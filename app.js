@@ -1,0 +1,485 @@
+const STORAGE_KEY = "skbc_content_v2";
+const state = {
+  content: loadContent(),
+  lang: new URLSearchParams(location.search).get("lang") || localStorage.getItem("skbc_lang") || "es",
+};
+
+function loadContent() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return saved ? deepMerge(window.SKBC_CONTENT, saved) : window.SKBC_CONTENT;
+  } catch {
+    return window.SKBC_CONTENT;
+  }
+}
+
+function deepMerge(base, override) {
+  if (Array.isArray(base) || Array.isArray(override)) return override ?? base;
+  if (!base || typeof base !== "object" || !override || typeof override !== "object") return override ?? base;
+  return Object.keys({ ...base, ...override }).reduce((merged, key) => {
+    merged[key] = deepMerge(base[key], override[key]);
+    return merged;
+  }, {});
+}
+
+function t() {
+  return state.content.languages[state.lang] || state.content.languages.es;
+}
+
+function whatsappLink(message) {
+  return `https://wa.me/${state.content.settings.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
+function cardGrid(items, columns = 4) {
+  return `<div class="grid-${columns}">${items.map((item) => `
+    <article class="card">
+      <span>${item[0]}</span>
+      <h3>${item[0]}</h3>
+      <p>${item[1] || ""}</p>
+    </article>`).join("")}</div>`;
+}
+
+function uniqueImages(images, excluded = []) {
+  const blocked = new Set(excluded.filter(Boolean));
+  return [...new Set((images || []).filter(Boolean))].filter((image) => !blocked.has(image));
+}
+
+function linesFrom(value) {
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function youtubeEmbedUrl(url) {
+  const value = String(url || "").trim();
+  const id = value.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([a-zA-Z0-9_-]{6,})/)?.[1];
+  return id ? `https://www.youtube.com/embed/${id}` : "";
+}
+
+function instagramEmbedUrl(url) {
+  const value = String(url || "").trim();
+  const match = value.match(/instagram\.com\/(p|reel|tv)\/([^/?#]+)/);
+  return match ? `https://www.instagram.com/${match[1]}/${match[2]}/embed` : "";
+}
+
+function socialEmbedCard(type, url) {
+  const embedUrl = type === "youtube" ? youtubeEmbedUrl(url) : instagramEmbedUrl(url);
+  if (!embedUrl) return "";
+  const title = type === "youtube" ? "YouTube SKBC GIPUZKOA" : "Instagram SKBC GIPUZKOA";
+  return `<article class="embed-card ${type === "instagram" ? "embed-card--instagram" : ""}">
+    <iframe src="${embedUrl}" title="${title}" loading="lazy" allowfullscreen></iframe>
+  </article>`;
+}
+
+function autoFeed() {
+  return window.SKBC_SOCIAL_FEED || { instagram: [], stories: [], youtube: [] };
+}
+
+function autoFeedInstagramCard(item) {
+  const embedUrl = instagramEmbedUrl(item.permalink);
+  if (embedUrl) {
+    return `<article class="embed-card embed-card--instagram">
+      <iframe src="${embedUrl}" title="Instagram SKBC GIPUZKOA" loading="lazy" allowfullscreen></iframe>
+    </article>`;
+  }
+  const image = item.thumbnailUrl || item.mediaUrl || "";
+  return `<a class="social-preview" href="${item.permalink}" target="_blank" rel="noreferrer">
+    ${image ? `<img src="${image}" alt="${item.caption || "Instagram SKBC GIPUZKOA"}" />` : ""}
+    <span>Instagram</span>
+    <strong>${item.caption || "Ver publicación"}</strong>
+  </a>`;
+}
+
+function autoFeedStoryCard(item) {
+  const image = item.thumbnailUrl || item.mediaUrl || "";
+  return `<a class="social-preview social-preview--story" href="${item.permalink || state.content.settings.instagram}" target="_blank" rel="noreferrer">
+    ${image ? `<img src="${image}" alt="Historia SKBC GIPUZKOA" />` : ""}
+    <span>Historia</span>
+    <strong>${item.caption || "Historia activa de Instagram"}</strong>
+  </a>`;
+}
+
+function autoFeedYoutubeCard(item) {
+  const embedUrl = item.videoId ? `https://www.youtube.com/embed/${item.videoId}` : youtubeEmbedUrl(item.url);
+  if (!embedUrl) return "";
+  return `<article class="embed-card">
+    <iframe src="${embedUrl}" title="${item.title || "YouTube SKBC GIPUZKOA"}" loading="lazy" allowfullscreen></iframe>
+  </article>`;
+}
+
+function embeddedSocial(settings) {
+  const feed = autoFeed();
+  const automaticInstagram = (feed.instagram || []).slice(0, 6).map(autoFeedInstagramCard).join("");
+  const automaticStories = (feed.stories || []).slice(0, 3).map(autoFeedStoryCard).join("");
+  const automaticYoutube = (feed.youtube || []).slice(0, 3).map(autoFeedYoutubeCard).join("");
+  const manualInstagram = linesFrom(settings.socialFeeds?.instagramUrls).map((url) => socialEmbedCard("instagram", url)).join("");
+  const manualYoutube = linesFrom(settings.socialFeeds?.youtubeUrls).map((url) => socialEmbedCard("youtube", url)).join("");
+  const instagram = automaticInstagram || manualInstagram;
+  const stories = automaticStories;
+  const youtube = automaticYoutube || manualYoutube;
+  return { instagram, stories, youtube, hasEmbeds: Boolean(instagram || stories || youtube) };
+}
+
+function customSections(settings) {
+  return (settings.customSections || [])
+    .filter((section) => section && section.enabled !== false)
+    .map((section, index) => {
+      const copy = section.languages?.[state.lang] || section.languages?.es || {};
+      const style = ["soft", "dark"].includes(section.style) ? section.style : "";
+      const image = section.image || "";
+      const button = copy.button && section.url
+        ? `<a class="button ${style === "dark" ? "secondary" : ""}" href="${section.url}" target="_blank" rel="noreferrer">${copy.button}</a>`
+        : "";
+      const text = `
+        <div class="custom-copy">
+          ${copy.eyebrow ? `<p class="eyebrow">${copy.eyebrow}</p>` : ""}
+          ${copy.title ? `<h2>${copy.title}</h2>` : ""}
+          ${copy.text ? `<p>${copy.text}</p>` : ""}
+          ${button}
+        </div>
+      `;
+      const content = image
+        ? `<div class="split ${index % 2 ? "split-reverse" : ""}">
+            <div class="split-media" style="background-image:url('${image}')"></div>
+            ${text}
+          </div>`
+        : `<div class="section-heading">${text}</div>`;
+      return `<section class="section custom-section ${style}">${content}</section>`;
+    })
+    .join("");
+}
+
+function parsePerson(person) {
+  if (Array.isArray(person)) {
+    return { name: person[0], role: person[1], text: person[2] || "" };
+  }
+  const [name, role] = String(person).split(" · ");
+  return { name, role: role || "", text: "" };
+}
+
+function profileText(person, group) {
+  if (person.text) return person.text;
+  if (state.lang === "eu") {
+    if (group === "technical") {
+      return `${person.name} SKBC GIPUZKOAko talde teknikoaren parte da, eta klubaren espirituari leiala den praktika hurbila eta jarraitua transmititzen laguntzen du.`;
+    }
+    return `${person.name} SKBC GIPUZKOAko zuzendaritzaren parte da, klubaren antolaketan eta eguneroko funtzionamenduan lagunduz.`;
+  }
+  if (state.lang === "en") {
+    if (group === "technical") {
+      return `${person.name} is part of the SKBC GIPUZKOA technical team and helps transmit a close, consistent practice faithful to the spirit of the club.`;
+    }
+    return `${person.name} is part of the SKBC GIPUZKOA board, helping with the organisation and daily running of the club.`;
+  }
+  if (group === "technical") {
+    return `${person.name} forma parte del equipo técnico de SKBC GIPUZKOA y ayuda a transmitir una práctica cercana, constante y fiel al espíritu del club.`;
+  }
+  return `${person.name} forma parte de la directiva de SKBC GIPUZKOA, colaborando en la organización y el funcionamiento diario del club.`;
+}
+
+function normalizeName(name) {
+  return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function personImage(name, index) {
+  const people = state.content.settings.images.people || {};
+  const normalized = normalizeName(name);
+  if (normalized === "alvaro calvo") return people.alvaro;
+  if (normalized === "inaki ventureira") return people.inaki;
+  if (normalized === "andoni dominguez") return people.andoni;
+  if (normalized === "oskar mateos") return people.oskar;
+  if (normalized === "asier azurmendi") return people.asier;
+  if (normalized === "igone lasa") return people.igone;
+  if (normalized === "inaki iturrioz") return people.iturrioz;
+  if (normalized === "bharat martin") return people.bharat;
+  if (normalized === "pablo sanchez") return people.pablo;
+  if (normalized === "uxue garikano") return people.uxue;
+  if (normalized === "jorge redondo") return people.jorge;
+  return "";
+}
+
+function personButton(person, group, index) {
+  const profile = parsePerson(person);
+  const image = personImage(profile.name, index);
+  const data = JSON.stringify({
+    name: profile.name,
+    role: profile.role,
+    text: profileText(profile, group)
+  });
+  return `<button class="person-card" type="button" data-profile='${data}'>
+    ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" /></span>` : ""}
+    <span>${profile.role}</span>
+    <strong>${profile.name}</strong>
+  </button>`;
+}
+
+function setMeta(copy) {
+  document.documentElement.lang = state.lang;
+  document.title = copy.seoTitle;
+  document.querySelector("meta[name='description']").setAttribute("content", copy.seoDescription);
+}
+
+function renderNav(copy) {
+  const anchors = ["#ninos", "#adultos", "#club", "#equipo", "#horarios", "#galeria", "#contacto"];
+  document.querySelector(".main-nav").innerHTML = copy.nav.map((label, index) => `<a href="${anchors[index]}">${label}</a>`).join("");
+  document.querySelector(".nav-cta").textContent = copy.ctaShort;
+  document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
+  document.querySelectorAll("[data-lang]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.lang === state.lang);
+  });
+  document.querySelector(".whatsapp-float").textContent = `WhatsApp · ${copy.ctaShort}`;
+  document.querySelector(".whatsapp-float").href = whatsappLink(copy.contact.title);
+}
+
+function render() {
+  const copy = t();
+  const { settings } = state.content;
+  document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
+  document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
+  const peopleImages = settings.images.people || {};
+  const socialEmbeds = embeddedSocial(settings);
+  const galleryImages = uniqueImages(settings.images.gallery, [
+    settings.images.hero,
+    settings.images.kids,
+    settings.images.adults,
+    settings.images.learn
+  ]);
+  setMeta(copy);
+  renderNav(copy);
+
+  document.querySelector("#app").innerHTML = `
+    <section class="hero" id="inicio">
+      <div class="hero-bg" style="background-image:url('${settings.images.hero}')"></div>
+      <img class="hero-logo" src="assets/logo-skbc.png" alt="Logo SKBC GIPUZKOA" />
+      <div class="hero-content">
+        <p class="eyebrow">${copy.hero.eyebrow}</p>
+        <h1>${copy.hero.title}</h1>
+        <p>${copy.hero.text}</p>
+        <div class="hero-actions">
+          <a class="button" href="${whatsappLink(copy.hero.primary)}" target="_blank" rel="noreferrer">${copy.hero.primary}</a>
+          <a class="button secondary" href="#horarios">${copy.hero.secondary}</a>
+        </div>
+      </div>
+      <div class="hero-proof">
+        ${copy.hero.cards.map((card) => `<article><strong>${card[0]}</strong><span>${card[1]}</span></article>`).join("")}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><p class="eyebrow">${copy.benefits.eyebrow}</p><h2>${copy.benefits.title}</h2><p>${copy.benefits.text}</p></div>
+      ${cardGrid(copy.benefits.items, 4)}
+    </section>
+
+    <section class="section soft">
+      <div class="section-heading"><p class="eyebrow">${copy.shorinji.eyebrow}</p><h2>${copy.shorinji.title}</h2><p>${copy.shorinji.text}</p></div>
+      ${cardGrid(copy.shorinji.blocks, 4)}
+    </section>
+
+    <section class="section" id="ninos">
+      <div class="split">
+        <div class="split-media" style="background-image:url('${settings.images.kids}')"></div>
+        <div class="split-copy">
+          <p class="eyebrow">${copy.kids.eyebrow}</p>
+          <h2>${copy.kids.title}</h2>
+          <p>${copy.kids.text}</p>
+          <ul class="check-list">${copy.kids.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+          <a class="button" href="${whatsappLink(copy.kids.cta)}" target="_blank" rel="noreferrer">${copy.kids.cta}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="adultos">
+      <div class="split">
+        <div class="split-copy">
+          <p class="eyebrow">${copy.adults.eyebrow}</p>
+          <h2>${copy.adults.title}</h2>
+          <p>${copy.adults.text}</p>
+          <div class="grid-3">${copy.adults.items.map((item) => `<article class="card"><span>${item[0]}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
+        </div>
+        <div class="split-media" style="background-image:url('${settings.images.adults}')"></div>
+      </div>
+    </section>
+
+    <section class="section" id="club">
+      <div class="club-intro">
+        <div class="club-logo-panel">
+          <img src="assets/logo-skbc-full.png" alt="Logo completo SKBC GIPUZKOA" />
+        </div>
+        <div>
+          <p class="eyebrow">${copy.club.eyebrow}</p>
+          <h2>${copy.club.title}</h2>
+          <p>${copy.club.text}</p>
+        </div>
+      </div>
+      ${cardGrid(copy.club.items, 3)}
+    </section>
+
+    <section class="section ika-band">
+      <div class="ika-layout">
+        <div>
+          <p class="eyebrow">${copy.ika.eyebrow}</p>
+          <h2>${copy.ika.title}</h2>
+          <p>${copy.ika.text}</p>
+          <p>${copy.ika.note || ""}</p>
+        </div>
+        <div class="ika-badge">
+          <img src="assets/ika-logo-white.png?v=2" alt="Logo International Kempo Association" />
+          <strong>${copy.ika.badge || copy.ika.title}</strong>
+          <span>International Kempo Association</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="instructor-layout">
+        <div class="instructor-photo" style="background-image:url('${peopleImages.alvaro || settings.images.learn}')"></div>
+        <div class="instructor-copy">
+          <p class="eyebrow">${copy.instructor.eyebrow}</p>
+          <h2>${copy.instructor.title}</h2>
+          <p>${copy.instructor.text}</p>
+          <p>${copy.instructor.extra}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="equipo">
+      <div class="section-heading"><p class="eyebrow">${copy.technicalTeam.eyebrow}</p><h2>${copy.technicalTeam.title}</h2><p>${copy.technicalTeam.text}</p></div>
+      <div class="team-feature">
+        <div class="team-feature__image" style="background-image:url('${peopleImages.technicalTeam || settings.images.adults}')"></div>
+        <div>
+          <h3>${copy.technicalTeam.groupTitle || copy.technicalTeam.title}</h3>
+          <p>${copy.technicalTeam.groupText || copy.technicalTeam.text}</p>
+        </div>
+      </div>
+      <div class="grid-2 person-grid">${copy.technicalTeam.leads.map((item, index) => personButton(item, "technical", index)).join("")}</div>
+      <div class="profile-list">${copy.technicalTeam.members.map((item, index) => personButton(item, "technical", index + copy.technicalTeam.leads.length)).join("")}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><p class="eyebrow">${copy.board.eyebrow}</p><h2>${copy.board.title}</h2></div>
+      <div class="profile-list">${copy.board.members.map((item, index) => personButton(item, "board", index)).join("")}</div>
+    </section>
+
+    <section class="section dark">
+      <div class="section-heading"><p class="eyebrow">${copy.learn.eyebrow}</p><h2>${copy.learn.title}</h2><p>${copy.learn.text}</p></div>
+    </section>
+
+    <section class="section" id="galeria">
+      <div class="section-heading"><p class="eyebrow">${copy.media.eyebrow}</p><h2>${copy.media.title}</h2><p>${copy.media.text}</p></div>
+      <div class="link-list">${settings.galleryLinks.map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.label}</a>`).join("")}</div>
+    </section>
+
+    <section class="section dark" id="horarios">
+      <div class="section-heading"><p class="eyebrow">${copy.schedule.eyebrow}</p><h2>${copy.schedule.title}</h2><p>${copy.schedule.text}</p></div>
+      <div class="grid-3">
+        <article class="card"><span>01</span><h3>${copy.schedule.kids}</h3></article>
+        <article class="card"><span>02</span><h3>${copy.schedule.adults}</h3></article>
+        <article class="card"><span>03</span><h3>${copy.schedule.place}</h3><p><a href="${settings.maps}" target="_blank" rel="noreferrer">${copy.schedule.maps}</a></p></article>
+      </div>
+    </section>
+
+    <section class="section soft" id="redes">
+      <div class="section-heading"><p class="eyebrow">${copy.social.eyebrow}</p><h2>${copy.social.title}</h2><p>${copy.social.text}</p></div>
+      ${socialEmbeds.hasEmbeds ? `
+        <div class="embed-layout">
+          ${socialEmbeds.instagram}
+          ${socialEmbeds.stories}
+          ${socialEmbeds.youtube}
+        </div>
+      ` : ""}
+      <div class="grid-3">
+        <a class="card" href="${settings.instagram}" target="_blank" rel="noreferrer"><span>Instagram</span><h3>${copy.social.instagram}</h3></a>
+        <a class="card" href="${settings.facebook}" target="_blank" rel="noreferrer"><span>Facebook</span><h3>${copy.social.facebook}</h3></a>
+        <a class="card" href="${settings.youtube}" target="_blank" rel="noreferrer"><span>YouTube</span><h3>${copy.social.youtube}</h3></a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><p class="eyebrow">${copy.merch.eyebrow}</p><h2>${copy.merch.title}</h2><p>${copy.merch.text}</p></div>
+      <div class="link-list">${copy.merch.items.map((item) => `<a href="${whatsappLink(item)}" target="_blank" rel="noreferrer">${item}</a>`).join("")}</div>
+    </section>
+
+    ${customSections(settings)}
+
+    <section class="section soft" id="contacto">
+      <div class="contact-layout">
+        <div>
+          <p class="eyebrow">${copy.contact.eyebrow}</p>
+          <h2>${copy.contact.title}</h2>
+          <p>${copy.contact.text}</p>
+          <div class="social-row">
+            <a href="${settings.instagram}" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="${settings.facebook}" target="_blank" rel="noreferrer">Facebook</a>
+            <a href="${settings.youtube}" target="_blank" rel="noreferrer">YouTube</a>
+          </div>
+        </div>
+        <form class="contact-form">
+          <label>${copy.contact.name}<input name="name" required /></label>
+          <label>${copy.contact.interest}<select name="interest">${copy.contact.options.map((option) => `<option>${option}</option>`).join("")}</select></label>
+          <label>${copy.contact.message}<textarea name="message" rows="4" required></textarea></label>
+          <button class="button" type="submit">${copy.contact.submit}</button>
+        </form>
+      </div>
+    </section>
+  `;
+
+  document.querySelector(".contact-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const text = `${data.get("name")} · ${data.get("interest")} · ${data.get("message")}`;
+    window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
+  });
+  bindProfiles();
+}
+
+function bindProfiles() {
+  document.querySelectorAll("[data-profile]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openProfile(JSON.parse(button.dataset.profile));
+    });
+  });
+}
+
+function openProfile(profile) {
+  const modal = document.querySelector("#profileModal");
+  modal.querySelector("#profileRole").textContent = profile.role;
+  modal.querySelector("#profileTitle").textContent = profile.name;
+  modal.querySelector("#profileText").textContent = profile.text;
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeProfile() {
+  const modal = document.querySelector("#profileModal");
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+document.querySelectorAll("[data-lang]").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.lang = button.dataset.lang;
+    localStorage.setItem("skbc_lang", state.lang);
+    render();
+  });
+});
+
+document.querySelector(".menu-button").addEventListener("click", () => {
+  const nav = document.querySelector(".main-nav");
+  const isOpen = nav.classList.toggle("is-open");
+  document.querySelector(".menu-button").setAttribute("aria-expanded", String(isOpen));
+});
+
+document.querySelector(".profile-modal__close").addEventListener("click", closeProfile);
+document.querySelector("#profileModal").addEventListener("click", (event) => {
+  if (event.target.id === "profileModal") closeProfile();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeProfile();
+});
+
+window.addEventListener("scroll", () => {
+  document.querySelector(".topbar").classList.toggle("is-scrolled", window.scrollY > 12);
+}, { passive: true });
+
+render();
