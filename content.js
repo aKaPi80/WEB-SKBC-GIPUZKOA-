@@ -122,7 +122,7 @@ window.SKBC_CONTENT = {
         "secondary": "Ver horarios",
         "cards": [
           [
-            "5-13 años",
+            "5-18 años",
             "Martes y jueves · 17:30-18:30"
           ],
           [
