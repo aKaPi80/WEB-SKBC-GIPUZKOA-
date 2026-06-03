@@ -145,9 +145,19 @@ function customSections(settings) {
             ${text}
           </div>`
         : `<div class="section-heading">${text}</div>`;
-      return `<section class="section custom-section ${style}">${content}</section>`;
+      return `<section class="section custom-section ${style}" id="area-${index + 1}">${content}</section>`;
     })
     .join("");
+}
+
+function customNavItems(settings) {
+  return (settings.customSections || [])
+    .filter((section) => section && section.enabled !== false)
+    .map((section, index) => {
+      const copy = section.languages?.[state.lang] || section.languages?.es || {};
+      return copy.title ? { label: copy.title, href: `#area-${index + 1}` } : null;
+    })
+    .filter(Boolean);
 }
 
 const calendarState = {
@@ -268,7 +278,9 @@ function upcomingNewsSection(settings, copy) {
     <div class="news-grid">
       ${news.length ? news.map((item) => {
         const text = item.languages?.[state.lang] || item.languages?.es || {};
+        const image = item.image ? `<img src="${item.image}" alt="${text.title || ""}" />` : "";
         const inner = `
+          ${image}
           <span style="--news-color:${item.color || "#1f6fa9"}">${item.date || ""}</span>
           <h3>${text.title || ""}</h3>
           <p>${text.text || ""}</p>
@@ -352,8 +364,20 @@ function setMeta(copy) {
 }
 
 function renderNav(copy) {
-  const anchors = ["#ninos", "#adultos", "#club", "#equipo", "#horarios", "#calendario", "#galeria", "#contacto"];
-  document.querySelector(".main-nav").innerHTML = copy.nav.map((label, index) => `<a href="${anchors[index]}">${label}</a>`).join("");
+  const navLabels = copy.nav || [];
+  const baseNav = [
+    { label: navLabels[0] || "Niños", href: "#ninos" },
+    { label: navLabels[1] || "Adultos", href: "#adultos" },
+    { label: navLabels[2] || "Club", href: "#club" },
+    { label: navLabels[3] || "Equipo", href: "#equipo" },
+    { label: navLabels[4] || "Horarios", href: "#horarios" },
+    { label: navLabels[5] || copy.calendar?.eyebrow || "Calendario", href: "#calendario" },
+    { label: navLabels[6] || copy.media?.videos || "Galería", href: "#galeria" },
+    { label: copy.news?.eyebrow || "Noticias", href: "#noticias" },
+    ...customNavItems(state.content.settings),
+    { label: navLabels[7] || copy.contact?.eyebrow || "Contacto", href: "#contacto" }
+  ];
+  document.querySelector(".main-nav").innerHTML = baseNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("");
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
   document.querySelectorAll("[data-lang]").forEach((button) => {
@@ -499,7 +523,7 @@ function render() {
 
     <section class="section" id="galeria">
       <div class="section-heading"><p class="eyebrow">${copy.media.eyebrow}</p><h2>${copy.media.title}</h2><p>${copy.media.text}</p></div>
-      <div class="link-list">${settings.galleryLinks.map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.label}</a>`).join("")}</div>
+      <div class="link-list">${(settings.galleryLinks || []).map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.label}</a>`).join("")}</div>
     </section>
 
     <section class="section dark" id="horarios">

@@ -45,8 +45,9 @@ const settingsGroups = [
   },
   {
     title: "Publicaciones visibles en la web",
-    help: "Pega una URL por lÃ­nea. Instagram acepta enlaces de posts o reels. YouTube acepta enlaces de vÃ­deos, shorts o youtu.be.",
+    help: "Añade o quita enlaces visibles. En galerías usa una línea por enlace con formato Nombre | URL.",
     fields: [
+      ["Galerías de fotos", ["settings", "galleryLinks"], "linkList"],
       ["Posts/Reels de Instagram", ["settings", "socialFeeds", "instagramUrls"], "textarea"],
       ["VÃ­deos de YouTube", ["settings", "socialFeeds", "youtubeUrls"], "textarea"]
     ]
@@ -67,7 +68,8 @@ const settingsGroups = [
       ["Foto niÃ±os", ["settings", "images", "kids"], "input"],
       ["Foto adultos", ["settings", "images", "adults"], "input"],
       ["Foto tÃ©cnica/aprendizaje", ["settings", "images", "learn"], "input"],
-      ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"]
+      ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"],
+      ["Imágenes de galería", ["settings", "images", "gallery"], "array"]
     ]
   },
   {
@@ -226,6 +228,16 @@ function setByPath(root, path, value) {
 function parseFieldValue(value, type) {
   if (type === "booleanText") return value === "true";
   if (type === "array") return value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (type === "linkList") {
+    return value.split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [label, ...urlParts] = line.split("|").map((part) => part.trim());
+        return { label, url: urlParts.join("|").trim() };
+      })
+      .filter((item) => item.label && item.url);
+  }
   if (type === "matrix") {
     return value.split(/\r?\n/).map((line) => line.split("|").map((part) => part.trim()).filter(Boolean)).filter((row) => row.length);
   }
@@ -235,6 +247,7 @@ function parseFieldValue(value, type) {
 function formatFieldValue(value, type) {
   if (type === "booleanText") return value === false ? "false" : "true";
   if (type === "array") return Array.isArray(value) ? value.join("\n") : "";
+  if (type === "linkList") return Array.isArray(value) ? value.map((item) => `${item.label || ""} | ${item.url || ""}`).join("\n") : "";
   if (type === "matrix") return Array.isArray(value) ? value.map((row) => Array.isArray(row) ? row.join(" | ") : row).join("\n") : "";
   return value ?? "";
 }
@@ -308,9 +321,9 @@ function isImageField(label, path) {
 }
 
 function controlTemplate(id, encodedPath, value, type) {
-  if (type === "textarea" || type === "array" || type === "matrix") {
+  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList") {
     const rows = type === "matrix" ? 6 : 4;
-    const hint = type === "matrix" ? `<small>Una lÃ­nea por elemento. Usa | para separar tÃ­tulo, texto y detalles.</small>` : "";
+    const hint = type === "matrix" || type === "linkList" ? `<small>Una línea por elemento. Usa | para separar nombre y URL.</small>` : "";
     return `${hint}<textarea id="${id}" data-type="${type}" data-path="${encodedPath}" rows="${rows}">${escapeHtml(value)}</textarea>`;
   }
   if (type === "date") {
@@ -440,6 +453,7 @@ function newsTemplate(item, index) {
       ["Activa", [...base, "enabled"], "booleanText"],
       ["Fecha", [...base, "date"], "date"],
       ["Color de fondo/acento", [...base, "color"], "color"],
+      ["Imagen de la noticia", [...base, "image"], "input"],
       ["URL opcional", [...base, "url"], "input"],
       ["ES título", [...base, "languages", "es", "title"], "input"],
       ["ES texto", [...base, "languages", "es", "text"], "textarea"],
@@ -460,6 +474,7 @@ function addNews() {
     enabled: true,
     date,
     color: "#1f6fa9",
+    image: "",
     url: "",
     languages: {
       es: { title: "Nueva noticia", text: "Texto de la noticia." },
