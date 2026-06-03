@@ -281,6 +281,19 @@ button.danger {
   background: #b42318;
 }
 
+.upload-image {
+  justify-self: start;
+  min-height: 38px;
+  border-color: rgba(31, 111, 169, .25);
+  color: #fff;
+  background: var(--blue);
+}
+
+.upload-image:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
 .advanced-editor {
   display: grid;
   gap: 14px;

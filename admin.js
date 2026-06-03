@@ -289,8 +289,14 @@ function fieldTemplate([label, path, type]) {
   const value = formatFieldValue(getByPath(data, path), type);
   const id = `field-${path.join("-")}`;
   const encodedPath = encodeURIComponent(JSON.stringify(path));
-  const control = controlTemplate(id, encodedPath, value, type);
+  const upload = isImageField(label, path) ? `<button class="upload-image" data-upload-path="${encodedPath}" type="button">Subir imagen</button>` : "";
+  const control = `${controlTemplate(id, encodedPath, value, type)}${upload}`;
   return `<label class="field" for="${id}"><span>${label}</span>${control}</label>`;
+}
+
+function isImageField(label, path) {
+  const text = `${label} ${path.join(" ")}`.toLowerCase();
+  return text.includes("foto") || text.includes("imagen") || text.includes("image") || text.includes("logo");
 }
 
 function controlTemplate(id, encodedPath, value, type) {
@@ -422,6 +428,90 @@ function bindFields(root) {
     };
     field.addEventListener("input", update);
     field.addEventListener("change", update);
+  });
+  root.querySelectorAll("[data-upload-path]").forEach((button) => {
+    button.addEventListener("click", () => uploadImageForPath(button));
+  });
+}
+
+async function uploadImageForPath(button) {
+  const path = JSON.parse(decodeURIComponent(button.dataset.uploadPath));
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/png,image/jpeg,image/webp,image/gif";
+  input.addEventListener("change", async () => {
+    const [file] = input.files;
+    if (!file) return;
+    try {
+      button.disabled = true;
+      button.textContent = "Subiendo...";
+      const assetPath = await uploadImageFile(file);
+      setByPath(data, path, assetPath);
+      const field = document.querySelector(`[data-path="${button.dataset.uploadPath}"]`);
+      if (field) field.value = assetPath;
+      markDirty();
+      setStatus("Imagen subida. Falta guardar/publicar cambios.", "warning");
+    } catch (error) {
+      setStatus(`Error al subir imagen: ${error.message}`, "danger");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Subir imagen";
+    }
+  });
+  input.click();
+}
+
+async function uploadImageFile(file) {
+  const extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "jpg";
+  const safeBase = file.name
+    .replace(/\.[^.]+$/, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 42) || "imagen";
+  const assetPath = `assets/uploads/${Date.now()}-${safeBase}.${extension}`;
+  const content = await fileToBase64(file);
+
+  if (location.hostname.endsWith("github.io")) {
+    const token = await githubToken();
+    await githubUploadFile(assetPath, content, token);
+    return assetPath;
+  }
+
+  if (location.protocol === "file:") {
+    throw new Error("Abre el editor con ABRIR-EDITOR-Y-PUBLICAR.bat para subir imágenes.");
+  }
+
+  const response = await fetch("/api/upload-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path: assetPath, content })
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "No se pudo subir la imagen");
+  return result.path;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolvePromise, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolvePromise(String(reader.result).split(",")[1]);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function githubUploadFile(path, content, token) {
+  const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  await githubRequest(apiUrl, token, {
+    method: "PUT",
+    body: JSON.stringify({
+      message: `Upload image ${path}`,
+      branch: GITHUB_BRANCH,
+      content
+    })
   });
 }
 
