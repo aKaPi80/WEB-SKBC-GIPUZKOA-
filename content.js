@@ -296,7 +296,7 @@ window.SKBC_CONTENT = {
         "title": "Ven a probar en Tolosa",
         "text": "Escríbenos antes de venir y te indicaremos cuál es el mejor día para probar, qué traer y cómo funciona el primer mes gratuito.",
         "kids": "Niños · 5-13 años · Martes y jueves · 17:30-18:30",
-        "adults": "Jóvenes y adultos · 16+ años · Martes y jueves · 18:30-20:00",
+        "adults": "Jóvenes y adultos · 13+ años · Martes y jueves · 18:30-20:00",
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Abrir en Google Maps"
       },
@@ -364,11 +364,11 @@ window.SKBC_CONTENT = {
         "secondary": "Ordutegiak ikusi",
         "cards": [
           [
-            "5-14 urte",
+            "5-13 urte",
             "Astearte eta ostegunetan · 17:30-18:30"
           ],
           [
-            "14+ eta helduak",
+            "13+ eta helduak",
             "Astearte eta ostegunetan · 18:30-20:00"
           ],
           [
@@ -537,8 +537,8 @@ window.SKBC_CONTENT = {
         "eyebrow": "Ordutegiak eta kokapena",
         "title": "Etorri Tolosan probatzera",
         "text": "Etorri aurretik idatzi eta probatzeko egunik egokiena, zer ekarri eta lehen hilabete doakoa nola den azalduko dizugu.",
-        "kids": "Haurrak · 5-14 urte · Astearte eta ostegunetan · 17:30-18:30",
-        "adults": "Gazteak eta helduak · 14+ urte · Astearte eta ostegunetan · 18:30-20:00",
+        "kids": "Haurrak · 5-13 urte · Astearte eta ostegunetan · 17:30-18:30",
+        "adults": "Gazteak eta helduak · 13+ urte · Astearte eta ostegunetan · 18:30-20:00",
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Google Mapsen ireki"
       },
@@ -606,11 +606,11 @@ window.SKBC_CONTENT = {
         "secondary": "See schedule",
         "cards": [
           [
-            "Ages 5-14",
+            "Ages 5-13",
             "Tuesday and Thursday · 17:30-18:30"
           ],
           [
-            "14+ and adults",
+            "13+ and adults",
             "Tuesday and Thursday · 18:30-20:00"
           ],
           [
@@ -779,8 +779,8 @@ window.SKBC_CONTENT = {
         "eyebrow": "Schedule and location",
         "title": "Come and try in Tolosa",
         "text": "Write to us before coming and we will tell you the best day to try, what to bring and how the free first month works.",
-        "kids": "Children · ages 5-14 · Tuesday and Thursday · 17:30-18:30",
-        "adults": "Teens and adults · 14+ · Tuesday and Thursday · 18:30-20:00",
+        "kids": "Children · ages 5-13 · Tuesday and Thursday · 17:30-18:30",
+        "adults": "Teens and adults · 13+ · Tuesday and Thursday · 18:30-20:00",
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Open in Google Maps"
       },
