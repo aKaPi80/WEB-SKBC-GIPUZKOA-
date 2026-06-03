@@ -150,6 +150,113 @@ function customSections(settings) {
     .join("");
 }
 
+const calendarState = {
+  view: "year",
+  date: new Date()
+};
+
+function pad(number) {
+  return String(number).padStart(2, "0");
+}
+
+function dateKey(date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function parseDate(value) {
+  const [year, month, day] = String(value || "").split("-").map(Number);
+  return new Date(year || new Date().getFullYear(), (month || 1) - 1, day || 1);
+}
+
+function eventCopy(event) {
+  return event.languages?.[state.lang] || event.languages?.es || {};
+}
+
+function eventTouchesDate(event, date) {
+  const current = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const start = parseDate(event.start).getTime();
+  const end = parseDate(event.end || event.start).getTime();
+  return current >= start && current <= end;
+}
+
+function monthName(date) {
+  return new Intl.DateTimeFormat(state.lang === "eu" ? "eu-ES" : state.lang, { month: "long", year: "numeric" }).format(date);
+}
+
+function monthGrid(monthDate, events, copy) {
+  const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+  const first = new Date(year, month, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < offset; i += 1) cells.push(`<span class="calendar-day is-empty"></span>`);
+  for (let day = 1; day <= days; day += 1) {
+    const current = new Date(year, month, day);
+    const dayEvents = events.filter((event) => eventTouchesDate(event, current));
+    cells.push(`<span class="calendar-day ${dayEvents.length ? "has-event" : ""}">
+      <strong>${day}</strong>
+      ${dayEvents.slice(0, 3).map((event) => {
+        const text = eventCopy(event);
+        return `<em style="--event-color:${event.color || "#1f6fa9"}" title="${text.title || ""}">${text.title || copy.empty}</em>`;
+      }).join("")}
+    </span>`);
+  }
+  return `<article class="calendar-month">
+    <h3>${monthName(monthDate)}</h3>
+    <div class="calendar-weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+    <div class="calendar-days">${cells.join("")}</div>
+  </article>`;
+}
+
+function calendarMonths() {
+  const base = new Date(calendarState.date.getFullYear(), calendarState.date.getMonth(), 1);
+  if (calendarState.view === "year") {
+    return Array.from({ length: 12 }, (_, index) => new Date(base.getFullYear(), index, 1));
+  }
+  if (calendarState.view === "quarter") {
+    const start = Math.floor(base.getMonth() / 3) * 3;
+    return Array.from({ length: 3 }, (_, index) => new Date(base.getFullYear(), start + index, 1));
+  }
+  return [base];
+}
+
+function calendarSection(settings, copy) {
+  const events = (settings.events || []).filter((event) => event.enabled !== false);
+  return `<section class="section calendar-section" id="calendario">
+    <div class="section-heading">
+      <p class="eyebrow">${copy.calendar.eyebrow}</p>
+      <h2>${copy.calendar.title}</h2>
+      <p>${copy.calendar.text}</p>
+    </div>
+    <div class="calendar-toolbar">
+      <div class="calendar-view">
+        <button type="button" data-calendar-view="year" class="${calendarState.view === "year" ? "active" : ""}">${copy.calendar.year}</button>
+        <button type="button" data-calendar-view="quarter" class="${calendarState.view === "quarter" ? "active" : ""}">${copy.calendar.quarter}</button>
+        <button type="button" data-calendar-view="month" class="${calendarState.view === "month" ? "active" : ""}">${copy.calendar.month}</button>
+      </div>
+      <div class="calendar-step">
+        <button type="button" data-calendar-step="-1">${copy.calendar.previous}</button>
+        <strong>${calendarState.view === "year" ? calendarState.date.getFullYear() : monthName(calendarState.date)}</strong>
+        <button type="button" data-calendar-step="1">${copy.calendar.next}</button>
+      </div>
+    </div>
+    <div class="calendar-grid calendar-grid--${calendarState.view}">
+      ${calendarMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
+    </div>
+    <div class="calendar-list">
+      ${events.length ? events.map((event) => {
+        const text = eventCopy(event);
+        return `<article style="--event-color:${event.color || "#1f6fa9"}">
+          <span>${event.start}${event.end && event.end !== event.start ? ` / ${event.end}` : ""}</span>
+          <h3>${text.title || ""}</h3>
+          <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
+        </article>`;
+      }).join("") : `<p>${copy.calendar.empty}</p>`}
+    </div>
+  </section>`;
+}
+
 function parsePerson(person) {
   if (Array.isArray(person)) {
     return { name: person[0], role: person[1], text: person[2] || "" };
@@ -379,6 +486,8 @@ function render() {
       </div>
     </section>
 
+    ${calendarSection(settings, copy)}
+
     <section class="section soft" id="redes">
       <div class="section-heading"><p class="eyebrow">${copy.social.eyebrow}</p><h2>${copy.social.title}</h2><p>${copy.social.text}</p></div>
       ${socialEmbeds.hasEmbeds ? `
@@ -431,12 +540,35 @@ function render() {
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
   });
   bindProfiles();
+  bindCalendar();
 }
 
 function bindProfiles() {
   document.querySelectorAll("[data-profile]").forEach((button) => {
     button.addEventListener("click", () => {
       openProfile(JSON.parse(button.dataset.profile));
+    });
+  });
+}
+
+function bindCalendar() {
+  document.querySelectorAll("[data-calendar-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      calendarState.view = button.dataset.calendarView;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-calendar-step]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const direction = Number(button.dataset.calendarStep);
+      if (calendarState.view === "year") {
+        calendarState.date = new Date(calendarState.date.getFullYear() + direction, calendarState.date.getMonth(), 1);
+      } else if (calendarState.view === "quarter") {
+        calendarState.date = new Date(calendarState.date.getFullYear(), calendarState.date.getMonth() + direction * 3, 1);
+      } else {
+        calendarState.date = new Date(calendarState.date.getFullYear(), calendarState.date.getMonth() + direction, 1);
+      }
+      render();
     });
   });
 }

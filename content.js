@@ -15,6 +15,50 @@ window.SKBC_CONTENT = {
       "youtubeUrls": ""
     },
     "customSections": [],
+    "events": [
+      {
+        "enabled": true,
+        "start": "2026-07-10",
+        "end": "2026-07-12",
+        "color": "#1f6fa9",
+        "location": "Irlanda",
+        "languages": {
+          "es": {
+            "title": "Curso internacional en Irlanda",
+            "description": "Entrenamiento y convivencia con otros practicantes."
+          },
+          "eu": {
+            "title": "Nazioarteko ikastaroa Irlandan",
+            "description": "Beste praktikatzaileekin entrenamendua eta bizikidetza."
+          },
+          "en": {
+            "title": "International course in Ireland",
+            "description": "Training and exchange with other practitioners."
+          }
+        }
+      },
+      {
+        "enabled": true,
+        "start": "2026-09-19",
+        "end": "2026-09-20",
+        "color": "#c52727",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "Curso en Tolosa",
+            "description": "Seminario abierto para alumnos del club e invitados."
+          },
+          "eu": {
+            "title": "Ikastaroa Tolosan",
+            "description": "Klubeko ikasleentzat eta gonbidatuentzat mintegia."
+          },
+          "en": {
+            "title": "Course in Tolosa",
+            "description": "Seminar for club students and guests."
+          }
+        }
+      }
+    ],
     "galleryLinks": [
       {
         "label": "SKBC Seminarioa 2024",
@@ -340,6 +384,17 @@ window.SKBC_CONTENT = {
           "Primer mes gratis",
           "Información general"
         ]
+      },
+      "calendar": {
+        "eyebrow": "Calendario",
+        "title": "Calendario anual de eventos",
+        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
+        "year": "A?o",
+        "quarter": "3 meses",
+        "month": "Mes",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "empty": "Sin eventos"
       }
     },
     "eu": {
@@ -582,6 +637,17 @@ window.SKBC_CONTENT = {
           "Lehen hilabetea doan",
           "Informazio orokorra"
         ]
+      },
+      "calendar": {
+        "eyebrow": "Egutegia",
+        "title": "Urteko ekitaldien egutegia",
+        "text": "Ikastaroak, mintegiak, bidaiak, entrenamendu bereziak eta klubeko jarduerak kontsulta ditzakezu. Urte osoa, hiru hilabete edo hilabetez hilabete ikus dezakezu.",
+        "year": "Urtea",
+        "quarter": "3 hilabete",
+        "month": "Hilabetea",
+        "previous": "Aurrekoa",
+        "next": "Hurrengoa",
+        "empty": "Ekitaldirik gabe"
       }
     },
     "en": {
@@ -824,6 +890,17 @@ window.SKBC_CONTENT = {
           "First month free",
           "General information"
         ]
+      },
+      "calendar": {
+        "eyebrow": "Calendar",
+        "title": "Annual event calendar",
+        "text": "Check courses, seminars, trips, special training sessions and club activities. You can view the full year, three months or one month at a time.",
+        "year": "Year",
+        "quarter": "3 months",
+        "month": "Month",
+        "previous": "Previous",
+        "next": "Next",
+        "empty": "No events"
       }
     }
   }

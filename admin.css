@@ -262,6 +262,12 @@ aside {
   line-height: 1.45;
 }
 
+.field input[type="color"] {
+  width: 96px;
+  min-height: 46px;
+  padding: 4px;
+}
+
 .field textarea {
   min-height: 116px;
   resize: vertical;
