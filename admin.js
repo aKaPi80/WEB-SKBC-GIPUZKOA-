@@ -27,6 +27,8 @@ const labels = {
 
 panelTitles.events = "Calendario de eventos";
 labels.events = "Calendario";
+panelTitles.news = "Próximas noticias";
+labels.news = "Noticias";
 
 const settingsGroups = [
   {
@@ -37,6 +39,7 @@ const settingsGroups = [
       ["Instagram", ["settings", "instagram"], "input"],
       ["Facebook", ["settings", "facebook"], "input"],
       ["YouTube", ["settings", "youtube"], "input"],
+      ["Web de IKA", ["settings", "ikaUrl"], "input"],
       ["Google Maps", ["settings", "maps"], "input"]
     ]
   },
@@ -254,6 +257,7 @@ function render() {
 
   if (currentPanel === "custom") return renderCustom();
   if (currentPanel === "events") return renderEvents();
+  if (currentPanel === "news") return renderNews();
   if (currentPanel === "advanced") return renderAdvanced();
   renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
 }
@@ -411,6 +415,67 @@ function removeEvent(index) {
   data.settings.events.splice(index, 1);
   markDirty();
   renderEvents();
+}
+
+function renderNews() {
+  const editor = document.querySelector("#editor");
+  const news = data.settings.news || [];
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions"><button id="add-news" class="primary" type="button">Añadir noticia</button></div>`)}
+    ${news.length ? news.map(newsTemplate).join("") : `<article class="editor-group"><header><h3>No hay noticias</h3><p>Pulsa Añadir noticia para crear avisos visibles en la web.</p></header></article>`}
+  `;
+  bindFields(editor);
+  document.querySelector("#add-news").addEventListener("click", addNews);
+  editor.querySelectorAll("[data-remove-news]").forEach((button) => {
+    button.addEventListener("click", () => removeNews(Number(button.dataset.removeNews)));
+  });
+}
+
+function newsTemplate(item, index) {
+  const base = ["settings", "news", index];
+  const groups = [{
+    title: `Noticia ${index + 1}`,
+    help: "Puedes poner fecha, color, enlace opcional y textos en los tres idiomas.",
+    fields: [
+      ["Activa", [...base, "enabled"], "booleanText"],
+      ["Fecha", [...base, "date"], "date"],
+      ["Color de fondo/acento", [...base, "color"], "color"],
+      ["URL opcional", [...base, "url"], "input"],
+      ["ES título", [...base, "languages", "es", "title"], "input"],
+      ["ES texto", [...base, "languages", "es", "text"], "textarea"],
+      ["EU título", [...base, "languages", "eu", "title"], "input"],
+      ["EU texto", [...base, "languages", "eu", "text"], "textarea"],
+      ["EN título", [...base, "languages", "en", "title"], "input"],
+      ["EN texto", [...base, "languages", "en", "text"], "textarea"]
+    ]
+  }];
+  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
+}
+
+function addNews() {
+  if (!data.settings.news) data.settings.news = [];
+  const today = new Date();
+  const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  data.settings.news.push({
+    enabled: true,
+    date,
+    color: "#1f6fa9",
+    url: "",
+    languages: {
+      es: { title: "Nueva noticia", text: "Texto de la noticia." },
+      eu: { title: "Albiste berria", text: "Albistearen testua." },
+      en: { title: "New update", text: "News text." }
+    }
+  });
+  markDirty();
+  renderNews();
+}
+
+function removeNews(index) {
+  if (!confirm("¿Eliminar esta noticia?")) return;
+  data.settings.news.splice(index, 1);
+  markDirty();
+  renderNews();
 }
 
 function customSectionTemplate(section, index) {

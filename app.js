@@ -257,6 +257,30 @@ function calendarSection(settings, copy) {
   </section>`;
 }
 
+function upcomingNewsSection(settings, copy) {
+  const news = (settings.news || []).filter((item) => item.enabled !== false);
+  return `<section class="section soft" id="noticias">
+    <div class="section-heading">
+      <p class="eyebrow">${copy.news.eyebrow}</p>
+      <h2>${copy.news.title}</h2>
+      <p>${copy.news.text}</p>
+    </div>
+    <div class="news-grid">
+      ${news.length ? news.map((item) => {
+        const text = item.languages?.[state.lang] || item.languages?.es || {};
+        const inner = `
+          <span style="--news-color:${item.color || "#1f6fa9"}">${item.date || ""}</span>
+          <h3>${text.title || ""}</h3>
+          <p>${text.text || ""}</p>
+        `;
+        return item.url
+          ? `<a class="news-card" href="${item.url}" target="_blank" rel="noreferrer">${inner}</a>`
+          : `<article class="news-card">${inner}</article>`;
+      }).join("") : `<p>${copy.news.empty}</p>`}
+    </div>
+  </section>`;
+}
+
 function parsePerson(person) {
   if (Array.isArray(person)) {
     return { name: person[0], role: person[1], text: person[2] || "" };
@@ -328,7 +352,7 @@ function setMeta(copy) {
 }
 
 function renderNav(copy) {
-  const anchors = ["#ninos", "#adultos", "#club", "#equipo", "#horarios", "#galeria", "#contacto"];
+  const anchors = ["#ninos", "#adultos", "#club", "#equipo", "#horarios", "#calendario", "#galeria", "#contacto"];
   document.querySelector(".main-nav").innerHTML = copy.nav.map((label, index) => `<a href="${anchors[index]}">${label}</a>`).join("");
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
@@ -429,6 +453,7 @@ function render() {
           <h2>${copy.ika.title}</h2>
           <p>${copy.ika.text}</p>
           <p>${copy.ika.note || ""}</p>
+          <a class="button" href="${settings.ikaUrl}" target="_blank" rel="noreferrer">${copy.ika.button}</a>
         </div>
         <div class="ika-badge">
           <img src="assets/ika-logo-white.png?v=2" alt="Logo International Kempo Association" />
@@ -487,6 +512,8 @@ function render() {
     </section>
 
     ${calendarSection(settings, copy)}
+
+    ${upcomingNewsSection(settings, copy)}
 
     <section class="section soft" id="redes">
       <div class="section-heading"><p class="eyebrow">${copy.social.eyebrow}</p><h2>${copy.social.title}</h2><p>${copy.social.text}</p></div>

@@ -139,9 +139,32 @@ window.SKBC_CONTENT = {
         "pablo": "assets/people/pablo-sanchez.png",
         "uxue": "assets/people/uxue-garikano.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
-        "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
+        "technicalTeam": "assets/people/equipo-tecnico.jpg"
       }
-    }
+    },
+    "ikaUrl": "https://www.internationalkempo.org/",
+    "news": [
+      {
+        "enabled": true,
+        "date": "2026-06-04",
+        "color": "#1f6fa9",
+        "url": "",
+        "languages": {
+          "es": {
+            "title": "Calendario anual disponible",
+            "text": "Ya puedes consultar los pr?ximos cursos, seminarios y actividades del club desde la web."
+          },
+          "eu": {
+            "title": "Urteko egutegia eskuragarri",
+            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+          },
+          "en": {
+            "title": "Annual calendar available",
+            "text": "You can now check upcoming courses, seminars and club activities on the website."
+          }
+        }
+      }
+    ]
   },
   "languages": {
     "es": {
@@ -149,12 +172,13 @@ window.SKBC_CONTENT = {
       "seoTitle": "Shorinji Kempo en Tolosa | SKBC GIPUZKOA",
       "seoDescription": "Clases de Shorinji Kempo en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
       "nav": [
-        "Niños",
+        "Ni?os",
         "Adultos",
         "Club",
         "Equipo",
         "Horarios",
-        "Galería",
+        "Calendario",
+        "Galer?a",
         "Contacto"
       ],
       "ctaShort": "Probar gratis",
@@ -166,7 +190,7 @@ window.SKBC_CONTENT = {
         "secondary": "Ver horarios",
         "cards": [
           [
-            "5-18 años",
+            "5-13 años",
             "Martes y jueves · 17:30-18:30"
           ],
           [
@@ -280,7 +304,8 @@ window.SKBC_CONTENT = {
         "title": "Representante de IKA en España",
         "text": "SKBC GIPUZKOA es el representante en España de la IKA, International Kempo Association. La IKA une clubes y representantes de diferentes países para preservar y transmitir el Shorinji Kempo respetando su esencia original, su filosofía y su línea técnica auténtica.",
         "badge": "IKA España",
-        "note": "Formar parte de IKA nos conecta con maestros, clubes y practicantes de Japón, Reino Unido, Irlanda, Suiza, Italia, Portugal, China y otros países."
+        "note": "Formar parte de IKA nos conecta con maestros, clubes y practicantes de Japón, Reino Unido, Irlanda, Suiza, Italia, Portugal, China y otros países.",
+        "button": "Visitar web de IKA"
       },
       "instructor": {
         "eyebrow": "Responsable técnico",
@@ -344,6 +369,17 @@ window.SKBC_CONTENT = {
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Abrir en Google Maps"
       },
+      "calendar": {
+        "eyebrow": "Calendario",
+        "title": "Calendario anual de eventos",
+        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el año, tres meses o mes a mes.",
+        "year": "Año",
+        "quarter": "3 meses",
+        "month": "Mes",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "empty": "Sin eventos"
+      },
       "media": {
         "eyebrow": "Fotos y vídeos",
         "title": "Actividades, seminarios y vida del club",
@@ -385,16 +421,11 @@ window.SKBC_CONTENT = {
           "Información general"
         ]
       },
-      "calendar": {
-        "eyebrow": "Calendario",
-        "title": "Calendario anual de eventos",
-        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
-        "year": "A?o",
-        "quarter": "3 meses",
-        "month": "Mes",
-        "previous": "Anterior",
-        "next": "Siguiente",
-        "empty": "Sin eventos"
+      "news": {
+        "eyebrow": "Noticias",
+        "title": "Pr?ximas noticias",
+        "text": "Avisos, novedades y comunicaciones importantes del club.",
+        "empty": "Sin noticias publicadas"
       }
     },
     "eu": {
@@ -407,6 +438,7 @@ window.SKBC_CONTENT = {
         "Kluba",
         "Taldea",
         "Ordutegiak",
+        "Egutegia",
         "Galeria",
         "Kontaktua"
       ],
@@ -533,7 +565,8 @@ window.SKBC_CONTENT = {
         "title": "IKAren ordezkaria Espainian",
         "text": "SKBC GIPUZKOA IKAren, International Kempo Association-en, ordezkaria da Espainian. IKAk herrialde desberdinetako klubak eta ordezkariak batzen ditu Shorinji Kempo bere jatorrizko esentzia, filosofia eta lerro tekniko autentikoa errespetatuz transmititzeko.",
         "badge": "IKA Espainia",
-        "note": "IKAren parte izateak Japonia, Erresuma Batua, Irlanda, Suitza, Italia, Portugal, Txina eta beste herrialdeetako maisu, klub eta praktikariekin lotzen gaitu."
+        "note": "IKAren parte izateak Japonia, Erresuma Batua, Irlanda, Suitza, Italia, Portugal, Txina eta beste herrialdeetako maisu, klub eta praktikariekin lotzen gaitu.",
+        "button": "IKAren webgunea ikusi"
       },
       "instructor": {
         "eyebrow": "Arduradun teknikoa",
@@ -597,6 +630,17 @@ window.SKBC_CONTENT = {
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Google Mapsen ireki"
       },
+      "calendar": {
+        "eyebrow": "Egutegia",
+        "title": "Urteko ekitaldien egutegia",
+        "text": "Ikastaroak, mintegiak, bidaiak, entrenamendu bereziak eta klubeko jarduerak kontsulta ditzakezu. Urte osoa, hiru hilabete edo hilabetez hilabete ikus dezakezu.",
+        "year": "Urtea",
+        "quarter": "3 hilabete",
+        "month": "Hilabetea",
+        "previous": "Aurrekoa",
+        "next": "Hurrengoa",
+        "empty": "Ekitaldirik gabe"
+      },
       "media": {
         "eyebrow": "Argazkiak eta bideoak",
         "title": "Jarduerak, mintegiak eta klubeko bizitza",
@@ -638,16 +682,11 @@ window.SKBC_CONTENT = {
           "Informazio orokorra"
         ]
       },
-      "calendar": {
-        "eyebrow": "Egutegia",
-        "title": "Urteko ekitaldien egutegia",
-        "text": "Ikastaroak, mintegiak, bidaiak, entrenamendu bereziak eta klubeko jarduerak kontsulta ditzakezu. Urte osoa, hiru hilabete edo hilabetez hilabete ikus dezakezu.",
-        "year": "Urtea",
-        "quarter": "3 hilabete",
-        "month": "Hilabetea",
-        "previous": "Aurrekoa",
-        "next": "Hurrengoa",
-        "empty": "Ekitaldirik gabe"
+      "news": {
+        "eyebrow": "Albisteak",
+        "title": "Hurrengo albisteak",
+        "text": "Klubeko oharrak, berriak eta komunikazio garrantzitsuak.",
+        "empty": "Albisterik gabe"
       }
     },
     "en": {
@@ -660,6 +699,7 @@ window.SKBC_CONTENT = {
         "Club",
         "Team",
         "Schedule",
+        "Calendar",
         "Gallery",
         "Contact"
       ],
@@ -786,7 +826,8 @@ window.SKBC_CONTENT = {
         "title": "IKA representative in Spain",
         "text": "SKBC GIPUZKOA is the representative in Spain of IKA, the International Kempo Association. IKA brings together clubs and representatives from different countries to preserve and transmit Shorinji Kempo while respecting its original essence, philosophy and authentic technical line.",
         "badge": "IKA Spain",
-        "note": "Being part of IKA connects us with teachers, clubs and practitioners from Japan, the United Kingdom, Ireland, Switzerland, Italy, Portugal, China and other countries."
+        "note": "Being part of IKA connects us with teachers, clubs and practitioners from Japan, the United Kingdom, Ireland, Switzerland, Italy, Portugal, China and other countries.",
+        "button": "Visit IKA website"
       },
       "instructor": {
         "eyebrow": "Technical director",
@@ -850,6 +891,17 @@ window.SKBC_CONTENT = {
         "place": "Garmendiola aldapa 2, Tolosa",
         "maps": "Open in Google Maps"
       },
+      "calendar": {
+        "eyebrow": "Calendar",
+        "title": "Annual event calendar",
+        "text": "Check courses, seminars, trips, special training sessions and club activities. You can view the full year, three months or one month at a time.",
+        "year": "Year",
+        "quarter": "3 months",
+        "month": "Month",
+        "previous": "Previous",
+        "next": "Next",
+        "empty": "No events"
+      },
       "media": {
         "eyebrow": "Photos and videos",
         "title": "Activities, seminars and club life",
@@ -891,16 +943,11 @@ window.SKBC_CONTENT = {
           "General information"
         ]
       },
-      "calendar": {
-        "eyebrow": "Calendar",
-        "title": "Annual event calendar",
-        "text": "Check courses, seminars, trips, special training sessions and club activities. You can view the full year, three months or one month at a time.",
-        "year": "Year",
-        "quarter": "3 months",
-        "month": "Month",
-        "previous": "Previous",
-        "next": "Next",
-        "empty": "No events"
+      "news": {
+        "eyebrow": "News",
+        "title": "Upcoming news",
+        "text": "Club notices, updates and important communications.",
+        "empty": "No news published"
       }
     }
   }
