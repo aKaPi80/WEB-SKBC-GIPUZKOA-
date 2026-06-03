@@ -160,6 +160,24 @@ function customNavItems(settings) {
     .filter(Boolean);
 }
 
+const NAV_TEXT = {
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", news: "Noticias", contact: "Contacto" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", news: "Albisteak", contact: "Kontaktua" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", news: "News", contact: "Contact" }
+};
+
+function uniqueNavItems(items) {
+  const seenHrefs = new Set();
+  const seenLabels = new Set();
+  return items.filter((item) => {
+    const labelKey = normalizeName(item.label);
+    if (seenHrefs.has(item.href) || seenLabels.has(labelKey)) return false;
+    seenHrefs.add(item.href);
+    seenLabels.add(labelKey);
+    return true;
+  });
+}
+
 const calendarState = {
   view: "year",
   date: new Date()
@@ -364,19 +382,19 @@ function setMeta(copy) {
 }
 
 function renderNav(copy) {
-  const navLabels = copy.nav || [];
-  const baseNav = [
-    { label: navLabels[0] || "Niños", href: "#ninos" },
-    { label: navLabels[1] || "Adultos", href: "#adultos" },
-    { label: navLabels[2] || "Club", href: "#club" },
-    { label: navLabels[3] || "Equipo", href: "#equipo" },
-    { label: navLabels[4] || "Horarios", href: "#horarios" },
-    { label: navLabels[5] || copy.calendar?.eyebrow || "Calendario", href: "#calendario" },
-    { label: navLabels[6] || copy.media?.videos || "Galería", href: "#galeria" },
-    { label: copy.news?.eyebrow || "Noticias", href: "#noticias" },
+  const labels = NAV_TEXT[state.lang] || NAV_TEXT.es;
+  const baseNav = uniqueNavItems([
+    { label: labels.kids, href: "#ninos" },
+    { label: labels.adults, href: "#adultos" },
+    { label: labels.club, href: "#club" },
+    { label: labels.team, href: "#equipo" },
+    { label: labels.schedule, href: "#horarios" },
+    { label: labels.calendar, href: "#calendario" },
+    { label: labels.gallery, href: "#galeria" },
+    { label: labels.news, href: "#noticias" },
     ...customNavItems(state.content.settings),
-    { label: navLabels[7] || copy.contact?.eyebrow || "Contacto", href: "#contacto" }
-  ];
+    { label: labels.contact, href: "#contacto" }
+  ]);
   document.querySelector(".main-nav").innerHTML = baseNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("");
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
