@@ -205,6 +205,10 @@ aside {
 }
 
 .editor-group header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   padding: 18px 20px;
   border-bottom: 1px solid var(--line);
   background: #fbfcfa;
@@ -219,6 +223,14 @@ aside {
   margin: 7px 0 0;
   color: var(--muted);
   line-height: 1.45;
+}
+
+.translate-section {
+  flex: 0 0 auto;
+  min-height: 38px;
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
 }
 
 .field-grid {

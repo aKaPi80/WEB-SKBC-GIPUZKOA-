@@ -341,14 +341,19 @@ function renderGroups(groups) {
   const editor = document.querySelector("#editor");
   editor.innerHTML = `${renderIntro()}${groups.map(groupTemplate).join("")}`;
   bindFields(editor);
+  bindSectionTranslations(editor);
 }
 
 function groupTemplate(group) {
+  const translate = currentPanel === "es" ? `<button class="translate-section" type="button" data-translate-section="${encodeURIComponent(JSON.stringify(group.fields))}">Traducir esta sección a EU/EN</button>` : "";
   return `
     <article class="editor-group">
       <header>
-        <h3>${group.title}</h3>
-        <p>${group.help}</p>
+        <div>
+          <h3>${group.title}</h3>
+          <p>${group.help}</p>
+        </div>
+        ${translate}
       </header>
       <div class="field-grid">
         ${group.fields.map(fieldTemplate).join("")}
@@ -765,6 +770,62 @@ async function translateText(text, target) {
   return result.responseData?.translatedText || "";
 }
 
+function bindSectionTranslations(root) {
+  root.querySelectorAll("[data-translate-section]").forEach((button) => {
+    button.addEventListener("click", () => translateSection(button));
+  });
+}
+
+async function translateSection(button) {
+  const fields = JSON.parse(decodeURIComponent(button.dataset.translateSection));
+  const translatable = fields
+    .filter(([, path, type]) => Array.isArray(path) && path[0] === "languages" && path[1] === "es" && ["input", "textarea", "array", "matrix"].includes(type))
+    .map(([label, path, type]) => ({ label, path, type }));
+
+  if (!translatable.length) {
+    setStatus("Esta sección no tiene textos traducibles.", "danger");
+    return;
+  }
+
+  try {
+    button.disabled = true;
+    button.textContent = "Traduciendo...";
+    for (const field of translatable) {
+      const source = getByPath(data, field.path);
+      const euPath = ["languages", "eu", ...field.path.slice(2)];
+      const enPath = ["languages", "en", ...field.path.slice(2)];
+      const [euValue, enValue] = await Promise.all([
+        translateValue(source, "eu", field.type),
+        translateValue(source, "en", field.type)
+      ]);
+      setByPath(data, euPath, euValue || source);
+      setByPath(data, enPath, enValue || source);
+    }
+    markDirty();
+    setStatus("Sección traducida a euskera e inglés. Revisa y guarda antes de publicar.", "warning");
+    renderGroups(languageGroups("es"));
+  } catch (error) {
+    setStatus(`No se pudo traducir la sección: ${error.message}`, "danger");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Traducir esta sección a EU/EN";
+  }
+}
+
+async function translateValue(value, target, type) {
+  if (!value) return value;
+  if (type === "array" && Array.isArray(value)) {
+    return Promise.all(value.map((item) => translateText(String(item), target)));
+  }
+  if (type === "matrix" && Array.isArray(value)) {
+    return Promise.all(value.map(async (row) => {
+      if (!Array.isArray(row)) return translateText(String(row), target);
+      return Promise.all(row.map((cell) => translateText(String(cell), target)));
+    }));
+  }
+  return translateText(String(value), target);
+}
+
 function renderNews() {
   const editor = document.querySelector("#editor");
   const news = data.settings.news || [];
@@ -780,13 +841,17 @@ function renderNews() {
   })).join("");
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions"><button id="add-news" class="primary" type="button">Añadir noticia</button></div>`)}
-    <div class="custom-card">${sectionCopy}</div>
+    <div class="custom-card">${sectionCopy}<button class="translate-section" data-translate-news-copy type="button">Traducir cabecera de noticias</button></div>
     ${news.length ? news.map(newsTemplate).join("") : `<article class="editor-group"><header><h3>No hay noticias</h3><p>Pulsa Añadir noticia para crear avisos visibles en la web.</p></header></article>`}
   `;
   bindFields(editor);
   document.querySelector("#add-news").addEventListener("click", addNews);
   editor.querySelectorAll("[data-remove-news]").forEach((button) => {
     button.addEventListener("click", () => removeNews(Number(button.dataset.removeNews)));
+  });
+  editor.querySelector("[data-translate-news-copy]")?.addEventListener("click", (event) => translateNewsCopy(event.currentTarget));
+  editor.querySelectorAll("[data-translate-news]").forEach((button) => {
+    button.addEventListener("click", () => translateNewsItem(Number(button.dataset.translateNews), button));
   });
 }
 
@@ -809,7 +874,58 @@ function newsTemplate(item, index) {
       ["EN texto", [...base, "languages", "en", "text"], "textarea"]
     ]
   }];
-  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
+  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="translate-section" data-translate-news="${index}" type="button">Traducir esta noticia a EU/EN</button><button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
+}
+
+async function translateNewsCopy(button) {
+  const source = data.languages?.es?.news || {};
+  try {
+    button.disabled = true;
+    button.textContent = "Traduciendo...";
+    for (const key of ["eyebrow", "title", "text", "empty"]) {
+      const value = source[key] || "";
+      const [eu, en] = await Promise.all([translateText(value, "eu"), translateText(value, "en")]);
+      setByPath(data, ["languages", "eu", "news", key], eu || value);
+      setByPath(data, ["languages", "en", "news", key], en || value);
+    }
+    markDirty();
+    setStatus("Cabecera de noticias traducida. Revisa y guarda antes de publicar.", "warning");
+    renderNews();
+  } catch (error) {
+    setStatus(`No se pudo traducir la cabecera: ${error.message}`, "danger");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Traducir cabecera de noticias";
+  }
+}
+
+async function translateNewsItem(index, button) {
+  const item = data.settings.news?.[index];
+  const source = item?.languages?.es || {};
+  if (!source.title && !source.text) {
+    setStatus("Escribe primero la noticia en castellano.", "danger");
+    return;
+  }
+  try {
+    button.disabled = true;
+    button.textContent = "Traduciendo...";
+    const [euTitle, euText, enTitle, enText] = await Promise.all([
+      translateText(source.title, "eu"),
+      translateText(source.text, "eu"),
+      translateText(source.title, "en"),
+      translateText(source.text, "en")
+    ]);
+    item.languages.eu = { title: euTitle || source.title, text: euText || source.text };
+    item.languages.en = { title: enTitle || source.title, text: enText || source.text };
+    markDirty();
+    setStatus("Noticia traducida. Revisa y guarda antes de publicar.", "warning");
+    renderNews();
+  } catch (error) {
+    setStatus(`No se pudo traducir la noticia: ${error.message}`, "danger");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Traducir esta noticia a EU/EN";
+  }
 }
 
 function addNews() {
