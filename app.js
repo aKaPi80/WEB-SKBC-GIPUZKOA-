@@ -201,6 +201,10 @@ function eventDateKeys(event) {
   return Array.isArray(event.dates) ? event.dates.filter(Boolean) : [];
 }
 
+function eventExcludedDateKeys(event) {
+  return Array.isArray(event.excludedDates) ? event.excludedDates.filter(Boolean) : [];
+}
+
 function eventCopy(event) {
   return event.languages?.[state.lang] || event.languages?.es || {};
 }
@@ -208,6 +212,7 @@ function eventCopy(event) {
 function eventTouchesDate(event, date) {
   const current = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
   const key = dateKey(date);
+  if (eventExcludedDateKeys(event).includes(key)) return false;
   if (eventDateKeys(event).includes(key)) return true;
   if (event.repeat?.enabled) {
     const start = parseDate(event.repeat.start || event.start);
@@ -217,7 +222,7 @@ function eventTouchesDate(event, date) {
     const untilTime = new Date(until.getFullYear(), until.getMonth(), until.getDate()).getTime();
     const dayMs = 24 * 60 * 60 * 1000;
     const diff = Math.round((current - startTime) / dayMs);
-    if (current >= startTime && current <= untilTime && diff % interval === 0) return true;
+    return current >= startTime && current <= untilTime && diff >= 0 && diff % interval === 0;
   }
   const start = parseDate(event.start).getTime();
   const end = parseDate(event.end || event.start).getTime();

@@ -315,6 +315,16 @@ button.danger {
   min-width: 0;
 }
 
+.empty-event-editor {
+  min-height: 280px;
+}
+
+.empty-event-editor header {
+  display: grid;
+  min-height: 220px;
+  align-content: center;
+}
+
 .events-sidebar {
   position: sticky;
   top: 106px;
@@ -427,11 +437,84 @@ button.danger {
   font-size: 12px;
 }
 
+.event-close-button {
+  justify-self: start;
+  margin-left: 18px;
+}
+
 .event-date-tool {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   padding: 18px 18px 8px;
+}
+
+.event-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.event-bulk-actions label {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.event-bulk-actions input {
+  width: 96px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  font: inherit;
+}
+
+.repeat-date-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 18px 18px;
+}
+
+.repeat-date-list span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid rgba(31, 111, 169, .18);
+  border-radius: 999px;
+  padding: 7px 8px 7px 12px;
+  background: #f3f8fc;
+  font-weight: 850;
+}
+
+.repeat-date-list.excluded span {
+  border-color: rgba(180, 35, 24, .18);
+  background: #fff5f5;
+}
+
+.repeat-date-list button {
+  min-height: 28px;
+  padding: 0 10px;
+  color: var(--blue);
+  background: #fff;
+}
+
+.repeat-date-list.excluded button {
+  color: #b42318;
+}
+
+.repeat-date-list p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.event-tools h4 {
+  margin: 0;
+  padding: 0 18px;
 }
 
 .event-date-tool input {

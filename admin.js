@@ -6,7 +6,7 @@ const GITHUB_BRANCH = "main";
 
 let data = load();
 let currentPanel = "settings";
-let currentEventIndex = 0;
+let currentEventIndex = null;
 let dirty = false;
 
 const panelTitles = {
@@ -389,14 +389,18 @@ function renderCustom() {
 function renderEvents() {
   const editor = document.querySelector("#editor");
   const events = data.settings.events || [];
-  if (currentEventIndex > events.length - 1) currentEventIndex = Math.max(0, events.length - 1);
-  const selected = events[currentEventIndex];
+  if (currentEventIndex !== null && currentEventIndex > events.length - 1) currentEventIndex = null;
+  const selected = currentEventIndex === null ? null : events[currentEventIndex];
   editor.innerHTML = `
-    ${renderIntro(`<div class="intro-actions"><button id="add-event" class="primary" type="button">Añadir evento</button></div>`)}
+    ${renderIntro(`<div class="intro-actions event-bulk-actions">
+      <button id="add-event" class="primary" type="button">Añadir evento</button>
+      <label>Duplicar todo a <input id="copy-events-year" type="number" min="2026" max="2100" value="${new Date().getFullYear() + 1}" /></label>
+      <button id="copy-events" type="button">Duplicar calendario</button>
+    </div>`)}
     ${events.length ? `
       <div class="events-workspace">
         <div class="events-editor">
-          ${eventTemplate(selected, currentEventIndex)}
+          ${selected ? eventTemplate(selected, currentEventIndex) : emptyEventEditor()}
         </div>
         <aside class="events-sidebar">
           <header>
@@ -412,6 +416,7 @@ function renderEvents() {
   `;
   bindFields(editor);
   document.querySelector("#add-event").addEventListener("click", addEvent);
+  document.querySelector("#copy-events").addEventListener("click", copyEventsToYear);
   editor.querySelectorAll("[data-select-event]").forEach((button) => {
     button.addEventListener("click", () => {
       currentEventIndex = Number(button.dataset.selectEvent);
@@ -420,6 +425,10 @@ function renderEvents() {
   });
   editor.querySelectorAll("[data-remove-event]").forEach((button) => {
     button.addEventListener("click", () => removeEvent(Number(button.dataset.removeEvent)));
+  });
+  editor.querySelector("[data-close-event]")?.addEventListener("click", () => {
+    currentEventIndex = null;
+    renderEvents();
   });
   editor.querySelectorAll("[data-add-event-date]").forEach((button) => {
     button.addEventListener("click", () => addEventDate(Number(button.dataset.addEventDate)));
@@ -430,11 +439,28 @@ function renderEvents() {
   editor.querySelectorAll("[data-translate-event]").forEach((button) => {
     button.addEventListener("click", () => translateEvent(Number(button.dataset.translateEvent), button));
   });
+  editor.querySelectorAll("[data-exclude-repeat-date]").forEach((button) => {
+    button.addEventListener("click", () => excludeRepeatDate(Number(button.dataset.excludeRepeatDate), button.dataset.date));
+  });
+  editor.querySelectorAll("[data-restore-repeat-date]").forEach((button) => {
+    button.addEventListener("click", () => restoreRepeatDate(Number(button.dataset.restoreRepeatDate), button.dataset.date));
+  });
+}
+
+function emptyEventEditor() {
+  return `<article class="editor-group empty-event-editor">
+    <header>
+      <h3>Selecciona un evento</h3>
+      <p>Elige un evento en el resumen de la derecha para editarlo, o pulsa Añadir evento para crear uno nuevo.</p>
+    </header>
+  </article>`;
 }
 
 function eventTemplate(event, index) {
   const base = ["settings", "events", index];
   const dates = Array.isArray(event.dates) ? event.dates.filter(Boolean).sort() : [];
+  const repeatDates = generatedRepeatDates(event);
+  const excludedDates = Array.isArray(event.excludedDates) ? event.excludedDates.filter(Boolean).sort() : [];
   const groups = [{
     title: `Evento ${index + 1}`,
     help: "Puedes usar rango inicio/fin, días sueltos, o repetición cada X días. Para una clase quincenal usa repetición cada 15 días.",
@@ -442,7 +468,6 @@ function eventTemplate(event, index) {
       ["Activo", [...base, "enabled"], "booleanText"],
       ["Fecha inicio", [...base, "start"], "date"],
       ["Fecha fin", [...base, "end"], "date"],
-      ["Días sueltos", [...base, "dates"], "array"],
       ["Repetición activa", [...base, "repeat", "enabled"], "booleanText"],
       ["Repetir desde", [...base, "repeat", "start"], "date"],
       ["Repetir hasta", [...base, "repeat", "until"], "date"],
@@ -459,22 +484,68 @@ function eventTemplate(event, index) {
   }];
   return `<div class="custom-card">
     ${groups.map(groupTemplate).join("")}
+    <button class="quiet event-close-button" data-close-event type="button">Cerrar ficha</button>
     <article class="editor-group event-tools">
       <header>
-        <h3>Días concretos y traducción</h3>
-        <p>Añade fechas sueltas con el selector. El botón de traducción intentará generar euskera e inglés desde el texto en castellano.</p>
+        <h3>Días concretos</h3>
+        <p>Úsalo para añadir días sueltos que no sigan la repetición normal.</p>
       </header>
       <div class="event-date-tool">
         <input type="date" id="event-date-${index}" />
         <button type="button" data-add-event-date="${index}">Añadir día</button>
-        <button type="button" data-translate-event="${index}">Traducir EU/EN desde ES</button>
       </div>
       <div class="event-date-chips">
         ${dates.length ? dates.map((date) => `<span>${date}<button type="button" data-remove-event-date="${index}" data-date="${date}">×</button></span>`).join("") : `<p>No hay días sueltos añadidos.</p>`}
       </div>
     </article>
+    <article class="editor-group event-tools">
+      <header>
+        <h3>Días generados por repetición</h3>
+        <p>Si una fecha concreta no se hará, pulsa Excluir. No se borrará el evento, solo ese día.</p>
+      </header>
+      <div class="repeat-date-list">
+        ${repeatDates.length ? repeatDates.map((date) => `<span>${date}<button type="button" data-exclude-repeat-date="${index}" data-date="${date}">Excluir</button></span>`).join("") : `<p>Activa la repetición y define fecha desde/hasta para ver los días generados.</p>`}
+      </div>
+      ${excludedDates.length ? `<h4>Días excluidos</h4><div class="repeat-date-list excluded">${excludedDates.map((date) => `<span>${date}<button type="button" data-restore-repeat-date="${index}" data-date="${date}">Restaurar</button></span>`).join("")}</div>` : ""}
+    </article>
+    <article class="editor-group event-tools">
+      <header>
+        <h3>Traducción</h3>
+        <p>Genera euskera e inglés desde el texto en castellano. Revisa siempre antes de publicar.</p>
+      </header>
+      <div class="event-date-tool">
+        <button type="button" data-translate-event="${index}">Traducir EU/EN desde ES</button>
+      </div>
+    </article>
     <button class="danger" data-remove-event="${index}" type="button">Eliminar este evento</button>
   </div>`;
+}
+
+function generatedRepeatDates(event) {
+  if (!event.repeat?.enabled) return [];
+  const start = event.repeat.start || event.start;
+  const until = event.repeat.until || event.end || event.start;
+  if (!start || !until) return [];
+  const interval = Math.max(1, Number(event.repeat.everyDays || 15));
+  const excluded = new Set(event.excludedDates || []);
+  const dates = [];
+  let current = parseDateInput(start);
+  const last = parseDateInput(until);
+  while (current <= last && dates.length < 80) {
+    const key = formatDateInput(current);
+    if (!excluded.has(key)) dates.push(key);
+    current = new Date(current.getFullYear(), current.getMonth(), current.getDate() + interval);
+  }
+  return dates;
+}
+
+function parseDateInput(value) {
+  const [year, month, day] = String(value || "").split("-").map(Number);
+  return new Date(year || new Date().getFullYear(), (month || 1) - 1, day || 1);
+}
+
+function formatDateInput(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 function eventSummary(event) {
@@ -566,6 +637,58 @@ function removeEventDate(index, date) {
   const event = data.settings.events[index];
   event.dates = (event.dates || []).filter((item) => item !== date);
   markDirty();
+  renderEvents();
+}
+
+function excludeRepeatDate(index, date) {
+  const event = data.settings.events[index];
+  if (!event.excludedDates) event.excludedDates = [];
+  if (!event.excludedDates.includes(date)) event.excludedDates.push(date);
+  event.excludedDates.sort();
+  markDirty();
+  renderEvents();
+}
+
+function restoreRepeatDate(index, date) {
+  const event = data.settings.events[index];
+  event.excludedDates = (event.excludedDates || []).filter((item) => item !== date);
+  markDirty();
+  renderEvents();
+}
+
+function shiftDateYear(value, targetYear) {
+  if (!value) return value;
+  const date = parseDateInput(value);
+  return formatDateInput(new Date(targetYear, date.getMonth(), date.getDate()));
+}
+
+function shiftEventToYear(event, targetYear) {
+  const copy = structuredClone(event);
+  copy.start = shiftDateYear(copy.start, targetYear);
+  copy.end = shiftDateYear(copy.end, targetYear);
+  copy.dates = (copy.dates || []).map((date) => shiftDateYear(date, targetYear));
+  copy.excludedDates = (copy.excludedDates || []).map((date) => shiftDateYear(date, targetYear));
+  if (copy.repeat) {
+    copy.repeat.start = shiftDateYear(copy.repeat.start || copy.start, targetYear);
+    copy.repeat.until = shiftDateYear(copy.repeat.until || copy.end || copy.start, targetYear);
+  }
+  return copy;
+}
+
+function copyEventsToYear() {
+  const targetYear = Number(document.querySelector("#copy-events-year")?.value);
+  if (!targetYear) {
+    setStatus("Indica el año al que quieres duplicar el calendario.", "danger");
+    return;
+  }
+  const events = data.settings.events || [];
+  if (!events.length) return;
+  if (!confirm(`¿Duplicar los ${events.length} eventos al año ${targetYear}? Luego podrás modificar fechas, colores o eliminar lo que no necesites.`)) return;
+  const copies = events.map((event) => shiftEventToYear(event, targetYear));
+  data.settings.events.push(...copies);
+  currentEventIndex = null;
+  markDirty();
+  setStatus(`Calendario duplicado a ${targetYear}. Revisa y elimina lo que no necesites.`, "warning");
   renderEvents();
 }
 
@@ -832,12 +955,25 @@ function bindFields(root) {
       setByPath(data, path, parseFieldValue(field.value, field.dataset.type));
       markDirty();
     };
+    const refreshIfNeeded = () => {
+      const path = JSON.parse(decodeURIComponent(field.dataset.path));
+      if (shouldRefreshEventEditor(path)) setTimeout(renderEvents, 0);
+    };
     field.addEventListener("input", update);
-    field.addEventListener("change", update);
+    field.addEventListener("change", () => {
+      update();
+      refreshIfNeeded();
+    });
   });
   root.querySelectorAll("[data-upload-path]").forEach((button) => {
     button.addEventListener("click", () => uploadImageForPath(button));
   });
+}
+
+function shouldRefreshEventEditor(path) {
+  if (currentPanel !== "events") return false;
+  if (path[0] !== "settings" || path[1] !== "events") return false;
+  return ["start", "end", "dates", "excludedDates", "enabled"].includes(path.at(-1)) || path.includes("repeat");
 }
 
 async function uploadImageForPath(button) {
