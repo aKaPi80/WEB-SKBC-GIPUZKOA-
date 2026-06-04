@@ -604,6 +604,16 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .calendar-section {
   background: #fff;
 }
+.calendar-home-actions {
+  display: flex;
+  justify-content: center;
+  max-width: 1180px;
+  margin: -18px auto 30px;
+}
+.calendar-preview .calendar-month {
+  background: linear-gradient(180deg, #fff, var(--soft));
+  box-shadow: 0 16px 42px rgba(16, 17, 19, .08);
+}
 .calendar-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -730,6 +740,70 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .calendar-list p {
   margin: 0;
   color: var(--muted);
+}
+.calendar-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  padding: 24px;
+  background: rgba(16,17,19,.72);
+}
+.calendar-modal.is-open {
+  display: block;
+}
+.calendar-modal__panel {
+  height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: 0 28px 80px rgba(0,0,0,.35);
+}
+.calendar-modal__header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 22px clamp(18px, 4vw, 38px);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(10px);
+}
+.calendar-modal__header h2 {
+  margin: 0;
+}
+.calendar-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.calendar-modal__actions button {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 16px;
+  color: var(--ink);
+  background: #fff;
+  font-weight: 950;
+  cursor: pointer;
+}
+.calendar-modal__actions button:first-child {
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+.print-area {
+  padding: clamp(18px, 4vw, 38px);
+}
+.calendar-print-grid {
+  max-width: none;
+}
+.calendar-print-list {
+  max-width: none;
+  margin-top: 28px;
 }
 .news-grid {
   display: grid;
@@ -949,4 +1023,61 @@ textarea { resize: vertical; }
   .photo { min-height: 250px; }
   .whatsapp-float { right: 12px; left: 96px; bottom: 12px; border-radius: 6px; }
   .admin-link { left: 12px; bottom: 12px; border-radius: 6px; }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #calendarModal,
+  #calendarModal * {
+    visibility: visible;
+  }
+  #calendarModal {
+    position: static;
+    display: block;
+    padding: 0;
+    background: #fff;
+  }
+  .calendar-modal__panel {
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .calendar-modal__header {
+    position: static;
+    padding: 0 0 12px;
+    border-bottom: 2px solid #111;
+  }
+  .calendar-modal__actions {
+    display: none;
+  }
+  .print-area {
+    padding: 12px 0 0;
+  }
+  .calendar-grid--year {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .calendar-month {
+    break-inside: avoid;
+    padding: 8px;
+    box-shadow: none;
+  }
+  .calendar-month h3 {
+    font-size: 14px;
+  }
+  .calendar-day {
+    min-height: 36px;
+    padding: 3px;
+  }
+  .calendar-day em {
+    font-size: 7px;
+    white-space: normal;
+  }
+  .calendar-print-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }

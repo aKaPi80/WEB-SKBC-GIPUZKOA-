@@ -278,6 +278,28 @@ function calendarMonths() {
   return [base];
 }
 
+function nextThreeMonths() {
+  const now = new Date();
+  return Array.from({ length: 3 }, (_, index) => new Date(now.getFullYear(), now.getMonth() + index, 1));
+}
+
+function fullYearMonths() {
+  const year = new Date().getFullYear();
+  return Array.from({ length: 12 }, (_, index) => new Date(year, index, 1));
+}
+
+function upcomingEvents(events) {
+  const today = new Date();
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const until = new Date(today.getFullYear(), today.getMonth() + 3, 0).getTime();
+  return events.filter((event) => {
+    for (let time = start; time <= until; time += 24 * 60 * 60 * 1000) {
+      if (eventTouchesDate(event, new Date(time))) return true;
+    }
+    return false;
+  }).slice(0, 8);
+}
+
 function calendarSection(settings, copy) {
   const events = (settings.events || []).filter((event) => event.enabled !== false);
   return `<section class="section calendar-section" id="calendario">
@@ -286,23 +308,14 @@ function calendarSection(settings, copy) {
       <h2>${copy.calendar.title}</h2>
       <p>${copy.calendar.text}</p>
     </div>
-    <div class="calendar-toolbar">
-      <div class="calendar-view">
-        <button type="button" data-calendar-view="year" class="${calendarState.view === "year" ? "active" : ""}">${copy.calendar.year}</button>
-        <button type="button" data-calendar-view="quarter" class="${calendarState.view === "quarter" ? "active" : ""}">${copy.calendar.quarter}</button>
-        <button type="button" data-calendar-view="month" class="${calendarState.view === "month" ? "active" : ""}">${copy.calendar.month}</button>
-      </div>
-      <div class="calendar-step">
-        <button type="button" data-calendar-step="-1">${copy.calendar.previous}</button>
-        <strong>${calendarState.view === "year" ? calendarState.date.getFullYear() : monthName(calendarState.date)}</strong>
-        <button type="button" data-calendar-step="1">${copy.calendar.next}</button>
-      </div>
+    <div class="calendar-home-actions">
+      <button class="button" type="button" data-open-calendar>Ver calendario completo</button>
     </div>
-    <div class="calendar-grid calendar-grid--${calendarState.view}">
-      ${calendarMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
+    <div class="calendar-grid calendar-grid--quarter calendar-preview">
+      ${nextThreeMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
     </div>
     <div class="calendar-list">
-      ${events.length ? events.map((event) => {
+      ${upcomingEvents(events).length ? upcomingEvents(events).map((event) => {
         const text = eventCopy(event);
         return `<article style="--event-color:${event.color || "#1f6fa9"}">
           <span>${eventDateLabel(event)}</span>
@@ -310,6 +323,35 @@ function calendarSection(settings, copy) {
           <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
         </article>`;
       }).join("") : `<p>${copy.calendar.empty}</p>`}
+    </div>
+    <div class="calendar-modal" id="calendarModal" aria-hidden="true">
+      <div class="calendar-modal__panel" role="dialog" aria-modal="true" aria-label="${copy.calendar.title}">
+        <div class="calendar-modal__header">
+          <div>
+            <p class="eyebrow">${copy.calendar.eyebrow}</p>
+            <h2>${copy.calendar.title}</h2>
+          </div>
+          <div class="calendar-modal__actions">
+            <button type="button" data-print-calendar>Imprimir</button>
+            <button type="button" data-close-calendar>Cerrar</button>
+          </div>
+        </div>
+        <div class="print-area">
+          <div class="calendar-grid calendar-grid--year calendar-print-grid">
+            ${fullYearMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
+          </div>
+          <div class="calendar-list calendar-print-list">
+            ${events.length ? events.map((event) => {
+              const text = eventCopy(event);
+              return `<article style="--event-color:${event.color || "#1f6fa9"}">
+                <span>${eventDateLabel(event)}</span>
+                <h3>${text.title || ""}</h3>
+                <p>${event.location || ""}${event.location && text.description ? " Â· " : ""}${text.description || ""}</p>
+              </article>`;
+            }).join("") : `<p>${copy.calendar.empty}</p>`}
+          </div>
+        </div>
+      </div>
     </div>
   </section>`;
 }
@@ -744,11 +786,14 @@ function bindProfiles() {
 }
 
 function bindCalendar() {
-  document.querySelectorAll("[data-calendar-view]").forEach((button) => {
-    button.addEventListener("click", () => {
-      calendarState.view = button.dataset.calendarView;
-      render();
-    });
+  document.querySelector("[data-open-calendar]")?.addEventListener("click", () => {
+    document.querySelector("#calendarModal")?.classList.add("is-open");
+    document.querySelector("#calendarModal")?.setAttribute("aria-hidden", "false");
+  });
+  document.querySelector("[data-close-calendar]")?.addEventListener("click", closeCalendarModal);
+  document.querySelector("[data-print-calendar]")?.addEventListener("click", () => window.print());
+  document.querySelector("#calendarModal")?.addEventListener("click", (event) => {
+    if (event.target.id === "calendarModal") closeCalendarModal();
   });
   document.querySelectorAll("[data-calendar-step]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -763,6 +808,11 @@ function bindCalendar() {
       render();
     });
   });
+}
+
+function closeCalendarModal() {
+  document.querySelector("#calendarModal")?.classList.remove("is-open");
+  document.querySelector("#calendarModal")?.setAttribute("aria-hidden", "true");
 }
 
 function bindMerch() {
