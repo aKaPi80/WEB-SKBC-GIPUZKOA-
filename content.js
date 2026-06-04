@@ -1053,8 +1053,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "Instagram albisteen iturri nagusi gisa",
-        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
+        "title": "JARRAITU GAITZAZU INSTAGRAM, FACEBOOK ETA YOUTUBE-N",
+        "text": "Azken berri eta eguneratze guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1344,8 +1344,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "Instagram as the main news source",
-        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
+        "title": "FOLLOW US ON INSTAGRAM, FACEBOOK AND YOUTUBE",
+        "text": "If you want to stay up to date with all the latest news and updates, follow us on our social media!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
