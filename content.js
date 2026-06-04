@@ -571,7 +571,12 @@ window.SKBC_CONTENT = {
         "month": "Mes",
         "previous": "Anterior",
         "next": "Siguiente",
-        "empty": "Sin eventos"
+        "empty": "Sin eventos",
+        "openFull": "Ver calendario completo",
+        "print": "Imprimir",
+        "savePrint": "Guardar / imprimir",
+        "back": "Volver",
+        "printHint": "Se abrirá una versión preparada para imprimir en A4 horizontal. En el diálogo puedes imprimir o guardar como PDF."
       },
       "media": {
         "eyebrow": "Fotos y vídeos",
@@ -857,7 +862,12 @@ window.SKBC_CONTENT = {
         "month": "Hilabetea",
         "previous": "Aurrekoa",
         "next": "Hurrengoa",
-        "empty": "Ekitaldirik gabe"
+        "empty": "Ekitaldirik gabe",
+        "openFull": "Egutegi osoa ikusi",
+        "print": "Inprimatu",
+        "savePrint": "Gorde / inprimatu",
+        "back": "Itzuli",
+        "printHint": "A4 horizontalean inprimatzeko prestatutako bertsioa irekiko da. Elkarrizketan inprimatu edo PDF gisa gorde dezakezu."
       },
       "media": {
         "eyebrow": "Argazkiak eta bideoak",
@@ -1143,7 +1153,12 @@ window.SKBC_CONTENT = {
         "month": "Month",
         "previous": "Previous",
         "next": "Next",
-        "empty": "No events"
+        "empty": "No events",
+        "openFull": "View full calendar",
+        "print": "Print",
+        "savePrint": "Save / print",
+        "back": "Back",
+        "printHint": "A print-ready A4 landscape version will open. In the print dialog you can print or save as PDF."
       },
       "media": {
         "eyebrow": "Photos and videos",
