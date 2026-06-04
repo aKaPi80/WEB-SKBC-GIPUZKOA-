@@ -306,7 +306,7 @@ function printableCalendarHtml(events, copy) {
     <html lang="${state.lang}">
       <head>
         <meta charset="utf-8" />
-        <title>${copy.calendar.title} · SKBC GIPUZKOA</title>
+        <title>${copy.calendar.title} \u00b7 SKBC GIPUZKOA</title>
         <style>
           @page { size: A4 landscape; margin: 8mm; }
           * { box-sizing: border-box; }
@@ -329,14 +329,12 @@ function printableCalendarHtml(events, copy) {
         </style>
       </head>
       <body>
-        <button class="no-print" onclick="window.print()" style="margin:0 0 10px;padding:8px 12px;font-weight:800;">${copy.calendar.savePrint || "Guardar / imprimir"}</button>
         <div class="print-header">
           <div><p>SKBC GIPUZKOA</p><h1>${copy.calendar.title}</h1></div>
           <strong>${new Date().getFullYear()}</strong>
         </div>
         <div class="calendar-grid calendar-grid--year">${months}</div>
         <div class="print-footer">${copy.calendar.printHint || ""}</div>
-        <script>setTimeout(() => window.print(), 350);<\/script>
       </body>
     </html>`;
 }
@@ -344,14 +342,18 @@ function printableCalendarHtml(events, copy) {
 function openPrintableCalendar() {
   const copy = t();
   const events = (state.content.settings.events || []).filter((event) => event.enabled !== false);
-  const printWindow = window.open("", "_blank", "noopener,noreferrer");
-  if (!printWindow) {
-    alert(copy.calendar.printHint || "Permite ventanas emergentes para imprimir o guardar el calendario.");
-    return;
-  }
-  printWindow.document.open();
-  printWindow.document.write(printableCalendarHtml(events, copy));
-  printWindow.document.close();
+  document.querySelector("#calendarPrintFrame")?.remove();
+  const frame = document.createElement("iframe");
+  frame.id = "calendarPrintFrame";
+  frame.className = "print-frame";
+  frame.onload = () => {
+    setTimeout(() => {
+      frame.contentWindow?.focus();
+      frame.contentWindow?.print();
+    }, 250);
+  };
+  frame.srcdoc = printableCalendarHtml(events, copy);
+  document.body.appendChild(frame);
 }
 
 function calendarSection(settings, copy) {
@@ -401,7 +403,7 @@ function calendarSection(settings, copy) {
               return `<article style="--event-color:${event.color || "#1f6fa9"}">
                 <span>${eventDateLabel(event)}</span>
                 <h3>${text.title || ""}</h3>
-                <p>${event.location || ""}${event.location && text.description ? " Â· " : ""}${text.description || ""}</p>
+                <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
               </article>`;
             }).join("") : `<p>${copy.calendar.empty}</p>`}
           </div>

@@ -565,8 +565,8 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Calendario",
         "title": "Calendario anual de eventos",
-        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
-        "year": "A?o",
+        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el año, tres meses o mes a mes.",
+        "year": "Año",
         "quarter": "3 meses",
         "month": "Mes",
         "previous": "Anterior",
@@ -647,7 +647,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Pr?ximas noticias",
+        "title": "Próximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       }
