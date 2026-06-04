@@ -235,7 +235,7 @@ window.SKBC_CONTENT = {
         "enabled": true,
         "start": "2026-08-01",
         "end": "2026-08-31",
-        "color": "#a81f1f",
+        "color": "#a81f76",
         "location": "Tolosa",
         "languages": {
           "es": {
@@ -249,6 +249,34 @@ window.SKBC_CONTENT = {
           "en": {
             "title": "HOLYDAYS",
             "description": "HOLYDAYS"
+          }
+        }
+      },
+      {
+        "enabled": true,
+        "start": "2026-09-05",
+        "end": "2026-12-31",
+        "color": "#43ad8d",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": true,
+          "start": "2026-09-05",
+          "until": "2026-12-31",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "eu": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "en": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
           }
         }
       }
@@ -565,8 +593,8 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Calendario",
         "title": "Calendario anual de eventos",
-        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el año, tres meses o mes a mes.",
-        "year": "Año",
+        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
+        "year": "A?o",
         "quarter": "3 meses",
         "month": "Mes",
         "previous": "Anterior",
@@ -647,7 +675,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Próximas noticias",
+        "title": "Pr?ximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       }
