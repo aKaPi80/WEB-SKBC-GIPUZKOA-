@@ -762,8 +762,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "Instagram como fuente principal de noticias",
-        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
+        "title": "SIGUENOS EN NUESTRAS REDES SOCIALES!",
+        "text": "SI QUIERES ESTAR AL CORRIENTE DE TODAS LAS NOVEDADES Y EVENTOS, SIGUENOS EN NUESTRAS REDES SOCIALES!",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
@@ -1053,8 +1053,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "Instagram albisteen iturri nagusi gisa",
-        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
+        "title": "JARRAITU GURE SARE SOZIALETATAN!",
+        "text": "Berri eta ekitaldi guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1344,8 +1344,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "Instagram as the main news source",
-        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
+        "title": "FOLLOW US ON OUR SOCIAL MEDIA!",
+        "text": "If you want to stay up to date on all the news and events, follow us on our social media!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
