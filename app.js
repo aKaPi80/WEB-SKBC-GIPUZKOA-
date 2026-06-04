@@ -6,12 +6,7 @@ const state = {
 };
 
 function loadContent() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved ? deepMerge(window.SKBC_CONTENT, saved) : window.SKBC_CONTENT;
-  } catch {
-    return window.SKBC_CONTENT;
-  }
+  return window.SKBC_CONTENT;
 }
 
 function deepMerge(base, override) {
