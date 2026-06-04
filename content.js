@@ -230,6 +230,27 @@ window.SKBC_CONTENT = {
             "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS.... "
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-08-01",
+        "end": "2026-08-31",
+        "color": "#a81f1f",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "VACACIONES",
+            "description": "VACACIONES DE VERANO"
+          },
+          "eu": {
+            "title": "OPORRAK",
+            "description": "UDAKO OPORRAK"
+          },
+          "en": {
+            "title": "HOLYDAYS",
+            "description": "HOLYDAYS"
+          }
+        }
       }
     ],
     "galleryLinks": [
