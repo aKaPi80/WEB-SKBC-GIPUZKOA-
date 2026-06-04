@@ -213,7 +213,7 @@ window.SKBC_CONTENT = {
       {
         "enabled": true,
         "start": "2026-07-01",
-        "end": "2026-06-30",
+        "end": "2026-07-30",
         "color": "#1fa853",
         "location": "Tolosa",
         "languages": {
