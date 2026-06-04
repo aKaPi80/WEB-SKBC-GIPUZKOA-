@@ -209,6 +209,27 @@ window.SKBC_CONTENT = {
             "description": "Seminar for club students and guests."
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-07-01",
+        "end": "2026-06-30",
+        "color": "#1fa853",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "SHAKUJO Y ENTRENAMIENTO AIRE LIBRE",
+            "description": "SHAKUJO Y ENTRENAMIENTOS AL AIRE LIBRE DURANTE TODO JULIO"
+          },
+          "eu": {
+            "title": "SHAKUJO ETA KAMPOKO ENTRENAMENDUAK",
+            "description": "SHAKUJO ETA ENTRENAMENDUAK MENDIAN, HONDARTZAN...."
+          },
+          "en": {
+            "title": "SHAKUJO AND OUTSIDE TRAININGS",
+            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS.... "
+          }
+        }
       }
     ],
     "galleryLinks": [
