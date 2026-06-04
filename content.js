@@ -341,6 +341,34 @@ window.SKBC_CONTENT = {
             "description": ""
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-12-10",
+        "end": "2026-12-10",
+        "color": "#c3f2c0",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "EXAMENES",
+            "description": "2 CONVOCATORIA EXAMENES DEL AÑO"
+          },
+          "eu": {
+            "title": "AZTERKETAK",
+            "description": "URTEKO 2. AZTERKETA SAIOA"
+          },
+          "en": {
+            "title": "TESTS",
+            "description": "2 EXAMS OF THE YEAR"
+          }
+        }
       }
     ],
     "galleryLinks": [
