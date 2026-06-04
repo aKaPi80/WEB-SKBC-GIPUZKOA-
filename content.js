@@ -470,15 +470,15 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780604041486-manji.jpg",
-      "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
-      "adults": "assets/uploads/1780604082854-adultos.jpg",
+      "hero": "assets/uploads/1780601440879-manji.heic",
+      "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
+      "adults": "assets/uploads/1780601631346-adultos.heic",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
-        "assets/uploads/1780604072168-grupo-ninos.jpg",
-        "assets/uploads/1780604041486-manji.jpg",
-        "assets/uploads/1780604082854-adultos.jpg",
         "assets/people/equipo-tecnico.jpg",
+        "assets/people/alvaro-calvo.jpg",
+        "assets/people/inaki-ventureira.png",
+        "assets/people/andoni-dominguez.png",
         "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       ],
       "profiles": [
@@ -514,23 +514,24 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-04",
+        "date": "2026-06-06",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
+            "title": "CURSO DE VERANO SKBC GIPUZKOA",
+            "text": "Ya esta aqui el curso de SKBC GIPUZKOA! 2 dias de entrenamiento en el que el objetivo es disfrutar, aprender, divertirse y conocer aun mas el Shorinji Kempo!"
           },
           "eu": {
-            "title": "Urteko egutegia eskuragarri",
-            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+            "title": "UDAKO IKASTAROA SKBC GIPUZKOA",
+            "text": "SKBC GIPUZKOA ikastaroa hemen da! Bi eguneko prestakuntza, non helburua gozatzea, ikastea, ondo pasatzea eta Shorinji Kempoa are gehiago ezagutzea!"
           },
           "en": {
-            "title": "Annual calendar available",
-            "text": "You can now check upcoming courses, seminars and club activities on the website."
+            "title": "SUMMER SKBC GIPUZKOA SEMINAR",
+            "text": "The SKBC GIPUZKOA course is here! Two days of training where the goal is to enjoy, learn, have fun and get to know Shorinji Kempo even more!"
           }
-        }
+        },
+        "image": "assets/uploads/1780606291328-curso-skbc.jpg"
       }
     ]
   },
