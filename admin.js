@@ -397,17 +397,32 @@ function renderEvents() {
   editor.querySelectorAll("[data-remove-event]").forEach((button) => {
     button.addEventListener("click", () => removeEvent(Number(button.dataset.removeEvent)));
   });
+  editor.querySelectorAll("[data-add-event-date]").forEach((button) => {
+    button.addEventListener("click", () => addEventDate(Number(button.dataset.addEventDate)));
+  });
+  editor.querySelectorAll("[data-remove-event-date]").forEach((button) => {
+    button.addEventListener("click", () => removeEventDate(Number(button.dataset.removeEventDate), button.dataset.date));
+  });
+  editor.querySelectorAll("[data-translate-event]").forEach((button) => {
+    button.addEventListener("click", () => translateEvent(Number(button.dataset.translateEvent), button));
+  });
 }
 
 function eventTemplate(event, index) {
   const base = ["settings", "events", index];
+  const dates = Array.isArray(event.dates) ? event.dates.filter(Boolean).sort() : [];
   const groups = [{
     title: `Evento ${index + 1}`,
-    help: "Si dura varios días, usa fecha de inicio y fecha de fin. El color se verá en el calendario.",
+    help: "Puedes usar rango inicio/fin, días sueltos, o repetición cada X días. Para una clase quincenal usa repetición cada 15 días.",
     fields: [
       ["Activo", [...base, "enabled"], "booleanText"],
       ["Fecha inicio", [...base, "start"], "date"],
       ["Fecha fin", [...base, "end"], "date"],
+      ["Días sueltos", [...base, "dates"], "array"],
+      ["Repetición activa", [...base, "repeat", "enabled"], "booleanText"],
+      ["Repetir desde", [...base, "repeat", "start"], "date"],
+      ["Repetir hasta", [...base, "repeat", "until"], "date"],
+      ["Cada cuántos días", [...base, "repeat", "everyDays"], "input"],
       ["Color del evento", [...base, "color"], "color"],
       ["Lugar", [...base, "location"], "input"],
       ["ES título", [...base, "languages", "es", "title"], "input"],
@@ -418,7 +433,24 @@ function eventTemplate(event, index) {
       ["EN descripción", [...base, "languages", "en", "description"], "textarea"]
     ]
   }];
-  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-event="${index}" type="button">Eliminar este evento</button></div>`;
+  return `<div class="custom-card">
+    ${groups.map(groupTemplate).join("")}
+    <article class="editor-group event-tools">
+      <header>
+        <h3>Días concretos y traducción</h3>
+        <p>Añade fechas sueltas con el selector. El botón de traducción intentará generar euskera e inglés desde el texto en castellano.</p>
+      </header>
+      <div class="event-date-tool">
+        <input type="date" id="event-date-${index}" />
+        <button type="button" data-add-event-date="${index}">Añadir día</button>
+        <button type="button" data-translate-event="${index}">Traducir EU/EN desde ES</button>
+      </div>
+      <div class="event-date-chips">
+        ${dates.length ? dates.map((date) => `<span>${date}<button type="button" data-remove-event-date="${index}" data-date="${date}">×</button></span>`).join("") : `<p>No hay días sueltos añadidos.</p>`}
+      </div>
+    </article>
+    <button class="danger" data-remove-event="${index}" type="button">Eliminar este evento</button>
+  </div>`;
 }
 
 function addEvent() {
@@ -431,6 +463,13 @@ function addEvent() {
     end: start,
     color: "#1f6fa9",
     location: "Tolosa",
+    dates: [],
+    repeat: {
+      enabled: false,
+      start,
+      until: start,
+      everyDays: "15"
+    },
     languages: {
       es: { title: "Nuevo evento", description: "Descripción del evento." },
       eu: { title: "Ekitaldi berria", description: "Ekitaldiaren deskribapena." },
@@ -446,6 +485,66 @@ function removeEvent(index) {
   data.settings.events.splice(index, 1);
   markDirty();
   renderEvents();
+}
+
+function addEventDate(index) {
+  const input = document.querySelector(`#event-date-${index}`);
+  const value = input?.value;
+  if (!value) {
+    setStatus("Elige primero una fecha para añadirla al evento.", "danger");
+    return;
+  }
+  const event = data.settings.events[index];
+  if (!event.dates) event.dates = [];
+  if (!event.dates.includes(value)) event.dates.push(value);
+  event.dates.sort();
+  markDirty();
+  renderEvents();
+}
+
+function removeEventDate(index, date) {
+  const event = data.settings.events[index];
+  event.dates = (event.dates || []).filter((item) => item !== date);
+  markDirty();
+  renderEvents();
+}
+
+async function translateEvent(index, button) {
+  const event = data.settings.events[index];
+  const source = event.languages?.es || {};
+  if (!source.title && !source.description) {
+    setStatus("Escribe primero el título y descripción en castellano.", "danger");
+    return;
+  }
+  try {
+    button.disabled = true;
+    button.textContent = "Traduciendo...";
+    const [euTitle, euDescription, enTitle, enDescription] = await Promise.all([
+      translateText(source.title, "eu"),
+      translateText(source.description, "eu"),
+      translateText(source.title, "en"),
+      translateText(source.description, "en")
+    ]);
+    event.languages.eu = { title: euTitle || source.title, description: euDescription || source.description };
+    event.languages.en = { title: enTitle || source.title, description: enDescription || source.description };
+    markDirty();
+    setStatus("Traducción generada. Revisa el texto antes de publicar.", "warning");
+    renderEvents();
+  } catch (error) {
+    setStatus(`No se pudo traducir automáticamente: ${error.message}`, "danger");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Traducir EU/EN desde ES";
+  }
+}
+
+async function translateText(text, target) {
+  if (!text) return "";
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|${target}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("servicio de traducción no disponible");
+  const result = await response.json();
+  return result.responseData?.translatedText || "";
 }
 
 function renderNews() {

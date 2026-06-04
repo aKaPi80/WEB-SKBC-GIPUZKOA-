@@ -300,6 +300,57 @@ button.danger {
   cursor: wait;
 }
 
+.event-tools {
+  margin-inline: 18px;
+}
+
+.event-date-tool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 18px 18px 8px;
+}
+
+.event-date-tool input {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  font: inherit;
+}
+
+.event-date-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 18px 18px;
+}
+
+.event-date-chips span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 8px 7px 12px;
+  color: #fff;
+  background: var(--dark);
+  font-weight: 850;
+}
+
+.event-date-chips button {
+  min-height: 26px;
+  min-width: 26px;
+  padding: 0;
+  border-color: rgba(255,255,255,.25);
+  color: #fff;
+  background: rgba(255,255,255,.14);
+}
+
+.event-date-chips p {
+  margin: 0;
+  color: var(--muted);
+}
+
 .advanced-editor {
   display: grid;
   gap: 14px;

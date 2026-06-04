@@ -197,15 +197,43 @@ function parseDate(value) {
   return new Date(year || new Date().getFullYear(), (month || 1) - 1, day || 1);
 }
 
+function eventDateKeys(event) {
+  return Array.isArray(event.dates) ? event.dates.filter(Boolean) : [];
+}
+
 function eventCopy(event) {
   return event.languages?.[state.lang] || event.languages?.es || {};
 }
 
 function eventTouchesDate(event, date) {
   const current = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const key = dateKey(date);
+  if (eventDateKeys(event).includes(key)) return true;
+  if (event.repeat?.enabled) {
+    const start = parseDate(event.repeat.start || event.start);
+    const until = parseDate(event.repeat.until || event.end || event.start);
+    const interval = Math.max(1, Number(event.repeat.everyDays || 15));
+    const startTime = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+    const untilTime = new Date(until.getFullYear(), until.getMonth(), until.getDate()).getTime();
+    const dayMs = 24 * 60 * 60 * 1000;
+    const diff = Math.round((current - startTime) / dayMs);
+    if (current >= startTime && current <= untilTime && diff % interval === 0) return true;
+  }
   const start = parseDate(event.start).getTime();
   const end = parseDate(event.end || event.start).getTime();
   return current >= start && current <= end;
+}
+
+function eventDateLabel(event) {
+  const dates = eventDateKeys(event);
+  if (dates.length) {
+    const visible = dates.slice(0, 4).join(", ");
+    return dates.length > 4 ? `${visible} +${dates.length - 4}` : visible;
+  }
+  if (event.repeat?.enabled) {
+    return `${event.repeat.start || event.start} / cada ${event.repeat.everyDays || 15} días / hasta ${event.repeat.until || event.end || ""}`;
+  }
+  return `${event.start}${event.end && event.end !== event.start ? ` / ${event.end}` : ""}`;
 }
 
 function monthName(date) {
@@ -277,7 +305,7 @@ function calendarSection(settings, copy) {
       ${events.length ? events.map((event) => {
         const text = eventCopy(event);
         return `<article style="--event-color:${event.color || "#1f6fa9"}">
-          <span>${event.start}${event.end && event.end !== event.start ? ` / ${event.end}` : ""}</span>
+          <span>${eventDateLabel(event)}</span>
           <h3>${text.title || ""}</h3>
           <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
         </article>`;
