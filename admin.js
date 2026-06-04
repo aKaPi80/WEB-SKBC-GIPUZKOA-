@@ -3,6 +3,11 @@ const GITHUB_TOKEN_KEY = "skbc_github_token";
 const GITHUB_OWNER = "aKaPi80";
 const GITHUB_REPO = "WEB-SKBC-GIPUZKOA-";
 const GITHUB_BRANCH = "main";
+const MEDIA_REPLACEMENTS = {
+  "assets/uploads/1780601440879-manji.heic": "assets/uploads/1780604041486-manji.jpg",
+  "assets/uploads/1780600913705-grupo-ninos.heic": "assets/uploads/1780604072168-grupo-ninos.jpg",
+  "assets/uploads/1780601631346-adultos.heic": "assets/uploads/1780604082854-adultos.jpg"
+};
 
 let data = load();
 let currentPanel = "settings";
@@ -227,6 +232,7 @@ function deepMerge(base, override) {
 
 function replaceLegacyCanvaMedia(value, fallback) {
   if (typeof value === "string") {
+    if (MEDIA_REPLACEMENTS[value]) return MEDIA_REPLACEMENTS[value];
     if (!value.includes("/_assets/media/")) return value;
     return typeof fallback === "string" && !fallback.includes("/_assets/media/") ? fallback : "";
   }
