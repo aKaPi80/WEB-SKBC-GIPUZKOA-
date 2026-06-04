@@ -400,15 +400,15 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2026-12-19",
-        "end": "2026-12-19",
+        "start": "2026-12-12",
+        "end": "2026-12-12",
         "color": "#a8961f",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-06-04",
-          "until": "2026-06-04",
+          "start": "2026-12-12",
+          "until": "2026-12-12",
           "everyDays": "15"
         },
         "languages": {
