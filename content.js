@@ -397,6 +397,34 @@ window.SKBC_CONTENT = {
             "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-12-19",
+        "end": "2026-12-19",
+        "color": "#a8961f",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "SKBC REUNION Y CENA DE FIN DE AÑO",
+            "description": "REUNION DIRECTIVA SKBC GIPUZKOA FY CENA DE DESPEDIDA DE AÑO CON TODO EL CLUB"
+          },
+          "eu": {
+            "title": "SKBC URTEBERRIKO BILERA ETA AFARIA",
+            "description": "SKBC Gipuzkoako  Zuzendaritza Batzordearen Bilera eta Urte Amaierako Agurra Klub Osoarekin"
+          },
+          "en": {
+            "title": "SKBC YEAR-END MEETING & DINNER",
+            "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
+          }
+        }
       }
     ],
     "galleryLinks": [
