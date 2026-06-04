@@ -1120,23 +1120,35 @@ async function publishWithGithubApi(contentData) {
   const token = await githubToken();
   const path = "content.js";
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
-  const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}`, token);
-  const body = {
-    message: "Update SKBC Gipuzkoa website content",
-    branch: GITHUB_BRANCH,
-    sha: current.sha,
-    content: base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`)
-  };
+  const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`);
 
-  await githubRequest(apiUrl, token, {
-    method: "PUT",
-    body: JSON.stringify(body)
-  });
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
+    try {
+      await githubRequest(apiUrl, token, {
+        method: "PUT",
+        body: JSON.stringify({
+          message: "Update SKBC Gipuzkoa website content",
+          branch: GITHUB_BRANCH,
+          sha: current.sha,
+          content
+        })
+      });
+      break;
+    } catch (error) {
+      if (attempt === 3 || error.status !== 409) throw error;
+      await wait(900);
+    }
+  }
 
   return {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
     url: `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`
   };
+}
+
+function wait(ms) {
+  return new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
 }
 
 function shouldUseGithubApi() {
@@ -1168,7 +1180,12 @@ async function githubRequest(url, token, options = {}) {
     }
   });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.message || `GitHub respondiÃ³ ${response.status}`);
+  if (!response.ok) {
+    const error = new Error(result.message || `GitHub respondiÃ³ ${response.status}`);
+    error.status = response.status;
+    error.result = result;
+    throw error;
+  }
   return result;
 }
 
