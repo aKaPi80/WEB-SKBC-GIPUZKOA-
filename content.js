@@ -258,7 +258,9 @@ window.SKBC_CONTENT = {
         "end": "2026-12-31",
         "color": "#43ad8d",
         "location": "Tolosa",
-        "dates": [],
+        "dates": [
+          "2026-12-19"
+        ],
         "repeat": {
           "enabled": true,
           "start": "2026-09-05",
