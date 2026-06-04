@@ -471,7 +471,7 @@ window.SKBC_CONTENT = {
     ],
     "images": {
       "hero": "assets/people/equipo-tecnico.jpg",
-      "kids": "assets/people/uxue-garikano.jpg",
+      "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
       "adults": "assets/people/alvaro-calvo.jpg",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
