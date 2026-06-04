@@ -300,8 +300,46 @@ function upcomingEvents(events) {
   }).slice(0, 8);
 }
 
+function printEventNumber(event, eventNumbers) {
+  if (!eventNumbers.has(event)) eventNumbers.set(event, eventNumbers.size + 1);
+  return eventNumbers.get(event);
+}
+
+function printableMonthGrid(monthDate, events, copy, eventNumbers) {
+  const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+  const first = new Date(year, month, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < offset; i += 1) cells.push(`<span class="calendar-day is-empty"></span>`);
+  for (let day = 1; day <= days; day += 1) {
+    const current = new Date(year, month, day);
+    const dayEvents = events.filter((event) => eventTouchesDate(event, current));
+    cells.push(`<span class="calendar-day ${dayEvents.length ? "has-event" : ""}">
+      <strong>${day}</strong>
+      <span class="print-markers">
+        ${dayEvents.slice(0, 4).map((event) => `<i style="--event-color:${event.color || "#1f6fa9"}">${printEventNumber(event, eventNumbers)}</i>`).join("")}
+      </span>
+    </span>`);
+  }
+  return `<article class="calendar-month">
+    <h3>${monthName(monthDate)}</h3>
+    <div class="calendar-weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+    <div class="calendar-days">${cells.join("")}</div>
+  </article>`;
+}
+
 function printableCalendarHtml(events, copy) {
-  const months = fullYearMonths().map((month) => monthGrid(month, events, copy.calendar)).join("");
+  const eventNumbers = new Map();
+  const months = fullYearMonths().map((month) => printableMonthGrid(month, events, copy.calendar, eventNumbers)).join("");
+  const eventList = Array.from(eventNumbers.entries())
+    .sort((a, b) => a[1] - b[1])
+    .map(([event, number]) => {
+      const text = eventCopy(event);
+      return `<li style="--event-color:${event.color || "#1f6fa9"}"><b>${number}</b><span><strong>${text.title || copy.calendar.empty}</strong><em>${eventDateLabel(event)}${event.location ? ` · ${event.location}` : ""}${text.description ? ` · ${text.description}` : ""}</em></span></li>`;
+    })
+    .join("");
   return `<!doctype html>
     <html lang="${state.lang}">
       <head>
@@ -310,21 +348,28 @@ function printableCalendarHtml(events, copy) {
         <style>
           @page { size: A4 landscape; margin: 8mm; }
           * { box-sizing: border-box; }
+          * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           body { margin: 0; color: #101113; font-family: Arial, sans-serif; }
           .print-header { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 7px; border-bottom: 2px solid #101113; padding-bottom: 5px; }
           .print-header p { margin: 0; color: #c52727; font-size: 9px; font-weight: 900; text-transform: uppercase; }
           .print-header h1 { margin: 1px 0 0; font-size: 18px; line-height: 1; }
           .print-header strong { font-size: 10px; }
-          .calendar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-          .calendar-month { break-inside: avoid; border: 1px solid #d9dee7; border-radius: 4px; padding: 5px; }
-          .calendar-month h3 { margin: 0 0 4px; font-size: 10px; text-transform: capitalize; }
+          .calendar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+          .calendar-month { break-inside: avoid; border: 1px solid #d9dee7; border-radius: 4px; padding: 4px; }
+          .calendar-month h3 { margin: 0 0 3px; font-size: 9px; text-transform: capitalize; }
           .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
           .calendar-weekdays span { color: #59606c; font-size: 6px; font-weight: 900; text-align: center; }
-          .calendar-day { min-height: 24px; border: 1px solid #eef0f4; border-radius: 2px; padding: 2px; overflow: hidden; }
+          .calendar-day { min-height: 19px; border: 1px solid #eef0f4; border-radius: 2px; padding: 2px; overflow: hidden; }
           .calendar-day.is-empty { border-color: transparent; }
           .calendar-day strong { display: block; font-size: 7px; line-height: 1; }
-          .calendar-day em { display: block; margin-top: 1px; border-radius: 2px; padding: 1px 2px; overflow: hidden; color: #fff; background: var(--event-color); font-size: 5.5px; font-style: normal; font-weight: 700; line-height: 1.05; white-space: nowrap; text-overflow: ellipsis; }
-          .print-footer { margin-top: 5px; color: #59606c; font-size: 7px; }
+          .print-markers { display: flex; flex-wrap: wrap; gap: 1px; margin-top: 1px; }
+          .print-markers i { display: inline-grid; place-items: center; min-width: 10px; height: 10px; border-radius: 999px; color: #fff; background: var(--event-color); font-size: 5px; font-style: normal; font-weight: 900; line-height: 1; }
+          .print-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px 8px; margin: 6px 0 0; padding: 0; list-style: none; }
+          .print-legend li { display: grid; grid-template-columns: 15px 1fr; gap: 4px; align-items: start; break-inside: avoid; font-size: 6.5px; line-height: 1.15; }
+          .print-legend b { display: grid; place-items: center; width: 13px; height: 13px; border-radius: 999px; color: #fff; background: var(--event-color); font-size: 7px; }
+          .print-legend strong { display: block; font-size: 7px; }
+          .print-legend em { display: block; color: #59606c; font-style: normal; }
+          .print-footer { margin-top: 4px; color: #59606c; font-size: 6px; }
           @media print { .no-print { display: none; } }
         </style>
       </head>
@@ -334,6 +379,7 @@ function printableCalendarHtml(events, copy) {
           <strong>${new Date().getFullYear()}</strong>
         </div>
         <div class="calendar-grid calendar-grid--year">${months}</div>
+        <ul class="print-legend">${eventList}</ul>
         <div class="print-footer">${copy.calendar.printHint || ""}</div>
       </body>
     </html>`;
