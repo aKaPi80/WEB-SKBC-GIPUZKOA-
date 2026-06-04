@@ -475,10 +475,10 @@ window.SKBC_CONTENT = {
       "adults": "assets/uploads/1780604082854-adultos.jpg",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
+        "assets/uploads/1780604072168-grupo-ninos.jpg",
+        "assets/uploads/1780604041486-manji.jpg",
+        "assets/uploads/1780604082854-adultos.jpg",
         "assets/people/equipo-tecnico.jpg",
-        "assets/people/alvaro-calvo.jpg",
-        "assets/people/inaki-ventureira.png",
-        "assets/people/andoni-dominguez.png",
         "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       ],
       "profiles": [
@@ -514,24 +514,24 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-04",
+        "date": "2026-06-06",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
+            "title": "CURSO DE VERANO SKBC GIPUZKOA 2026",
+            "text": "YA ESTA AQUI EL CURSO DE VERANO DE SKBC GIPUZKOA! VEN A DISFRUTARLO JUNTO A NOSOTROS!"
           },
           "eu": {
-            "title": "Urteko egutegia eskuragarri",
-            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+            "title": "SKBC GIPUZKOAKO UDAKO IKASTAROA 2026",
+            "text": "SKBC GIPUZKOAKO UDAKO IKASTAROA HEMEN DA! ZATOZ GUREKIN ETA GOZATU!"
           },
           "en": {
-            "title": "Annual calendar available",
-            "text": "You can now check upcoming courses, seminars and club activities on the website."
+            "title": "SKBC GIPUZKOA 2026 SUMMER COURSE",
+            "text": "SKBC GIPUZKOA SUMMER COURSE IS HERE! COME AND ENJOY IT WITH US!"
           }
         },
-        "image": "assets/uploads/1780606250233-curso-skbc.jpg"
+        "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
       }
     ]
   },
@@ -762,8 +762,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "SIGUENOS EN INSTAGRAM, FACEBOOK Y YOUTUBE",
-        "text": "SI QUIERES ESTAR AL DIA DE TODAS LAS NOVEDADES Y NOTICIAS SIGUENOS EN NUESTRAS REDES SOCIALES!",
+        "title": "Instagram como fuente principal de noticias",
+        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
@@ -822,7 +822,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Próximas noticias",
+        "title": "Proximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       }
@@ -1053,8 +1053,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "JARRAITU GAITZAZU INSTAGRAM, FACEBOOK ETA YOUTUBE-N",
-        "text": "Azken berri eta eguneratze guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
+        "title": "Instagram albisteen iturri nagusi gisa",
+        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1344,8 +1344,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "FOLLOW US ON INSTAGRAM, FACEBOOK AND YOUTUBE",
-        "text": "If you want to stay up to date with all the latest news and updates, follow us on our social media!",
+        "title": "Instagram as the main news source",
+        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
