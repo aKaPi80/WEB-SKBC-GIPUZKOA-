@@ -307,6 +307,34 @@ window.SKBC_CONTENT = {
             "description": "Event description."
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-12-24",
+        "end": "2026-12-31",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "VACACIONES DE NAVIDAD",
+            "description": ""
+          },
+          "eu": {
+            "title": "ABENDUKO OPORRAK",
+            "description": ""
+          },
+          "en": {
+            "title": "WINTER HOLIDAYS",
+            "description": ""
+          }
+        }
       }
     ],
     "galleryLinks": [
