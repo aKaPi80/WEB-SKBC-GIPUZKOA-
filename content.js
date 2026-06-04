@@ -25,7 +25,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/logo-skbc.png",
+          "image": "assets/uploads/1780564872665-camiseta-blanca.png",
           "price": "10",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -100,7 +100,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/logo-skbc.png",
+          "image": "assets/uploads/1780565070624-sudadera-negra.png",
           "price": "30",
           "personalization": "Bordado SKBC",
           "sizes": [
@@ -135,7 +135,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/logo-skbc.png",
+          "image": "assets/uploads/1780565086940-sudadera-negra-kanji.png",
           "price": "35",
           "personalization": "Bordado SKBC",
           "sizes": [
@@ -170,42 +170,42 @@ window.SKBC_CONTENT = {
     "events": [
       {
         "enabled": true,
-        "start": "2026-07-10",
-        "end": "2026-07-12",
+        "start": "2026-06-27",
+        "end": "2026-06-28",
         "color": "#1f6fa9",
         "location": "Irlanda",
         "languages": {
           "es": {
-            "title": "Curso internacional en Irlanda",
+            "title": "Curso internacional IKA en Irlanda",
             "description": "Entrenamiento y convivencia con otros practicantes."
           },
           "eu": {
-            "title": "Nazioarteko ikastaroa Irlandan",
+            "title": "IKA Nazioarteko ikastaroa Irlandan",
             "description": "Beste praktikatzaileekin entrenamendua eta bizikidetza."
           },
           "en": {
-            "title": "International course in Ireland",
+            "title": "IKA International course in Ireland",
             "description": "Training and exchange with other practitioners."
           }
         }
       },
       {
         "enabled": true,
-        "start": "2026-09-19",
-        "end": "2026-09-20",
+        "start": "2026-06-06",
+        "end": "2026-06-07",
         "color": "#c52727",
         "location": "Tolosa",
         "languages": {
           "es": {
-            "title": "Curso en Tolosa",
+            "title": "Curso SKBC en Tolosa",
             "description": "Seminario abierto para alumnos del club e invitados."
           },
           "eu": {
-            "title": "Ikastaroa Tolosan",
+            "title": "SKBC Ikastaroa Tolosan",
             "description": "Klubeko ikasleentzat eta gonbidatuentzat mintegia."
           },
           "en": {
-            "title": "Course in Tolosa",
+            "title": "SKBC Course in Tolosa",
             "description": "Seminar for club students and guests."
           }
         }
@@ -291,7 +291,7 @@ window.SKBC_CONTENT = {
         "pablo": "assets/people/pablo-sanchez.png",
         "uxue": "assets/people/uxue-garikano.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
-        "technicalTeam": "assets/people/equipo-tecnico.jpg"
+        "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",
@@ -304,7 +304,7 @@ window.SKBC_CONTENT = {
         "languages": {
           "es": {
             "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los pr?ximos cursos, seminarios y actividades del club desde la web."
+            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
           },
           "eu": {
             "title": "Urteko egutegia eskuragarri",
@@ -324,14 +324,12 @@ window.SKBC_CONTENT = {
       "seoTitle": "Shorinji Kempo en Tolosa | SKBC GIPUZKOA",
       "seoDescription": "Clases de Shorinji Kempo en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
       "nav": [
-        "Ni?os",
+        "Niños",
         "Adultos",
         "Club",
         "Equipo",
         "Horarios",
-        "Calendario",
-        "Galer?a",
-        "Merchandising",
+        "Galería",
         "Contacto"
       ],
       "ctaShort": "Probar gratis",
@@ -343,7 +341,7 @@ window.SKBC_CONTENT = {
         "secondary": "Ver horarios",
         "cards": [
           [
-            "5-13 años",
+            "5-18 años",
             "Martes y jueves · 17:30-18:30"
           ],
           [
@@ -525,8 +523,8 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Calendario",
         "title": "Calendario anual de eventos",
-        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el año, tres meses o mes a mes.",
-        "year": "Año",
+        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
+        "year": "A?o",
         "quarter": "3 meses",
         "month": "Mes",
         "previous": "Anterior",
@@ -551,7 +549,7 @@ window.SKBC_CONTENT = {
       "merch": {
         "eyebrow": "Merchandising",
         "title": "Material del club",
-        "text": "Reserva ropa del club basada en prendas del catálogo JHK. El pedido no se paga online: lo revisamos contigo y se paga en el dojo o tras confirmar la forma de pago.",
+        "text": "SKBC GIPUZKOA es una asociación sin ánimo de lucro. Los ingresos obtenidos se destinan íntegramente al mantenimiento del club, material y organización de actividades.",
         "items": [
           "Camiseta impresa · 10€",
           "Polo impreso · 15€",
@@ -617,9 +615,7 @@ window.SKBC_CONTENT = {
         "Kluba",
         "Taldea",
         "Ordutegiak",
-        "Egutegia",
         "Galeria",
-        "Merchandising",
         "Kontaktua"
       ],
       "ctaShort": "Doan probatu",
@@ -839,7 +835,7 @@ window.SKBC_CONTENT = {
       "merch": {
         "eyebrow": "Merchandising",
         "title": "Klubeko materiala",
-        "text": "JHK katalogoko oinarrizko jantziekin egindako klubeko arropa erreserbatu. Eskaera ez da online ordaintzen: zurekin berrikusi eta dojon edo adostutako moduan ordainduko da.",
+        "text": "SKBC GIPUZKOA irabazi asmorik gabeko elkartea da. Lortutako diru-sarrerak klubaren mantentzera, materialera eta jardueren antolaketara bideratzen dira osorik.",
         "items": [
           "Kamiseta inprimatua · 10€",
           "Poloa inprimatua · 15€",
@@ -905,9 +901,7 @@ window.SKBC_CONTENT = {
         "Club",
         "Team",
         "Schedule",
-        "Calendar",
         "Gallery",
-        "Merchandising",
         "Contact"
       ],
       "ctaShort": "Try for free",
@@ -1126,8 +1120,8 @@ window.SKBC_CONTENT = {
       },
       "merch": {
         "eyebrow": "Merchandising",
-        "title": "Club kit",
-        "text": "Reserve club clothing based on garments from the JHK catalogue. There is no online payment: we review the order with you and payment is made at the dojo or after confirming the payment method.",
+        "title": "Club material",
+        "text": "SKBC GIPUZKOA is a non-profit association. Income is fully used for club maintenance, material and organisation of activities.",
         "items": [
           "Printed T-shirt · 10€",
           "Printed polo · 15€",
