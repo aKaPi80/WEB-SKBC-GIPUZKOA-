@@ -363,8 +363,9 @@ function printableCalendarHtml(events, copy) {
           .calendar-day.is-empty { border-color: transparent; }
           .calendar-day strong { display: block; font-size: 7px; line-height: 1; }
           .print-markers { display: flex; flex-wrap: wrap; gap: 1px; margin-top: 1px; }
-          .print-markers i { display: inline-grid; place-items: center; min-width: 10px; height: 10px; border-radius: 999px; color: #fff; background: var(--event-color); font-size: 5px; font-style: normal; font-weight: 900; line-height: 1; }
-          .print-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px 8px; margin: 6px 0 0; padding: 0; list-style: none; }
+          .print-markers i { display: inline-grid; place-items: center; min-width: 10px; height: 10px; border: 1px solid var(--event-color); border-radius: 999px; color: #fff; background: var(--event-color); font-size: 5px; font-style: normal; font-weight: 900; line-height: 1; }
+          .print-legend-title { margin: 5px 0 3px; color: #101113; font-size: 8px; font-weight: 900; text-transform: uppercase; }
+          .print-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px 8px; margin: 0; padding: 0; list-style: none; }
           .print-legend li { display: grid; grid-template-columns: 15px 1fr; gap: 4px; align-items: start; break-inside: avoid; font-size: 6.5px; line-height: 1.15; }
           .print-legend b { display: grid; place-items: center; width: 13px; height: 13px; border-radius: 999px; color: #fff; background: var(--event-color); font-size: 7px; }
           .print-legend strong { display: block; font-size: 7px; }
@@ -379,6 +380,7 @@ function printableCalendarHtml(events, copy) {
           <strong>${new Date().getFullYear()}</strong>
         </div>
         <div class="calendar-grid calendar-grid--year">${months}</div>
+        <h2 class="print-legend-title">Eventos programados</h2>
         <ul class="print-legend">${eventList}</ul>
         <div class="print-footer">${copy.calendar.printHint || ""}</div>
       </body>
