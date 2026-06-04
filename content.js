@@ -472,7 +472,7 @@ window.SKBC_CONTENT = {
     "images": {
       "hero": "assets/uploads/1780601440879-manji.heic",
       "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
-      "adults": "assets/people/alvaro-calvo.jpg",
+      "adults": "assets/uploads/1780601631346-adultos.heic",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
         "assets/people/equipo-tecnico.jpg",
