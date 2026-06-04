@@ -200,7 +200,13 @@ function languageGroups(lang) {
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved ? deepMerge(cloneDefault(), saved) : cloneDefault();
+    const base = cloneDefault();
+    const loaded = saved ? deepMerge(base, saved) : base;
+    const cleaned = replaceLegacyCanvaMedia(loaded, base);
+    if (saved && JSON.stringify(cleaned) !== JSON.stringify(loaded)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return cloneDefault();
   }
@@ -216,6 +222,22 @@ function deepMerge(base, override) {
   return Object.keys({ ...base, ...override }).reduce((merged, key) => {
     merged[key] = deepMerge(base[key], override[key]);
     return merged;
+  }, {});
+}
+
+function replaceLegacyCanvaMedia(value, fallback) {
+  if (typeof value === "string") {
+    if (!value.includes("/_assets/media/")) return value;
+    return typeof fallback === "string" && !fallback.includes("/_assets/media/") ? fallback : "";
+  }
+  if (Array.isArray(value)) {
+    const fallbackArray = Array.isArray(fallback) ? fallback : [];
+    return value.map((item, index) => replaceLegacyCanvaMedia(item, fallbackArray[index]));
+  }
+  if (!value || typeof value !== "object") return value;
+  return Object.keys(value).reduce((cleaned, key) => {
+    cleaned[key] = replaceLegacyCanvaMedia(value[key], fallback?.[key]);
+    return cleaned;
   }, {});
 }
 
