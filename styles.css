@@ -545,6 +545,16 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .merch-custom p {
   color: var(--muted);
 }
+.merch-custom .button.secondary {
+  margin-top: 8px;
+  color: var(--red);
+  border-color: var(--red);
+  background: #fff;
+}
+.merch-custom .button.secondary:hover {
+  color: #fff;
+  background: var(--red);
+}
 .merch-order {
   position: sticky;
   top: 104px;

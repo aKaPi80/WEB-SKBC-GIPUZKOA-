@@ -539,7 +539,7 @@ function eventTemplate(event, index) {
         <p>Genera euskera e inglés desde el texto en castellano. Revisa siempre antes de publicar.</p>
       </header>
       <div class="event-date-tool">
-        <button type="button" data-translate-event="${index}">Traducir EU/EN desde ES</button>
+        <button class="primary" type="button" data-translate-event="${index}">Traducir EU/EN desde ES</button>
       </div>
     </article>
     <button class="danger" data-remove-event="${index}" type="button">Eliminar este evento</button>
