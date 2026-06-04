@@ -186,6 +186,10 @@ function languageGroups(lang) {
         ["Texto Instagram", [...root, "social", "instagram"], "input"],
         ["Texto Facebook", [...root, "social", "facebook"], "input"],
         ["Texto YouTube", [...root, "social", "youtube"], "input"],
+        ["Etiqueta noticias", [...root, "news", "eyebrow"], "input"],
+        ["Título noticias", [...root, "news", "title"], "input"],
+        ["Texto noticias", [...root, "news", "text"], "textarea"],
+        ["Texto sin noticias", [...root, "news", "empty"], "input"],
         ["TÃ­tulo merchandising", [...root, "merch", "title"], "input"],
         ["Texto merchandising", [...root, "merch", "text"], "textarea"],
         ["Botón catálogo JHK", [...root, "merch", "catalog"], "input"],
@@ -764,8 +768,19 @@ async function translateText(text, target) {
 function renderNews() {
   const editor = document.querySelector("#editor");
   const news = data.settings.news || [];
+  const sectionCopy = ["es", "eu", "en"].map((lang) => groupTemplate({
+    title: `Cabecera de noticias (${lang.toUpperCase()})`,
+    help: "Estos textos son los que se ven encima de las noticias en la web.",
+    fields: [
+      ["Etiqueta pequeña", ["languages", lang, "news", "eyebrow"], "input"],
+      ["Título visible", ["languages", lang, "news", "title"], "input"],
+      ["Texto descriptivo", ["languages", lang, "news", "text"], "textarea"],
+      ["Texto si no hay noticias", ["languages", lang, "news", "empty"], "input"]
+    ]
+  })).join("");
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions"><button id="add-news" class="primary" type="button">Añadir noticia</button></div>`)}
+    <div class="custom-card">${sectionCopy}</div>
     ${news.length ? news.map(newsTemplate).join("") : `<article class="editor-group"><header><h3>No hay noticias</h3><p>Pulsa Añadir noticia para crear avisos visibles en la web.</p></header></article>`}
   `;
   bindFields(editor);
