@@ -470,30 +470,30 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780601440879-manji.heic",
-      "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
-      "adults": "assets/uploads/1780601631346-adultos.heic",
-      "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
+      "hero": "https://skbcgipuzkoa.com/_assets/media/b9825ca1ab19d0a34e65496c4b887803.jpg",
+      "kids": "https://skbcgipuzkoa.com/_assets/media/6e0809cb668fc2bc09365b69c61ebc45.jpg",
+      "adults": "https://skbcgipuzkoa.com/_assets/media/e39f300b4482fb647d852167da384f29.jpg",
+      "learn": "https://skbcgipuzkoa.com/_assets/media/1fba977bea609178b96d3de02866e7d2.jpg",
       "gallery": [
-        "assets/people/equipo-tecnico.jpg",
-        "assets/people/alvaro-calvo.jpg",
-        "assets/people/inaki-ventureira.png",
-        "assets/people/andoni-dominguez.png",
-        "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
+        "https://skbcgipuzkoa.com/_assets/media/97a6783ec9cf78d71b8687c72b22aec4.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/b64af949fd66da52fe98781dd6a7a8e3.png",
+        "https://skbcgipuzkoa.com/_assets/media/dd1553aaf9b986308b39f645a91dd622.png",
+        "https://skbcgipuzkoa.com/_assets/media/35bebccd5601cdf4b77987531339c57c.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/fd6359a2b4113b64eba10febf4cf9008.png"
       ],
       "profiles": [
         "assets/people/alvaro-calvo.jpg",
         "assets/people/inaki-ventureira.png",
         "assets/people/andoni-dominguez.png",
         "assets/people/equipo-tecnico.jpg",
-        "assets/people/oskar-mateos.png",
-        "assets/people/asier-azurmendi.jpg",
-        "assets/people/igone-lasa.png",
-        "assets/people/inaki-iturrioz.jpg",
-        "assets/people/bharat-martin.png",
-        "assets/people/pablo-sanchez.png",
-        "assets/people/uxue-garikano.jpg",
-        "assets/people/jorge-redondo.jpg"
+        "https://skbcgipuzkoa.com/_assets/media/97a6783ec9cf78d71b8687c72b22aec4.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/35bebccd5601cdf4b77987531339c57c.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/b64af949fd66da52fe98781dd6a7a8e3.png",
+        "https://skbcgipuzkoa.com/_assets/media/dd1553aaf9b986308b39f645a91dd622.png",
+        "https://skbcgipuzkoa.com/_assets/media/fd6359a2b4113b64eba10febf4cf9008.png",
+        "https://skbcgipuzkoa.com/_assets/media/6e0809cb668fc2bc09365b69c61ebc45.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/e39f300b4482fb647d852167da384f29.jpg",
+        "https://skbcgipuzkoa.com/_assets/media/1fba977bea609178b96d3de02866e7d2.jpg"
       ],
       "people": {
         "alvaro": "assets/people/alvaro-calvo.jpg",
@@ -557,7 +557,7 @@ window.SKBC_CONTENT = {
         "secondary": "Ver horarios",
         "cards": [
           [
-            "5-18 años",
+            "5-13 años",
             "Martes y jueves · 17:30-18:30"
           ],
           [
