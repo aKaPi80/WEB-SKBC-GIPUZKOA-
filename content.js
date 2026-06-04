@@ -279,6 +279,34 @@ window.SKBC_CONTENT = {
             "description": ""
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-12-08",
+        "end": "2026-12-08",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": ""
+        },
+        "languages": {
+          "es": {
+            "title": "PUENTE DICIEMBRE",
+            "description": "Descripción del evento."
+          },
+          "eu": {
+            "title": "ABENDUKO ZUBIA",
+            "description": "Ekitaldiaren deskribapena."
+          },
+          "en": {
+            "title": "HOLYDAY",
+            "description": "Event description."
+          }
+        }
       }
     ],
     "galleryLinks": [
