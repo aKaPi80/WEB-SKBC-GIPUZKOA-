@@ -431,7 +431,7 @@ function renderEvents() {
     renderEvents();
   });
   editor.querySelectorAll("[data-add-event-date]").forEach((button) => {
-    button.addEventListener("click", () => addEventDate(Number(button.dataset.addEventDate)));
+    button.addEventListener("click", () => addEventDate(Number(button.dataset.addEventDate), button.dataset.date));
   });
   editor.querySelectorAll("[data-remove-event-date]").forEach((button) => {
     button.addEventListener("click", () => removeEventDate(Number(button.dataset.removeEventDate), button.dataset.date));
@@ -491,8 +491,11 @@ function eventTemplate(event, index) {
         <p>Úsalo para añadir días sueltos que no sigan la repetición normal.</p>
       </header>
       <div class="event-date-tool">
-        <input type="date" id="event-date-${index}" />
-        <button type="button" data-add-event-date="${index}">Añadir día</button>
+        <label for="event-date-${index}">
+          <span>Fecha concreta</span>
+          <input type="date" id="event-date-${index}" />
+        </label>
+        <button class="primary" type="button" data-add-event-date="${index}">Asignar día</button>
       </div>
       <div class="event-date-chips">
         ${dates.length ? dates.map((date) => `<span>${date}<button type="button" data-remove-event-date="${index}" data-date="${date}">×</button></span>`).join("") : `<p>No hay días sueltos añadidos.</p>`}
@@ -504,7 +507,7 @@ function eventTemplate(event, index) {
         <p>Si una fecha concreta no se hará, pulsa Excluir. No se borrará el evento, solo ese día.</p>
       </header>
       <div class="repeat-date-list">
-        ${repeatDates.length ? repeatDates.map((date) => `<span>${date}<button type="button" data-exclude-repeat-date="${index}" data-date="${date}">Excluir</button></span>`).join("") : `<p>Activa la repetición y define fecha desde/hasta para ver los días generados.</p>`}
+        ${repeatDates.length ? repeatDates.map((date) => `<span>${date}<button type="button" data-add-event-date="${index}" data-date="${date}">Añadir como día concreto</button><button type="button" data-exclude-repeat-date="${index}" data-date="${date}">Excluir</button></span>`).join("") : `<p>Activa la repetición y define fecha desde/hasta para ver los días generados.</p>`}
       </div>
       ${excludedDates.length ? `<h4>Días excluidos</h4><div class="repeat-date-list excluded">${excludedDates.map((date) => `<span>${date}<button type="button" data-restore-repeat-date="${index}" data-date="${date}">Restaurar</button></span>`).join("")}</div>` : ""}
     </article>
@@ -618,9 +621,9 @@ function removeEvent(index) {
   renderEvents();
 }
 
-function addEventDate(index) {
+function addEventDate(index, presetDate = "") {
   const input = document.querySelector(`#event-date-${index}`);
-  const value = input?.value;
+  const value = presetDate || input?.value;
   if (!value) {
     setStatus("Elige primero una fecha para añadirla al evento.", "danger");
     return;

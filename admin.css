@@ -443,9 +443,10 @@ button.danger {
 }
 
 .event-date-tool {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) auto;
   gap: 10px;
+  align-items: end;
   padding: 18px 18px 8px;
 }
 
@@ -517,12 +518,26 @@ button.danger {
   padding: 0 18px;
 }
 
+.event-date-tool label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .event-date-tool input {
+  width: 100%;
   min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0 12px;
   font: inherit;
+}
+
+.event-date-tool .primary {
+  min-height: 42px;
+  align-self: end;
 }
 
 .event-date-chips {
@@ -555,6 +570,12 @@ button.danger {
 .event-date-chips p {
   margin: 0;
   color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .event-date-tool {
+    grid-template-columns: 1fr;
+  }
 }
 
 .advanced-editor {
