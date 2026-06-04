@@ -1019,7 +1019,7 @@ async function uploadImageFile(file) {
   const assetPath = `assets/uploads/${Date.now()}-${safeBase}.${extension}`;
   const content = await fileToBase64(file);
 
-  if (location.hostname.endsWith("github.io")) {
+  if (shouldUseGithubApi()) {
     const token = await githubToken();
     await githubUploadFile(assetPath, content, token);
     return assetPath;
@@ -1093,7 +1093,7 @@ document.querySelector("#publish").addEventListener("click", async () => {
 
   try {
     setStatus("Publicando en GitHub...", "warning");
-    if (location.hostname.endsWith("github.io")) {
+    if (shouldUseGithubApi()) {
       const result = await publishWithGithubApi(data);
       dirty = false;
       setStatus(result.message, "ok");
@@ -1137,6 +1137,10 @@ async function publishWithGithubApi(contentData) {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
     url: `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`
   };
+}
+
+function shouldUseGithubApi() {
+  return location.hostname.endsWith("github.io") || location.hostname.endsWith("skbcgipuzkoa.com");
 }
 
 async function githubToken() {
