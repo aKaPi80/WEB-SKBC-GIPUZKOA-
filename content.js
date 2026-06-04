@@ -263,7 +263,7 @@ window.SKBC_CONTENT = {
           "enabled": true,
           "start": "2026-09-05",
           "until": "2026-12-31",
-          "everyDays": "15"
+          "everyDays": "14"
         },
         "languages": {
           "es": {
@@ -278,7 +278,11 @@ window.SKBC_CONTENT = {
             "title": "BUSEN SKBC GIPUZKOA",
             "description": ""
           }
-        }
+        },
+        "excludedDates": [
+          "2026-12-12",
+          "2026-12-26"
+        ]
       },
       {
         "enabled": true,
