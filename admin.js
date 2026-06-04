@@ -6,6 +6,7 @@ const GITHUB_BRANCH = "main";
 
 let data = load();
 let currentPanel = "settings";
+let currentEventIndex = 0;
 let dirty = false;
 
 const panelTitles = {
@@ -388,12 +389,35 @@ function renderCustom() {
 function renderEvents() {
   const editor = document.querySelector("#editor");
   const events = data.settings.events || [];
+  if (currentEventIndex > events.length - 1) currentEventIndex = Math.max(0, events.length - 1);
+  const selected = events[currentEventIndex];
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions"><button id="add-event" class="primary" type="button">Añadir evento</button></div>`)}
-    ${events.length ? events.map(eventTemplate).join("") : `<article class="editor-group"><header><h3>No hay eventos</h3><p>Pulsa Añadir evento para crear el calendario del club.</p></header></article>`}
+    ${events.length ? `
+      <div class="events-workspace">
+        <div class="events-editor">
+          ${eventTemplate(selected, currentEventIndex)}
+        </div>
+        <aside class="events-sidebar">
+          <header>
+            <h3>Eventos</h3>
+            <p>Resumen rápido con colores asignados.</p>
+          </header>
+          <div class="events-mini-list">
+            ${events.map(eventMiniCard).join("")}
+          </div>
+        </aside>
+      </div>
+    ` : `<article class="editor-group"><header><h3>No hay eventos</h3><p>Pulsa Añadir evento para crear el calendario del club.</p></header></article>`}
   `;
   bindFields(editor);
   document.querySelector("#add-event").addEventListener("click", addEvent);
+  editor.querySelectorAll("[data-select-event]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentEventIndex = Number(button.dataset.selectEvent);
+      renderEvents();
+    });
+  });
   editor.querySelectorAll("[data-remove-event]").forEach((button) => {
     button.addEventListener("click", () => removeEvent(Number(button.dataset.removeEvent)));
   });
@@ -453,6 +477,40 @@ function eventTemplate(event, index) {
   </div>`;
 }
 
+function eventSummary(event) {
+  const title = event.languages?.es?.title || "Evento sin título";
+  const dates = Array.isArray(event.dates) && event.dates.length ? event.dates.slice(0, 3).join(", ") : "";
+  const extraDates = Array.isArray(event.dates) && event.dates.length > 3 ? ` +${event.dates.length - 3}` : "";
+  const range = event.start ? `${event.start}${event.end && event.end !== event.start ? ` / ${event.end}` : ""}` : "Sin fecha";
+  const repeat = event.repeat?.enabled ? `Cada ${event.repeat.everyDays || 15} días` : "";
+  return {
+    title,
+    date: dates ? `${dates}${extraDates}` : range,
+    repeat,
+    location: event.location || "",
+    color: event.color || "#1f6fa9",
+    enabled: event.enabled !== false
+  };
+}
+
+function eventMiniCard(event, index) {
+  const summary = eventSummary(event);
+  return `<article class="event-mini ${index === currentEventIndex ? "active" : ""}" style="--event-color:${summary.color}">
+    <button type="button" data-select-event="${index}">
+      <i></i>
+      <span>
+        <strong>${summary.title}</strong>
+        <small>${summary.date}${summary.repeat ? ` · ${summary.repeat}` : ""}</small>
+        ${summary.location ? `<small>${summary.location}</small>` : ""}
+      </span>
+    </button>
+    <div class="event-mini__actions">
+      <span>${summary.enabled ? "Activo" : "Oculto"}</span>
+      <button type="button" data-remove-event="${index}">Eliminar</button>
+    </div>
+  </article>`;
+}
+
 function addEvent() {
   if (!data.settings.events) data.settings.events = [];
   const today = new Date();
@@ -476,6 +534,7 @@ function addEvent() {
       en: { title: "New event", description: "Event description." }
     }
   });
+  currentEventIndex = data.settings.events.length - 1;
   markDirty();
   renderEvents();
 }
@@ -483,6 +542,7 @@ function addEvent() {
 function removeEvent(index) {
   if (!confirm("¿Eliminar este evento?")) return;
   data.settings.events.splice(index, 1);
+  currentEventIndex = Math.max(0, Math.min(currentEventIndex, data.settings.events.length - 1));
   markDirty();
   renderEvents();
 }

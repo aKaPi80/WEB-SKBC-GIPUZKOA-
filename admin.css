@@ -304,6 +304,129 @@ button.danger {
   margin-inline: 18px;
 }
 
+.events-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
+}
+
+.events-editor {
+  min-width: 0;
+}
+
+.events-sidebar {
+  position: sticky;
+  top: 106px;
+  max-height: calc(100vh - 126px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.events-sidebar header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fbfcfa;
+}
+
+.events-sidebar h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.events-sidebar p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.events-mini-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.event-mini {
+  border: 1px solid var(--line);
+  border-left: 8px solid var(--event-color);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.event-mini.active {
+  border-color: rgba(31, 111, 169, .42);
+  box-shadow: 0 12px 30px rgba(31, 111, 169, .12);
+}
+
+.event-mini > button {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  padding: 12px;
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+}
+
+.event-mini i {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  outline: 1px solid rgba(16, 17, 19, .18);
+  background: var(--event-color);
+}
+
+.event-mini strong,
+.event-mini small {
+  display: block;
+}
+
+.event-mini strong {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.event-mini small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.event-mini__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 0 10px 10px 46px;
+}
+
+.event-mini__actions span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.event-mini__actions button {
+  min-height: 30px;
+  border-color: rgba(180, 35, 24, .2);
+  color: #b42318;
+  background: #fff5f5;
+  font-size: 12px;
+}
+
 .event-date-tool {
   display: flex;
   flex-wrap: wrap;
@@ -407,5 +530,14 @@ button.danger {
 
   .field-grid {
     grid-template-columns: 1fr;
+  }
+
+  .events-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .events-sidebar {
+    position: static;
+    max-height: none;
   }
 }
