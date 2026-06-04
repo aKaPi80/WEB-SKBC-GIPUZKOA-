@@ -514,24 +514,24 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-06",
+        "date": "2026-06-04",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "CURSO DE VERANO SKBC GIPUZKOA",
-            "text": "Ya esta aqui el curso de SKBC GIPUZKOA! 2 dias de entrenamiento en el que el objetivo es disfrutar, aprender, divertirse y conocer aun mas el Shorinji Kempo!"
+            "title": "Calendario anual disponible",
+            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
           },
           "eu": {
-            "title": "UDAKO IKASTAROA SKBC GIPUZKOA",
-            "text": "SKBC GIPUZKOA ikastaroa hemen da! Bi eguneko prestakuntza, non helburua gozatzea, ikastea, ondo pasatzea eta Shorinji Kempoa are gehiago ezagutzea!"
+            "title": "Urteko egutegia eskuragarri",
+            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
           },
           "en": {
-            "title": "SUMMER SKBC GIPUZKOA SEMINAR",
-            "text": "The SKBC GIPUZKOA course is here! Two days of training where the goal is to enjoy, learn, have fun and get to know Shorinji Kempo even more!"
+            "title": "Annual calendar available",
+            "text": "You can now check upcoming courses, seminars and club activities on the website."
           }
         },
-        "image": "assets/uploads/1780606291328-curso-skbc.jpg"
+        "image": "assets/uploads/1780606250233-curso-skbc.jpg"
       }
     ]
   },
@@ -762,8 +762,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "Instagram como fuente principal de noticias",
-        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
+        "title": "SIGUENOS EN INSTAGRAM, FACEBOOK Y YOUTUBE",
+        "text": "SI QUIERES ESTAR AL DIA DE TODAS LAS NOVEDADES Y NOTICIAS SIGUENOS EN NUESTRAS REDES SOCIALES!",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
