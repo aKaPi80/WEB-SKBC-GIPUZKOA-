@@ -11,8 +11,8 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "socialFeeds": {
-      "instagramUrls": "",
-      "youtubeUrls": ""
+      "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      "youtubeUrls": "https://youtu.be/gcqSNxgEf74?si=nOr2_fWOr3nOIakt"
     },
     "merch": {
       "enabled": true,
