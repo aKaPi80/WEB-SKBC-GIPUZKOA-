@@ -470,15 +470,15 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780604041486-manji.jpg",
-      "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
-      "adults": "assets/uploads/1780604082854-adultos.jpg",
+      "hero": "assets/uploads/1780601440879-manji.heic",
+      "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
+      "adults": "assets/uploads/1780601631346-adultos.heic",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
-        "assets/uploads/1780600913705-grupo-ninos.heic",
-        "assets/uploads/1780601440879-manji.heic",
-        "assets/uploads/1780601631346-adultos.heic",
         "assets/people/equipo-tecnico.jpg",
+        "assets/people/alvaro-calvo.jpg",
+        "assets/people/inaki-ventureira.png",
+        "assets/people/andoni-dominguez.png",
         "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       ],
       "profiles": [
