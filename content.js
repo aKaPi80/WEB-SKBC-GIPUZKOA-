@@ -14,6 +14,158 @@ window.SKBC_CONTENT = {
       "instagramUrls": "",
       "youtubeUrls": ""
     },
+    "merch": {
+      "enabled": true,
+      "catalogUrl": "https://www.jhktshirt.com/es/",
+      "note": "Pedido sujeto a confirmación de disponibilidad. El pago se realiza en el dojo o tras hablar con SKBC GIPUZKOA.",
+      "products": [
+        {
+          "enabled": true,
+          "name": "Camiseta SKBC impresa",
+          "jhkName": "Prenda base JHK",
+          "jhkRef": "REF pendiente",
+          "jhkUrl": "https://www.jhktshirt.com/es/",
+          "image": "assets/logo-skbc.png",
+          "price": "10",
+          "personalization": "Impresión SKBC",
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+            "3XL"
+          ],
+          "colors": [
+            {
+              "code": "WH",
+              "name": "Blanco",
+              "hex": "#ffffff"
+            },
+            {
+              "code": "BK",
+              "name": "Negro",
+              "hex": "#111111"
+            },
+            {
+              "code": "NY",
+              "name": "Navy",
+              "hex": "#17233f"
+            },
+            {
+              "code": "RD",
+              "name": "Rojo",
+              "hex": "#c52727"
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "name": "Polo SKBC impreso",
+          "jhkName": "Prenda base JHK",
+          "jhkRef": "REF pendiente",
+          "jhkUrl": "https://www.jhktshirt.com/es/",
+          "image": "assets/logo-skbc.png",
+          "price": "15",
+          "personalization": "Impresión SKBC",
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+            "3XL"
+          ],
+          "colors": [
+            {
+              "code": "WH",
+              "name": "Blanco",
+              "hex": "#ffffff"
+            },
+            {
+              "code": "BK",
+              "name": "Negro",
+              "hex": "#111111"
+            },
+            {
+              "code": "NY",
+              "name": "Navy",
+              "hex": "#17233f"
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "name": "Prenda SKBC bordada",
+          "jhkName": "Prenda base JHK",
+          "jhkRef": "REF pendiente",
+          "jhkUrl": "https://www.jhktshirt.com/es/",
+          "image": "assets/logo-skbc.png",
+          "price": "30",
+          "personalization": "Bordado SKBC",
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+            "3XL"
+          ],
+          "colors": [
+            {
+              "code": "BK",
+              "name": "Negro",
+              "hex": "#111111"
+            },
+            {
+              "code": "NY",
+              "name": "Navy",
+              "hex": "#17233f"
+            },
+            {
+              "code": "GY",
+              "name": "Gris",
+              "hex": "#8f949b"
+            }
+          ]
+        },
+        {
+          "enabled": true,
+          "name": "Sudadera SKBC bordada",
+          "jhkName": "Prenda base JHK",
+          "jhkRef": "REF pendiente",
+          "jhkUrl": "https://www.jhktshirt.com/es/",
+          "image": "assets/logo-skbc.png",
+          "price": "35",
+          "personalization": "Bordado SKBC",
+          "sizes": [
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+            "3XL"
+          ],
+          "colors": [
+            {
+              "code": "BK",
+              "name": "Negro",
+              "hex": "#111111"
+            },
+            {
+              "code": "NY",
+              "name": "Navy",
+              "hex": "#17233f"
+            },
+            {
+              "code": "GY",
+              "name": "Gris",
+              "hex": "#8f949b"
+            }
+          ]
+        }
+      ]
+    },
     "customSections": [],
     "events": [
       {
@@ -179,6 +331,7 @@ window.SKBC_CONTENT = {
         "Horarios",
         "Calendario",
         "Galer?a",
+        "Merchandising",
         "Contacto"
       ],
       "ctaShort": "Probar gratis",
@@ -398,13 +551,39 @@ window.SKBC_CONTENT = {
       "merch": {
         "eyebrow": "Merchandising",
         "title": "Material del club",
-        "text": "SKBC GIPUZKOA es una asociación sin ánimo de lucro. Los ingresos obtenidos se destinan íntegramente al mantenimiento del club, material y organización de actividades.",
+        "text": "Reserva ropa del club basada en prendas del catálogo JHK. El pedido no se paga online: lo revisamos contigo y se paga en el dojo o tras confirmar la forma de pago.",
         "items": [
           "Camiseta impresa · 10€",
           "Polo impreso · 15€",
           "Prenda bordada · 30€",
           "Sudadera bordada · 35€"
-        ]
+        ],
+        "catalog": "Ver catálogo JHK",
+        "base": "Base JHK",
+        "ref": "REF",
+        "personalization": "Personalización",
+        "size": "Talla",
+        "color": "Color",
+        "quantity": "Cantidad",
+        "add": "Añadir al pedido",
+        "orderTitle": "Resumen del pedido",
+        "emptyOrder": "Aún no has añadido productos.",
+        "remove": "Quitar",
+        "total": "Total estimado",
+        "buyerTitle": "Datos para confirmar el pedido",
+        "name": "Nombre",
+        "phone": "Teléfono",
+        "email": "Email",
+        "payment": "Forma de pago preferida",
+        "paymentDojo": "Pagaré en el dojo",
+        "paymentContact": "Contactad conmigo para cerrar el pago",
+        "comments": "Comentarios",
+        "send": "Enviar pedido por WhatsApp",
+        "customTitle": "Otra prenda del catálogo JHK",
+        "customText": "Si quieres otra prenda personalizable de JHK, pega aquí la referencia o enlace y la revisamos contigo.",
+        "customReference": "Referencia o enlace JHK",
+        "customDetails": "Color, talla, cantidad y tipo de personalización",
+        "noteTitle": "Importante"
       },
       "contact": {
         "eyebrow": "Contacto",
@@ -440,6 +619,7 @@ window.SKBC_CONTENT = {
         "Ordutegiak",
         "Egutegia",
         "Galeria",
+        "Merchandising",
         "Kontaktua"
       ],
       "ctaShort": "Doan probatu",
@@ -659,13 +839,39 @@ window.SKBC_CONTENT = {
       "merch": {
         "eyebrow": "Merchandising",
         "title": "Klubeko materiala",
-        "text": "SKBC GIPUZKOA irabazi asmorik gabeko elkartea da. Lortutako diru-sarrerak klubaren mantentzera, materialera eta jardueren antolaketara bideratzen dira osorik.",
+        "text": "JHK katalogoko oinarrizko jantziekin egindako klubeko arropa erreserbatu. Eskaera ez da online ordaintzen: zurekin berrikusi eta dojon edo adostutako moduan ordainduko da.",
         "items": [
           "Kamiseta inprimatua · 10€",
           "Poloa inprimatua · 15€",
           "Jantzi bordatua · 30€",
           "Sudadera bordatua · 35€"
-        ]
+        ],
+        "catalog": "JHK katalogoa ikusi",
+        "base": "JHK oinarria",
+        "ref": "REF",
+        "personalization": "Pertsonalizazioa",
+        "size": "Neurria",
+        "color": "Kolorea",
+        "quantity": "Kopurua",
+        "add": "Eskaerara gehitu",
+        "orderTitle": "Eskaeraren laburpena",
+        "emptyOrder": "Oraindik ez duzu produkturik gehitu.",
+        "remove": "Kendu",
+        "total": "Gutxi gorabeherako guztira",
+        "buyerTitle": "Eskaera baieztatzeko datuak",
+        "name": "Izena",
+        "phone": "Telefonoa",
+        "email": "Emaila",
+        "payment": "Ordainketa aukera",
+        "paymentDojo": "Dojon ordainduko dut",
+        "paymentContact": "Jarri nirekin harremanetan ordainketa ixteko",
+        "comments": "Oharrak",
+        "send": "Bidali eskaera WhatsApp bidez",
+        "customTitle": "JHK katalogoko beste jantzi bat",
+        "customText": "JHKko beste jantzi pertsonalizagarri bat nahi baduzu, jarri erreferentzia edo esteka eta zurekin berrikusiko dugu.",
+        "customReference": "JHK erreferentzia edo esteka",
+        "customDetails": "Kolorea, neurria, kopurua eta pertsonalizazio mota",
+        "noteTitle": "Garrantzitsua"
       },
       "contact": {
         "eyebrow": "Kontaktua",
@@ -701,6 +907,7 @@ window.SKBC_CONTENT = {
         "Schedule",
         "Calendar",
         "Gallery",
+        "Merchandising",
         "Contact"
       ],
       "ctaShort": "Try for free",
@@ -919,14 +1126,40 @@ window.SKBC_CONTENT = {
       },
       "merch": {
         "eyebrow": "Merchandising",
-        "title": "Club material",
-        "text": "SKBC GIPUZKOA is a non-profit association. Income is fully used for club maintenance, material and organisation of activities.",
+        "title": "Club kit",
+        "text": "Reserve club clothing based on garments from the JHK catalogue. There is no online payment: we review the order with you and payment is made at the dojo or after confirming the payment method.",
         "items": [
           "Printed T-shirt · 10€",
           "Printed polo · 15€",
           "Embroidered garment · 30€",
           "Embroidered hoodie · 35€"
-        ]
+        ],
+        "catalog": "View JHK catalogue",
+        "base": "JHK base",
+        "ref": "REF",
+        "personalization": "Customisation",
+        "size": "Size",
+        "color": "Colour",
+        "quantity": "Quantity",
+        "add": "Add to order",
+        "orderTitle": "Order summary",
+        "emptyOrder": "No products added yet.",
+        "remove": "Remove",
+        "total": "Estimated total",
+        "buyerTitle": "Details to confirm the order",
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "payment": "Preferred payment option",
+        "paymentDojo": "I will pay at the dojo",
+        "paymentContact": "Contact me to arrange payment",
+        "comments": "Comments",
+        "send": "Send order by WhatsApp",
+        "customTitle": "Another garment from the JHK catalogue",
+        "customText": "If you want another customisable JHK garment, paste the reference or link and we will review it with you.",
+        "customReference": "JHK reference or link",
+        "customDetails": "Colour, size, quantity and customisation type",
+        "noteTitle": "Important"
       },
       "contact": {
         "eyebrow": "Contact",

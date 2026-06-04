@@ -29,6 +29,8 @@ panelTitles.events = "Calendario de eventos";
 labels.events = "Calendario";
 panelTitles.news = "Próximas noticias";
 labels.news = "Noticias";
+panelTitles.merch = "Tienda merchandising";
+labels.merch = "Tienda";
 
 const settingsGroups = [
   {
@@ -180,7 +182,11 @@ function languageGroups(lang) {
         ["Texto YouTube", [...root, "social", "youtube"], "input"],
         ["TÃ­tulo merchandising", [...root, "merch", "title"], "input"],
         ["Texto merchandising", [...root, "merch", "text"], "textarea"],
-        ["Productos merchandising", [...root, "merch", "items"], "array"],
+        ["Botón catálogo JHK", [...root, "merch", "catalog"], "input"],
+        ["Título pedido", [...root, "merch", "orderTitle"], "input"],
+        ["Título datos comprador", [...root, "merch", "buyerTitle"], "input"],
+        ["Texto otra prenda JHK", [...root, "merch", "customText"], "textarea"],
+        ["Botón enviar pedido", [...root, "merch", "send"], "input"],
         ["TÃ­tulo contacto", [...root, "contact", "title"], "input"],
         ["Texto contacto", [...root, "contact", "text"], "textarea"],
         ["Opciones formulario", [...root, "contact", "options"], "array"],
@@ -238,6 +244,16 @@ function parseFieldValue(value, type) {
       })
       .filter((item) => item.label && item.url);
   }
+  if (type === "colorList") {
+    return value.split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [code, name, hex] = line.split("|").map((part) => part.trim());
+        return { code, name, hex: hex || "#d9dee7" };
+      })
+      .filter((item) => item.code || item.name);
+  }
   if (type === "matrix") {
     return value.split(/\r?\n/).map((line) => line.split("|").map((part) => part.trim()).filter(Boolean)).filter((row) => row.length);
   }
@@ -248,6 +264,7 @@ function formatFieldValue(value, type) {
   if (type === "booleanText") return value === false ? "false" : "true";
   if (type === "array") return Array.isArray(value) ? value.join("\n") : "";
   if (type === "linkList") return Array.isArray(value) ? value.map((item) => `${item.label || ""} | ${item.url || ""}`).join("\n") : "";
+  if (type === "colorList") return Array.isArray(value) ? value.map((item) => `${item.code || ""} | ${item.name || ""} | ${item.hex || "#d9dee7"}`).join("\n") : "";
   if (type === "matrix") return Array.isArray(value) ? value.map((row) => Array.isArray(row) ? row.join(" | ") : row).join("\n") : "";
   return value ?? "";
 }
@@ -271,6 +288,7 @@ function render() {
   if (currentPanel === "custom") return renderCustom();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();
+  if (currentPanel === "merch") return renderMerch();
   if (currentPanel === "advanced") return renderAdvanced();
   renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
 }
@@ -321,9 +339,9 @@ function isImageField(label, path) {
 }
 
 function controlTemplate(id, encodedPath, value, type) {
-  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList") {
+  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList") {
     const rows = type === "matrix" ? 6 : 4;
-    const hint = type === "matrix" || type === "linkList" ? `<small>Una línea por elemento. Usa | para separar nombre y URL.</small>` : "";
+    const hint = type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
     return `${hint}<textarea id="${id}" data-type="${type}" data-path="${encodedPath}" rows="${rows}">${escapeHtml(value)}</textarea>`;
   }
   if (type === "date") {
@@ -491,6 +509,82 @@ function removeNews(index) {
   data.settings.news.splice(index, 1);
   markDirty();
   renderNews();
+}
+
+function renderMerch() {
+  const editor = document.querySelector("#editor");
+  if (!data.settings.merch) data.settings.merch = { enabled: true, products: [] };
+  const products = data.settings.merch.products || [];
+  const intro = `<div class="intro-actions"><button id="add-merch-product" class="primary" type="button">Añadir producto</button></div>`;
+  const general = groupTemplate({
+    title: "Configuración de tienda",
+    help: "La tienda funciona como reserva: no cobra online. El pedido se envía por WhatsApp para confirmarlo contigo.",
+    fields: [
+      ["Tienda activa", ["settings", "merch", "enabled"], "booleanText"],
+      ["Enlace catálogo JHK", ["settings", "merch", "catalogUrl"], "input"],
+      ["Nota de pago/confirmación", ["settings", "merch", "note"], "textarea"]
+    ]
+  });
+  editor.innerHTML = `
+    ${renderIntro(intro)}
+    ${general}
+    ${products.length ? products.map(merchProductTemplate).join("") : `<article class="editor-group"><header><h3>No hay productos</h3><p>Pulsa Añadir producto para crear la tienda.</p></header></article>`}
+  `;
+  bindFields(editor);
+  document.querySelector("#add-merch-product").addEventListener("click", addMerchProduct);
+  editor.querySelectorAll("[data-remove-merch-product]").forEach((button) => {
+    button.addEventListener("click", () => removeMerchProduct(Number(button.dataset.removeMerchProduct)));
+  });
+}
+
+function merchProductTemplate(product, index) {
+  const base = ["settings", "merch", "products", index];
+  const groups = [{
+    title: `Producto ${index + 1}: ${product.name || "Sin nombre"}`,
+    help: "Usa la referencia JHK real cuando la tengas. Colores: CODIGO | Nombre | #hex. Tallas: una talla por línea.",
+    fields: [
+      ["Activo", [...base, "enabled"], "booleanText"],
+      ["Nombre visible", [...base, "name"], "input"],
+      ["Nombre prenda JHK", [...base, "jhkName"], "input"],
+      ["Referencia JHK", [...base, "jhkRef"], "input"],
+      ["Enlace ficha JHK", [...base, "jhkUrl"], "input"],
+      ["Imagen producto", [...base, "image"], "input"],
+      ["Precio SKBC", [...base, "price"], "input"],
+      ["Personalización", [...base, "personalization"], "input"],
+      ["Tallas disponibles", [...base, "sizes"], "array"],
+      ["Colores JHK", [...base, "colors"], "colorList"]
+    ]
+  }];
+  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-merch-product="${index}" type="button">Eliminar este producto</button></div>`;
+}
+
+function addMerchProduct() {
+  if (!data.settings.merch) data.settings.merch = { enabled: true, products: [] };
+  if (!data.settings.merch.products) data.settings.merch.products = [];
+  data.settings.merch.products.push({
+    enabled: true,
+    name: "Nuevo producto SKBC",
+    jhkName: "Prenda base JHK",
+    jhkRef: "REF pendiente",
+    jhkUrl: data.settings.merch.catalogUrl || "https://www.jhktshirt.com/es/",
+    image: "assets/logo-skbc.png",
+    price: "0",
+    personalization: "Personalización SKBC",
+    sizes: ["S", "M", "L", "XL"],
+    colors: [
+      { code: "WH", name: "Blanco", hex: "#ffffff" },
+      { code: "BK", name: "Negro", hex: "#111111" }
+    ]
+  });
+  markDirty();
+  renderMerch();
+}
+
+function removeMerchProduct(index) {
+  if (!confirm("¿Eliminar este producto de la tienda?")) return;
+  data.settings.merch.products.splice(index, 1);
+  markDirty();
+  renderMerch();
 }
 
 function customSectionTemplate(section, index) {

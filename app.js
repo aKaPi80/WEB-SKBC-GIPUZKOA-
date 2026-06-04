@@ -2,6 +2,7 @@ const STORAGE_KEY = "skbc_content_v2";
 const state = {
   content: loadContent(),
   lang: new URLSearchParams(location.search).get("lang") || localStorage.getItem("skbc_lang") || "es",
+  merchCart: []
 };
 
 function loadContent() {
@@ -161,9 +162,9 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", news: "Noticias", contact: "Contacto" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", news: "Albisteak", contact: "Kontaktua" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", news: "News", contact: "Contact" }
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", news: "Noticias", merch: "Merchandising", contact: "Contacto" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", news: "Albisteak", merch: "Merchandising", contact: "Kontaktua" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", news: "News", merch: "Merchandising", contact: "Contact" }
 };
 
 function uniqueNavItems(items) {
@@ -311,6 +312,101 @@ function upcomingNewsSection(settings, copy) {
   </section>`;
 }
 
+function money(value) {
+  const number = Number(String(value || "0").replace(",", "."));
+  return Number.isFinite(number) ? `${number.toFixed(number % 1 ? 2 : 0)}€` : `${value}€`;
+}
+
+function merchProducts(settings) {
+  return (settings.merch?.products || []).filter((product) => product && product.enabled !== false);
+}
+
+function colorOption(color) {
+  const label = `${color.code || ""}${color.code ? " · " : ""}${color.name || ""}`.trim();
+  return `<option value="${label}">${label}</option>`;
+}
+
+function merchProductCard(product, index, copy) {
+  const sizes = product.sizes?.length ? product.sizes : ["S", "M", "L", "XL"];
+  const colors = product.colors?.length ? product.colors : [{ code: "", name: "Consultar", hex: "#d9dee7" }];
+  return `<article class="merch-product">
+    <div class="merch-product__image">
+      <img src="${product.image || "assets/logo-skbc.png"}" alt="${product.name}" />
+    </div>
+    <div class="merch-product__body">
+      <span>${copy.merch.base}: ${product.jhkName || "JHK"} · ${copy.merch.ref}: ${product.jhkRef || "Consultar"}</span>
+      <h3>${product.name}</h3>
+      <p>${copy.merch.personalization}: ${product.personalization || "SKBC"}</p>
+      <div class="swatches">
+        ${colors.map((color) => `<i title="${color.code || ""} ${color.name || ""}" style="--swatch:${color.hex || "#d9dee7"}"></i>`).join("")}
+      </div>
+      <strong>${money(product.price)}</strong>
+      <div class="merch-controls">
+        <label>${copy.merch.size}<select data-merch-size="${index}">${sizes.map((size) => `<option>${size}</option>`).join("")}</select></label>
+        <label>${copy.merch.color}<select data-merch-color="${index}">${colors.map(colorOption).join("")}</select></label>
+        <label>${copy.merch.quantity}<input type="number" min="1" value="1" data-merch-quantity="${index}" /></label>
+      </div>
+      <div class="merch-actions">
+        <button class="button" type="button" data-add-merch="${index}">${copy.merch.add}</button>
+        <a href="${product.jhkUrl || state.content.settings.merch?.catalogUrl}" target="_blank" rel="noreferrer">${copy.merch.catalog}</a>
+      </div>
+    </div>
+  </article>`;
+}
+
+function merchTotal() {
+  return state.merchCart.reduce((total, item) => total + Number(item.price || 0) * Number(item.quantity || 1), 0);
+}
+
+function merchCartHtml(copy) {
+  if (!state.merchCart.length) return `<p class="merch-empty">${copy.merch.emptyOrder}</p>`;
+  return `<ul class="merch-cart-list">
+    ${state.merchCart.map((item, index) => `<li>
+      <span><strong>${item.name}</strong>${item.size} · ${item.color} · x${item.quantity}</span>
+      <button type="button" data-remove-merch="${index}">${copy.merch.remove}</button>
+    </li>`).join("")}
+  </ul>
+  <p class="merch-total">${copy.merch.total}: <strong>${money(merchTotal())}</strong></p>`;
+}
+
+function merchSection(settings, copy) {
+  if (settings.merch?.enabled === false) return "";
+  const products = merchProducts(settings);
+  return `<section class="section merch-section" id="merchandising">
+    <div class="section-heading">
+      <p class="eyebrow">${copy.merch.eyebrow}</p>
+      <h2>${copy.merch.title}</h2>
+      <p>${copy.merch.text}</p>
+    </div>
+    <div class="merch-layout">
+      <div class="merch-catalog">
+        ${products.map((product, index) => merchProductCard(product, index, copy)).join("")}
+        <article class="merch-custom">
+          <h3>${copy.merch.customTitle}</h3>
+          <p>${copy.merch.customText}</p>
+          <a class="button secondary" href="${settings.merch?.catalogUrl || "https://www.jhktshirt.com/es/"}" target="_blank" rel="noreferrer">${copy.merch.catalog}</a>
+        </article>
+      </div>
+      <aside class="merch-order">
+        <h3>${copy.merch.orderTitle}</h3>
+        <div id="merchCart">${merchCartHtml(copy)}</div>
+        <form class="merch-form">
+          <h4>${copy.merch.buyerTitle}</h4>
+          <label>${copy.merch.name}<input name="name" required /></label>
+          <label>${copy.merch.phone}<input name="phone" required /></label>
+          <label>${copy.merch.email}<input name="email" type="email" /></label>
+          <label>${copy.merch.payment}<select name="payment"><option>${copy.merch.paymentDojo}</option><option>${copy.merch.paymentContact}</option></select></label>
+          <label>${copy.merch.customReference}<input name="customReference" /></label>
+          <label>${copy.merch.customDetails}<textarea name="customDetails" rows="3"></textarea></label>
+          <label>${copy.merch.comments}<textarea name="comments" rows="3"></textarea></label>
+          <p><strong>${copy.merch.noteTitle}:</strong> ${settings.merch?.note || ""}</p>
+          <button class="button" type="submit">${copy.merch.send}</button>
+        </form>
+      </aside>
+    </div>
+  </section>`;
+}
+
 function parsePerson(person) {
   if (Array.isArray(person)) {
     return { name: person[0], role: person[1], text: person[2] || "" };
@@ -392,6 +488,7 @@ function renderNav(copy) {
     { label: labels.calendar, href: "#calendario" },
     { label: labels.gallery, href: "#galeria" },
     { label: labels.news, href: "#noticias" },
+    { label: labels.merch, href: "#merchandising" },
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
@@ -573,10 +670,7 @@ function render() {
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-heading"><p class="eyebrow">${copy.merch.eyebrow}</p><h2>${copy.merch.title}</h2><p>${copy.merch.text}</p></div>
-      <div class="link-list">${copy.merch.items.map((item) => `<a href="${whatsappLink(item)}" target="_blank" rel="noreferrer">${item}</a>`).join("")}</div>
-    </section>
+    ${merchSection(settings, copy)}
 
     ${customSections(settings)}
 
@@ -610,6 +704,7 @@ function render() {
   });
   bindProfiles();
   bindCalendar();
+  bindMerch();
 }
 
 function bindProfiles() {
@@ -639,6 +734,59 @@ function bindCalendar() {
       }
       render();
     });
+  });
+}
+
+function bindMerch() {
+  const products = merchProducts(state.content.settings);
+  document.querySelectorAll("[data-add-merch]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.addMerch);
+      const product = products[index];
+      if (!product) return;
+      const quantity = Math.max(1, Number(document.querySelector(`[data-merch-quantity="${index}"]`)?.value || 1));
+      state.merchCart.push({
+        name: product.name,
+        ref: product.jhkRef || "",
+        price: Number(product.price || 0),
+        size: document.querySelector(`[data-merch-size="${index}"]`)?.value || "",
+        color: document.querySelector(`[data-merch-color="${index}"]`)?.value || "",
+        quantity
+      });
+      render();
+      document.querySelector("#merchandising")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  document.querySelectorAll("[data-remove-merch]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.merchCart.splice(Number(button.dataset.removeMerch), 1);
+      render();
+      document.querySelector("#merchandising")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  document.querySelector(".merch-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const lines = [
+      "Nuevo pedido merchandising SKBC GIPUZKOA",
+      "",
+      `Nombre: ${form.get("name")}`,
+      `Teléfono: ${form.get("phone")}`,
+      `Email: ${form.get("email") || "No indicado"}`,
+      "",
+      "Productos SKBC:",
+      ...(state.merchCart.length ? state.merchCart.map((item) => `- ${item.name} · REF ${item.ref || "consultar"} · ${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity))}`) : ["- Sin productos SKBC directos"]),
+      "",
+      `Total estimado: ${money(merchTotal())}`,
+      "",
+      "Producto personalizado JHK:",
+      `Referencia/enlace: ${form.get("customReference") || "No indicado"}`,
+      `Detalles: ${form.get("customDetails") || "No indicado"}`,
+      "",
+      `Forma de pago: ${form.get("payment")}`,
+      `Comentarios: ${form.get("comments") || "Sin comentarios"}`
+    ];
+    window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
   });
 }
 
