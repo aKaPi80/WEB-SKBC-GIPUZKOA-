@@ -470,9 +470,9 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780601440879-manji.heic",
-      "kids": "assets/uploads/1780600913705-grupo-ninos.heic",
-      "adults": "assets/uploads/1780601631346-adultos.heic",
+      "hero": "assets/uploads/1780604041486-manji.jpg",
+      "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
+      "adults": "assets/uploads/1780604082854-adultos.jpg",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
         "assets/uploads/1780600913705-grupo-ninos.heic",
