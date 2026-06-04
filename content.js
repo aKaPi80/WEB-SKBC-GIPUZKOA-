@@ -369,6 +369,34 @@ window.SKBC_CONTENT = {
             "description": "2 EXAMS OF THE YEAR"
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2026-09-10",
+        "end": "2026-09-10",
+        "color": "#515176",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "CONFERENCIA DE SKBC GIPUZKOA",
+            "description": "CHARLA SOBRE SHORINJI KEMPO ABIERTA A TODOS, PADRES Y MADRES DE MIEMBROS DEL CLUB, MIEMBROS DEL CLUB Y GENTE INTERESADA EN SABER QUE ES SHORINJI KEMPO."
+          },
+          "eu": {
+            "title": "SKBC GIPUZKOAKO HITZALDIA",
+            "description": "SHORINJI KEMPO HITZALDIA GUZTIONTZAT IREKITA, KLUB BAZKIDEEN GURASOENTZAT, KLUB BAZKIDEENTZAT ETA SHORINJI KEMPO ZER DEN JAKITEKO INTERESA DUTEN PERTSONENTZAT."
+          },
+          "en": {
+            "title": "SKBC GIPUZKOA CONFERENCE",
+            "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
+          }
+        }
       }
     ],
     "galleryLinks": [
