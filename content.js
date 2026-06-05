@@ -835,12 +835,12 @@ window.SKBC_CONTENT = {
       "testimonials": {
         "eyebrow": "Testimonios",
         "title": "Testimonios reales del club",
-        "text": "Publicamos ?nicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
+        "text": "Publicamos unicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
         "items": [],
         "empty": "Sin testimonios por el momento.",
         "formTitle": "Enviar un testimonio",
         "name": "Nombre",
-        "role": "Relaci?n con el club",
+        "role": "Relacion con el club",
         "roles": [
           "Padre/madre",
           "Alumno adulto",
@@ -848,38 +848,38 @@ window.SKBC_CONTENT = {
           "Otro"
         ],
         "message": "Testimonio",
-        "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicar? nada sin revisi?n previa.",
+        "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicara nada sin revisión previa.",
         "submit": "Enviar testimonio",
         "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo."
       },
       "faq": {
         "eyebrow": "Preguntas frecuentes",
         "title": "Antes de venir a probar",
-        "text": "Resolvemos las dudas m?s habituales para que puedas venir con tranquilidad.",
+        "text": "Resolvemos las dudas mas habituales para que puedas venir con tranquilidad.",
         "items": [
           [
             "?Necesito experiencia?",
-            "No. Puedes empezar desde cero. Adaptamos el entrenamiento a tu nivel y te acompa?amos paso a paso."
+            "No. Puedes empezar desde cero. Adaptamos el entrenamiento a tu nivel y te acompañamos paso a paso."
           ],
           [
             "?Soy demasiado mayor?",
             "No. Hay adultos que empiezan sin experiencia previa. Lo importante es entrenar con constancia y a tu ritmo."
           ],
           [
-            "?Qu? ropa necesito?",
-            "Para probar basta con ropa deportiva c?moda y una botella de agua. M?s adelante te explicaremos el material del club."
+            "?Que ropa necesito?",
+            "Para probar basta con ropa deportiva cómoda y una botella de agua. Mas adelante te explicaremos el material del club."
           ],
           [
             "?Puedo probar gratis?",
             "S?. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
           ],
           [
-            "?Hay competici?n?",
-            "El enfoque principal del club es la pr?ctica, la defensa personal, la cooperaci?n y el desarrollo personal."
+            "?Hay competición?",
+            "El enfoque principal del club es la practica, la defensa personal, la cooperación y el desarrollo personal. Pero también tenemos un apartado en que podrás competir en kata o combate (Randori)"
           ],
           [
             "?Y si no estoy en forma?",
-            "No pasa nada. La forma f?sica mejora poco a poco con la pr?ctica. Nadie empieza sabiendo ni estando perfecto."
+            "No pasa nada. La forma física mejora poco a poco con la practica. Nadie empieza sabiendo ni estando perfecto."
           ]
         ]
       }
