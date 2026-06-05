@@ -858,27 +858,27 @@ window.SKBC_CONTENT = {
         "text": "Resolvemos las dudas mas habituales para que puedas venir con tranquilidad.",
         "items": [
           [
-            "?Necesito experiencia?",
+            "Necesito experiencia?",
             "No. Puedes empezar desde cero. Adaptamos el entrenamiento a tu nivel y te acompañamos paso a paso."
           ],
           [
-            "?Soy demasiado mayor?",
+            "Soy demasiado mayor?",
             "No. Hay adultos que empiezan sin experiencia previa. Lo importante es entrenar con constancia y a tu ritmo."
           ],
           [
-            "?Que ropa necesito?",
+            "Que ropa necesito?",
             "Para probar basta con ropa deportiva cómoda y una botella de agua. Mas adelante te explicaremos el material del club."
           ],
           [
-            "?Puedo probar gratis?",
+            "Puedo probar gratis?",
             "S?. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
           ],
           [
-            "?Hay competición?",
+            "Hay competición?",
             "El enfoque principal del club es la practica, la defensa personal, la cooperación y el desarrollo personal. Pero también tenemos un apartado en que podrás competir en kata o combate (Randori)"
           ],
           [
-            "?Y si no estoy en forma?",
+            "Y si no estoy en forma?",
             "No pasa nada. La forma física mejora poco a poco con la practica. Nadie empieza sabiendo ni estando perfecto."
           ]
         ]
