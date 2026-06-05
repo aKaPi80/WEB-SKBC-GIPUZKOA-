@@ -489,14 +489,16 @@ function upcomingNewsSection(settings, copy) {
 
 function testimonialsSection(copy) {
   const testimonials = copy.testimonials?.items || [];
+  const carouselItems = testimonials.length > 2 ? [...testimonials, ...testimonials] : testimonials;
   return `<section class="section testimonials-section" id="testimonios">
     <div class="section-heading">
       <p class="eyebrow">${copy.testimonials.eyebrow || "Testimonios"}</p>
       <h2>${copy.testimonials.title}</h2>
       <p>${copy.testimonials.text}</p>
     </div>
-    ${testimonials.length ? `<div class="testimonial-grid">
-      ${testimonials.map((item) => {
+    ${testimonials.length ? `<div class="testimonial-carousel ${testimonials.length > 2 ? "is-animated" : ""}" aria-label="${copy.testimonials.title}">
+      <div class="testimonial-track">
+      ${carouselItems.map((item) => {
         const [audience, quote, name, image] = item;
         return `<article class="testimonial-card">
           ${image ? `<img src="${image}" alt="${name || audience}" />` : ""}
@@ -505,6 +507,7 @@ function testimonialsSection(copy) {
           ${name ? `<strong>${name}</strong>` : ""}
         </article>`;
       }).join("")}
+      </div>
     </div>` : `<p class="testimonial-empty">${copy.testimonials.empty || "Sin testimonios por el momento."}</p>`}
     <form class="testimonial-form">
       <h3>${copy.testimonials.formTitle || copy.testimonials.title}</h3>
@@ -515,6 +518,33 @@ function testimonialsSection(copy) {
       <button class="button" type="submit">${copy.testimonials.submit || "Enviar testimonio"}</button>
     </form>
   </section>`;
+}
+
+function testimonialInboxConfig() {
+  const config = state.content.settings.testimonialInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || "").trim(),
+    table: config.table || "skbc_testimonials"
+  };
+}
+
+async function submitTestimonialToSupabase(payload) {
+  const config = testimonialInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) throw new Error("No se pudo guardar el testimonio en Supabase");
+  return true;
 }
 
 function faqSection(copy) {
@@ -987,16 +1017,34 @@ function render() {
 }
 
 function bindTestimonials(copy) {
-  document.querySelector(".testimonial-form")?.addEventListener("submit", (event) => {
+  document.querySelector(".testimonial-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const payload = {
+      name: String(form.get("name") || "").trim(),
+      role: String(form.get("role") || "").trim(),
+      message: String(form.get("message") || "").trim(),
+      page_lang: state.lang,
+      status: "pending",
+      source: "website"
+    };
+    try {
+      const saved = await submitTestimonialToSupabase(payload);
+      if (saved) {
+        event.currentTarget.reset();
+        alert(copy.testimonials.thanks || "Gracias. Revisaremos el testimonio antes de publicarlo.");
+        return;
+      }
+    } catch (error) {
+      alert(`${error.message}. Se abrirá WhatsApp como alternativa.`);
+    }
     const text = [
       "Nuevo testimonio para SKBC GIPUZKOA",
       "",
-      `Nombre: ${form.get("name")}`,
-      `Perfil: ${form.get("role")}`,
+      `Nombre: ${payload.name}`,
+      `Perfil: ${payload.role}`,
       "",
-      `Testimonio: ${form.get("message")}`,
+      `Testimonio: ${payload.message}`,
       "",
       "Pendiente de aprobación antes de publicarse en la web."
     ].join("\n");

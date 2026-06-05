@@ -533,7 +533,13 @@ window.SKBC_CONTENT = {
         },
         "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
       }
-    ]
+    ],
+    "testimonialInbox": {
+      "enabled": false,
+      "supabaseUrl": "",
+      "anonKey": "",
+      "table": "skbc_testimonials"
+    }
   },
   "languages": {
     "es": {
@@ -843,7 +849,7 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testimonio",
         "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicar? nada sin revisi?n previa.",
-        "submit": "Enviar testimonio por WhatsApp",
+        "submit": "Enviar testimonio",
         "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo."
       },
       "faq": {

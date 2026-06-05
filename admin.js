@@ -1,5 +1,6 @@
 ﻿const STORAGE_KEY = "skbc_content_v2";
 const GITHUB_TOKEN_KEY = "skbc_github_token";
+const SUPABASE_SESSION_KEY = "skbc_supabase_session";
 const GITHUB_OWNER = "aKaPi80";
 const GITHUB_REPO = "WEB-SKBC-GIPUZKOA-";
 const GITHUB_BRANCH = "main";
@@ -35,6 +36,8 @@ panelTitles.events = "Calendario de eventos";
 labels.events = "Calendario";
 panelTitles.news = "Próximas noticias";
 labels.news = "Noticias";
+panelTitles.testimonials = "Testimonios";
+labels.testimonials = "Testimonios";
 panelTitles.merch = "Tienda merchandising";
 labels.merch = "Tienda";
 
@@ -58,6 +61,16 @@ const settingsGroups = [
       ["Galerías de fotos", ["settings", "galleryLinks"], "linkList"],
       ["Posts/Reels de Instagram", ["settings", "socialFeeds", "instagramUrls"], "textarea"],
       ["VÃ­deos de YouTube", ["settings", "socialFeeds", "youtubeUrls"], "textarea"]
+    ]
+  },
+  {
+    title: "Buzón de testimonios con Supabase",
+    help: "Opcional. Si lo configuras, los testimonios se guardarán en Supabase y podrás aprobarlos desde la pestaña Testimonios.",
+    fields: [
+      ["Buzón activo", ["settings", "testimonialInbox", "enabled"], "booleanText"],
+      ["Supabase URL", ["settings", "testimonialInbox", "supabaseUrl"], "input"],
+      ["Supabase anon key", ["settings", "testimonialInbox", "anonKey"], "textarea"],
+      ["Tabla", ["settings", "testimonialInbox", "table"], "input"]
     ]
   },
   {
@@ -336,6 +349,7 @@ function render() {
   if (currentPanel === "custom") return renderCustom();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();
+  if (currentPanel === "testimonials") return renderTestimonialsInbox();
   if (currentPanel === "merch") return renderMerch();
   if (currentPanel === "advanced") return renderAdvanced();
   renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
@@ -968,6 +982,188 @@ function removeNews(index) {
   data.settings.news.splice(index, 1);
   markDirty();
   renderNews();
+}
+
+function testimonialInboxConfig() {
+  const config = data.settings.testimonialInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || "").trim(),
+    table: config.table || "skbc_testimonials"
+  };
+}
+
+function supabaseSession() {
+  try {
+    return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function supabaseHeaders(session = supabaseSession()) {
+  const config = testimonialInboxConfig();
+  const token = session?.access_token || config.anonKey;
+  return {
+    apikey: config.anonKey,
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+}
+
+function renderTestimonialsInbox() {
+  const editor = document.querySelector("#editor");
+  const config = testimonialInboxConfig();
+  const session = supabaseSession();
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions">
+      <button id="load-testimonials" class="primary" type="button">Cargar pendientes</button>
+      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
+    </div>`)}
+    ${groupTemplate({
+      title: "Conexión Supabase",
+      help: "Para recibir testimonios sin WhatsApp, crea la tabla indicada en Supabase y pega aquí URL y anon key.",
+      fields: [
+        ["Buzón activo", ["settings", "testimonialInbox", "enabled"], "booleanText"],
+        ["Supabase URL", ["settings", "testimonialInbox", "supabaseUrl"], "input"],
+        ["Supabase anon key", ["settings", "testimonialInbox", "anonKey"], "textarea"],
+        ["Tabla", ["settings", "testimonialInbox", "table"], "input"]
+      ]
+    })}
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Acceso privado a pendientes</h3>
+          <p>Usa un usuario creado en Supabase Auth. La web pública solo inserta; el admin lee y modera tras iniciar sesión.</p>
+        </div>
+      </header>
+      <div class="field-grid">
+        <label class="field"><span>Email Supabase</span><input id="supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
+        <label class="field"><span>Contraseña Supabase</span><input id="supabase-password" type="password" /></label>
+        <button id="login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
+      </div>
+    </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Testimonios pendientes</h3>
+          <p id="testimonial-inbox-status">${config.enabled ? "Pulsa Cargar pendientes." : "Activa y configura Supabase primero."}</p>
+        </div>
+      </header>
+      <div id="testimonial-inbox-list" class="testimonial-inbox-list"></div>
+    </article>
+  `;
+  bindFields(editor);
+  document.querySelector("#login-supabase").addEventListener("click", loginSupabase);
+  document.querySelector("#load-testimonials").addEventListener("click", loadPendingTestimonials);
+  document.querySelector("#logout-supabase").addEventListener("click", () => {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    setStatus("Sesión de Supabase cerrada.", "ok");
+    renderTestimonialsInbox();
+  });
+}
+
+async function loginSupabase() {
+  const config = testimonialInboxConfig();
+  const email = document.querySelector("#supabase-email")?.value.trim();
+  const password = document.querySelector("#supabase-password")?.value;
+  if (!config.supabaseUrl || !config.anonKey || !email || !password) {
+    setStatus("Configura Supabase URL, anon key, email y contraseña.", "danger");
+    return;
+  }
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudo iniciar sesión: ${result.error_description || result.msg || "error"}`, "danger");
+    return;
+  }
+  localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(result));
+  setStatus("Sesión de Supabase iniciada.", "ok");
+  renderTestimonialsInbox();
+}
+
+async function loadPendingTestimonials() {
+  const config = testimonialInboxConfig();
+  const list = document.querySelector("#testimonial-inbox-list");
+  const status = document.querySelector("#testimonial-inbox-status");
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para ver pendientes.", "danger");
+    return;
+  }
+  status.textContent = "Cargando pendientes...";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?status=eq.pending&select=*&order=created_at.desc`, {
+    headers: supabaseHeaders()
+  });
+  const items = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudieron cargar testimonios: ${items.message || "error"}`, "danger");
+    return;
+  }
+  status.textContent = items.length ? `${items.length} testimonio(s) pendiente(s).` : "No hay testimonios pendientes.";
+  list.innerHTML = items.length ? items.map(testimonialPendingTemplate).join("") : `<p class="empty-note">No hay testimonios pendientes.</p>`;
+  list.querySelectorAll("[data-approve-testimonial]").forEach((button) => {
+    button.addEventListener("click", () => approvePendingTestimonial(JSON.parse(decodeURIComponent(button.dataset.approveTestimonial))));
+  });
+  list.querySelectorAll("[data-reject-testimonial]").forEach((button) => {
+    button.addEventListener("click", () => rejectPendingTestimonial(button.dataset.rejectTestimonial));
+  });
+}
+
+function testimonialPendingTemplate(item) {
+  return `<article class="pending-testimonial">
+    <span>${escapeHtml(item.role || "")} · ${escapeHtml(item.page_lang || "es")}</span>
+    <h3>${escapeHtml(item.name || "Sin nombre")}</h3>
+    <p>${escapeHtml(item.message || "")}</p>
+    <div>
+      <button class="primary" type="button" data-approve-testimonial="${encodeURIComponent(JSON.stringify(item))}">Aprobar</button>
+      <button class="danger" type="button" data-reject-testimonial="${escapeHtml(item.id)}">Descartar</button>
+    </div>
+  </article>`;
+}
+
+async function approvePendingTestimonial(item) {
+  const row = [item.role || "Testimonio", item.message || "", item.name || "", ""];
+  ["es", "eu", "en"].forEach((lang) => {
+    if (!data.languages[lang].testimonials.items) data.languages[lang].testimonials.items = [];
+    data.languages[lang].testimonials.items.push(row);
+  });
+  await updatePendingTestimonialStatus(item.id, "approved");
+  markDirty();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  setStatus("Testimonio aprobado. Ahora falta Publicar en GitHub para verlo en la web.", "warning");
+  loadPendingTestimonials();
+}
+
+async function rejectPendingTestimonial(id) {
+  if (!confirm("¿Descartar este testimonio?")) return;
+  await updatePendingTestimonialStatus(id, "rejected");
+  setStatus("Testimonio descartado.", "ok");
+  loadPendingTestimonials();
+}
+
+async function updatePendingTestimonialStatus(id, status) {
+  const config = testimonialInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(), Prefer: "return=minimal" },
+    body: JSON.stringify({ status, reviewed_at: new Date().toISOString() })
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.message || "No se pudo actualizar el testimonio");
+  }
 }
 
 function renderMerch() {

@@ -197,6 +197,46 @@ aside {
   font-weight: 850;
 }
 
+.testimonial-inbox-list {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.pending-testimonial {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.pending-testimonial span {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.pending-testimonial h3,
+.pending-testimonial p {
+  margin: 0;
+}
+
+.pending-testimonial div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.empty-note {
+  margin: 0;
+  padding: 18px;
+  color: var(--muted);
+  font-weight: 850;
+}
+
 .editor-group {
   overflow: hidden;
   border: 1px solid var(--line);
