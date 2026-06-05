@@ -153,7 +153,13 @@ function languageGroups(lang) {
         ["BotÃ³n niÃ±os", [...root, "kids", "cta"], "input"],
         ["TÃ­tulo adultos", [...root, "adults", "title"], "input"],
         ["Texto adultos", [...root, "adults", "text"], "textarea"],
-        ["Tarjetas adultos", [...root, "adults", "items"], "matrix"]
+        ["Tarjetas adultos", [...root, "adults", "items"], "matrix"],
+        ["TÃ­tulo quÃ© aprenden", [...root, "learn", "title"], "input"],
+        ["Texto quÃ© aprenden", [...root, "learn", "text"], "textarea"],
+        ["Tarjetas quÃ© aprenden", [...root, "learn", "items"], "matrix"],
+        ["Conceptos quÃ© aprenden", [...root, "learn", "concepts"], "array"],
+        ["BotÃ³n quÃ© aprenden", [...root, "learn", "button"], "input"],
+        ["URL botÃ³n quÃ© aprenden", [...root, "learn", "url"], "input"]
       ]
     },
     {

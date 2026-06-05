@@ -547,6 +547,38 @@ function testimonialsSection(copy) {
   </section>`;
 }
 
+function learnSection(settings, copy) {
+  const items = copy.learn.items || [
+    ["Técnica", "Bases, desplazamientos, ataques, defensas y aplicaciones progresivas."],
+    ["Filosofía", "Respeto, cooperación, autocontrol y desarrollo personal dentro y fuera del dojo."],
+    ["Recursos", "Materiales de consulta para repasar conceptos y seguir aprendiendo entre clases."]
+  ];
+  const concepts = copy.learn.concepts || ["Chinkon Gyo", "Howa", "Taiso", "Kihon", "Waza", "Kappo", "Appo", "Seiho", "Embu", "Randori", "Ukemi"];
+  const url = copy.learn.url || "#galeria";
+  const externalAttrs = /^https?:\/\//.test(url) ? ` target="_blank" rel="noreferrer"` : "";
+  return `<section class="section dark learn-section">
+    <div class="learn-layout">
+      <div class="learn-copy">
+        <p class="eyebrow">${copy.learn.eyebrow}</p>
+        <h2>${copy.learn.title}</h2>
+        <p>${copy.learn.text}</p>
+        <div class="learn-pill-list">${concepts.map((concept) => `<span>${escapeHtml(concept)}</span>`).join("")}</div>
+        <a class="button" href="${escapeHtml(url)}"${externalAttrs}>${copy.learn.button || "Ver recursos"}</a>
+      </div>
+      <div class="learn-panel">
+        <div class="learn-photo" style="background-image:url('${settings.images.learn}')"></div>
+        <div class="learn-cards">
+          ${items.map((item, index) => `<article>
+            <span>${String(index + 1).padStart(2, "0")}</span>
+            <h3>${escapeHtml(item[0] || "")}</h3>
+            <p>${escapeHtml(item[1] || "")}</p>
+          </article>`).join("")}
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
 function testimonialInboxConfig() {
   const config = state.content.settings.testimonialInbox || {};
   return {
@@ -1002,9 +1034,7 @@ function render() {
       <div class="profile-list">${copy.board.members.map((item, index) => personButton(item, "board", index)).join("")}</div>
     </section>
 
-    <section class="section dark">
-      <div class="section-heading"><p class="eyebrow">${copy.learn.eyebrow}</p><h2>${copy.learn.title}</h2><p>${copy.learn.text}</p></div>
-    </section>
+    ${learnSection(settings, copy)}
 
     <section class="section" id="galeria">
       <div class="section-heading"><p class="eyebrow">${copy.media.eyebrow}</p><h2>${copy.media.title}</h2><p>${copy.media.text}</p></div>

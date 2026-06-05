@@ -733,7 +733,36 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Qué aprenden nuestros alumnos",
         "title": "Técnica, filosofía y recursos interactivos",
-        "text": "La web mantiene el acceso a los materiales interactivos del club para consultar conceptos como Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi y otros contenidos de práctica."
+        "text": "Un alumno no solo aprende movimientos. Aprende a moverse mejor, entender lo que practica y consultar recursos para seguir progresando entre clase y clase.",
+        "items": [
+          [
+            "Técnica",
+            "Bases, desplazamientos, ataques, defensas y aplicaciones progresivas adaptadas a cada nivel."
+          ],
+          [
+            "Filosofía",
+            "Respeto, cooperación, autocontrol y desarrollo personal dentro y fuera del dojo."
+          ],
+          [
+            "Recursos",
+            "Materiales de consulta para repasar conceptos, nombres y contenidos de práctica."
+          ]
+        ],
+        "concepts": [
+          "Chinkon Gyo",
+          "Howa",
+          "Taiso",
+          "Kihon",
+          "Waza",
+          "Kappo",
+          "Appo",
+          "Seiho",
+          "Embu",
+          "Randori",
+          "Ukemi"
+        ],
+        "button": "Ver recursos",
+        "url": "#galeria"
       },
       "schedule": {
         "eyebrow": "Horarios y ubicación",
@@ -1085,7 +1114,36 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
         "title": "Teknika, filosofia eta baliabide interaktiboak",
-        "text": "Webguneak klubeko material interaktiboetarako sarbidea mantentzen du: Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta beste praktika eduki batzuk."
+        "text": "Ikasleak ez ditu mugimenduak bakarrik ikasten. Hobeto mugitzen, praktikatzen duena ulertzen eta klase artean aurrera egiteko baliabideak erabiltzen ikasten du.",
+        "items": [
+          [
+            "Teknika",
+            "Oinarriak, desplazamenduak, erasoak, defentsak eta maila bakoitzera egokitutako aplikazio progresiboak."
+          ],
+          [
+            "Filosofia",
+            "Errespetua, lankidetza, autokontrola eta garapen pertsonala dojo barruan eta kanpoan."
+          ],
+          [
+            "Baliabideak",
+            "Kontzeptuak, izenak eta praktika edukiak berrikusteko kontsulta-materialak."
+          ]
+        ],
+        "concepts": [
+          "Chinkon Gyo",
+          "Howa",
+          "Taiso",
+          "Kihon",
+          "Waza",
+          "Kappo",
+          "Appo",
+          "Seiho",
+          "Embu",
+          "Randori",
+          "Ukemi"
+        ],
+        "button": "Baliabideak ikusi",
+        "url": "#galeria"
       },
       "schedule": {
         "eyebrow": "Ordutegiak eta kokapena",
@@ -1437,7 +1495,36 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "What students learn",
         "title": "Technique, philosophy and interactive resources",
-        "text": "The website keeps access to the club's interactive materials for concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other training content."
+        "text": "Students do not only learn movements. They learn to move better, understand what they practise and use resources to keep progressing between classes.",
+        "items": [
+          [
+            "Technique",
+            "Basics, footwork, attacks, defences and progressive applications adapted to each level."
+          ],
+          [
+            "Philosophy",
+            "Respect, cooperation, self-control and personal development inside and outside the dojo."
+          ],
+          [
+            "Resources",
+            "Reference materials to review concepts, names and practice content."
+          ]
+        ],
+        "concepts": [
+          "Chinkon Gyo",
+          "Howa",
+          "Taiso",
+          "Kihon",
+          "Waza",
+          "Kappo",
+          "Appo",
+          "Seiho",
+          "Embu",
+          "Randori",
+          "Ukemi"
+        ],
+        "button": "View resources",
+        "url": "#galeria"
       },
       "schedule": {
         "eyebrow": "Schedule and location",
