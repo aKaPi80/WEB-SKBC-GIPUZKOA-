@@ -26,6 +26,28 @@ function whatsappLink(message) {
   return `https://wa.me/${state.content.settings.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function truncateText(value, maxLength = 165) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}...`;
+}
+
+function ratingStars(value) {
+  const rating = Number(value);
+  if (!Number.isFinite(rating) || rating < 1) return "";
+  const safeRating = Math.max(1, Math.min(5, Math.round(rating)));
+  return `<span class="testimonial-stars" aria-label="${safeRating} de 5 estrellas">${"★".repeat(safeRating)}${"☆".repeat(5 - safeRating)}</span>`;
+}
+
 function cardGrid(items, columns = 4) {
   return `<div class="grid-${columns}">${items.map((item) => `
     <article class="card">
@@ -498,14 +520,17 @@ function testimonialsSection(copy) {
     </div>
     ${testimonials.length ? `<div class="testimonial-carousel ${testimonials.length > 2 ? "is-animated" : ""}" aria-label="${copy.testimonials.title}">
       <div class="testimonial-track">
-      ${carouselItems.map((item) => {
-        const [audience, quote, name, image] = item;
-        return `<article class="testimonial-card">
-          ${image ? `<img src="${image}" alt="${name || audience}" />` : ""}
-          <span>${audience || ""}</span>
-          <blockquote>${quote || ""}</blockquote>
-          ${name ? `<strong>${name}</strong>` : ""}
-        </article>`;
+      ${carouselItems.map((item, index) => {
+        const [audience, quote, name, image, rating] = item;
+        const realIndex = index % testimonials.length;
+        return `<button class="testimonial-card" type="button" data-testimonial-index="${realIndex}" aria-label="${copy.testimonials.readFull || "Leer testimonio completo"}">
+          ${name ? `<strong>${escapeHtml(name)}</strong>` : ""}
+          ${ratingStars(rating)}
+          ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(name || audience)}" />` : ""}
+          <span>${escapeHtml(audience || "")}</span>
+          <blockquote>${escapeHtml(truncateText(quote))}</blockquote>
+          <em>${copy.testimonials.readFull || "Leer completo"}</em>
+        </button>`;
       }).join("")}
       </div>
     </div>` : `<p class="testimonial-empty">${copy.testimonials.empty || "Sin testimonios por el momento."}</p>`}
@@ -513,6 +538,7 @@ function testimonialsSection(copy) {
       <h3>${copy.testimonials.formTitle || copy.testimonials.title}</h3>
       <label>${copy.testimonials.name || "Nombre"}<input name="name" required /></label>
       <label>${copy.testimonials.role || "Relación con el club"}<select name="role">${(copy.testimonials.roles || []).map((role) => `<option>${role}</option>`).join("")}</select></label>
+      <label>${copy.testimonials.rating || "Valoración"}<select name="rating">${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} / 5</option>`).join("")}</select></label>
       <label>${copy.testimonials.message || "Testimonio"}<textarea name="message" rows="4" required></textarea></label>
       <label>${copy.testimonials.photo || "Foto opcional"}<input name="photo" type="file" accept="image/png,image/jpeg,image/webp" /></label>
       <p>${copy.testimonials.consent || ""}</p>
@@ -565,7 +591,7 @@ async function submitTestimonialToSupabase(payload, photoFile) {
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
   const photoUrl = await uploadTestimonialPhoto(photoFile);
   const body = photoUrl ? { ...payload, photo_url: photoUrl } : payload;
-  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+  const insert = (insertBody) => fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
     method: "POST",
     headers: {
       apikey: config.anonKey,
@@ -573,8 +599,15 @@ async function submitTestimonialToSupabase(payload, photoFile) {
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(insertBody)
   });
+  let response = await insert(body);
+  if (!response.ok && (body.photo_url || body.rating)) {
+    const fallbackBody = { ...body };
+    delete fallbackBody.photo_url;
+    delete fallbackBody.rating;
+    response = await insert(fallbackBody);
+  }
   if (!response.ok) throw new Error("No se pudo guardar el testimonio en Supabase");
   return true;
 }
@@ -1044,6 +1077,7 @@ function render() {
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
   });
   bindTestimonials(copy);
+  bindTestimonialCards(copy);
   bindProfiles();
   bindCalendar();
   bindMerch();
@@ -1059,6 +1093,7 @@ function bindTestimonials(copy) {
       name: String(form.get("name") || "").trim(),
       role: String(form.get("role") || "").trim(),
       message: String(form.get("message") || "").trim(),
+      rating: Number(form.get("rating") || 5),
       page_lang: state.lang,
       status: "pending",
       source: "website"
@@ -1093,6 +1128,16 @@ function bindProfiles() {
   document.querySelectorAll("[data-profile]").forEach((button) => {
     button.addEventListener("click", () => {
       openProfile(JSON.parse(button.dataset.profile));
+    });
+  });
+}
+
+function bindTestimonialCards(copy) {
+  document.querySelectorAll("[data-testimonial-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const testimonials = copy.testimonials?.items || [];
+      const item = testimonials[Number(button.dataset.testimonialIndex)];
+      if (item) openTestimonial(item, copy);
     });
   });
 }
@@ -1189,6 +1234,32 @@ function openProfile(profile) {
   modal.setAttribute("aria-hidden", "false");
 }
 
+function openTestimonial(item, copy) {
+  const [audience, quote, name, image, rating] = item;
+  const modal = document.querySelector("#testimonialModal");
+  modal.querySelector("#testimonialModalName").textContent = name || copy.testimonials.title || "Testimonio";
+  modal.querySelector("#testimonialModalRole").textContent = audience || "";
+  modal.querySelector("#testimonialModalStars").innerHTML = ratingStars(rating);
+  modal.querySelector("#testimonialModalText").textContent = quote || "";
+  const imageElement = modal.querySelector("#testimonialModalImage");
+  if (image) {
+    imageElement.src = image;
+    imageElement.alt = name || audience || "Testimonio";
+    imageElement.hidden = false;
+  } else {
+    imageElement.hidden = true;
+    imageElement.removeAttribute("src");
+  }
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeTestimonial() {
+  const modal = document.querySelector("#testimonialModal");
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+}
+
 function closeProfile() {
   const modal = document.querySelector("#profileModal");
   modal.classList.remove("is-open");
@@ -1213,8 +1284,15 @@ document.querySelector(".profile-modal__close").addEventListener("click", closeP
 document.querySelector("#profileModal").addEventListener("click", (event) => {
   if (event.target.id === "profileModal") closeProfile();
 });
+document.querySelector(".testimonial-modal__close").addEventListener("click", closeTestimonial);
+document.querySelector("#testimonialModal").addEventListener("click", (event) => {
+  if (event.target.id === "testimonialModal") closeTestimonial();
+});
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeProfile();
+  if (event.key === "Escape") {
+    closeProfile();
+    closeTestimonial();
+  }
 });
 
 window.addEventListener("scroll", () => {

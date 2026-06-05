@@ -89,8 +89,21 @@
       </div>
     </div>
 
+    <div class="profile-modal testimonial-modal" id="testimonialModal" aria-hidden="true">
+      <div class="profile-modal__panel testimonial-modal__panel" role="dialog" aria-modal="true" aria-labelledby="testimonialModalName">
+        <button class="testimonial-modal__close profile-modal__close" type="button" aria-label="Cerrar testimonio">Ã—</button>
+        <div class="profile-modal__content testimonial-modal__content">
+          <img id="testimonialModalImage" alt="" hidden />
+          <p class="eyebrow" id="testimonialModalRole"></p>
+          <h2 id="testimonialModalName"></h2>
+          <div id="testimonialModalStars"></div>
+          <p id="testimonialModalText"></p>
+        </div>
+      </div>
+    </div>
+
     <a class="whatsapp-float" data-whatsapp="general" target="_blank" rel="noreferrer"></a>
 
-    <script src="app.js?v=20260605-testimonials-nav"></script>
+    <script src="app.js?v=20260605-testimonial-modal-rating"></script>
   </body>
 </html>

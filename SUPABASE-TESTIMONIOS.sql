@@ -7,12 +7,16 @@ create table if not exists public.skbc_testimonials (
   role text,
   message text not null,
   photo_url text,
+  rating integer check (rating between 1 and 5),
   page_lang text default 'es',
   source text default 'website'
 );
 
 alter table public.skbc_testimonials
 add column if not exists photo_url text;
+
+alter table public.skbc_testimonials
+add column if not exists rating integer check (rating between 1 and 5);
 
 alter table public.skbc_testimonials enable row level security;
 

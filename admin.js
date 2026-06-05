@@ -1122,9 +1122,12 @@ async function loadPendingTestimonials() {
 }
 
 function testimonialPendingTemplate(item) {
+  const rating = Number(item.rating);
+  const stars = Number.isFinite(rating) && rating > 0 ? `${"★".repeat(Math.min(5, Math.round(rating)))}${"☆".repeat(5 - Math.min(5, Math.round(rating)))}` : "";
   return `<article class="pending-testimonial">
     <span>${escapeHtml(item.role || "")} · ${escapeHtml(item.page_lang || "es")}</span>
     <h3>${escapeHtml(item.name || "Sin nombre")}</h3>
+    ${stars ? `<strong class="pending-testimonial__stars">${stars}</strong>` : ""}
     ${item.photo_url ? `<img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.name || "Testimonio")}" />` : ""}
     <p>${escapeHtml(item.message || "")}</p>
     <div>
@@ -1135,7 +1138,7 @@ function testimonialPendingTemplate(item) {
 }
 
 async function approvePendingTestimonial(item) {
-  const row = [item.role || "Testimonio", item.message || "", item.name || "", item.photo_url || ""];
+  const row = [item.role || "Testimonio", item.message || "", item.name || "", item.photo_url || "", item.rating || ""];
   ["es", "eu", "en"].forEach((lang) => {
     if (!data.languages[lang].testimonials.items) data.languages[lang].testimonials.items = [];
     data.languages[lang].testimonials.items.push(row);

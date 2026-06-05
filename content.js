@@ -859,7 +859,9 @@ window.SKBC_CONTENT = {
         "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicara nada sin revisión previa.",
         "submit": "Enviar testimonio",
         "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo.",
-        "photo": "Foto opcional"
+        "photo": "Foto opcional",
+        "rating": "Valoracion",
+        "readFull": "Leer completo"
       },
       "faq": {
         "eyebrow": "Preguntas frecuentes",
@@ -1209,7 +1211,9 @@ window.SKBC_CONTENT = {
         "consent": "Bidaltzean, SKBC GIPUZKOAk testigantza berrikustea onartzen duzu, webgunean argitaratu ala ez erabaki aurretik. Ez da ezer argitaratuko aurretik berrikusi gabe.",
         "submit": "Testigantza WhatsApp bidez bidali",
         "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik.",
-        "photo": "Aukerako argazkia"
+        "photo": "Aukerako argazkia",
+        "rating": "Balorazioa",
+        "readFull": "Osorik irakurri"
       },
       "faq": {
         "eyebrow": "Ohiko galderak",
@@ -1557,9 +1561,11 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testimonial",
         "consent": "By sending it, you agree that SKBC GIPUZKOA may review it before deciding whether it appears on the website. Nothing will be published without prior review.",
-        "submit": "Send testimonial by WhatsApp",
+        "submit": "Send testimonial",
         "thanks": "Thank you. We will review the testimonial before publishing it.",
-        "photo": "Optional photo"
+        "photo": "Optional photo",
+        "rating": "Rating",
+        "readFull": "Read full"
       },
       "faq": {
         "eyebrow": "FAQ",

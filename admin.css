@@ -224,6 +224,12 @@ aside {
   margin: 0;
 }
 
+.pending-testimonial__stars {
+  color: #c7a24a;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
 .pending-testimonial img {
   width: min(260px, 100%);
   aspect-ratio: 4 / 3;
