@@ -505,7 +505,7 @@ window.SKBC_CONTENT = {
         "iturrioz": "assets/people/inaki-iturrioz.jpg",
         "bharat": "assets/people/bharat-martin.png",
         "pablo": "assets/people/pablo-sanchez.png",
-        "uxue": "assets/people/uxue-garikano.jpg",
+        "uxue": "assets/uploads/1780680490604-uxue.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
         "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       }
