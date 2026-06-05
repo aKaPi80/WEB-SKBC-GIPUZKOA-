@@ -470,7 +470,7 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780684453801-hero-1.png",
+      "hero": "assets/uploads/1780684830629-chatgpt-image-5-jun-2026-20-40-02.png",
       "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
       "adults": "assets/uploads/1780604082854-adultos.jpg",
       "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
