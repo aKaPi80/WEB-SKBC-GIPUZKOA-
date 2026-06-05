@@ -642,16 +642,16 @@ window.SKBC_CONTENT = {
         "text": "No hace falta haber practicado artes marciales antes. El entrenamiento combina defensa personal, movilidad, respiración, técnica y mejora física progresiva.",
         "items": [
           [
-            "No estoy en forma",
-            "La clase te ayuda a mejorar poco a poco."
+            "Poco a poco",
+            "Empezamos a tu ritmo. La práctica te ayuda a ganar movilidad, coordinación y confianza clase a clase."
           ],
           [
-            "Nunca he entrenado",
-            "Empezamos desde lo básico, con acompañamiento."
+            "Desde cero",
+            "Aprenderás las bases paso a paso, con acompañamiento y sin presión por saber antes de empezar."
           ],
           [
-            "Me da respeto probar",
-            "El primer mes es gratis y sin compromiso."
+            "Puedo probar sin compromiso",
+            "Ven, prueba un mes y decide después si el ambiente y la práctica encajan contigo."
           ]
         ]
       },
