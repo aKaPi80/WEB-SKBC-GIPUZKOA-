@@ -1,52 +1,45 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Editor SKBC GIPUZKOA</title>
-    <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="admin.css?v=20260605-supabase-testimonials" />
-    <script>
-      document.write('<script src="content.js?v=' + Date.now() + '"><\/script>');
-    </script>
+    <title>Editor desactivado | SKBC GIPUZKOA</title>
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <style>
+      body {
+        margin: 0;
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+        background: #15171a;
+        color: #fff;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      main {
+        width: min(680px, calc(100% - 36px));
+        padding: 34px;
+        border: 1px solid rgba(255,255,255,.16);
+        border-radius: 8px;
+        background: rgba(255,255,255,.06);
+      }
+      p { color: #d9dee7; line-height: 1.55; }
+      a {
+        display: inline-flex;
+        margin-top: 14px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        color: #fff;
+        background: #c52727;
+        font-weight: 900;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
-    <header class="admin-header">
-      <div>
-        <p>SKBC GIPUZKOA</p>
-        <h1>Editor sencillo de la web</h1>
-        <span id="status">Listo para editar</span>
-      </div>
-      <nav>
-        <a href="index.html">Ver web</a>
-        <button id="save" class="primary" type="button">Guardar cambios</button>
-        <button id="publish" type="button">Publicar en GitHub</button>
-        <button id="export" type="button">Exportar copia</button>
-        <label class="import-button">
-          Importar copia
-          <input id="import" type="file" accept="application/json" />
-        </label>
-        <button id="reset" class="quiet" type="button">Restaurar</button>
-      </nav>
-    </header>
-
     <main>
-      <aside>
-        <button class="tab active" data-panel="settings" type="button">Ajustes</button>
-        <button class="tab" data-panel="es" type="button">EspaÃ±ol</button>
-        <button class="tab" data-panel="eu" type="button">Euskera</button>
-        <button class="tab" data-panel="en" type="button">InglÃ©s</button>
-        <button class="tab" data-panel="events" type="button">Eventos</button>
-        <button class="tab" data-panel="news" type="button">Noticias</button>
-        <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
-        <button class="tab" data-panel="merch" type="button">Tienda</button>
-        <button class="tab" data-panel="custom" type="button">Ãreas</button>
-        <button class="tab" data-panel="advanced" type="button">Todo</button>
-      </aside>
-      <section id="editor"></section>
+      <h1>Editor desactivado en la web pública</h1>
+      <p>Por seguridad, el editor no está disponible desde el dominio público. La web visible sigue funcionando con normalidad.</p>
+      <a href="/">Volver a la web</a>
     </main>
-
-    <script src="admin.js?v=20260605-supabase-testimonials"></script>
   </body>
 </html>
-
