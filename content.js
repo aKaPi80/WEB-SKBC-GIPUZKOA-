@@ -540,6 +540,13 @@ window.SKBC_CONTENT = {
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_testimonials",
       "storageBucket": "skbc-testimonials"
+    },
+    "orderInbox": {
+      "enabled": true,
+      "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
+      "table": "skbc_merch_orders",
+      "emailWebhookUrl": ""
     }
   },
   "languages": {
@@ -834,12 +841,16 @@ window.SKBC_CONTENT = {
         "paymentDojo": "Pagaré en el dojo",
         "paymentContact": "Contactad conmigo para cerrar el pago",
         "comments": "Comentarios",
-        "send": "Enviar pedido por WhatsApp",
+        "send": "Enviar pedido",
         "customTitle": "Otra prenda del catálogo JHK",
         "customText": "Si quieres otra prenda personalizable de JHK, pega aquí la referencia o enlace y la revisamos contigo.",
         "customReference": "Referencia o enlace JHK",
         "customDetails": "Color, talla, cantidad y tipo de personalización",
-        "noteTitle": "Importante"
+        "noteTitle": "Importante",
+        "whatsappOptional": "Enviar tambien por WhatsApp",
+        "orderThanks": "Pedido guardado correctamente. Te contactaremos para confirmar disponibilidad y forma de pago.",
+        "orderError": "No se pudo guardar el pedido. Se abrira WhatsApp como alternativa.",
+        "orderRequired": "Anade algun producto o indica una referencia JHK antes de enviar el pedido."
       },
       "contact": {
         "eyebrow": "Contacto",
@@ -1215,12 +1226,16 @@ window.SKBC_CONTENT = {
         "paymentDojo": "Dojon ordainduko dut",
         "paymentContact": "Jarri nirekin harremanetan ordainketa ixteko",
         "comments": "Oharrak",
-        "send": "Bidali eskaera WhatsApp bidez",
+        "send": "Eskaera bidali",
         "customTitle": "JHK katalogoko beste jantzi bat",
         "customText": "JHKko beste jantzi pertsonalizagarri bat nahi baduzu, jarri erreferentzia edo esteka eta zurekin berrikusiko dugu.",
         "customReference": "JHK erreferentzia edo esteka",
         "customDetails": "Kolorea, neurria, kopurua eta pertsonalizazio mota",
-        "noteTitle": "Garrantzitsua"
+        "noteTitle": "Garrantzitsua",
+        "whatsappOptional": "WhatsApp bidez ere bidali",
+        "orderThanks": "Eskaera behar bezala gorde da. Eskuragarritasuna eta ordainketa modua baieztatzeko jarriko gara harremanetan.",
+        "orderError": "Ezin izan da eskaera gorde. WhatsApp irekiko da ordezko aukera gisa.",
+        "orderRequired": "Gehitu produkturen bat edo adierazi JHK erreferentzia bat eskaera bidali aurretik."
       },
       "contact": {
         "eyebrow": "Kontaktua",
@@ -1596,12 +1611,16 @@ window.SKBC_CONTENT = {
         "paymentDojo": "I will pay at the dojo",
         "paymentContact": "Contact me to arrange payment",
         "comments": "Comments",
-        "send": "Send order by WhatsApp",
+        "send": "Send order",
         "customTitle": "Another garment from the JHK catalogue",
         "customText": "If you want another customisable JHK garment, paste the reference or link and we will review it with you.",
         "customReference": "JHK reference or link",
         "customDetails": "Colour, size, quantity and customisation type",
-        "noteTitle": "Important"
+        "noteTitle": "Important",
+        "whatsappOptional": "Also send by WhatsApp",
+        "orderThanks": "Order saved successfully. We will contact you to confirm availability and payment method.",
+        "orderError": "The order could not be saved. WhatsApp will open as a fallback.",
+        "orderRequired": "Add a product or enter a JHK reference before sending the order."
       },
       "contact": {
         "eyebrow": "Contact",

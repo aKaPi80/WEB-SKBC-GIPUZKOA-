@@ -40,6 +40,8 @@ panelTitles.testimonials = "Testimonios";
 labels.testimonials = "Testimonios";
 panelTitles.merch = "Tienda merchandising";
 labels.merch = "Tienda";
+panelTitles.orders = "Pedidos de tienda";
+labels.orders = "Pedidos";
 
 const settingsGroups = [
   {
@@ -71,6 +73,17 @@ const settingsGroups = [
       ["Supabase URL", ["settings", "testimonialInbox", "supabaseUrl"], "input"],
       ["Supabase anon key", ["settings", "testimonialInbox", "anonKey"], "textarea"],
       ["Tabla", ["settings", "testimonialInbox", "table"], "input"]
+    ]
+  },
+  {
+    title: "Pedidos de tienda con Supabase",
+    help: "Los pedidos se guardan en Supabase. El aviso por email puede activarse pegando una URL de webhook o Edge Function cuando la tengas.",
+    fields: [
+      ["Pedidos activos", ["settings", "orderInbox", "enabled"], "booleanText"],
+      ["Supabase URL", ["settings", "orderInbox", "supabaseUrl"], "input"],
+      ["Supabase anon key", ["settings", "orderInbox", "anonKey"], "textarea"],
+      ["Tabla pedidos", ["settings", "orderInbox", "table"], "input"],
+      ["Webhook email", ["settings", "orderInbox", "emailWebhookUrl"], "input"]
     ]
   },
   {
@@ -357,6 +370,7 @@ function render() {
   if (currentPanel === "news") return renderNews();
   if (currentPanel === "testimonials") return renderTestimonialsInbox();
   if (currentPanel === "merch") return renderMerch();
+  if (currentPanel === "orders") return renderOrders();
   if (currentPanel === "advanced") return renderAdvanced();
   renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
 }
@@ -1000,6 +1014,18 @@ function testimonialInboxConfig() {
   };
 }
 
+function orderInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = data.settings.orderInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_merch_orders",
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
+  };
+}
+
 function supabaseSession() {
   try {
     return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -1008,8 +1034,7 @@ function supabaseSession() {
   }
 }
 
-function supabaseHeaders(session = supabaseSession()) {
-  const config = testimonialInboxConfig();
+function supabaseHeaders(session = supabaseSession(), config = testimonialInboxConfig()) {
   const token = session?.access_token || config.anonKey;
   return {
     apikey: config.anonKey,
@@ -1225,6 +1250,157 @@ async function updatePendingTestimonialStatus(id, status) {
     const result = await response.json().catch(() => ({}));
     throw new Error(result.message || "No se pudo actualizar el testimonio");
   }
+}
+
+function renderOrders() {
+  const editor = document.querySelector("#editor");
+  const config = orderInboxConfig();
+  const session = supabaseSession();
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions">
+      <button id="load-orders" class="primary" type="button">Cargar pedidos</button>
+      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
+    </div>`)}
+    ${groupTemplate({
+      title: "Conexión pedidos",
+      help: "Usa la misma sesión privada de Supabase. Si quieres email automático, pega aquí una URL de webhook o Edge Function.",
+      fields: [
+        ["Pedidos activos", ["settings", "orderInbox", "enabled"], "booleanText"],
+        ["Supabase URL", ["settings", "orderInbox", "supabaseUrl"], "input"],
+        ["Supabase anon key", ["settings", "orderInbox", "anonKey"], "textarea"],
+        ["Tabla pedidos", ["settings", "orderInbox", "table"], "input"],
+        ["Webhook email", ["settings", "orderInbox", "emailWebhookUrl"], "input"]
+      ]
+    })}
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Acceso privado a pedidos</h3>
+          <p>Inicia sesión con tu usuario de Supabase para leer y actualizar pedidos.</p>
+        </div>
+      </header>
+      <div class="field-grid">
+        <label class="field"><span>Email Supabase</span><input id="orders-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
+        <label class="field"><span>Contraseña Supabase</span><input id="orders-supabase-password" type="password" /></label>
+        <button id="orders-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
+      </div>
+    </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Pedidos recibidos</h3>
+          <p id="orders-status">${config.enabled ? "Pulsa Cargar pedidos." : "Activa y configura Supabase primero."}</p>
+        </div>
+      </header>
+      <div id="orders-list" class="testimonial-inbox-list orders-list"></div>
+    </article>
+  `;
+  bindFields(editor);
+  document.querySelector("#orders-login-supabase").addEventListener("click", loginOrdersSupabase);
+  document.querySelector("#load-orders").addEventListener("click", loadOrders);
+  document.querySelector("#logout-supabase").addEventListener("click", () => {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    setStatus("Sesión de Supabase cerrada.", "ok");
+    renderOrders();
+  });
+}
+
+async function loginOrdersSupabase() {
+  const config = orderInboxConfig();
+  const email = document.querySelector("#orders-supabase-email")?.value.trim();
+  const password = document.querySelector("#orders-supabase-password")?.value;
+  if (!config.supabaseUrl || !config.anonKey || !email || !password) {
+    setStatus("Configura Supabase URL, anon key, email y contraseña.", "danger");
+    return;
+  }
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudo iniciar sesión: ${result.error_description || result.msg || "error"}`, "danger");
+    return;
+  }
+  localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(result));
+  setStatus("Sesión de Supabase iniciada.", "ok");
+  renderOrders();
+}
+
+async function loadOrders() {
+  const config = orderInboxConfig();
+  const list = document.querySelector("#orders-list");
+  const status = document.querySelector("#orders-status");
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa pedidos con Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para ver pedidos.", "danger");
+    return;
+  }
+  status.textContent = "Cargando pedidos...";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?select=*&order=created_at.desc&limit=50`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const items = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudieron cargar pedidos: ${items.message || "error"}`, "danger");
+    return;
+  }
+  status.textContent = items.length ? `${items.length} pedido(s) recibido(s).` : "No hay pedidos.";
+  list.innerHTML = items.length ? items.map(orderTemplate).join("") : `<p class="empty-note">No hay pedidos.</p>`;
+  list.querySelectorAll("[data-order-status]").forEach((select) => {
+    select.addEventListener("change", () => updateOrderStatus(select.dataset.orderStatus, select.value));
+  });
+}
+
+function orderTemplate(order) {
+  const items = Array.isArray(order.items) ? order.items : [];
+  const phone = String(order.customer_phone || "").replace(/\D/g, "");
+  const whatsappText = [
+    "Hola, te escribimos por tu pedido de merchandising de SKBC GIPUZKOA.",
+    "",
+    `Pedido: ${order.id || ""}`
+  ].join("\n");
+  const whatsappUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(whatsappText)}` : "";
+  return `<article class="pending-testimonial order-card">
+    <span>${escapeHtml(order.status || "pending")} · ${escapeHtml(new Date(order.created_at || Date.now()).toLocaleString("es-ES"))}</span>
+    <h3>${escapeHtml(order.customer_name || "Sin nombre")}</h3>
+    <p><strong>Teléfono:</strong> ${escapeHtml(order.customer_phone || "")}</p>
+    <p><strong>Email:</strong> ${escapeHtml(order.customer_email || "No indicado")}</p>
+    <p><strong>Pago:</strong> ${escapeHtml(order.payment_method || "")}</p>
+    <p><strong>Total:</strong> ${escapeHtml(String(order.total_estimated || 0))} €</p>
+    ${items.length ? `<ul>${items.map((item) => `<li>${escapeHtml(item.name || "")} · ${escapeHtml(item.size || "")} · ${escapeHtml(item.color || "")} · x${escapeHtml(item.quantity || 1)}</li>`).join("")}</ul>` : ""}
+    ${order.custom_reference ? `<p><strong>JHK:</strong> ${escapeHtml(order.custom_reference)}</p>` : ""}
+    ${order.custom_details ? `<p><strong>Detalles:</strong> ${escapeHtml(order.custom_details)}</p>` : ""}
+    ${order.comments ? `<p><strong>Comentarios:</strong> ${escapeHtml(order.comments)}</p>` : ""}
+    <div>
+      <select data-order-status="${escapeHtml(order.id)}">
+        ${["pending", "seen", "contacted", "payment_pending", "paid", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
+      </select>
+      ${whatsappUrl ? `<a class="button-like" href="${whatsappUrl}" target="_blank" rel="noreferrer">WhatsApp cliente</a>` : ""}
+    </div>
+  </article>`;
+}
+
+async function updateOrderStatus(id, status) {
+  const config = orderInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" },
+    body: JSON.stringify({ status, updated_at: new Date().toISOString() })
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(result.message || "No se pudo actualizar el pedido.", "danger");
+    return;
+  }
+  setStatus("Estado del pedido actualizado.", "ok");
 }
 
 function renderMerch() {

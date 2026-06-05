@@ -590,6 +590,18 @@ function testimonialInboxConfig() {
   };
 }
 
+function orderInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = state.content.settings.orderInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_merch_orders",
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
+  };
+}
+
 async function uploadTestimonialPhoto(file) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
@@ -717,6 +729,85 @@ function merchCartHtml(copy) {
     </li>`).join("")}
   </ul>
   <p class="merch-total">${copy.merch.total}: <strong>${money(merchTotal())}</strong></p>`;
+}
+
+function merchWhatsappLines(order, copy) {
+  return [
+    "Nuevo pedido merchandising SKBC GIPUZKOA",
+    "",
+    `Nombre: ${order.customer_name}`,
+    `Teléfono: ${order.customer_phone}`,
+    `Email: ${order.customer_email || "No indicado"}`,
+    "",
+    "Productos SKBC:",
+    ...(order.items.length ? order.items.map((item) => `- ${item.name} · REF ${item.ref || "consultar"} · ${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity))}`) : ["- Sin productos SKBC directos"]),
+    "",
+    `Total estimado: ${money(order.total_estimated)}`,
+    "",
+    "Producto personalizado JHK:",
+    `Referencia/enlace: ${order.custom_reference || "No indicado"}`,
+    `Detalles: ${order.custom_details || "No indicado"}`,
+    "",
+    `Forma de pago: ${order.payment_method}`,
+    `Comentarios: ${order.comments || "Sin comentarios"}`,
+    "",
+    copy.merch.orderThanks || ""
+  ];
+}
+
+function merchOrderFromForm(form) {
+  return {
+    customer_name: String(form.get("name") || "").trim(),
+    customer_phone: String(form.get("phone") || "").trim(),
+    customer_email: String(form.get("email") || "").trim(),
+    payment_method: String(form.get("payment") || "").trim(),
+    custom_reference: String(form.get("customReference") || "").trim(),
+    custom_details: String(form.get("customDetails") || "").trim(),
+    comments: String(form.get("comments") || "").trim(),
+    items: state.merchCart.map((item) => ({ ...item })),
+    total_estimated: merchTotal(),
+    status: "pending",
+    source: "website",
+    page_lang: state.lang
+  };
+}
+
+async function submitMerchOrderToSupabase(order) {
+  const config = orderInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const body = {
+    customer_name: order.customer_name,
+    customer_phone: order.customer_phone,
+    customer_email: order.customer_email,
+    payment_method: order.payment_method,
+    custom_reference: order.custom_reference,
+    custom_details: order.custom_details,
+    comments: order.comments,
+    items: order.items,
+    total_estimated: order.total_estimated,
+    status: order.status,
+    source: order.source,
+    page_lang: order.page_lang
+  };
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) throw new Error("No se pudo guardar el pedido en Supabase");
+  if (config.emailWebhookUrl) {
+    fetch(config.emailWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order)
+    }).catch(() => {});
+  }
+  return true;
 }
 
 function merchSection(settings, copy) {
@@ -1229,28 +1320,30 @@ function bindMerch() {
       document.querySelector("#merchandising")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
-  document.querySelector(".merch-form")?.addEventListener("submit", (event) => {
+  document.querySelector(".merch-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const lines = [
-      "Nuevo pedido merchandising SKBC GIPUZKOA",
-      "",
-      `Nombre: ${form.get("name")}`,
-      `Teléfono: ${form.get("phone")}`,
-      `Email: ${form.get("email") || "No indicado"}`,
-      "",
-      "Productos SKBC:",
-      ...(state.merchCart.length ? state.merchCart.map((item) => `- ${item.name} · REF ${item.ref || "consultar"} · ${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity))}`) : ["- Sin productos SKBC directos"]),
-      "",
-      `Total estimado: ${money(merchTotal())}`,
-      "",
-      "Producto personalizado JHK:",
-      `Referencia/enlace: ${form.get("customReference") || "No indicado"}`,
-      `Detalles: ${form.get("customDetails") || "No indicado"}`,
-      "",
-      `Forma de pago: ${form.get("payment")}`,
-      `Comentarios: ${form.get("comments") || "Sin comentarios"}`
-    ];
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const order = merchOrderFromForm(form);
+    if (!order.items.length && !order.custom_reference && !order.custom_details) {
+      alert(copy.merch.orderRequired || "A?ade alg?n producto antes de enviar el pedido.");
+      return;
+    }
+    const lines = merchWhatsappLines(order, copy);
+    try {
+      const saved = await submitMerchOrderToSupabase(order);
+      if (saved) {
+        state.merchCart = [];
+        formElement.reset();
+        render();
+        if (confirm(`${copy.merch.orderThanks || "Pedido guardado correctamente."}\n\n${copy.merch.whatsappOptional || "?Enviar tambi?n por WhatsApp?"}`)) {
+          window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
+        }
+        return;
+      }
+    } catch (error) {
+      alert(copy.merch.orderError || `${error.message}. Se abrir? WhatsApp como alternativa.`);
+    }
     window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
   });
 }
