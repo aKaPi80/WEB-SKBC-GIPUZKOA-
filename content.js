@@ -759,7 +759,7 @@ window.SKBC_CONTENT = {
           "Seiho",
           "Embu",
           "Randori",
-          "Ukemi"
+          "..."
         ],
         "button": "Ver recursos",
         "url": "#galeria"
@@ -961,39 +961,39 @@ window.SKBC_CONTENT = {
       },
       "benefits": {
         "eyebrow": "Zergatik entrenatu",
-        "title": "Dojo barruan eta kanpoan hazteko arte martziala",
-        "text": "Shorinji Kempo-k defentsa pertsonala, entrenamendu fisikoa eta garapen pertsonala uztartzen ditu. Teknika garrantzitsua da, baina entrenatzeko modua ere bai.",
+        "title": "Dojo barruan eta kanpoan hazteko arte martzial bat",
+        "text": "Shorinji Kempoak autodefentsa, prestakuntza fisikoa eta garapen pertsonala uztartzen ditu. Teknikak garrantzia du, baina entrenatzeko moduak are garrantzitsuagoa da.",
         "items": [
           [
             "Errespetua",
-            "Arretaz, zaintzaz eta taldekideekiko konpromisoz entrenatzen dugu."
+            "Arretaz, arretaz eta taldekideekiko konpromisoz entrenatzen dugu."
           ],
           [
             "Konfiantza",
-            "Aurrerapena pausoz pauso dator, giro seguru eta hurbilean."
+            "Aurrerapena pausoz pauso dator, ingurune seguru eta atsegin batean."
           ],
           [
-            "Defentsa pertsonala",
-            "Adin eta maila bakoitzera egokitutako teknika erabilgarriak."
+            "Autodefentsa",
+            "Adin eta maila bakoitzera egokitutako teknika erabilgarriak eta kontrolatuak."
           ],
           [
-            "Adiskidetasuna",
-            "Haurrak eta helduak talde osasuntsu baten parte sentitzen diren dojoa."
+            "Adiskidetasun",
+            "Dojo bat, non haurrek eta helduek talde osasuntsu baten parte sentitzen diren."
           ]
         ]
       },
       "shorinji": {
         "eyebrow": "Zer da Shorinji Kempo",
-        "title": "Defentsa pertsonala, gorputza eta burua",
-        "text": "Shorinji Kempo Doshin So-k sortutako arte martzial japoniar modernoa da. Defentsa pertsonala, entrenamendu fisikoa eta garapen mentala uztartzen ditu ideia nagusi batekin: pertsona bat hobetzen bada, gizartea ere hobetzen da.",
+        "title": "Autodefentsa, gorputza eta adimena",
+        "text": "Shorinji Kempoa Doshin So-k sortutako japoniar arte martzial modernoa da. Autodefentsa teknikak, entrenamendu fisikoa eta garapen mentala konbinatzen ditu ideia nagusi batekin: norbanako bat hobetzen bada, gizartea ere hobetzen da.",
         "blocks": [
           [
             "Goho",
-            "Kolpeak, blokeoak eta desplazamenduak eraginkortasunez defendatzeko."
+            "Zeure burua eraginkortasunez defendatzeko kolpeak, blokeoak eta mugimenduak."
           ],
           [
             "Juho",
-            "Luxazioak, kontrolak eta proiekzioak behar baino kalte handiagorik egin gabe neutralizatzeko."
+            "Beharrezkoa baino kalte gehiago eragin gabe neutralizatzeko dislokazioak, kontrolak eta proiekzioak."
           ],
           [
             "Kongo Zen",
@@ -1001,38 +1001,38 @@ window.SKBC_CONTENT = {
           ],
           [
             "Lan fisikoa",
-            "Malgutasuna, koordinazioa, oreka, tonu muskularra eta jarrera ona."
+            "Elastikotasuna, koordinazioa, oreka, gihar-tonua eta jarrera ona."
           ]
         ]
       },
       "kids": {
         "eyebrow": "Haurrak eta familiak",
-        "title": "Diziplina eta konfiantza txikienentzat",
-        "text": "Haurren eskolak koordinazioa, arreta, autokontrola eta segurtasuna hobetzen laguntzen dute. Haurrek ahalegintzen, entzuten eta elkarlanean ikasten dute giro errespetuzko batean.",
+        "title": "Diziplina eta konfiantza txikientzat",
+        "text": "Haurren klaseek koordinazioa, arreta, autokontrola eta konfiantza hobetzen laguntzen dute. Haurrek ahalegintzen, entzuten eta lankidetzan aritzen ikasten dute errespetuzko ingurune batean.",
         "items": [
-          "Segurtasun eta autoestima handiagoa.",
-          "Oreka, koordinazioa eta psikomotrizitate hobea.",
-          "Errespetua, diziplina eta ardura.",
-          "Lagunak egiteko talde osasuntsua."
+          "Konfiantza eta autoestimu gehiago.",
+          "Oreka, koordinazioa eta gaitasun psikomotorrak hobetzea.",
+          "Errespetua, diziplina eta erantzukizuna.",
+          "Lagunak egiteko aukera ematen duen talde osasuntsua."
         ],
-        "cta": "Haurren eskolei buruz galdetu"
+        "cta": "Galdetu haurrentzako klaseei buruz"
       },
       "adults": {
         "eyebrow": "Esperientziarik gabeko helduak",
-        "title": "Hasi hutsetik, zure erritmoan eta presiorik gabe",
-        "text": "Ez da beharrezkoa aurretik arte martzialik praktikatu izana. Entrenamenduak defentsa pertsonala, mugikortasuna, arnasketa, teknika eta hobekuntza fisiko progresiboa uztartzen ditu.",
+        "title": "Hasi hutsetik, zure erritmoan eta presiorik gabe.",
+        "text": "Ez da beharrezkoa aurretiko arte martzialetan esperientziarik izatea. Prestakuntzak autodefentsa, mugikortasuna, arnasketa, teknika eta hobekuntza fisiko progresiboa uztartzen ditu.",
         "items": [
           [
-            "Ez nago sasoi onean",
-            "Eskolak pixkanaka hobetzen lagunduko dizu."
+            "Formatik kanpo nago",
+            "Klaseak pixkanaka hobetzen laguntzen dizu."
           ],
           [
             "Inoiz ez dut entrenatu",
-            "Oinarrietatik hasten gara, lagunduta."
+            "Oinarrizkoetatik hasten gara, laguntzarekin."
           ],
           [
-            "Probatzeko lotsa ematen dit",
-            "Lehen hilabetea doakoa da eta konpromisorik gabe."
+            "Zalantzan nago probatzeko.",
+            "Lehenengo hilabetea doakoa eta konpromisorik gabea da."
           ]
         ]
       },
@@ -1114,19 +1114,19 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
         "title": "Teknika, filosofia eta baliabide interaktiboak",
-        "text": "Webguneak klubeko material interaktiboetarako sarbidea mantentzen du: Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta beste praktika eduki batzuk.",
+        "text": "Webguneak klubaren material interaktiboetarako sarbidea mantentzen du, Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta bestelako praktika-edukiak bezalako kontzeptuak kontsultatzeko.",
         "items": [
           [
-            "Teknika",
-            "Oinarriak, desplazamenduak, erasoak, defentsak eta maila bakoitzera egokitutako aplikazio progresiboak."
+            "TEKNIKOA",
+            "Oinarriak, mugimenduak, erasoak, defentsak eta aplikazio progresiboak maila bakoitzera egokituta."
           ],
           [
             "Filosofia",
-            "Errespetua, lankidetza, autokontrola eta garapen pertsonala dojo barruan eta kanpoan."
+            "Errespetua, lankidetza, autokontrola eta garapen pertsonala dojoaren barruan eta kanpoan."
           ],
           [
             "Baliabideak",
-            "Kontzeptuak, izenak eta praktika edukiak berrikusteko kontsulta-materialak."
+            "Kontzeptuak, izenak eta praktikaren edukia berrikusteko erreferentziazko materialak."
           ]
         ],
         "concepts": [
@@ -1140,9 +1140,9 @@ window.SKBC_CONTENT = {
           "Seiho",
           "Embu",
           "Randori",
-          "Ukemi"
+          "..."
         ],
-        "button": "Baliabideak ikusi",
+        "button": "Ikusi baliabideak",
         "url": "#galeria"
       },
       "schedule": {
@@ -1342,20 +1342,20 @@ window.SKBC_CONTENT = {
       },
       "benefits": {
         "eyebrow": "Why train",
-        "title": "A martial art to grow inside and outside the dojo",
-        "text": "Shorinji Kempo combines self-defence, physical training and personal development. Technique matters, but the way we train matters just as much.",
+        "title": "A martial art to grow in and out of the dojo",
+        "text": "Shorinji Kempo combines self-defense, physical training, and personal development. Technique matters, but how you train matters even more.",
         "items": [
           [
             "Respect",
-            "We train with care, attention and commitment to our training partners."
+            "We train with care, attention and commitment to peers."
           ],
           [
-            "Confidence",
-            "Progress comes step by step in a safe and welcoming environment."
+            "Trust",
+            "Progress comes step by step, with a safe and close environment."
           ],
           [
-            "Self-defence",
-            "Useful, controlled techniques adapted to each age and level."
+            "Self Defense",
+            "Useful techniques, controlled and adapted to each age and level."
           ],
           [
             "Friendship",
@@ -1365,55 +1365,55 @@ window.SKBC_CONTENT = {
       },
       "shorinji": {
         "eyebrow": "What is Shorinji Kempo",
-        "title": "Self-defence, body and mind",
-        "text": "Shorinji Kempo is a modern Japanese martial art created by Doshin So. It combines self-defence techniques, physical training and mental development with one central idea: if a person improves, society improves too.",
+        "title": "Self defense, body and mind",
+        "text": "Shorinji Kempo is a modern Japanese martial art created by Doshin So. It combines self-defense, physical training, and mental development techniques with one central idea: if a person improves, they also improve society.",
         "blocks": [
           [
             "Goho",
-            "Strikes, blocks and footwork for effective defence."
+            "Blows, blockades and displacements to defend yourself effectively."
           ],
           [
             "Juho",
-            "Locks, controls and throws to neutralise without unnecessary harm."
+            "Dislocations, controls and projections to neutralize without damaging more than necessary."
           ],
           [
             "Kongo Zen",
-            "Philosophy and values that strengthen character, calm and respect."
+            "Philosophy and values that strengthen character, calmness and respect."
           ],
           [
             "Physical work",
-            "Flexibility, coordination, balance, muscle tone and posture."
+            "Elasticity, coordination, balance, muscle tone and good posture."
           ]
         ]
       },
       "kids": {
         "eyebrow": "Children and families",
-        "title": "Discipline and confidence for younger students",
-        "text": "Children's classes help improve coordination, attention, self-control and confidence. Students learn effort, listening and cooperation in a respectful environment.",
+        "title": "Discipline and confidence for the little ones",
+        "text": "Children's classes help improve coordination, attention, self-control, and safety. Children learn to strive, listen, and cooperate in a respectful environment.",
         "items": [
           "More confidence and self-esteem.",
-          "Better balance, coordination and motor skills.",
+          "Better balance, coordination and psychomotor skills.",
           "Respect, discipline and responsibility.",
-          "A healthy group where they can make friends."
+          "A healthy group where you can make friends."
         ],
         "cta": "Ask about children's classes"
       },
       "adults": {
         "eyebrow": "Adult beginners",
-        "title": "Start from zero, at your pace and without pressure",
-        "text": "No previous martial arts experience is needed. Training combines self-defence, mobility, breathing, technique and gradual physical improvement.",
+        "title": "Start from scratch, at your own pace and without pressure",
+        "text": "You don't need to have practiced martial arts before. The training combines self-defense, mobility, breathing, technique and progressive physical improvement.",
         "items": [
           [
-            "I am not fit",
-            "Classes help you improve progressively."
+            "I'm not out of shape",
+            "The class helps you to improve little by little."
           ],
           [
             "I have never trained",
-            "We start from the basics, with guidance."
+            "We start from the basics, with accompaniment."
           ],
           [
-            "I feel nervous about trying",
-            "The first month is free and with no commitment."
+            "It gives me respect to try",
+            "The first month is free and without obligation."
           ]
         ]
       },
@@ -1495,11 +1495,11 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "What students learn",
         "title": "Technique, philosophy and interactive resources",
-        "text": "The website keeps access to the club's interactive materials for concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other training content.",
+        "text": "The website maintains access to the club's interactive materials to consult concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other practice content.",
         "items": [
           [
-            "Technique",
-            "Basics, footwork, attacks, defences and progressive applications adapted to each level."
+            "Technical",
+            "Bases, displacements, attacks, defenses and progressive applications adapted to each level."
           ],
           [
             "Philosophy",
@@ -1507,7 +1507,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "Resources",
-            "Reference materials to review concepts, names and practice content."
+            "Reference materials to review concepts, names and practice contents."
           ]
         ],
         "concepts": [
@@ -1517,14 +1517,14 @@ window.SKBC_CONTENT = {
           "Kihon",
           "Waza",
           "Kappo",
-          "Appo",
+          "2006 Oaxaca protests",
           "Seiho",
           "Embu",
           "Randori",
-          "Ukemi"
+          "We..."
         ],
-        "button": "View resources",
-        "url": "#galeria"
+        "button": "View Resources",
+        "url": "gallery"
       },
       "schedule": {
         "eyebrow": "Schedule and location",
