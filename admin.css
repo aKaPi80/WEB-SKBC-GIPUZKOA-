@@ -224,6 +224,13 @@ aside {
   margin: 0;
 }
 
+.pending-testimonial img {
+  width: min(260px, 100%);
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
 .pending-testimonial div {
   display: flex;
   flex-wrap: wrap;

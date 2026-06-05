@@ -1125,6 +1125,7 @@ function testimonialPendingTemplate(item) {
   return `<article class="pending-testimonial">
     <span>${escapeHtml(item.role || "")} · ${escapeHtml(item.page_lang || "es")}</span>
     <h3>${escapeHtml(item.name || "Sin nombre")}</h3>
+    ${item.photo_url ? `<img src="${escapeHtml(item.photo_url)}" alt="${escapeHtml(item.name || "Testimonio")}" />` : ""}
     <p>${escapeHtml(item.message || "")}</p>
     <div>
       <button class="primary" type="button" data-approve-testimonial="${encodeURIComponent(JSON.stringify(item))}">Aprobar</button>
@@ -1134,7 +1135,7 @@ function testimonialPendingTemplate(item) {
 }
 
 async function approvePendingTestimonial(item) {
-  const row = [item.role || "Testimonio", item.message || "", item.name || "", ""];
+  const row = [item.role || "Testimonio", item.message || "", item.name || "", item.photo_url || ""];
   ["es", "eu", "en"].forEach((lang) => {
     if (!data.languages[lang].testimonials.items) data.languages[lang].testimonials.items = [];
     data.languages[lang].testimonials.items.push(row);

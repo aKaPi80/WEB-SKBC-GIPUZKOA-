@@ -514,6 +514,7 @@ function testimonialsSection(copy) {
       <label>${copy.testimonials.name || "Nombre"}<input name="name" required /></label>
       <label>${copy.testimonials.role || "Relación con el club"}<select name="role">${(copy.testimonials.roles || []).map((role) => `<option>${role}</option>`).join("")}</select></label>
       <label>${copy.testimonials.message || "Testimonio"}<textarea name="message" rows="4" required></textarea></label>
+      <label>${copy.testimonials.photo || "Foto opcional"}<input name="photo" type="file" accept="image/png,image/jpeg,image/webp" /></label>
       <p>${copy.testimonials.consent || ""}</p>
       <button class="button" type="submit">${copy.testimonials.submit || "Enviar testimonio"}</button>
     </form>
@@ -526,13 +527,44 @@ function testimonialInboxConfig() {
     enabled: config.enabled === true || config.enabled === "true",
     supabaseUrl: String(config.supabaseUrl || "").replace(/\/+$/, ""),
     anonKey: String(config.anonKey || "").trim(),
-    table: config.table || "skbc_testimonials"
+    table: config.table || "skbc_testimonials",
+    storageBucket: config.storageBucket || "skbc-testimonials"
   };
 }
 
-async function submitTestimonialToSupabase(payload) {
+async function uploadTestimonialPhoto(file) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  if (!file || !file.size) return "";
+  const extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "jpg";
+  const safeName = file.name
+    .replace(/\.[^.]+$/, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 42) || "testimonio";
+  const filePath = `${Date.now()}-${safeName}.${extension}`;
+  const response = await fetch(`${config.supabaseUrl}/storage/v1/object/${config.storageBucket}/${filePath}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "Content-Type": file.type || "application/octet-stream",
+      "x-upsert": "false"
+    },
+    body: file
+  });
+  if (!response.ok) throw new Error("No se pudo subir la foto del testimonio");
+  return `${config.supabaseUrl}/storage/v1/object/public/${config.storageBucket}/${filePath}`;
+}
+
+async function submitTestimonialToSupabase(payload, photoFile) {
+  const config = testimonialInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const photoUrl = await uploadTestimonialPhoto(photoFile);
+  const body = photoUrl ? { ...payload, photo_url: photoUrl } : payload;
   const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
     method: "POST",
     headers: {
@@ -541,7 +573,7 @@ async function submitTestimonialToSupabase(payload) {
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(body)
   });
   if (!response.ok) throw new Error("No se pudo guardar el testimonio en Supabase");
   return true;
@@ -1019,7 +1051,9 @@ function render() {
 function bindTestimonials(copy) {
   document.querySelector(".testimonial-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    const photoFile = form.get("photo");
     const payload = {
       name: String(form.get("name") || "").trim(),
       role: String(form.get("role") || "").trim(),
@@ -1029,9 +1063,9 @@ function bindTestimonials(copy) {
       source: "website"
     };
     try {
-      const saved = await submitTestimonialToSupabase(payload);
+      const saved = await submitTestimonialToSupabase(payload, photoFile);
       if (saved) {
-        event.currentTarget.reset();
+        formElement.reset();
         alert(copy.testimonials.thanks || "Gracias. Revisaremos el testimonio antes de publicarlo.");
         return;
       }
@@ -1049,7 +1083,7 @@ function bindTestimonials(copy) {
       "Pendiente de aprobación antes de publicarse en la web."
     ].join("\n");
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
-    event.currentTarget.reset();
+    formElement.reset();
     alert(copy.testimonials.thanks || "Gracias. Revisaremos el testimonio antes de publicarlo.");
   });
 }

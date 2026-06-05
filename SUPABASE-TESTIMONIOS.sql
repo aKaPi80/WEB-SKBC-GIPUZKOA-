@@ -6,9 +6,13 @@ create table if not exists public.skbc_testimonials (
   name text not null,
   role text,
   message text not null,
+  photo_url text,
   page_lang text default 'es',
   source text default 'website'
 );
+
+alter table public.skbc_testimonials
+add column if not exists photo_url text;
 
 alter table public.skbc_testimonials enable row level security;
 
@@ -33,3 +37,21 @@ for update
 to authenticated
 using (true)
 with check (status in ('pending', 'approved', 'rejected'));
+
+insert into storage.buckets (id, name, public)
+values ('skbc-testimonials', 'skbc-testimonials', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "Public can upload testimonial photos" on storage.objects;
+create policy "Public can upload testimonial photos"
+on storage.objects
+for insert
+to anon
+with check (bucket_id = 'skbc-testimonials');
+
+drop policy if exists "Public can view testimonial photos" on storage.objects;
+create policy "Public can view testimonial photos"
+on storage.objects
+for select
+to anon, authenticated
+using (bucket_id = 'skbc-testimonials');

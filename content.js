@@ -537,7 +537,8 @@ window.SKBC_CONTENT = {
       "enabled": true,
       "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
-      "table": "skbc_testimonials"
+      "table": "skbc_testimonials",
+      "storageBucket": "skbc-testimonials"
     }
   },
   "languages": {
@@ -856,7 +857,8 @@ window.SKBC_CONTENT = {
         "message": "Testimonio",
         "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicara nada sin revisión previa.",
         "submit": "Enviar testimonio",
-        "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo."
+        "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo.",
+        "photo": "Foto opcional"
       },
       "faq": {
         "eyebrow": "Preguntas frecuentes",
@@ -1204,8 +1206,9 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testigantza",
         "consent": "Bidaltzean, SKBC GIPUZKOAk testigantza berrikustea onartzen duzu, webgunean argitaratu ala ez erabaki aurretik. Ez da ezer argitaratuko aurretik berrikusi gabe.",
-        "submit": "Testigantza WhatsApp bidez bidali",
-        "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik."
+        "submit": "Testigantza bidali",
+        "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik.",
+        "photo": "Aukerako argazkia"
       },
       "faq": {
         "eyebrow": "Ohiko galderak",
@@ -1553,8 +1556,9 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testimonial",
         "consent": "By sending it, you agree that SKBC GIPUZKOA may review it before deciding whether it appears on the website. Nothing will be published without prior review.",
-        "submit": "Send testimonial by WhatsApp",
-        "thanks": "Thank you. We will review the testimonial before publishing it."
+        "submit": "Send testimonial",
+        "thanks": "Thank you. We will review the testimonial before publishing it.",
+        "photo": "Optional photo"
       },
       "faq": {
         "eyebrow": "FAQ",
