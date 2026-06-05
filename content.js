@@ -837,7 +837,14 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testimonios",
         "title": "Testimonios reales del club",
         "text": "Publicamos unicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
-        "items": [],
+        "items": [
+          [
+            "Padre/madre",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "ENKI",
+            ""
+          ]
+        ],
         "empty": "Sin testimonios por el momento.",
         "formTitle": "Enviar un testimonio",
         "name": "Nombre",
@@ -1180,7 +1187,14 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testigantzak",
         "title": "Klubeko benetako testigantzak",
         "text": "Ikasleek edo familiek bidalitako eta webgunean agertu aurretik berrikusitako testigantzak soilik argitaratzen ditugu.",
-        "items": [],
+        "items": [
+          [
+            "Padre/madre",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "ENKI",
+            ""
+          ]
+        ],
         "empty": "Oraingoz ez dago testigantzarik.",
         "formTitle": "Testigantza bidali",
         "name": "Izena",
@@ -1523,7 +1537,14 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testimonials",
         "title": "Real club testimonials",
         "text": "We only publish testimonials sent by students or families and reviewed before they appear on the website.",
-        "items": [],
+        "items": [
+          [
+            "Padre/madre",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "ENKI",
+            ""
+          ]
+        ],
         "empty": "No testimonials yet.",
         "formTitle": "Send a testimonial",
         "name": "Name",
