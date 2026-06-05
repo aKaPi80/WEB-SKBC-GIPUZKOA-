@@ -803,7 +803,8 @@ async function submitMerchOrderToSupabase(order) {
   if (config.emailWebhookUrl) {
     fetch(config.emailWebhookUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(order)
     }).catch(() => {});
   }
