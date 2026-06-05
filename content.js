@@ -843,6 +843,13 @@ window.SKBC_CONTENT = {
             "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Padre/madre",
+            "adfadf",
+            "prueba",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1780683091104-andonii.jpg",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1195,6 +1202,13 @@ window.SKBC_CONTENT = {
             "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Padre/madre",
+            "adfadf",
+            "prueba",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1780683091104-andonii.jpg",
+            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -1547,6 +1561,13 @@ window.SKBC_CONTENT = {
             "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Padre/madre",
+            "adfadf",
+            "prueba",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1780683091104-andonii.jpg",
+            5
           ]
         ],
         "empty": "No testimonials yet.",
@@ -1561,7 +1582,7 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testimonial",
         "consent": "By sending it, you agree that SKBC GIPUZKOA may review it before deciding whether it appears on the website. Nothing will be published without prior review.",
-        "submit": "Send testimonial",
+        "submit": "Send testimonial by WhatsApp",
         "thanks": "Thank you. We will review the testimonial before publishing it.",
         "photo": "Optional photo",
         "rating": "Rating",
