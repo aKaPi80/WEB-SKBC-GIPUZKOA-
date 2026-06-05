@@ -498,7 +498,7 @@ window.SKBC_CONTENT = {
       "people": {
         "alvaro": "assets/people/alvaro-calvo.jpg",
         "inaki": "assets/people/inaki-ventureira.png",
-        "andoni": "assets/people/andoni-dominguez.png",
+        "andoni": "assets/uploads/1780680201369-andonii.jpg",
         "oskar": "assets/people/oskar-mateos.png",
         "asier": "assets/people/asier-azurmendi.jpg",
         "igone": "assets/people/igone-lasa.png",
@@ -514,23 +514,24 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-04",
+        "date": "2026-06-06",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
+            "title": "CURSO DE VERANO SKBC GIPUZKOA 2026",
+            "text": "YA ESTA AQUI EL CURSO DE VERANO DE SKBC GIPUZKOA! VEN A DISFRUTARLO JUNTO A NOSOTROS!"
           },
           "eu": {
-            "title": "Urteko egutegia eskuragarri",
-            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+            "title": "SKBC GIPUZKOAKO UDAKO IKASTAROA 2026",
+            "text": "SKBC GIPUZKOAKO UDAKO IKASTAROA HEMEN DA! ZATOZ GUREKIN ETA GOZATU!"
           },
           "en": {
-            "title": "Annual calendar available",
-            "text": "You can now check upcoming courses, seminars and club activities on the website."
+            "title": "SKBC GIPUZKOA 2026 SUMMER COURSE",
+            "text": "SKBC GIPUZKOA SUMMER COURSE IS HERE! COME AND ENJOY IT WITH US!"
           }
-        }
+        },
+        "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
       }
     ],
     "testimonialInbox": {
@@ -768,8 +769,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "Instagram como fuente principal de noticias",
-        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
+        "title": "SIGUENOS EN NUESTRAS REDES SOCIALES!",
+        "text": "SI QUIERES ESTAR AL CORRIENTE DE TODAS LAS NOVEDADES Y EVENTOS, SIGUENOS EN NUESTRAS REDES SOCIALES!",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
@@ -828,7 +829,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Pr?ximas noticias",
+        "title": "Proximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       },
@@ -836,14 +837,7 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testimonios",
         "title": "Testimonios reales del club",
         "text": "Publicamos unicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
-        "items": [
-          [
-            "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
-            "ENKI",
-            ""
-          ]
-        ],
+        "items": [],
         "empty": "Sin testimonios por el momento.",
         "formTitle": "Enviar un testimonio",
         "name": "Nombre",
@@ -1118,8 +1112,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "Instagram albisteen iturri nagusi gisa",
-        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
+        "title": "JARRAITU GURE SARE SOZIALETATAN!",
+        "text": "Berri eta ekitaldi guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1186,14 +1180,7 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testigantzak",
         "title": "Klubeko benetako testigantzak",
         "text": "Ikasleek edo familiek bidalitako eta webgunean agertu aurretik berrikusitako testigantzak soilik argitaratzen ditugu.",
-        "items": [
-          [
-            "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
-            "ENKI",
-            ""
-          ]
-        ],
+        "items": [],
         "empty": "Oraingoz ez dago testigantzarik.",
         "formTitle": "Testigantza bidali",
         "name": "Izena",
@@ -1206,7 +1193,7 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testigantza",
         "consent": "Bidaltzean, SKBC GIPUZKOAk testigantza berrikustea onartzen duzu, webgunean argitaratu ala ez erabaki aurretik. Ez da ezer argitaratuko aurretik berrikusi gabe.",
-        "submit": "Testigantza bidali",
+        "submit": "Testigantza WhatsApp bidez bidali",
         "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik.",
         "photo": "Aukerako argazkia"
       },
@@ -1468,8 +1455,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "Instagram as the main news source",
-        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
+        "title": "FOLLOW US ON OUR SOCIAL MEDIA!",
+        "text": "If you want to stay up to date on all the news and events, follow us on our social media!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
@@ -1536,14 +1523,7 @@ window.SKBC_CONTENT = {
         "eyebrow": "Testimonials",
         "title": "Real club testimonials",
         "text": "We only publish testimonials sent by students or families and reviewed before they appear on the website.",
-        "items": [
-          [
-            "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
-            "ENKI",
-            ""
-          ]
-        ],
+        "items": [],
         "empty": "No testimonials yet.",
         "formTitle": "Send a testimonial",
         "name": "Name",
@@ -1556,7 +1536,7 @@ window.SKBC_CONTENT = {
         ],
         "message": "Testimonial",
         "consent": "By sending it, you agree that SKBC GIPUZKOA may review it before deciding whether it appears on the website. Nothing will be published without prior review.",
-        "submit": "Send testimonial",
+        "submit": "Send testimonial by WhatsApp",
         "thanks": "Thank you. We will review the testimonial before publishing it.",
         "photo": "Optional photo"
       },
