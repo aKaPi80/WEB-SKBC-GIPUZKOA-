@@ -487,6 +487,47 @@ function upcomingNewsSection(settings, copy) {
   </section>`;
 }
 
+function testimonialsSection(copy) {
+  const testimonials = copy.testimonials?.items || [];
+  if (!testimonials.length) return "";
+  return `<section class="section testimonials-section" id="testimonios">
+    <div class="section-heading">
+      <p class="eyebrow">${copy.testimonials.eyebrow || "Testimonios"}</p>
+      <h2>${copy.testimonials.title}</h2>
+      <p>${copy.testimonials.text}</p>
+    </div>
+    <div class="testimonial-grid">
+      ${testimonials.map((item) => {
+        const [audience, quote, name, image] = item;
+        return `<article class="testimonial-card">
+          ${image ? `<img src="${image}" alt="${name || audience}" />` : ""}
+          <span>${audience || ""}</span>
+          <blockquote>${quote || ""}</blockquote>
+          ${name ? `<strong>${name}</strong>` : ""}
+        </article>`;
+      }).join("")}
+    </div>
+  </section>`;
+}
+
+function faqSection(copy) {
+  const items = copy.faq?.items || [];
+  if (!items.length) return "";
+  return `<section class="section soft faq-section" id="faq">
+    <div class="section-heading">
+      <p class="eyebrow">${copy.faq.eyebrow || "Preguntas frecuentes"}</p>
+      <h2>${copy.faq.title}</h2>
+      <p>${copy.faq.text}</p>
+    </div>
+    <div class="faq-list">
+      ${items.map((item) => `<details>
+        <summary>${item[0] || ""}</summary>
+        <p>${item[1] || ""}</p>
+      </details>`).join("")}
+    </div>
+  </section>`;
+}
+
 function money(value) {
   const number = Number(String(value || "0").replace(",", "."));
   return Number.isFinite(number) ? `${number.toFixed(number % 1 ? 2 : 0)}€` : `${value}€`;
@@ -879,6 +920,10 @@ function render() {
     ${calendarSection(settings, copy)}
 
     ${upcomingNewsSection(settings, copy)}
+
+    ${testimonialsSection(copy)}
+
+    ${faqSection(copy)}
 
     <section class="section soft" id="redes">
       <div class="section-heading"><p class="eyebrow">${copy.social.eyebrow}</p><h2>${copy.social.title}</h2><p>${copy.social.text}</p></div>

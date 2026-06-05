@@ -551,10 +551,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Probar gratis",
       "hero": {
-        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
-        "title": "Shorinji Kempo para niños, jóvenes y adultos en Tolosa",
-        "text": "Aprende defensa personal, mejora tu confianza y entrena en un club familiar, cercano y sin presión competitiva.",
-        "primary": "Primer mes gratis",
+        "eyebrow": "Tolosa ? Gipuzkoa",
+        "title": "SHORINJI KEMPO EN TOLOSA",
+        "text": "Confianza ? Disciplina ? Defensa personal",
+        "primary": "Quiero probar",
         "secondary": "Ver horarios",
         "cards": [
           [
@@ -825,6 +825,62 @@ window.SKBC_CONTENT = {
         "title": "Proximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
+      },
+      "testimonials": {
+        "eyebrow": "Testimonios",
+        "title": "Lo que se vive dentro del dojo",
+        "text": "Historias reales de familias, adultos y practicantes que han encontrado en SKBC GIPUZKOA un lugar donde crecer.",
+        "items": [
+          [
+            "Padres",
+            "Mi hijo ha ganado confianza.",
+            "Familia SKBC",
+            "assets/uploads/1780604072168-grupo-ninos.jpg"
+          ],
+          [
+            "Adultos",
+            "Empec? sin experiencia y me sent? acompa?ado desde el primer d?a.",
+            "Alumno adulto",
+            "assets/uploads/1780604082854-adultos.jpg"
+          ],
+          [
+            "Practicantes",
+            "Encontr? una segunda familia.",
+            "Practicante SKBC",
+            "assets/uploads/1780606250233-curso-skbc.jpg"
+          ]
+        ]
+      },
+      "faq": {
+        "eyebrow": "Preguntas frecuentes",
+        "title": "Antes de venir a probar",
+        "text": "Resolvemos las dudas m?s habituales para que puedas venir con tranquilidad.",
+        "items": [
+          [
+            "?Necesito experiencia?",
+            "No. Puedes empezar desde cero. Adaptamos el entrenamiento a tu nivel y te acompa?amos paso a paso."
+          ],
+          [
+            "?Soy demasiado mayor?",
+            "No. Hay adultos que empiezan sin experiencia previa. Lo importante es entrenar con constancia y a tu ritmo."
+          ],
+          [
+            "?Qu? ropa necesito?",
+            "Para probar basta con ropa deportiva c?moda y una botella de agua. M?s adelante te explicaremos el material del club."
+          ],
+          [
+            "?Puedo probar gratis?",
+            "S?. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
+          ],
+          [
+            "?Hay competici?n?",
+            "El enfoque principal del club es la pr?ctica, la defensa personal, la cooperaci?n y el desarrollo personal."
+          ],
+          [
+            "?Y si no estoy en forma?",
+            "No pasa nada. La forma f?sica mejora poco a poco con la pr?ctica. Nadie empieza sabiendo ni estando perfecto."
+          ]
+        ]
       }
     },
     "eu": {
@@ -842,10 +898,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Doan probatu",
       "hero": {
-        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
-        "title": "Shorinji Kempo haurrentzat, gazteentzat eta helduentzat Tolosan",
-        "text": "Ikasi defentsa pertsonala, indartu konfiantza eta entrenatu giro familiar, hurbil eta lehiarik gabeko batean.",
-        "primary": "Lehen hilabetea doan",
+        "eyebrow": "Tolosa ? Gipuzkoa",
+        "title": "SHORINJI KEMPO TOLOSAN",
+        "text": "Konfiantza ? Diziplina ? Defentsa pertsonala",
+        "primary": "Probatu nahi dut",
         "secondary": "Ordutegiak ikusi",
         "cards": [
           [
@@ -1116,6 +1172,62 @@ window.SKBC_CONTENT = {
         "title": "Hurrengo albisteak",
         "text": "Klubeko oharrak, berriak eta komunikazio garrantzitsuak.",
         "empty": "Albisterik gabe"
+      },
+      "testimonials": {
+        "eyebrow": "Testigantzak",
+        "title": "Dojo barruan bizi dena",
+        "text": "Familiek, helduek eta praktikatzaileek SKBC GIPUZKOAn hazteko eta ikasteko aurkitu duten giro hurbila.",
+        "items": [
+          [
+            "Gurasoak",
+            "Nire semeak konfiantza irabazi du.",
+            "SKBC familia",
+            "assets/uploads/1780604072168-grupo-ninos.jpg"
+          ],
+          [
+            "Helduak",
+            "Esperientziarik gabe hasi nintzen eta lehen egunetik lagunduta sentitu nintzen.",
+            "Ikasle heldua",
+            "assets/uploads/1780604082854-adultos.jpg"
+          ],
+          [
+            "Praktikatzaileak",
+            "Bigarren familia bat aurkitu dut.",
+            "SKBC praktikatzailea",
+            "assets/uploads/1780606250233-curso-skbc.jpg"
+          ]
+        ]
+      },
+      "faq": {
+        "eyebrow": "Ohiko galderak",
+        "title": "Probatzera etorri aurretik",
+        "text": "Ohiko zalantzak argitzen ditugu lasai etor zaitezen.",
+        "items": [
+          [
+            "Esperientzia behar dut?",
+            "Ez. Hutsetik has zaitezke. Entrenamendua zure mailara egokitzen dugu eta pausoz pauso laguntzen dizugu."
+          ],
+          [
+            "Zaharregia al naiz?",
+            "Ez. Heldu asko esperientziarik gabe hasten dira. Garrantzitsuena konstantziaz eta zure erritmoan entrenatzea da."
+          ],
+          [
+            "Zer arropa behar dut?",
+            "Probatzeko nahikoa da kirol-arropa erosoa eta ur botila bat ekartzea. Gero klubeko materiala azalduko dizugu."
+          ],
+          [
+            "Doan probatu dezaket?",
+            "Bai. Lehen hilabetea doakoa da taldea, eskolak eta giroa konpromisorik gabe ezagutzeko."
+          ],
+          [
+            "Lehiaketarik dago?",
+            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira."
+          ],
+          [
+            "Eta sasoian ez banago?",
+            "Ez da ezer gertatzen. Forma fisikoa praktikarekin pixkanaka hobetzen da. Inor ez da dena jakinda hasten."
+          ]
+        ]
       }
     },
     "en": {
@@ -1133,10 +1245,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Try for free",
       "hero": {
-        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
-        "title": "Shorinji Kempo for children, teens and adults in Tolosa",
-        "text": "Learn self-defence, build confidence and train in a friendly family club with no competitive pressure.",
-        "primary": "First month free",
+        "eyebrow": "Tolosa ? Gipuzkoa",
+        "title": "SHORINJI KEMPO IN TOLOSA",
+        "text": "Confidence ? Discipline ? Self-defence",
+        "primary": "I want to try",
         "secondary": "See schedule",
         "cards": [
           [
@@ -1407,6 +1519,62 @@ window.SKBC_CONTENT = {
         "title": "Upcoming news",
         "text": "Club notices, updates and important communications.",
         "empty": "No news published"
+      },
+      "testimonials": {
+        "eyebrow": "Testimonials",
+        "title": "What people experience inside the dojo",
+        "text": "Real stories from families, adults and practitioners who found in SKBC GIPUZKOA a place to grow.",
+        "items": [
+          [
+            "Parents",
+            "My child has gained confidence.",
+            "SKBC family",
+            "assets/uploads/1780604072168-grupo-ninos.jpg"
+          ],
+          [
+            "Adults",
+            "I started with no experience and felt supported from day one.",
+            "Adult student",
+            "assets/uploads/1780604082854-adultos.jpg"
+          ],
+          [
+            "Practitioners",
+            "I found a second family.",
+            "SKBC practitioner",
+            "assets/uploads/1780606250233-curso-skbc.jpg"
+          ]
+        ]
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "title": "Before coming to try a class",
+        "text": "Answers to common questions so you can come with confidence.",
+        "items": [
+          [
+            "Do I need experience?",
+            "No. You can start from zero. Training is adapted to your level and you will be guided step by step."
+          ],
+          [
+            "Am I too old?",
+            "No. Many adults begin with no previous experience. What matters is training consistently and at your own pace."
+          ],
+          [
+            "What clothes do I need?",
+            "For a trial class, comfortable sportswear and a bottle of water are enough. Later we will explain the club equipment."
+          ],
+          [
+            "Can I try for free?",
+            "Yes. The first month is free so you can discover the group, classes and atmosphere with no commitment."
+          ],
+          [
+            "Is there competition?",
+            "The club mainly focuses on practice, self-defence, cooperation and personal development."
+          ],
+          [
+            "What if I am not fit?",
+            "That is perfectly fine. Fitness improves gradually with practice. Nobody starts knowing everything or being perfect."
+          ]
+        ]
       }
     }
   }
