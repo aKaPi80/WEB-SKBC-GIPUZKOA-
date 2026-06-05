@@ -157,9 +157,9 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", news: "Noticias", merch: "Merchandising", contact: "Contacto" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", news: "Albisteak", merch: "Merchandising", contact: "Kontaktua" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", news: "News", merch: "Merchandising", contact: "Contact" }
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", news: "Noticias", merch: "Merchandising", contact: "Contacto" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", news: "Albisteak", merch: "Merchandising", contact: "Kontaktua" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", news: "News", merch: "Merchandising", contact: "Contact" }
 };
 
 function uniqueNavItems(items) {
@@ -823,6 +823,7 @@ function renderNav(copy) {
     { label: labels.schedule, href: "#horarios" },
     { label: labels.calendar, href: "#calendario" },
     { label: labels.gallery, href: "#galeria" },
+    { label: labels.testimonials, href: "#testimonios" },
     { label: labels.news, href: "#noticias" },
     { label: labels.merch, href: "#merchandising" },
     ...customNavItems(state.content.settings),
