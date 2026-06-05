@@ -535,17 +535,17 @@ window.SKBC_CONTENT = {
       }
     ],
     "testimonialInbox": {
-      "enabled": false,
-      "supabaseUrl": "",
-      "anonKey": "",
+      "enabled": true,
+      "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co/rest/v1/",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_testimonials"
     }
   },
   "languages": {
     "es": {
       "languageName": "Español",
-      "seoTitle": "Shorinji Kempo y artes marciales en Tolosa | SKBC",
-      "seoDescription": "Clases de Shorinji Kempo, artes marciales y defensa personal en Tolosa para niños, jóvenes y adultos. Primer mes gratis.",
+      "seoTitle": "Shorinji Kempo en Tolosa | SKBC GIPUZKOA",
+      "seoDescription": "Clases de Shorinji Kempo en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
       "nav": [
         "Niños",
         "Adultos",
@@ -557,10 +557,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Probar gratis",
       "hero": {
-        "eyebrow": "Tolosa ? Gipuzkoa",
-        "title": "SHORINJI KEMPO EN TOLOSA",
-        "text": "Confianza ? Disciplina ? Defensa personal",
-        "primary": "Quiero probar",
+        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
+        "title": "Shorinji Kempo para niños, jóvenes y adultos en Tolosa",
+        "text": "Aprende defensa personal, mejora tu confianza y entrena en un club familiar, cercano y sin presión competitiva.",
+        "primary": "Primer mes gratis",
         "secondary": "Ver horarios",
         "cards": [
           [
@@ -886,8 +886,8 @@ window.SKBC_CONTENT = {
     },
     "eu": {
       "languageName": "Euskera",
-      "seoTitle": "Shorinji Kempo eta arte martzialak Tolosan | SKBC",
-      "seoDescription": "Shorinji Kempo, arte martzialak eta defentsa pertsonaleko eskolak Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan.",
+      "seoTitle": "Shorinji Kempo Tolosan | SKBC GIPUZKOA",
+      "seoDescription": "Shorinji Kempo eskolak Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan, konpromisorik gabe probatzeko.",
       "nav": [
         "Haurrak",
         "Helduak",
@@ -899,10 +899,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Doan probatu",
       "hero": {
-        "eyebrow": "Tolosa ? Gipuzkoa",
-        "title": "SHORINJI KEMPO TOLOSAN",
-        "text": "Konfiantza ? Diziplina ? Defentsa pertsonala",
-        "primary": "Probatu nahi dut",
+        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
+        "title": "Shorinji Kempo haurrentzat, gazteentzat eta helduentzat Tolosan",
+        "text": "Ikasi defentsa pertsonala, indartu konfiantza eta entrenatu giro familiar, hurbil eta lehiarik gabeko batean.",
+        "primary": "Lehen hilabetea doan",
         "secondary": "Ordutegiak ikusi",
         "cards": [
           [
@@ -1228,8 +1228,8 @@ window.SKBC_CONTENT = {
     },
     "en": {
       "languageName": "English",
-      "seoTitle": "Shorinji Kempo and martial arts in Tolosa | SKBC",
-      "seoDescription": "Shorinji Kempo, martial arts and self-defence classes in Tolosa for children, teens and adults. First month free.",
+      "seoTitle": "Shorinji Kempo in Tolosa | SKBC GIPUZKOA",
+      "seoDescription": "Shorinji Kempo classes in Tolosa for children, teens and adults. First month free with no commitment.",
       "nav": [
         "Kids",
         "Adults",
@@ -1241,10 +1241,10 @@ window.SKBC_CONTENT = {
       ],
       "ctaShort": "Try for free",
       "hero": {
-        "eyebrow": "Tolosa ? Gipuzkoa",
-        "title": "SHORINJI KEMPO IN TOLOSA",
-        "text": "Confidence ? Discipline ? Self-defence",
-        "primary": "I want to try",
+        "eyebrow": "Tolosa · Gipuzkoa · Shorinji Kempo",
+        "title": "Shorinji Kempo for children, teens and adults in Tolosa",
+        "text": "Learn self-defence, build confidence and train in a friendly family club with no competitive pressure.",
+        "primary": "First month free",
         "secondary": "See schedule",
         "cards": [
           [
