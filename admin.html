@@ -3,43 +3,196 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Editor desactivado | SKBC GIPUZKOA</title>
+    <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
+    <link rel="stylesheet" href="admin.css?v=20260605-supabase-testimonials" />
     <style>
-      body {
-        margin: 0;
+      .admin-login {
         display: grid;
         min-height: 100vh;
         place-items: center;
-        background: #15171a;
+        padding: 24px;
         color: #fff;
-        font-family: "Segoe UI", Arial, sans-serif;
+        background: #15171a;
       }
-      main {
-        width: min(680px, calc(100% - 36px));
-        padding: 34px;
+      .admin-login__panel {
+        display: grid;
+        gap: 16px;
+        width: min(520px, 100%);
+        padding: 28px;
         border: 1px solid rgba(255,255,255,.16);
         border-radius: 8px;
-        background: rgba(255,255,255,.06);
+        background: rgba(255,255,255,.07);
       }
-      p { color: #d9dee7; line-height: 1.55; }
-      a {
-        display: inline-flex;
-        margin-top: 14px;
-        padding: 12px 16px;
-        border-radius: 6px;
+      .admin-login__panel h1,
+      .admin-login__panel p {
+        margin: 0;
+      }
+      .admin-login__panel p {
+        color: #d9dee7;
+        line-height: 1.5;
+      }
+      .admin-login__panel label {
+        display: grid;
+        gap: 8px;
         color: #fff;
-        background: #c52727;
         font-weight: 900;
-        text-decoration: none;
+      }
+      .admin-login__panel input {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 6px;
+        padding: 13px 14px;
+        color: #15171a;
+        font: inherit;
+      }
+      .admin-login__error {
+        min-height: 22px;
+        color: #ffd6d6;
+        font-weight: 850;
+      }
+      body.admin-locked #admin-shell {
+        display: none;
+      }
+      body:not(.admin-locked) #admin-login {
+        display: none;
       }
     </style>
+    <script>
+      document.write('<script src="content.js?v=' + Date.now() + '"><\/script>');
+    </script>
   </head>
-  <body>
-    <main>
-      <h1>Editor desactivado en la web pública</h1>
-      <p>Por seguridad, el editor no está disponible desde el dominio público. La web visible sigue funcionando con normalidad.</p>
-      <a href="/">Volver a la web</a>
-    </main>
+  <body class="admin-locked">
+    <section class="admin-login" id="admin-login">
+      <form class="admin-login__panel" id="admin-login-form">
+        <div>
+          <p>SKBC GIPUZKOA</p>
+          <h1>Editor privado</h1>
+        </div>
+        <p>Acceso protegido con Supabase. Usa el email y contraseña de tu usuario de Supabase.</p>
+        <label>Email <input id="admin-login-email" type="email" autocomplete="email" required /></label>
+        <label>Contraseña <input id="admin-login-password" type="password" autocomplete="current-password" required /></label>
+        <button class="primary" type="submit">Entrar al editor</button>
+        <span class="admin-login__error" id="admin-login-error"></span>
+      </form>
+    </section>
+
+    <div id="admin-shell">
+      <header class="admin-header">
+        <div>
+          <p>SKBC GIPUZKOA</p>
+          <h1>Editor sencillo de la web</h1>
+          <span id="status">Listo para editar</span>
+        </div>
+        <nav>
+          <a href="index.html">Ver web</a>
+          <button id="save" class="primary" type="button">Guardar cambios</button>
+          <button id="publish" type="button">Publicar en GitHub</button>
+          <button id="export" type="button">Exportar copia</button>
+          <label class="import-button">
+            Importar copia
+            <input id="import" type="file" accept="application/json" />
+          </label>
+          <button id="reset" class="quiet" type="button">Restaurar</button>
+        </nav>
+      </header>
+
+      <main>
+        <aside>
+          <button class="tab active" data-panel="settings" type="button">Ajustes</button>
+          <button class="tab" data-panel="es" type="button">Español</button>
+          <button class="tab" data-panel="eu" type="button">Euskera</button>
+          <button class="tab" data-panel="en" type="button">Inglés</button>
+          <button class="tab" data-panel="events" type="button">Eventos</button>
+          <button class="tab" data-panel="news" type="button">Noticias</button>
+          <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
+          <button class="tab" data-panel="merch" type="button">Tienda</button>
+          <button class="tab" data-panel="custom" type="button">Áreas</button>
+          <button class="tab" data-panel="advanced" type="button">Todo</button>
+        </aside>
+        <section id="editor"></section>
+      </main>
+    </div>
+
+    <script>
+      const ADMIN_SESSION_KEY = "skbc_supabase_session";
+      const adminInbox = window.SKBC_CONTENT?.settings?.testimonialInbox || {};
+      const adminSupabaseUrl = String(adminInbox.supabaseUrl || "").replace(/\/+$/, "");
+      const adminAnonKey = String(adminInbox.anonKey || "").trim();
+      const loginError = document.querySelector("#admin-login-error");
+
+      function savedAdminSession() {
+        try {
+          return JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY) || "null");
+        } catch {
+          return null;
+        }
+      }
+
+      async function validateAdminSession(session) {
+        if (!session?.access_token || !adminSupabaseUrl || !adminAnonKey) return false;
+        const response = await fetch(`${adminSupabaseUrl}/auth/v1/user`, {
+          headers: {
+            apikey: adminAnonKey,
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
+        return response.ok;
+      }
+
+      function unlockAdmin() {
+        document.body.classList.remove("admin-locked");
+        if (!document.querySelector("script[data-admin-app]")) {
+          const script = document.createElement("script");
+          script.src = "admin.js?v=20260605-supabase-admin-gate";
+          script.dataset.adminApp = "true";
+          document.body.appendChild(script);
+        }
+      }
+
+      async function loginAdmin(email, password) {
+        if (!adminSupabaseUrl || !adminAnonKey) {
+          throw new Error("Falta configurar Supabase URL y anon key en content.js.");
+        }
+        const response = await fetch(`${adminSupabaseUrl}/auth/v1/token?grant_type=password`, {
+          method: "POST",
+          headers: {
+            apikey: adminAnonKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error_description || result.msg || "No se pudo iniciar sesión.");
+        }
+        localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(result));
+        return result;
+      }
+
+      document.querySelector("#admin-login-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        loginError.textContent = "Comprobando acceso...";
+        try {
+          await loginAdmin(
+            document.querySelector("#admin-login-email").value.trim(),
+            document.querySelector("#admin-login-password").value
+          );
+          loginError.textContent = "";
+          unlockAdmin();
+        } catch (error) {
+          loginError.textContent = error.message;
+        }
+      });
+
+      (async () => {
+        const session = savedAdminSession();
+        if (await validateAdminSession(session)) {
+          unlockAdmin();
+        } else {
+          localStorage.removeItem(ADMIN_SESSION_KEY);
+        }
+      })();
+    </script>
   </body>
 </html>
