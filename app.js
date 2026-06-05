@@ -489,14 +489,13 @@ function upcomingNewsSection(settings, copy) {
 
 function testimonialsSection(copy) {
   const testimonials = copy.testimonials?.items || [];
-  if (!testimonials.length) return "";
   return `<section class="section testimonials-section" id="testimonios">
     <div class="section-heading">
       <p class="eyebrow">${copy.testimonials.eyebrow || "Testimonios"}</p>
       <h2>${copy.testimonials.title}</h2>
       <p>${copy.testimonials.text}</p>
     </div>
-    <div class="testimonial-grid">
+    ${testimonials.length ? `<div class="testimonial-grid">
       ${testimonials.map((item) => {
         const [audience, quote, name, image] = item;
         return `<article class="testimonial-card">
@@ -506,7 +505,15 @@ function testimonialsSection(copy) {
           ${name ? `<strong>${name}</strong>` : ""}
         </article>`;
       }).join("")}
-    </div>
+    </div>` : `<p class="testimonial-empty">${copy.testimonials.empty || "Sin testimonios por el momento."}</p>`}
+    <form class="testimonial-form">
+      <h3>${copy.testimonials.formTitle || copy.testimonials.title}</h3>
+      <label>${copy.testimonials.name || "Nombre"}<input name="name" required /></label>
+      <label>${copy.testimonials.role || "Relación con el club"}<select name="role">${(copy.testimonials.roles || []).map((role) => `<option>${role}</option>`).join("")}</select></label>
+      <label>${copy.testimonials.message || "Testimonio"}<textarea name="message" rows="4" required></textarea></label>
+      <p>${copy.testimonials.consent || ""}</p>
+      <button class="button" type="submit">${copy.testimonials.submit || "Enviar testimonio"}</button>
+    </form>
   </section>`;
 }
 
@@ -973,9 +980,30 @@ function render() {
     const text = `${data.get("name")} · ${data.get("interest")} · ${data.get("message")}`;
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
   });
+  bindTestimonials(copy);
   bindProfiles();
   bindCalendar();
   bindMerch();
+}
+
+function bindTestimonials(copy) {
+  document.querySelector(".testimonial-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const text = [
+      "Nuevo testimonio para SKBC GIPUZKOA",
+      "",
+      `Nombre: ${form.get("name")}`,
+      `Perfil: ${form.get("role")}`,
+      "",
+      `Testimonio: ${form.get("message")}`,
+      "",
+      "Pendiente de aprobación antes de publicarse en la web."
+    ].join("\n");
+    window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
+    event.currentTarget.reset();
+    alert(copy.testimonials.thanks || "Gracias. Revisaremos el testimonio antes de publicarlo.");
+  });
 }
 
 function bindProfiles() {

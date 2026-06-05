@@ -828,28 +828,23 @@ window.SKBC_CONTENT = {
       },
       "testimonials": {
         "eyebrow": "Testimonios",
-        "title": "Lo que se vive dentro del dojo",
-        "text": "Historias reales de familias, adultos y practicantes que han encontrado en SKBC GIPUZKOA un lugar donde crecer.",
-        "items": [
-          [
-            "Padres",
-            "Mi hijo ha ganado confianza.",
-            "Familia SKBC",
-            "assets/uploads/1780604072168-grupo-ninos.jpg"
-          ],
-          [
-            "Adultos",
-            "Empec? sin experiencia y me sent? acompa?ado desde el primer d?a.",
-            "Alumno adulto",
-            "assets/uploads/1780604082854-adultos.jpg"
-          ],
-          [
-            "Practicantes",
-            "Encontr? una segunda familia.",
-            "Practicante SKBC",
-            "assets/uploads/1780606250233-curso-skbc.jpg"
-          ]
-        ]
+        "title": "Testimonios reales del club",
+        "text": "Publicamos ?nicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
+        "items": [],
+        "empty": "Sin testimonios por el momento.",
+        "formTitle": "Enviar un testimonio",
+        "name": "Nombre",
+        "role": "Relaci?n con el club",
+        "roles": [
+          "Padre/madre",
+          "Alumno adulto",
+          "Practicante",
+          "Otro"
+        ],
+        "message": "Testimonio",
+        "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo revise antes de decidir si se publica en la web. No se publicar? nada sin revisi?n previa.",
+        "submit": "Enviar testimonio por WhatsApp",
+        "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo."
       },
       "faq": {
         "eyebrow": "Preguntas frecuentes",
@@ -1175,28 +1170,23 @@ window.SKBC_CONTENT = {
       },
       "testimonials": {
         "eyebrow": "Testigantzak",
-        "title": "Dojo barruan bizi dena",
-        "text": "Familiek, helduek eta praktikatzaileek SKBC GIPUZKOAn hazteko eta ikasteko aurkitu duten giro hurbila.",
-        "items": [
-          [
-            "Gurasoak",
-            "Nire semeak konfiantza irabazi du.",
-            "SKBC familia",
-            "assets/uploads/1780604072168-grupo-ninos.jpg"
-          ],
-          [
-            "Helduak",
-            "Esperientziarik gabe hasi nintzen eta lehen egunetik lagunduta sentitu nintzen.",
-            "Ikasle heldua",
-            "assets/uploads/1780604082854-adultos.jpg"
-          ],
-          [
-            "Praktikatzaileak",
-            "Bigarren familia bat aurkitu dut.",
-            "SKBC praktikatzailea",
-            "assets/uploads/1780606250233-curso-skbc.jpg"
-          ]
-        ]
+        "title": "Klubeko benetako testigantzak",
+        "text": "Ikasleek edo familiek bidalitako eta webgunean agertu aurretik berrikusitako testigantzak soilik argitaratzen ditugu.",
+        "items": [],
+        "empty": "Oraingoz ez dago testigantzarik.",
+        "formTitle": "Testigantza bidali",
+        "name": "Izena",
+        "role": "Klubarekin duzun harremana",
+        "roles": [
+          "Aita/ama",
+          "Ikasle heldua",
+          "Praktikatzailea",
+          "Beste bat"
+        ],
+        "message": "Testigantza",
+        "consent": "Bidaltzean, SKBC GIPUZKOAk testigantza berrikustea onartzen duzu, webgunean argitaratu ala ez erabaki aurretik. Ez da ezer argitaratuko aurretik berrikusi gabe.",
+        "submit": "Testigantza WhatsApp bidez bidali",
+        "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik."
       },
       "faq": {
         "eyebrow": "Ohiko galderak",
@@ -1522,28 +1512,23 @@ window.SKBC_CONTENT = {
       },
       "testimonials": {
         "eyebrow": "Testimonials",
-        "title": "What people experience inside the dojo",
-        "text": "Real stories from families, adults and practitioners who found in SKBC GIPUZKOA a place to grow.",
-        "items": [
-          [
-            "Parents",
-            "My child has gained confidence.",
-            "SKBC family",
-            "assets/uploads/1780604072168-grupo-ninos.jpg"
-          ],
-          [
-            "Adults",
-            "I started with no experience and felt supported from day one.",
-            "Adult student",
-            "assets/uploads/1780604082854-adultos.jpg"
-          ],
-          [
-            "Practitioners",
-            "I found a second family.",
-            "SKBC practitioner",
-            "assets/uploads/1780606250233-curso-skbc.jpg"
-          ]
-        ]
+        "title": "Real club testimonials",
+        "text": "We only publish testimonials sent by students or families and reviewed before they appear on the website.",
+        "items": [],
+        "empty": "No testimonials yet.",
+        "formTitle": "Send a testimonial",
+        "name": "Name",
+        "role": "Relationship with the club",
+        "roles": [
+          "Parent",
+          "Adult student",
+          "Practitioner",
+          "Other"
+        ],
+        "message": "Testimonial",
+        "consent": "By sending it, you agree that SKBC GIPUZKOA may review it before deciding whether it appears on the website. Nothing will be published without prior review.",
+        "submit": "Send testimonial by WhatsApp",
+        "thanks": "Thank you. We will review the testimonial before publishing it."
       },
       "faq": {
         "eyebrow": "FAQ",
