@@ -224,6 +224,13 @@ aside {
   margin: 0;
 }
 
+.approved-testimonial p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
 .pending-testimonial__stars {
   color: #c7a24a;
   font-size: 20px;

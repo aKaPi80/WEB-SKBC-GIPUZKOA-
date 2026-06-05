@@ -1053,15 +1053,66 @@ function renderTestimonialsInbox() {
       </header>
       <div id="testimonial-inbox-list" class="testimonial-inbox-list"></div>
     </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Testimonios publicados en la web</h3>
+          <p>Estos son los testimonios ya aprobados y visibles. Puedes retirarlos de la web y después publicar en GitHub.</p>
+        </div>
+      </header>
+      <div id="approved-testimonial-list" class="testimonial-inbox-list">
+        ${approvedTestimonialsTemplate()}
+      </div>
+    </article>
   `;
   bindFields(editor);
   document.querySelector("#login-supabase").addEventListener("click", loginSupabase);
   document.querySelector("#load-testimonials").addEventListener("click", loadPendingTestimonials);
+  document.querySelectorAll("[data-remove-approved-testimonial]").forEach((button) => {
+    button.addEventListener("click", () => removeApprovedTestimonial(Number(button.dataset.removeApprovedTestimonial)));
+  });
   document.querySelector("#logout-supabase").addEventListener("click", () => {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
     setStatus("Sesión de Supabase cerrada.", "ok");
     renderTestimonialsInbox();
   });
+}
+
+function approvedTestimonialsTemplate() {
+  const items = data.languages?.es?.testimonials?.items || [];
+  if (!items.length) return `<p class="empty-note">No hay testimonios publicados.</p>`;
+  return items.map((item, index) => approvedTestimonialTemplate(item, index)).join("");
+}
+
+function approvedTestimonialTemplate(item, index) {
+  const [role, message, name, image, rating] = item;
+  const ratingNumber = Number(rating);
+  const stars = Number.isFinite(ratingNumber) && ratingNumber > 0 ? `${"★".repeat(Math.min(5, Math.round(ratingNumber)))}${"☆".repeat(5 - Math.min(5, Math.round(ratingNumber)))}` : "";
+  return `<article class="pending-testimonial approved-testimonial">
+    <span>${escapeHtml(role || "Testimonio publicado")}</span>
+    <h3>${escapeHtml(name || "Sin nombre")}</h3>
+    ${stars ? `<strong class="pending-testimonial__stars">${stars}</strong>` : ""}
+    ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(name || "Testimonio")}" />` : ""}
+    <p>${escapeHtml(message || "")}</p>
+    <div>
+      <button class="danger" type="button" data-remove-approved-testimonial="${index}">Quitar de la web</button>
+    </div>
+  </article>`;
+}
+
+function removeApprovedTestimonial(index) {
+  if (!Number.isInteger(index)) return;
+  if (!confirm("¿Quitar este testimonio aprobado de la web? No se borrará el histórico de Supabase, solo dejará de mostrarse al publicar.")) return;
+  ["es", "eu", "en"].forEach((lang) => {
+    const items = data.languages?.[lang]?.testimonials?.items;
+    if (Array.isArray(items) && index >= 0 && index < items.length) {
+      items.splice(index, 1);
+    }
+  });
+  markDirty();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  setStatus("Testimonio retirado del contenido. Pulsa Publicar en GitHub para que desaparezca de la web.", "warning");
+  renderTestimonialsInbox();
 }
 
 async function loginSupabase() {
