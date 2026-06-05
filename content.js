@@ -1217,7 +1217,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "Lehiaketarik dago?",
-            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira."
+            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira. Hala ere badugu lehiatzeko atal batzuk bai kata moduan eta borroka librean ere bai."
           ],
           [
             "Eta sasoian ez banago?",
