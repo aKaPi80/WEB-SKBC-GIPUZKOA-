@@ -546,7 +546,7 @@ window.SKBC_CONTENT = {
       "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_merch_orders",
-      "emailWebhookUrl": ""
+      "emailWebhookUrl": "https://hook.eu1.make.com/36eny4icya8t3ogorq3mlf3ogeyp93c4"
     }
   },
   "languages": {
@@ -841,7 +841,7 @@ window.SKBC_CONTENT = {
         "paymentDojo": "Pagaré en el dojo",
         "paymentContact": "Contactad conmigo para cerrar el pago",
         "comments": "Comentarios",
-        "send": "Enviar pedido",
+        "send": "Enviar pedido por WhatsApp",
         "customTitle": "Otra prenda del catálogo JHK",
         "customText": "Si quieres otra prenda personalizable de JHK, pega aquí la referencia o enlace y la revisamos contigo.",
         "customReference": "Referencia o enlace JHK",
@@ -1226,7 +1226,7 @@ window.SKBC_CONTENT = {
         "paymentDojo": "Dojon ordainduko dut",
         "paymentContact": "Jarri nirekin harremanetan ordainketa ixteko",
         "comments": "Oharrak",
-        "send": "Eskaera bidali",
+        "send": "Bidali eskaera WhatsApp bidez",
         "customTitle": "JHK katalogoko beste jantzi bat",
         "customText": "JHKko beste jantzi pertsonalizagarri bat nahi baduzu, jarri erreferentzia edo esteka eta zurekin berrikusiko dugu.",
         "customReference": "JHK erreferentzia edo esteka",
@@ -1611,7 +1611,7 @@ window.SKBC_CONTENT = {
         "paymentDojo": "I will pay at the dojo",
         "paymentContact": "Contact me to arrange payment",
         "comments": "Comments",
-        "send": "Send order",
+        "send": "Send order by WhatsApp",
         "customTitle": "Another garment from the JHK catalogue",
         "customText": "If you want another customisable JHK garment, paste the reference or link and we will review it with you.",
         "customReference": "JHK reference or link",
