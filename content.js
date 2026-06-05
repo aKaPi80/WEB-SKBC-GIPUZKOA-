@@ -546,7 +546,7 @@ window.SKBC_CONTENT = {
       "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_merch_orders",
-      "emailWebhookUrl": "https://hook.eu1.make.com/36eny4icya8t3ogorq3mlf3ogeyp93c4"
+      "emailWebhookUrl": "https://script.google.com/macros/s/AKfycbzItZhZGJrHe5B4IMZTRLfsbqYplIIWJtO8h47UplZUvTAhnl3wnZRP7PvOZwDulmR8/exec"
     }
   },
   "languages": {
