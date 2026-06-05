@@ -842,6 +842,7 @@ function merchSection(settings, copy) {
           <label>${copy.merch.comments}<textarea name="comments" rows="3"></textarea></label>
           <p><strong>${copy.merch.noteTitle}:</strong> ${settings.merch?.note || ""}</p>
           <button class="button" type="submit">${copy.merch.send}</button>
+          <p class="merch-form-status" aria-live="polite"></p>
         </form>
       </aside>
     </div>
@@ -1201,7 +1202,7 @@ function render() {
   bindTestimonialCards(copy);
   bindProfiles();
   bindCalendar();
-  bindMerch();
+  bindMerch(copy);
 }
 
 function bindTestimonials(copy) {
@@ -1293,7 +1294,7 @@ function closeCalendarModal() {
   document.querySelector("#calendarModal")?.setAttribute("aria-hidden", "true");
 }
 
-function bindMerch() {
+function bindMerch(copy = t()) {
   const products = merchProducts(state.content.settings);
   document.querySelectorAll("[data-add-merch]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1323,26 +1324,31 @@ function bindMerch() {
   document.querySelector(".merch-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
+    const statusElement = formElement.querySelector(".merch-form-status");
     const form = new FormData(formElement);
     const order = merchOrderFromForm(form);
     if (!order.items.length && !order.custom_reference && !order.custom_details) {
-      alert(copy.merch.orderRequired || "A?ade alg?n producto antes de enviar el pedido.");
+      if (statusElement) statusElement.textContent = copy.merch.orderRequired || "Añade algún producto antes de enviar el pedido.";
+      alert(copy.merch.orderRequired || "Añade algún producto antes de enviar el pedido.");
       return;
     }
     const lines = merchWhatsappLines(order, copy);
+    if (statusElement) statusElement.textContent = "Enviando pedido...";
     try {
       const saved = await submitMerchOrderToSupabase(order);
       if (saved) {
         state.merchCart = [];
         formElement.reset();
         render();
-        if (confirm(`${copy.merch.orderThanks || "Pedido guardado correctamente."}\n\n${copy.merch.whatsappOptional || "?Enviar tambi?n por WhatsApp?"}`)) {
+        document.querySelector(".merch-form-status")?.replaceChildren(document.createTextNode(copy.merch.orderThanks || "Pedido guardado correctamente."));
+        if (confirm(`${copy.merch.orderThanks || "Pedido guardado correctamente."}\n\n${copy.merch.whatsappOptional || "¿Enviar también por WhatsApp?"}`)) {
           window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
         }
         return;
       }
     } catch (error) {
-      alert(copy.merch.orderError || `${error.message}. Se abrir? WhatsApp como alternativa.`);
+      if (statusElement) statusElement.textContent = copy.merch.orderError || `${error.message}. Se abrirá WhatsApp como alternativa.`;
+      alert(copy.merch.orderError || `${error.message}. Se abrirá WhatsApp como alternativa.`);
     }
     window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
   });
