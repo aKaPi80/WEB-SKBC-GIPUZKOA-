@@ -1289,15 +1289,19 @@ function renderOrders() {
       <header>
         <div>
           <h3>Pedidos recibidos</h3>
-          <p id="orders-status">${config.enabled ? "Pulsa Cargar pedidos." : "Activa y configura Supabase primero."}</p>
+          <p id="orders-status">${config.enabled ? "Pulsa Cargar pedidos. Puedes borrar pedidos antiguos o ya cerrados para mantener limpia la lista." : "Activa y configura Supabase primero."}</p>
         </div>
       </header>
+      <div class="intro-actions">
+        <button id="delete-closed-orders" class="danger" type="button">Borrar cerrados/cancelados</button>
+      </div>
       <div id="orders-list" class="testimonial-inbox-list orders-list"></div>
     </article>
   `;
   bindFields(editor);
   document.querySelector("#orders-login-supabase").addEventListener("click", loginOrdersSupabase);
   document.querySelector("#load-orders").addEventListener("click", loadOrders);
+  document.querySelector("#delete-closed-orders").addEventListener("click", deleteClosedOrders);
   document.querySelector("#logout-supabase").addEventListener("click", () => {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
     setStatus("Sesión de Supabase cerrada.", "ok");
@@ -1357,6 +1361,9 @@ async function loadOrders() {
   list.querySelectorAll("[data-order-status]").forEach((select) => {
     select.addEventListener("change", () => updateOrderStatus(select.dataset.orderStatus, select.value));
   });
+  list.querySelectorAll("[data-delete-order]").forEach((button) => {
+    button.addEventListener("click", () => deleteOrder(button.dataset.deleteOrder, button.dataset.orderLabel || ""));
+  });
 }
 
 function orderTemplate(order) {
@@ -1384,6 +1391,7 @@ function orderTemplate(order) {
         ${["pending", "seen", "contacted", "payment_pending", "paid", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
       </select>
       ${whatsappUrl ? `<a class="button-like" href="${whatsappUrl}" target="_blank" rel="noreferrer">WhatsApp cliente</a>` : ""}
+      <button class="danger" type="button" data-delete-order="${escapeHtml(order.id)}" data-order-label="${escapeHtml(order.customer_name || order.id || "pedido")}">Eliminar pedido</button>
     </div>
   </article>`;
 }
@@ -1401,6 +1409,41 @@ async function updateOrderStatus(id, status) {
     return;
   }
   setStatus("Estado del pedido actualizado.", "ok");
+}
+
+async function deleteOrder(id, label) {
+  if (!id) return;
+  const confirmed = window.confirm(`¿Eliminar definitivamente el pedido de ${label || id}?\n\nEsta acción lo borra de Supabase y no se puede deshacer.`);
+  if (!confirmed) return;
+  const config = orderInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(result.message || "No se pudo eliminar el pedido.", "danger");
+    return;
+  }
+  setStatus("Pedido eliminado.", "ok");
+  loadOrders();
+}
+
+async function deleteClosedOrders() {
+  const confirmed = window.confirm("¿Borrar todos los pedidos cerrados, entregados o cancelados?\n\nSe eliminarán los pedidos con estado paid, delivered o cancelled. Los pendientes se conservan.");
+  if (!confirmed) return;
+  const config = orderInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?status=in.(paid,delivered,cancelled)`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(result.message || "No se pudieron eliminar los pedidos cerrados.", "danger");
+    return;
+  }
+  setStatus("Pedidos cerrados/cancelados eliminados.", "ok");
+  loadOrders();
 }
 
 function renderMerch() {

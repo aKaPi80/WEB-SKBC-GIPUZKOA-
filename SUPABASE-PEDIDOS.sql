@@ -39,3 +39,10 @@ for update
 to authenticated
 using (true)
 with check (status in ('pending', 'seen', 'contacted', 'payment_pending', 'paid', 'delivered', 'cancelled'));
+
+drop policy if exists "Authenticated can delete merch orders" on public.skbc_merch_orders;
+create policy "Authenticated can delete merch orders"
+on public.skbc_merch_orders
+for delete
+to authenticated
+using (true);
