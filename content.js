@@ -473,7 +473,7 @@ window.SKBC_CONTENT = {
       "hero": "assets/uploads/1780685194448-esta-es-la-ultima.png",
       "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
       "adults": "assets/uploads/1780604082854-adultos.jpg",
-      "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
+      "learn": "assets/uploads/1780687199393-img-0434.jpg",
       "gallery": [
         "assets/uploads/1780604072168-grupo-ninos.jpg",
         "assets/uploads/1780604041486-manji.jpg",
@@ -733,7 +733,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Qué aprenden nuestros alumnos",
         "title": "Técnica, filosofía y recursos interactivos",
-        "text": "Un alumno no solo aprende movimientos. Aprende a moverse mejor, entender lo que practica y consultar recursos para seguir progresando entre clase y clase.",
+        "text": "La web mantiene el acceso a los materiales interactivos del club para consultar conceptos como Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi y otros contenidos de práctica.",
         "items": [
           [
             "Técnica",
@@ -1114,7 +1114,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
         "title": "Teknika, filosofia eta baliabide interaktiboak",
-        "text": "Ikasleak ez ditu mugimenduak bakarrik ikasten. Hobeto mugitzen, praktikatzen duena ulertzen eta klase artean aurrera egiteko baliabideak erabiltzen ikasten du.",
+        "text": "Webguneak klubeko material interaktiboetarako sarbidea mantentzen du: Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta beste praktika eduki batzuk.",
         "items": [
           [
             "Teknika",
@@ -1495,7 +1495,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "What students learn",
         "title": "Technique, philosophy and interactive resources",
-        "text": "Students do not only learn movements. They learn to move better, understand what they practise and use resources to keep progressing between classes.",
+        "text": "The website keeps access to the club's interactive materials for concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other training content.",
         "items": [
           [
             "Technique",
