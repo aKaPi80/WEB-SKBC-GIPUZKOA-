@@ -538,8 +538,8 @@ window.SKBC_CONTENT = {
   "languages": {
     "es": {
       "languageName": "Español",
-      "seoTitle": "Shorinji Kempo en Tolosa | SKBC GIPUZKOA",
-      "seoDescription": "Clases de Shorinji Kempo en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
+      "seoTitle": "Shorinji Kempo y artes marciales en Tolosa | SKBC",
+      "seoDescription": "Clases de Shorinji Kempo, artes marciales y defensa personal en Tolosa para niños, jóvenes y adultos. Primer mes gratis.",
       "nav": [
         "Niños",
         "Adultos",
@@ -829,8 +829,8 @@ window.SKBC_CONTENT = {
     },
     "eu": {
       "languageName": "Euskera",
-      "seoTitle": "Shorinji Kempo Tolosan | SKBC GIPUZKOA",
-      "seoDescription": "Shorinji Kempo eskolak Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan, konpromisorik gabe probatzeko.",
+      "seoTitle": "Shorinji Kempo eta arte martzialak Tolosan | SKBC",
+      "seoDescription": "Shorinji Kempo, arte martzialak eta defentsa pertsonaleko eskolak Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan.",
       "nav": [
         "Haurrak",
         "Helduak",
@@ -1120,8 +1120,8 @@ window.SKBC_CONTENT = {
     },
     "en": {
       "languageName": "English",
-      "seoTitle": "Shorinji Kempo in Tolosa | SKBC GIPUZKOA",
-      "seoDescription": "Shorinji Kempo classes in Tolosa for children, teens and adults. First month free with no commitment.",
+      "seoTitle": "Shorinji Kempo and martial arts in Tolosa | SKBC",
+      "seoDescription": "Shorinji Kempo, martial arts and self-defence classes in Tolosa for children, teens and adults. First month free.",
       "nav": [
         "Kids",
         "Adults",

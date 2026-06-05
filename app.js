@@ -646,10 +646,61 @@ function personButton(person, group, index) {
   </button>`;
 }
 
+function absoluteUrl(path = "") {
+  if (/^https?:\/\//.test(path)) return path;
+  return `https://www.skbcgipuzkoa.com/${String(path).replace(/^\/+/, "")}`;
+}
+
+function localizedUrl(lang = state.lang) {
+  return lang === "es" ? "https://www.skbcgipuzkoa.com/" : `https://www.skbcgipuzkoa.com/?lang=${lang}`;
+}
+
+function ensureMeta(selector, create) {
+  let element = document.head.querySelector(selector);
+  if (!element) {
+    element = create();
+    document.head.appendChild(element);
+  }
+  return element;
+}
+
+function setMetaContent(selector, attrs, content) {
+  const element = ensureMeta(selector, () => {
+    const meta = document.createElement("meta");
+    Object.entries(attrs).forEach(([key, value]) => meta.setAttribute(key, value));
+    return meta;
+  });
+  element.setAttribute("content", content || "");
+}
+
+function setLink(selector, attrs) {
+  const element = ensureMeta(selector, () => {
+    const link = document.createElement("link");
+    Object.entries(attrs).forEach(([key, value]) => link.setAttribute(key, value));
+    return link;
+  });
+  Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+}
+
 function setMeta(copy) {
   document.documentElement.lang = state.lang;
   document.title = copy.seoTitle;
   document.querySelector("meta[name='description']").setAttribute("content", copy.seoDescription);
+  const url = localizedUrl(state.lang);
+  const image = absoluteUrl(state.content.settings.images?.hero || "assets/logo-skbc-full.png");
+  setLink("link[rel='canonical']", { rel: "canonical", href: url });
+  setLink("link[rel='alternate'][hreflang='es']", { rel: "alternate", hreflang: "es", href: localizedUrl("es") });
+  setLink("link[rel='alternate'][hreflang='eu']", { rel: "alternate", hreflang: "eu", href: localizedUrl("eu") });
+  setLink("link[rel='alternate'][hreflang='en']", { rel: "alternate", hreflang: "en", href: localizedUrl("en") });
+  setLink("link[rel='alternate'][hreflang='x-default']", { rel: "alternate", hreflang: "x-default", href: localizedUrl("es") });
+  setMetaContent("meta[property='og:locale']", { property: "og:locale" }, state.lang === "eu" ? "eu_ES" : state.lang === "en" ? "en_GB" : "es_ES");
+  setMetaContent("meta[property='og:title']", { property: "og:title" }, copy.seoTitle);
+  setMetaContent("meta[property='og:description']", { property: "og:description" }, copy.seoDescription);
+  setMetaContent("meta[property='og:url']", { property: "og:url" }, url);
+  setMetaContent("meta[property='og:image']", { property: "og:image" }, image);
+  setMetaContent("meta[name='twitter:title']", { name: "twitter:title" }, copy.seoTitle);
+  setMetaContent("meta[name='twitter:description']", { name: "twitter:description" }, copy.seoDescription);
+  setMetaContent("meta[name='twitter:image']", { name: "twitter:image" }, image);
 }
 
 function renderNav(copy) {
