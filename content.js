@@ -65,7 +65,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1780688813446-polooo.png",
+          "image": "assets/logo-skbc.png",
           "price": "15",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -91,11 +91,6 @@ window.SKBC_CONTENT = {
               "code": "NY",
               "name": "Navy",
               "hex": "#17233f"
-            },
-            {
-              "code": "RD",
-              "name": "Rojo",
-              "hex": "#c52727"
             }
           ]
         },
@@ -118,11 +113,6 @@ window.SKBC_CONTENT = {
           ],
           "colors": [
             {
-              "code": "WH",
-              "name": "Blanco",
-              "hex": "#ffffff"
-            },
-            {
               "code": "BK",
               "name": "Negro",
               "hex": "#111111"
@@ -133,9 +123,9 @@ window.SKBC_CONTENT = {
               "hex": "#17233f"
             },
             {
-              "code": "RD",
-              "name": "Rojo",
-              "hex": "#c52727"
+              "code": "GY",
+              "name": "Gris",
+              "hex": "#8f949b"
             }
           ]
         },
@@ -158,11 +148,6 @@ window.SKBC_CONTENT = {
           ],
           "colors": [
             {
-              "code": "WH",
-              "name": "Blanco",
-              "hex": "#ffffff"
-            },
-            {
               "code": "BK",
               "name": "Negro",
               "hex": "#111111"
@@ -173,9 +158,9 @@ window.SKBC_CONTENT = {
               "hex": "#17233f"
             },
             {
-              "code": "RD",
-              "name": "Rojo",
-              "hex": "#c52727"
+              "code": "GY",
+              "name": "Gris",
+              "hex": "#8f949b"
             }
           ]
         }
@@ -485,10 +470,10 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780685194448-esta-es-la-ultima.png",
+      "hero": "assets/uploads/1780604041486-manji.jpg",
       "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
       "adults": "assets/uploads/1780604082854-adultos.jpg",
-      "learn": "assets/uploads/1780687199393-img-0434.jpg",
+      "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
         "assets/uploads/1780604072168-grupo-ninos.jpg",
         "assets/uploads/1780604041486-manji.jpg",
@@ -513,14 +498,14 @@ window.SKBC_CONTENT = {
       "people": {
         "alvaro": "assets/people/alvaro-calvo.jpg",
         "inaki": "assets/people/inaki-ventureira.png",
-        "andoni": "assets/uploads/1780680201369-andonii.jpg",
+        "andoni": "assets/people/andoni-dominguez.png",
         "oskar": "assets/people/oskar-mateos.png",
         "asier": "assets/people/asier-azurmendi.jpg",
         "igone": "assets/people/igone-lasa.png",
         "iturrioz": "assets/people/inaki-iturrioz.jpg",
         "bharat": "assets/people/bharat-martin.png",
         "pablo": "assets/people/pablo-sanchez.png",
-        "uxue": "assets/uploads/1780680490604-uxue.jpg",
+        "uxue": "assets/people/uxue-garikano.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
         "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       }
@@ -529,24 +514,23 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-06",
+        "date": "2026-06-04",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "CURSO DE VERANO SKBC GIPUZKOA 2026",
-            "text": "YA ESTA AQUI EL CURSO DE VERANO DE SKBC GIPUZKOA! VEN A DISFRUTARLO JUNTO A NOSOTROS!"
+            "title": "Calendario anual disponible",
+            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
           },
           "eu": {
-            "title": "SKBC GIPUZKOAKO UDAKO IKASTAROA 2026",
-            "text": "SKBC GIPUZKOAKO UDAKO IKASTAROA HEMEN DA! ZATOZ GUREKIN ETA GOZATU!"
+            "title": "Urteko egutegia eskuragarri",
+            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
           },
           "en": {
-            "title": "SKBC GIPUZKOA 2026 SUMMER COURSE",
-            "text": "SKBC GIPUZKOA SUMMER COURSE IS HERE! COME AND ENJOY IT WITH US!"
+            "title": "Annual calendar available",
+            "text": "You can now check upcoming courses, seminars and club activities on the website."
           }
-        },
-        "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
+        }
       }
     ],
     "testimonialInbox": {
@@ -664,16 +648,16 @@ window.SKBC_CONTENT = {
         "text": "No hace falta haber practicado artes marciales antes. El entrenamiento combina defensa personal, movilidad, respiración, técnica y mejora física progresiva.",
         "items": [
           [
-            "Poco a poco",
-            "Empezamos a tu ritmo. La práctica te ayuda a ganar movilidad, coordinación y confianza clase a clase."
+            "No estoy en forma",
+            "La clase te ayuda a mejorar poco a poco."
           ],
           [
-            "Desde cero",
-            "Aprenderás las bases paso a paso, con acompañamiento y sin presión por saber antes de empezar."
+            "Nunca he entrenado",
+            "Empezamos desde lo básico, con acompañamiento."
           ],
           [
-            "Puedo probar sin compromiso",
-            "Ven, prueba un mes y decide después si el ambiente y la práctica encajan contigo."
+            "Me da respeto probar",
+            "El primer mes es gratis y sin compromiso."
           ]
         ]
       },
@@ -820,8 +804,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "SIGUENOS EN NUESTRAS REDES SOCIALES!",
-        "text": "SI QUIERES ESTAR AL CORRIENTE DE TODAS LAS NOVEDADES Y EVENTOS, SIGUENOS EN NUESTRAS REDES SOCIALES!",
+        "title": "Instagram como fuente principal de noticias",
+        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
@@ -884,7 +868,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Proximas noticias",
+        "title": "Pr?ximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       },
@@ -895,9 +879,30 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -987,39 +992,39 @@ window.SKBC_CONTENT = {
       },
       "benefits": {
         "eyebrow": "Zergatik entrenatu",
-        "title": "Dojo barruan eta kanpoan hazteko arte martzial bat",
-        "text": "Shorinji Kempoak autodefentsa, prestakuntza fisikoa eta garapen pertsonala uztartzen ditu. Teknikak garrantzia du, baina entrenatzeko moduak are garrantzitsuagoa da.",
+        "title": "Dojo barruan eta kanpoan hazteko arte martziala",
+        "text": "Shorinji Kempo-k defentsa pertsonala, entrenamendu fisikoa eta garapen pertsonala uztartzen ditu. Teknika garrantzitsua da, baina entrenatzeko modua ere bai.",
         "items": [
           [
             "Errespetua",
-            "Arretaz, arretaz eta taldekideekiko konpromisoz entrenatzen dugu."
+            "Arretaz, zaintzaz eta taldekideekiko konpromisoz entrenatzen dugu."
           ],
           [
             "Konfiantza",
-            "Aurrerapena pausoz pauso dator, ingurune seguru eta atsegin batean."
+            "Aurrerapena pausoz pauso dator, giro seguru eta hurbilean."
           ],
           [
-            "Autodefentsa",
-            "Adin eta maila bakoitzera egokitutako teknika erabilgarriak eta kontrolatuak."
+            "Defentsa pertsonala",
+            "Adin eta maila bakoitzera egokitutako teknika erabilgarriak."
           ],
           [
-            "Adiskidetasun",
-            "Dojo bat, non haurrek eta helduek talde osasuntsu baten parte sentitzen diren."
+            "Adiskidetasuna",
+            "Haurrak eta helduak talde osasuntsu baten parte sentitzen diren dojoa."
           ]
         ]
       },
       "shorinji": {
         "eyebrow": "Zer da Shorinji Kempo",
-        "title": "Autodefentsa, gorputza eta adimena",
-        "text": "Shorinji Kempoa Doshin So-k sortutako japoniar arte martzial modernoa da. Autodefentsa teknikak, entrenamendu fisikoa eta garapen mentala konbinatzen ditu ideia nagusi batekin: norbanako bat hobetzen bada, gizartea ere hobetzen da.",
+        "title": "Defentsa pertsonala, gorputza eta burua",
+        "text": "Shorinji Kempo Doshin So-k sortutako arte martzial japoniar modernoa da. Defentsa pertsonala, entrenamendu fisikoa eta garapen mentala uztartzen ditu ideia nagusi batekin: pertsona bat hobetzen bada, gizartea ere hobetzen da.",
         "blocks": [
           [
             "Goho",
-            "Zeure burua eraginkortasunez defendatzeko kolpeak, blokeoak eta mugimenduak."
+            "Kolpeak, blokeoak eta desplazamenduak eraginkortasunez defendatzeko."
           ],
           [
             "Juho",
-            "Beharrezkoa baino kalte gehiago eragin gabe neutralizatzeko dislokazioak, kontrolak eta proiekzioak."
+            "Luxazioak, kontrolak eta proiekzioak behar baino kalte handiagorik egin gabe neutralizatzeko."
           ],
           [
             "Kongo Zen",
@@ -1027,38 +1032,38 @@ window.SKBC_CONTENT = {
           ],
           [
             "Lan fisikoa",
-            "Elastikotasuna, koordinazioa, oreka, gihar-tonua eta jarrera ona."
+            "Malgutasuna, koordinazioa, oreka, tonu muskularra eta jarrera ona."
           ]
         ]
       },
       "kids": {
         "eyebrow": "Haurrak eta familiak",
-        "title": "Diziplina eta konfiantza txikientzat",
-        "text": "Haurren klaseek koordinazioa, arreta, autokontrola eta konfiantza hobetzen laguntzen dute. Haurrek ahalegintzen, entzuten eta lankidetzan aritzen ikasten dute errespetuzko ingurune batean.",
+        "title": "Diziplina eta konfiantza txikienentzat",
+        "text": "Haurren eskolak koordinazioa, arreta, autokontrola eta segurtasuna hobetzen laguntzen dute. Haurrek ahalegintzen, entzuten eta elkarlanean ikasten dute giro errespetuzko batean.",
         "items": [
-          "Konfiantza eta autoestimu gehiago.",
-          "Oreka, koordinazioa eta gaitasun psikomotorrak hobetzea.",
-          "Errespetua, diziplina eta erantzukizuna.",
-          "Lagunak egiteko aukera ematen duen talde osasuntsua."
+          "Segurtasun eta autoestima handiagoa.",
+          "Oreka, koordinazioa eta psikomotrizitate hobea.",
+          "Errespetua, diziplina eta ardura.",
+          "Lagunak egiteko talde osasuntsua."
         ],
-        "cta": "Galdetu haurrentzako klaseei buruz"
+        "cta": "Haurren eskolei buruz galdetu"
       },
       "adults": {
         "eyebrow": "Esperientziarik gabeko helduak",
-        "title": "Hasi hutsetik, zure erritmoan eta presiorik gabe.",
-        "text": "Ez da beharrezkoa aurretiko arte martzialetan esperientziarik izatea. Prestakuntzak autodefentsa, mugikortasuna, arnasketa, teknika eta hobekuntza fisiko progresiboa uztartzen ditu.",
+        "title": "Hasi hutsetik, zure erritmoan eta presiorik gabe",
+        "text": "Ez da beharrezkoa aurretik arte martzialik praktikatu izana. Entrenamenduak defentsa pertsonala, mugikortasuna, arnasketa, teknika eta hobekuntza fisiko progresiboa uztartzen ditu.",
         "items": [
           [
-            "Formatik kanpo nago",
-            "Klaseak pixkanaka hobetzen laguntzen dizu."
+            "Ez nago sasoi onean",
+            "Eskolak pixkanaka hobetzen lagunduko dizu."
           ],
           [
             "Inoiz ez dut entrenatu",
-            "Oinarrizkoetatik hasten gara, laguntzarekin."
+            "Oinarrietatik hasten gara, lagunduta."
           ],
           [
-            "Zalantzan nago probatzeko.",
-            "Lehenengo hilabetea doakoa eta konpromisorik gabea da."
+            "Probatzeko lotsa ematen dit",
+            "Lehen hilabetea doakoa da eta konpromisorik gabe."
           ]
         ]
       },
@@ -1140,7 +1145,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
         "title": "Teknika, filosofia eta baliabide interaktiboak",
-        "text": "Webguneak klubaren material interaktiboetarako sarbidea mantentzen du, Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta bestelako praktika-edukiak bezalako kontzeptuak kontsultatzeko.",
+        "text": "Webguneak klubeko material interaktiboetarako sarbidea mantentzen du: Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta beste praktika eduki batzuk.",
         "items": [
           [
             "TEKNIKOA",
@@ -1205,8 +1210,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "JARRAITU GURE SARE SOZIALETATAN!",
-        "text": "Berri eta ekitaldi guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
+        "title": "Instagram albisteen iturri nagusi gisa",
+        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1280,9 +1285,30 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -1372,20 +1398,20 @@ window.SKBC_CONTENT = {
       },
       "benefits": {
         "eyebrow": "Why train",
-        "title": "A martial art to grow in and out of the dojo",
-        "text": "Shorinji Kempo combines self-defense, physical training, and personal development. Technique matters, but how you train matters even more.",
+        "title": "A martial art to grow inside and outside the dojo",
+        "text": "Shorinji Kempo combines self-defence, physical training and personal development. Technique matters, but the way we train matters just as much.",
         "items": [
           [
             "Respect",
-            "We train with care, attention and commitment to peers."
+            "We train with care, attention and commitment to our training partners."
           ],
           [
-            "Trust",
-            "Progress comes step by step, with a safe and close environment."
+            "Confidence",
+            "Progress comes step by step in a safe and welcoming environment."
           ],
           [
-            "Self Defense",
-            "Useful techniques, controlled and adapted to each age and level."
+            "Self-defence",
+            "Useful, controlled techniques adapted to each age and level."
           ],
           [
             "Friendship",
@@ -1395,55 +1421,55 @@ window.SKBC_CONTENT = {
       },
       "shorinji": {
         "eyebrow": "What is Shorinji Kempo",
-        "title": "Self defense, body and mind",
-        "text": "Shorinji Kempo is a modern Japanese martial art created by Doshin So. It combines self-defense, physical training, and mental development techniques with one central idea: if a person improves, they also improve society.",
+        "title": "Self-defence, body and mind",
+        "text": "Shorinji Kempo is a modern Japanese martial art created by Doshin So. It combines self-defence techniques, physical training and mental development with one central idea: if a person improves, society improves too.",
         "blocks": [
           [
             "Goho",
-            "Blows, blockades and displacements to defend yourself effectively."
+            "Strikes, blocks and footwork for effective defence."
           ],
           [
             "Juho",
-            "Dislocations, controls and projections to neutralize without damaging more than necessary."
+            "Locks, controls and throws to neutralise without unnecessary harm."
           ],
           [
             "Kongo Zen",
-            "Philosophy and values that strengthen character, calmness and respect."
+            "Philosophy and values that strengthen character, calm and respect."
           ],
           [
             "Physical work",
-            "Elasticity, coordination, balance, muscle tone and good posture."
+            "Flexibility, coordination, balance, muscle tone and posture."
           ]
         ]
       },
       "kids": {
         "eyebrow": "Children and families",
-        "title": "Discipline and confidence for the little ones",
-        "text": "Children's classes help improve coordination, attention, self-control, and safety. Children learn to strive, listen, and cooperate in a respectful environment.",
+        "title": "Discipline and confidence for younger students",
+        "text": "Children's classes help improve coordination, attention, self-control and confidence. Students learn effort, listening and cooperation in a respectful environment.",
         "items": [
           "More confidence and self-esteem.",
-          "Better balance, coordination and psychomotor skills.",
+          "Better balance, coordination and motor skills.",
           "Respect, discipline and responsibility.",
-          "A healthy group where you can make friends."
+          "A healthy group where they can make friends."
         ],
         "cta": "Ask about children's classes"
       },
       "adults": {
         "eyebrow": "Adult beginners",
-        "title": "Start from scratch, at your own pace and without pressure",
-        "text": "You don't need to have practiced martial arts before. The training combines self-defense, mobility, breathing, technique and progressive physical improvement.",
+        "title": "Start from zero, at your pace and without pressure",
+        "text": "No previous martial arts experience is needed. Training combines self-defence, mobility, breathing, technique and gradual physical improvement.",
         "items": [
           [
-            "I'm not out of shape",
-            "The class helps you to improve little by little."
+            "I am not fit",
+            "Classes help you improve progressively."
           ],
           [
             "I have never trained",
-            "We start from the basics, with accompaniment."
+            "We start from the basics, with guidance."
           ],
           [
-            "It gives me respect to try",
-            "The first month is free and without obligation."
+            "I feel nervous about trying",
+            "The first month is free and with no commitment."
           ]
         ]
       },
@@ -1525,7 +1551,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "What students learn",
         "title": "Technique, philosophy and interactive resources",
-        "text": "The website maintains access to the club's interactive materials to consult concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other practice content.",
+        "text": "The website keeps access to the club's interactive materials for concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other training content.",
         "items": [
           [
             "Technical",
@@ -1590,8 +1616,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "FOLLOW US ON OUR SOCIAL MEDIA!",
-        "text": "If you want to stay up to date on all the news and events, follow us on our social media!",
+        "title": "Instagram as the main news source",
+        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
@@ -1665,9 +1691,30 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
           ]
         ],
         "empty": "No testimonials yet.",
