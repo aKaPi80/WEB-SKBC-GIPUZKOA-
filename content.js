@@ -903,6 +903,20 @@ window.SKBC_CONTENT = {
             "unodostres",
             "",
             5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
+            "",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1309,6 +1323,20 @@ window.SKBC_CONTENT = {
             "unodostres",
             "",
             5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
+            "",
+            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -1713,6 +1741,20 @@ window.SKBC_CONTENT = {
             "Practicante",
             "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
             "unodostres",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
             "",
             5
           ]
