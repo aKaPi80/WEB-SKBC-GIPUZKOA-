@@ -11,8 +11,8 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "socialFeeds": {
-      "instagramUrls": "",
-      "youtubeUrls": ""
+      "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      "youtubeUrls": "https://youtu.be/gcqSNxgEf74?si=nOr2_fWOr3nOIakt"
     },
     "merch": {
       "enabled": true,
@@ -65,7 +65,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1780688813446-polooo.png",
+          "image": "assets/logo-skbc.png",
           "price": "15",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -470,15 +470,15 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780685194448-esta-es-la-ultima.png",
+      "hero": "assets/uploads/1780604041486-manji.jpg",
       "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
       "adults": "assets/uploads/1780604082854-adultos.jpg",
-      "learn": "assets/uploads/1780687199393-img-0434.jpg",
+      "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
       "gallery": [
-        "assets/uploads/1780604072168-grupo-ninos.jpg",
-        "assets/uploads/1780604041486-manji.jpg",
-        "assets/uploads/1780604082854-adultos.jpg",
         "assets/people/equipo-tecnico.jpg",
+        "assets/people/alvaro-calvo.jpg",
+        "assets/people/inaki-ventureira.png",
+        "assets/people/andoni-dominguez.png",
         "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       ],
       "profiles": [
@@ -498,61 +498,40 @@ window.SKBC_CONTENT = {
       "people": {
         "alvaro": "assets/people/alvaro-calvo.jpg",
         "inaki": "assets/people/inaki-ventureira.png",
-        "andoni": "assets/uploads/1780947050545-andonii.jpg",
+        "andoni": "assets/people/andoni-dominguez.png",
         "oskar": "assets/people/oskar-mateos.png",
         "asier": "assets/people/asier-azurmendi.jpg",
         "igone": "assets/people/igone-lasa.png",
         "iturrioz": "assets/people/inaki-iturrioz.jpg",
         "bharat": "assets/people/bharat-martin.png",
         "pablo": "assets/people/pablo-sanchez.png",
-        "uxue": "assets/uploads/1780946868173-uxue.jpg",
+        "uxue": "assets/people/uxue-garikano.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
-        "technicalTeam": "assets/people/equipo-tecnico.jpg"
+        "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-25",
+        "date": "2026-06-04",
         "color": "#1f6fa9",
-        "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
-        "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9",
-        "languages": {
-          "es": {
-            "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
-            "text": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO"
-          },
-          "eu": {
-            "title": "PATATA TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA.",
-            "text": "PATATA-TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA"
-          },
-          "en": {
-            "title": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY.",
-            "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
-          }
-        }
-      },
-      {
-        "enabled": true,
-        "date": "2026-06-27",
-        "color": "#1fa89f",
-        "image": "assets/uploads/1780948628594-dingle-seminar.png",
         "url": "",
         "languages": {
           "es": {
-            "title": "SEMINARIO OFICIAL IKA DINGLE (IRLANDA)",
-            "text": "PROXIMO SEMINARIO OFICIAL IKA 2026 EN DINGLE (IRLANDA) UNA REPRESENTACION DE SKBC GIPUZKOA ESTARA EN ESTE SEMINARIO TAN ESPECIAL."
+            "title": "Calendario anual disponible",
+            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
           },
           "eu": {
-            "title": "IKA DINGLE IKASTARO OFIZIALA (IRLANDA)",
-            "text": "HURRENGO IKA IKASTARO OFIZIALA 2026AN DINGLE-N (IRLANDA) SKBC GIPUZKOAKO ORDEZKARITZA BAT EGONGO DA IKASTARO BEREZI HONETAN."
+            "title": "Urteko egutegia eskuragarri",
+            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
           },
           "en": {
-            "title": "IKA DINGLE OFFICIAL SEMINAR (IRELAND)",
-            "text": "NEXT OFFICIAL IKA 2026 SEMINAR IN DINGLE (IRELAND) A REPRESENTATION OF SKBC GIPUZKOA WILL BE IN THIS VERY SPECIAL SEMINAR."
+            "title": "Annual calendar available",
+            "text": "You can now check upcoming courses, seminars and club activities on the website."
           }
-        }
+        },
+        "image": "assets/uploads/1780606250233-curso-skbc.jpg"
       }
     ],
     "testimonialInbox": {
@@ -826,8 +805,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Noticias y redes",
-        "title": "Instagram como fuente principal de noticias",
-        "text": "Instagram queda como canal principal para novedades y publicaciones recientes. Facebook aparece solo como página oficial del club, sin mostrar sus publicaciones en la web para evitar duplicados. YouTube se usa para vídeos, demostraciones y contenido audiovisual del club.",
+        "title": "SIGUENOS EN INSTAGRAM, FACEBOOK Y YOUTUBE",
+        "text": "SI QUIERES ESTAR AL DIA DE TODAS LAS NOVEDADES Y NOTICIAS SIGUENOS EN NUESTRAS REDES SOCIALES!",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
         "youtube": "YouTube · vídeos"
@@ -890,7 +869,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Proximas noticias",
+        "title": "Pr?ximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       },
@@ -978,11 +957,11 @@ window.SKBC_CONTENT = {
           ],
           [
             "Puedo probar gratis?",
-            "S?. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
+            "Si. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
           ],
           [
             "Hay competición?",
-            "El enfoque principal del club es la practica, la defensa personal, la cooperación y el desarrollo personal. Pero también tenemos un apartado en que podrás competir en kata o combate (Randori)"
+            "El enfoque principal del club es la practica, la defensa personal, la cooperación y el desarrollo personal. Pero también tenemos un apartado en que podrás competir en kata,embu o combate (Randori)"
           ],
           [
             "Y si no estoy en forma?",
@@ -1246,8 +1225,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "Albisteak eta sareak",
-        "title": "Instagram albisteen iturri nagusi gisa",
-        "text": "Instagram izango da albiste eta argitalpen berrien kanal nagusia. Facebook klubaren orri ofizial gisa agertzen da soilik, webgunean argitalpenak bikoiztu gabe. YouTube bideoetarako, erakustaldietarako eta klubeko ikus-entzunezko edukietarako erabiliko da.",
+        "title": "JARRAITU GAITZAZU INSTAGRAM, FACEBOOK ETA YOUTUBE-N",
+        "text": "Azken berri eta eguneratze guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
         "instagram": "Instagram · azken argitalpenak",
         "facebook": "Facebook · orri ofiziala",
         "youtube": "YouTube · bideoak"
@@ -1402,7 +1381,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "Lehiaketarik dago?",
-            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira. Hala ere badugu lehiatzeko atal batzuk bai kata moduan eta borroka librean ere bai."
+            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira. Hala ere badugu lehiatzeko atal batzuk bai kata,embu moduan eta borroka librean ere bai."
           ],
           [
             "Eta sasoian ez banago?",
@@ -1666,8 +1645,8 @@ window.SKBC_CONTENT = {
       },
       "social": {
         "eyebrow": "News and social media",
-        "title": "Instagram as the main news source",
-        "text": "Instagram remains the main channel for news and recent posts. Facebook appears only as the club's official page, without showing posts on the website to avoid duplication. YouTube is used for videos, demonstrations and audiovisual club content.",
+        "title": "FOLLOW US ON INSTAGRAM, FACEBOOK AND YOUTUBE",
+        "text": "If you want to stay up to date with all the latest news and updates, follow us on our social media!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
