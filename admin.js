@@ -1770,6 +1770,7 @@ async function publishWithGithubApi(contentData) {
   const token = await githubToken();
   const path = "content.js";
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+  await confirmNoPublishedTestimonialsWillDisappear(contentData, token, apiUrl);
   const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`);
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
@@ -1795,6 +1796,29 @@ async function publishWithGithubApi(contentData) {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
     url: `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`
   };
+}
+
+async function confirmNoPublishedTestimonialsWillDisappear(contentData, token, apiUrl) {
+  const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
+  const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
+  const losses = ["es", "eu", "en"]
+    .map((lang) => {
+      const remoteCount = remote.languages?.[lang]?.testimonials?.items?.length || 0;
+      const nextCount = contentData.languages?.[lang]?.testimonials?.items?.length || 0;
+      return { lang, remoteCount, nextCount };
+    })
+    .filter((item) => item.remoteCount > item.nextCount);
+  if (!losses.length) return;
+  const detail = losses.map((item) => `${item.lang.toUpperCase()}: ${item.remoteCount} publicadas -> ${item.nextCount}`).join("\n");
+  const ok = confirm(`Atención: esta publicación tiene menos testimonios que la web publicada.\n\n${detail}\n\nSi publicas así, esos testimonios dejarán de verse. ¿Quieres continuar igualmente?`);
+  if (!ok) throw new Error("Publicación cancelada para no perder testimonios publicados.");
+}
+
+function parseSkbcContentJs(text) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("};");
+  if (start < 0 || end < 0) throw new Error("No se pudo leer el contenido publicado.");
+  return JSON.parse(text.slice(start, end + 1));
 }
 
 function wait(ms) {
@@ -1849,6 +1873,12 @@ function base64Utf8(value) {
     binary += String.fromCharCode(byte);
   });
   return btoa(binary);
+}
+
+function utf8FromBase64(value) {
+  const binary = atob(String(value).replace(/\s/g, ""));
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
 }
 
 document.querySelector("#export").addEventListener("click", () => {

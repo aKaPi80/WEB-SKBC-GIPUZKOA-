@@ -901,9 +901,44 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
+            "",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1286,9 +1321,44 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
+            "",
+            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -1671,9 +1741,44 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
+          ],
+          [
+            "Practicante",
+            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Estrellita",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Clases muy entrenidas y divertidas.",
+            "Cameron",
+            "",
+            5
+          ],
+          [
+            "Practicante",
+            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "unodostres",
+            "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ekaitz",
+            "",
+            5
+          ],
+          [
+            "Padre/madre",
+            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Arene",
+            "",
+            5
           ]
         ],
         "empty": "No testimonials yet.",
