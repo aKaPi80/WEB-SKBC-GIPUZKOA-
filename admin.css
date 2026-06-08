@@ -813,6 +813,54 @@ button.danger {
   background: var(--red);
 }
 
+.people-rows {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.person-editor-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.person-editor-row label {
+  display: grid;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.person-editor-row input,
+.person-editor-row textarea {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-weight: 750;
+}
+
+.person-editor-row textarea {
+  resize: vertical;
+}
+
+.person-editor-row .remove-person {
+  align-self: end;
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+
 @media (max-width: 900px) {
   .admin-header {
     display: block;
@@ -863,5 +911,9 @@ button.danger {
 
   .special-schedule-message {
     grid-column: auto;
+  }
+
+  .person-editor-row {
+    grid-template-columns: 1fr;
   }
 }

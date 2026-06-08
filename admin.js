@@ -29,6 +29,7 @@ const labels = {
   es: "EspaÃ±ol",
   eu: "Euskera",
   en: "InglÃ©s",
+  people: "Personas",
   custom: "Secciones",
   advanced: "Avanzado"
 };
@@ -37,6 +38,8 @@ panelTitles.events = "Calendario de eventos";
 labels.events = "Calendario";
 panelTitles.news = "Próximas noticias";
 labels.news = "Noticias";
+panelTitles.people = "Personas del equipo y directiva";
+labels.people = "Personas";
 panelTitles.testimonials = "Testimonios";
 labels.testimonials = "Testimonios";
 panelTitles.merch = "Tienda merchandising";
@@ -392,6 +395,7 @@ function render() {
   });
 
   if (currentPanel === "custom") return renderCustom();
+  if (currentPanel === "people") return renderPeople();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();
   if (currentPanel === "testimonials") return renderTestimonialsInbox();
@@ -417,6 +421,139 @@ function renderGroups(groups) {
   editor.innerHTML = `${renderIntro()}${groups.map(groupTemplate).join("")}`;
   bindFields(editor);
   bindSectionTranslations(editor);
+}
+
+function parseEditorPerson(person) {
+  if (Array.isArray(person)) {
+    return { name: person[0] || "", role: person[1] || "", text: person[2] || "", image: person[3] || "" };
+  }
+  const [name, role] = String(person || "").split(" Â· ");
+  return { name: name || "", role: role || "", text: "", image: "" };
+}
+
+function peopleRows(kind, key) {
+  const lists = ["es", "eu", "en"].map((lang) => data.languages?.[lang]?.[key.group]?.[key.list] || []);
+  const count = Math.max(...lists.map((list) => list.length), 0);
+  return Array.from({ length: count }, (_, index) => {
+    const es = parseEditorPerson(lists[0][index]);
+    const eu = parseEditorPerson(lists[1][index]);
+    const en = parseEditorPerson(lists[2][index]);
+    return {
+      kind,
+      name: es.name || eu.name || en.name,
+      image: es.image || eu.image || en.image || "",
+      esRole: es.role,
+      euRole: eu.role,
+      enRole: en.role,
+      esText: es.text,
+      euText: eu.text,
+      enText: en.text
+    };
+  });
+}
+
+function renderPeople() {
+  const editor = document.querySelector("#editor");
+  const leads = peopleRows("lead", { group: "technicalTeam", list: "leads" });
+  const members = peopleRows("member", { group: "technicalTeam", list: "members" });
+  const board = peopleRows("board", { group: "board", list: "members" });
+  editor.innerHTML = `
+    ${renderIntro(`<p class="advanced-warning">Edita nombres, cargos y fotos desde aquí. El nombre se aplica a ES/EU/EN; cargos y descripciones pueden ser distintos por idioma.</p>`)}
+    ${peopleSectionTemplate("Responsables técnicos destacados", "lead", leads, true)}
+    ${peopleSectionTemplate("Equipo técnico", "member", members, false)}
+    ${peopleSectionTemplate("Directiva", "board", board, false)}
+  `;
+  bindPeopleEditor(editor);
+}
+
+function peopleSectionTemplate(title, kind, people, hasText) {
+  return `
+    <article class="editor-group people-editor" data-people-section="${kind}">
+      <header>
+        <div>
+          <h3>${title}</h3>
+          <p>Añade, elimina o cambia personas. Foto opcional: pega una ruta tipo assets/uploads/foto.jpg.</p>
+        </div>
+        <button class="primary add-person" type="button" data-add-person="${kind}">Añadir persona</button>
+      </header>
+      <div class="people-rows">
+        ${people.map((person) => personRowTemplate(kind, person, hasText)).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function personRowTemplate(kind, person = {}, hasText = false) {
+  return `
+    <div class="person-editor-row" data-person-kind="${kind}">
+      <label>Nombre<input data-person-field="name" value="${escapeHtml(person.name || "")}" /></label>
+      <label>Foto opcional<input data-person-field="image" value="${escapeHtml(person.image || "")}" placeholder="assets/uploads/foto.jpg" /></label>
+      <label>Cargo ES<input data-person-field="esRole" value="${escapeHtml(person.esRole || "")}" /></label>
+      <label>Cargo EU<input data-person-field="euRole" value="${escapeHtml(person.euRole || "")}" /></label>
+      <label>Cargo EN<input data-person-field="enRole" value="${escapeHtml(person.enRole || "")}" /></label>
+      ${hasText ? `
+        <label>Descripción ES<textarea data-person-field="esText" rows="3">${escapeHtml(person.esText || "")}</textarea></label>
+        <label>Descripción EU<textarea data-person-field="euText" rows="3">${escapeHtml(person.euText || "")}</textarea></label>
+        <label>Descripción EN<textarea data-person-field="enText" rows="3">${escapeHtml(person.enText || "")}</textarea></label>
+      ` : ""}
+      <button class="danger remove-person" type="button">Eliminar persona</button>
+    </div>
+  `;
+}
+
+function bindPeopleEditor(editor) {
+  const sync = () => {
+    const rowsFor = (kind) => Array.from(editor.querySelectorAll(`[data-person-kind="${kind}"]`)).map((row) => {
+      const value = (field) => row.querySelector(`[data-person-field="${field}"]`)?.value?.trim() || "";
+      return {
+        name: value("name"),
+        image: value("image"),
+        esRole: value("esRole"),
+        euRole: value("euRole"),
+        enRole: value("enRole"),
+        esText: value("esText"),
+        euText: value("euText"),
+        enText: value("enText")
+      };
+    }).filter((person) => person.name);
+    const write = (lang, group, list, rows, roleKey, textKey = null) => {
+      data.languages[lang][group][list] = rows.map((person) => {
+        const role = person[roleKey] || person.esRole || "";
+        const text = textKey ? person[textKey] || person.esText || "" : "";
+        return [person.name, role, text, person.image || ""];
+      });
+    };
+    const leads = rowsFor("lead");
+    const members = rowsFor("member");
+    const board = rowsFor("board");
+    write("es", "technicalTeam", "leads", leads, "esRole", "esText");
+    write("eu", "technicalTeam", "leads", leads, "euRole", "euText");
+    write("en", "technicalTeam", "leads", leads, "enRole", "enText");
+    write("es", "technicalTeam", "members", members, "esRole");
+    write("eu", "technicalTeam", "members", members, "euRole");
+    write("en", "technicalTeam", "members", members, "enRole");
+    write("es", "board", "members", board, "esRole");
+    write("eu", "board", "members", board, "euRole");
+    write("en", "board", "members", board, "enRole");
+    markDirty();
+  };
+  editor.addEventListener("input", (event) => {
+    if (event.target.matches("[data-person-field]")) sync();
+  });
+  editor.addEventListener("click", (event) => {
+    const add = event.target.closest("[data-add-person]");
+    if (add) {
+      const section = editor.querySelector(`[data-people-section="${add.dataset.addPerson}"] .people-rows`);
+      section.insertAdjacentHTML("beforeend", personRowTemplate(add.dataset.addPerson, {}, add.dataset.addPerson === "lead"));
+      sync();
+      return;
+    }
+    const remove = event.target.closest(".remove-person");
+    if (remove) {
+      remove.closest(".person-editor-row")?.remove();
+      sync();
+    }
+  });
 }
 
 function groupTemplate(group) {

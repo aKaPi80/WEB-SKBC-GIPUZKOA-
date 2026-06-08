@@ -871,10 +871,10 @@ function merchSection(settings, copy) {
 
 function parsePerson(person) {
   if (Array.isArray(person)) {
-    return { name: person[0], role: person[1], text: person[2] || "" };
+    return { name: person[0], role: person[1], text: person[2] || "", image: person[3] || "" };
   }
   const [name, role] = String(person).split(" · ");
-  return { name, role: role || "", text: "" };
+  return { name, role: role || "", text: "", image: "" };
 }
 
 function profileText(person, group) {
@@ -901,8 +901,10 @@ function normalizeName(name) {
   return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-function personImage(name, index) {
+function personImage(profile, index) {
+  if (profile.image) return profile.image;
   const people = state.content.settings.images.people || {};
+  const name = profile.name || "";
   const normalized = normalizeName(name);
   if (normalized === "alvaro calvo") return people.alvaro;
   if (normalized === "inaki ventureira") return people.inaki;
@@ -920,13 +922,13 @@ function personImage(name, index) {
 
 function personButton(person, group, index) {
   const profile = parsePerson(person);
-  const image = personImage(profile.name, index);
+  const image = personImage(profile, index);
   const data = JSON.stringify({
     name: profile.name,
     role: profile.role,
     text: profileText(profile, group)
   });
-  return `<button class="person-card" type="button" data-profile='${data}'>
+  return `<button class="person-card" type="button" data-profile='${escapeHtml(data)}'>
     ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" /></span>` : ""}
     <span>${profile.role}</span>
     <strong>${profile.name}</strong>
