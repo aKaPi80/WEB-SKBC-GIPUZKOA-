@@ -12,7 +12,7 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "specialVisual": {
-      "mode": "carnival",
+      "mode": "womensDay",
       "intensity": "high",
       "message": "",
       "schedule": [
