@@ -14,7 +14,8 @@ window.SKBC_CONTENT = {
     "specialVisual": {
       "mode": "none",
       "intensity": "medium",
-      "message": ""
+      "message": "",
+      "schedule": []
     },
     "socialFeeds": {
       "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\nhttps://www.instagram.com/reel/DZTJzzoPn76/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\n",

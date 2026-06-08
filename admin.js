@@ -95,7 +95,8 @@ const settingsGroups = [
       ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"],
       ["Efecto especial manual", ["settings", "specialVisual", "mode"], "specialVisualMode"],
       ["Intensidad del efecto", ["settings", "specialVisual", "intensity"], "specialVisualIntensity"],
-      ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"]
+      ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"],
+      ["Programador de efectos", ["settings", "specialVisual", "schedule"], "specialVisualSchedule"]
     ]
   },
   {
@@ -337,6 +338,23 @@ function parseFieldValue(value, type) {
       })
       .filter((item) => item.code || item.name);
   }
+  if (type === "specialVisualSchedule") {
+    return value.split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [enabled, mode, intensity, start, end, ...messageParts] = line.split("|").map((part) => part.trim());
+        return {
+          enabled: enabled !== "false" && enabled !== "no" && enabled !== "0",
+          mode: mode || "none",
+          intensity: intensity || "medium",
+          start: start || "",
+          end: end || "",
+          message: messageParts.join("|").trim()
+        };
+      })
+      .filter((item) => item.mode && item.start && item.end);
+  }
   if (type === "matrix") {
     return value.split(/\r?\n/).map((line) => line.split("|").map((part) => part.trim()).filter(Boolean)).filter((row) => row.length);
   }
@@ -348,6 +366,11 @@ function formatFieldValue(value, type) {
   if (type === "array") return Array.isArray(value) ? value.join("\n") : "";
   if (type === "linkList") return Array.isArray(value) ? value.map((item) => `${item.label || ""} | ${item.url || ""}`).join("\n") : "";
   if (type === "colorList") return Array.isArray(value) ? value.map((item) => `${item.code || ""} | ${item.name || ""} | ${item.hex || "#d9dee7"}`).join("\n") : "";
+  if (type === "specialVisualSchedule") {
+    return Array.isArray(value)
+      ? value.map((item) => `${item.enabled === false ? "false" : "true"} | ${item.mode || "none"} | ${item.intensity || "medium"} | ${item.start || ""} | ${item.end || ""} | ${item.message || ""}`).join("\n")
+      : "";
+  }
   if (type === "matrix") return Array.isArray(value) ? value.map((row) => Array.isArray(row) ? row.join(" | ") : row).join("\n") : "";
   return value ?? "";
 }
@@ -429,9 +452,11 @@ function isImageField(label, path) {
 }
 
 function controlTemplate(id, encodedPath, value, type) {
-  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList") {
+  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList" || type === "specialVisualSchedule") {
     const rows = type === "matrix" ? 6 : 4;
-    const hint = type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
+    const hint = type === "specialVisualSchedule"
+      ? `<small>Una línea por programación: true | christmas | medium | 2026-12-20 | 2027-01-07 | Mensaje opcional</small>`
+      : type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
     return `${hint}<textarea id="${id}" data-type="${type}" data-path="${encodedPath}" rows="${rows}">${escapeHtml(value)}</textarea>`;
   }
   if (type === "date") {

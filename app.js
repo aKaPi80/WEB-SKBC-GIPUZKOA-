@@ -1020,10 +1020,25 @@ function specialVisualSettings(settings) {
   const visual = settings.specialVisual || {};
   const allowedModes = new Set(["none", "christmas", "autumn", "carnival", "womensDay", "mourning"]);
   const allowedIntensities = new Set(["low", "medium", "high"]);
-  return {
+  const manual = {
     mode: allowedModes.has(visual.mode) ? visual.mode : "none",
     intensity: allowedIntensities.has(visual.intensity) ? visual.intensity : "medium",
     message: String(visual.message || "").trim()
+  };
+  const today = new Date();
+  const todayKey = dateKey(today);
+  const activeSchedule = (visual.schedule || []).find((item) => {
+    if (!item || item.enabled === false) return false;
+    if (!allowedModes.has(item.mode) || item.mode === "none") return false;
+    const start = String(item.start || "").trim();
+    const end = String(item.end || start).trim();
+    return start && end && todayKey >= start && todayKey <= end;
+  });
+  if (!activeSchedule) return manual;
+  return {
+    mode: activeSchedule.mode,
+    intensity: allowedIntensities.has(activeSchedule.intensity) ? activeSchedule.intensity : manual.intensity,
+    message: String(activeSchedule.message || manual.message || "").trim()
   };
 }
 
