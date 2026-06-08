@@ -459,11 +459,41 @@ function renderPeople() {
   const board = peopleRows("board", { group: "board", list: "members" });
   editor.innerHTML = `
     ${renderIntro(`<p class="advanced-warning">Edita nombres, cargos y fotos desde aquí. El nombre se aplica a ES/EU/EN; cargos y descripciones pueden ser distintos por idioma.</p>`)}
+    ${instructorEditorTemplate()}
     ${peopleSectionTemplate("Responsables técnicos destacados", "lead", leads, true)}
     ${peopleSectionTemplate("Equipo técnico", "member", members, false)}
     ${peopleSectionTemplate("Directiva", "board", board, false)}
   `;
   bindPeopleEditor(editor);
+}
+
+function instructorEditorTemplate() {
+  const image = data.settings?.images?.people?.alvaro || "";
+  return `
+    <article class="editor-group people-editor">
+      <header>
+        <div>
+          <h3>Responsable técnico general</h3>
+          <p>Este bloque controla la ficha principal del profesor que aparece antes del equipo técnico.</p>
+        </div>
+      </header>
+      <div class="people-rows">
+        <div class="person-editor-row person-editor-row--instructor">
+          <label>Nombre<input data-instructor-field="title" data-lang="all" value="${escapeHtml(data.languages.es.instructor.title || "")}" /></label>
+          <label>Foto principal<input data-instructor-field="image" value="${escapeHtml(image)}" placeholder="assets/uploads/foto.jpg" /></label>
+          <label>Etiqueta ES<input data-instructor-field="eyebrow" data-lang="es" value="${escapeHtml(data.languages.es.instructor.eyebrow || "")}" /></label>
+          <label>Etiqueta EU<input data-instructor-field="eyebrow" data-lang="eu" value="${escapeHtml(data.languages.eu.instructor.eyebrow || "")}" /></label>
+          <label>Etiqueta EN<input data-instructor-field="eyebrow" data-lang="en" value="${escapeHtml(data.languages.en.instructor.eyebrow || "")}" /></label>
+          <label>Texto ES<textarea data-instructor-field="text" data-lang="es" rows="4">${escapeHtml(data.languages.es.instructor.text || "")}</textarea></label>
+          <label>Texto EU<textarea data-instructor-field="text" data-lang="eu" rows="4">${escapeHtml(data.languages.eu.instructor.text || "")}</textarea></label>
+          <label>Texto EN<textarea data-instructor-field="text" data-lang="en" rows="4">${escapeHtml(data.languages.en.instructor.text || "")}</textarea></label>
+          <label>Texto adicional ES<textarea data-instructor-field="extra" data-lang="es" rows="4">${escapeHtml(data.languages.es.instructor.extra || "")}</textarea></label>
+          <label>Texto adicional EU<textarea data-instructor-field="extra" data-lang="eu" rows="4">${escapeHtml(data.languages.eu.instructor.extra || "")}</textarea></label>
+          <label>Texto adicional EN<textarea data-instructor-field="extra" data-lang="en" rows="4">${escapeHtml(data.languages.en.instructor.extra || "")}</textarea></label>
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 function peopleSectionTemplate(title, kind, people, hasText) {
@@ -502,6 +532,28 @@ function personRowTemplate(kind, person = {}, hasText = false) {
 }
 
 function bindPeopleEditor(editor) {
+  const syncInstructor = () => {
+    editor.querySelectorAll("[data-instructor-field]").forEach((field) => {
+      const key = field.dataset.instructorField;
+      const lang = field.dataset.lang;
+      const value = field.value.trim();
+      if (key === "image") {
+        if (!data.settings.images.people) data.settings.images.people = {};
+        data.settings.images.people.alvaro = value;
+        return;
+      }
+      if (lang === "all" && key === "title") {
+        ["es", "eu", "en"].forEach((language) => {
+          data.languages[language].instructor.title = value;
+        });
+        return;
+      }
+      if (lang && data.languages[lang]?.instructor) {
+        data.languages[lang].instructor[key] = value;
+      }
+    });
+    markDirty();
+  };
   const sync = () => {
     const rowsFor = (kind) => Array.from(editor.querySelectorAll(`[data-person-kind="${kind}"]`)).map((row) => {
       const value = (field) => row.querySelector(`[data-person-field="${field}"]`)?.value?.trim() || "";
@@ -538,6 +590,10 @@ function bindPeopleEditor(editor) {
     markDirty();
   };
   editor.addEventListener("input", (event) => {
+    if (event.target.matches("[data-instructor-field]")) {
+      syncInstructor();
+      return;
+    }
     if (event.target.matches("[data-person-field]")) sync();
   });
   editor.addEventListener("click", (event) => {
