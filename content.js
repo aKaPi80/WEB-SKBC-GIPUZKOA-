@@ -514,7 +514,7 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-08",
+        "date": "2026-06-25",
         "color": "#1f6fa9",
         "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
         "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9",
