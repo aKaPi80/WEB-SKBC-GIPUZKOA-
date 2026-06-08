@@ -1,4 +1,5 @@
 window.SKBC_CONTENT = {
+  "publishedAt": "2026-06-08Tnews-testimonials-sync-2",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -514,24 +515,45 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-04",
+        "date": "2026-06-25",
         "color": "#1f6fa9",
+        "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
+        "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9",
+        "languages": {
+          "es": {
+            "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
+            "text": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO"
+          },
+          "eu": {
+            "title": "PATATA TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA.",
+            "text": "PATATA-TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA"
+          },
+          "en": {
+            "title": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY.",
+            "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
+          }
+        }
+      },
+      {
+        "enabled": true,
+        "date": "2026-06-27",
+        "color": "#1fa89f",
+        "image": "assets/uploads/1780948628594-dingle-seminar.png",
         "url": "",
         "languages": {
           "es": {
-            "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
+            "title": "SEMINARIO OFICIAL IKA DINGLE (IRLANDA)",
+            "text": "PROXIMO SEMINARIO OFICIAL IKA 2026 EN DINGLE (IRLANDA) UNA REPRESENTACION DE SKBC GIPUZKOA ESTARA EN ESTE SEMINARIO TAN ESPECIAL."
           },
           "eu": {
-            "title": "Urteko egutegia eskuragarri",
-            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+            "title": "IKA DINGLE IKASTARO OFIZIALA (IRLANDA)",
+            "text": "HURRENGO IKA IKASTARO OFIZIALA 2026AN DINGLE-N (IRLANDA) SKBC GIPUZKOAKO ORDEZKARITZA BAT EGONGO DA IKASTARO BEREZI HONETAN."
           },
           "en": {
-            "title": "Annual calendar available",
-            "text": "You can now check upcoming courses, seminars and club activities on the website."
+            "title": "IKA DINGLE OFFICIAL SEMINAR (IRELAND)",
+            "text": "NEXT OFFICIAL IKA 2026 SEMINAR IN DINGLE (IRELAND) A REPRESENTATION OF SKBC GIPUZKOA WILL BE IN THIS VERY SPECIAL SEMINAR."
           }
-        },
-        "image": "assets/uploads/1780606250233-curso-skbc.jpg"
+        }
       }
     ],
     "testimonialInbox": {
