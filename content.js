@@ -13,7 +13,7 @@ window.SKBC_CONTENT = {
     },
     "specialVisual": {
       "mode": "autumn",
-      "intensity": "medium",
+      "intensity": "high",
       "message": "",
       "schedule": [
         {
