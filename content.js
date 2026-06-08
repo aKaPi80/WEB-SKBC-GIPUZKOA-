@@ -12,7 +12,7 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "specialVisual": {
-      "mode": "autumn",
+      "mode": "carnival",
       "intensity": "high",
       "message": "",
       "schedule": [
@@ -38,7 +38,7 @@ window.SKBC_CONTENT = {
           "intensity": "medium",
           "start": "2027-10-01",
           "end": "2027-11-15",
-          "message": "Otoño en el dojo"
+          "message": "Otono en el dojo"
         }
       ]
     },
