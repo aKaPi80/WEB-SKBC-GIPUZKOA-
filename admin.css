@@ -184,7 +184,45 @@ aside {
 }
 
 .intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
   margin-top: 16px;
+}
+
+.intro-actions label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.intro-actions input {
+  width: 112px;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-weight: 850;
+}
+
+.event-bulk-actions {
+  padding: 12px;
+  border: 1px solid rgba(31, 111, 169, .22);
+  border-radius: 8px;
+  background: #eef6fb;
+}
+
+#copy-events {
+  border-color: var(--blue);
+  color: #fff;
+  background: var(--blue);
 }
 
 .advanced-warning {
@@ -548,19 +586,23 @@ button.danger {
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(31, 111, 169, .22);
+  border-radius: 8px;
+  background: #eef6fb;
 }
 
 .event-bulk-actions label {
   display: inline-flex;
   gap: 8px;
   align-items: center;
-  color: var(--muted);
+  color: var(--ink);
   font-weight: 850;
 }
 
 .event-bulk-actions input {
-  width: 96px;
-  min-height: 38px;
+  width: 112px;
+  min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0 10px;
