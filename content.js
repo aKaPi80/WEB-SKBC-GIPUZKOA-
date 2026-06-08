@@ -777,7 +777,7 @@ window.SKBC_CONTENT = {
         "text": "Escríbenos antes de venir y te indicaremos cuál es el mejor día para probar, qué traer y cómo funciona el primer mes gratuito.",
         "kids": "Niños · 5-13 años · Martes y jueves · 17:30-18:30",
         "adults": "Jóvenes y adultos · 13+ años · Martes y jueves · 18:30-20:00",
-        "place": "Garmendiola aldapa 2, Tolosa",
+        "place": "GAINBERRI      Garmendiola aldapa 2, Tolosa",
         "maps": "Abrir en Google Maps"
       },
       "calendar": {
