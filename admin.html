@@ -86,14 +86,14 @@
         </div>
         <nav>
           <a href="index.html">Ver web</a>
-          <button id="save" class="primary" type="button">Guardar cambios</button>
+          <button id="save" class="primary" type="button">Info guardado</button>
           <button id="publish" type="button">Publicar en GitHub</button>
           <button id="export" type="button">Exportar copia</button>
           <label class="import-button">
             Importar copia
             <input id="import" type="file" accept="application/json" />
           </label>
-          <button id="reset" class="quiet" type="button">Restaurar</button>
+          <button id="reset" class="quiet" type="button">Recargar publicado</button>
         </nav>
       </header>
 
@@ -145,7 +145,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260608-testimonial-local-sync";
+          script.src = "admin.js?v=20260608-server-source-of-truth";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

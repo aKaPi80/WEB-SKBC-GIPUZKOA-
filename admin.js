@@ -11,6 +11,7 @@ const MEDIA_REPLACEMENTS = {
 };
 
 let data = load();
+let publishedContentSignature = contentSignature(cloneDefault());
 let currentPanel = "settings";
 let currentEventIndex = null;
 let dirty = false;
@@ -255,14 +256,9 @@ function languageGroups(lang) {
 
 function load() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const base = cloneDefault();
-    const loaded = saved ? deepMerge(base, saved) : base;
-    const cleaned = keepPublishedTestimonialsIfLocalCopyIsOlder(replaceLegacyCanvaMedia(loaded, base), base);
-    if (saved && JSON.stringify(cleaned) !== JSON.stringify(loaded)) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
-    }
-    return cleaned;
+    localStorage.removeItem(STORAGE_KEY);
+    return replaceLegacyCanvaMedia(base, base);
   } catch {
     return cloneDefault();
   }
@@ -272,16 +268,8 @@ function cloneDefault() {
   return structuredClone(window.SKBC_CONTENT);
 }
 
-function keepPublishedTestimonialsIfLocalCopyIsOlder(currentData, publishedData) {
-  ["es", "eu", "en"].forEach((lang) => {
-    const localItems = currentData.languages?.[lang]?.testimonials?.items;
-    const publishedItems = publishedData.languages?.[lang]?.testimonials?.items;
-    if (!Array.isArray(localItems) || !Array.isArray(publishedItems)) return;
-    if (localItems.length < publishedItems.length) {
-      currentData.languages[lang].testimonials.items = structuredClone(publishedItems);
-    }
-  });
-  return currentData;
+function contentSignature(contentData) {
+  return JSON.stringify(contentData);
 }
 
 function deepMerge(base, override) {
@@ -1153,7 +1141,6 @@ function removeApprovedTestimonial(index) {
     }
   });
   markDirty();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   setStatus("Testimonio retirado del contenido. Pulsa Publicar en GitHub para que desaparezca de la web.", "warning");
   renderTestimonialsInbox();
 }
@@ -1239,7 +1226,6 @@ async function approvePendingTestimonial(item) {
   });
   await updatePendingTestimonialStatus(item.id, "approved");
   markDirty();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   setStatus("Testimonio aprobado. Ahora falta Publicar en GitHub para verlo en la web.", "warning");
   loadPendingTestimonials();
 }
@@ -1738,13 +1724,10 @@ document.querySelectorAll(".tab").forEach((tab) => {
 });
 
 document.querySelector("#save").addEventListener("click", () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  dirty = false;
-  setStatus("Guardado correctamente en este navegador", "ok");
+  setStatus("Sin guardado local: para guardar de verdad usa Publicar en GitHub. Si cierras sin publicar, se descartan los cambios.", "warning");
 });
 
 document.querySelector("#publish").addEventListener("click", async () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   if (location.protocol === "file:") {
     setStatus("Para publicar, abre el editor con ABRIR-EDITOR-Y-PUBLICAR.bat", "danger");
     alert("El navegador no puede publicar en GitHub desde file://.\n\nAbre ABRIR-EDITOR-Y-PUBLICAR.bat y usa el editor desde localhost.");
@@ -1782,11 +1765,15 @@ async function publishWithGithubApi(contentData) {
   const token = await githubToken();
   const path = "content.js";
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
-  await confirmNoPublishedTestimonialsWillDisappear(contentData, token, apiUrl);
+  const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
+  const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
+  if (contentSignature(remote) !== publishedContentSignature) {
+    throw new Error("La web publicada ha cambiado desde que abriste el editor. Recarga el admin antes de publicar para no pisar noticias, testimonios, calendario u otros cambios.");
+  }
+  await confirmNoPublishedCriticalContentWillDisappear(remote, contentData);
   const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`);
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
     try {
       await githubRequest(apiUrl, token, {
         method: "PUT",
@@ -1799,10 +1786,13 @@ async function publishWithGithubApi(contentData) {
       });
       break;
     } catch (error) {
-      if (attempt === 3 || error.status !== 409) throw error;
-      await wait(900);
+      if (error.status === 409) {
+        throw new Error("GitHub ha recibido otro cambio mientras publicabas. Recarga el admin y vuelve a intentarlo.");
+      }
+      throw error;
     }
   }
+  publishedContentSignature = contentSignature(contentData);
 
   return {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
@@ -1810,20 +1800,33 @@ async function publishWithGithubApi(contentData) {
   };
 }
 
-async function confirmNoPublishedTestimonialsWillDisappear(contentData, token, apiUrl) {
-  const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
-  const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
-  const losses = ["es", "eu", "en"]
-    .map((lang) => {
-      const remoteCount = remote.languages?.[lang]?.testimonials?.items?.length || 0;
-      const nextCount = contentData.languages?.[lang]?.testimonials?.items?.length || 0;
-      return { lang, remoteCount, nextCount };
-    })
-    .filter((item) => item.remoteCount > item.nextCount);
+async function confirmNoPublishedCriticalContentWillDisappear(remote, contentData) {
+  const losses = [
+    {
+      label: "Noticias",
+      remoteCount: remote.settings?.news?.length || 0,
+      nextCount: contentData.settings?.news?.length || 0
+    },
+    {
+      label: "Eventos",
+      remoteCount: remote.settings?.events?.length || 0,
+      nextCount: contentData.settings?.events?.length || 0
+    },
+    {
+      label: "Productos tienda",
+      remoteCount: remote.settings?.merch?.products?.length || 0,
+      nextCount: contentData.settings?.merch?.products?.length || 0
+    },
+    ...["es", "eu", "en"].map((lang) => ({
+      label: `Testimonios ${lang.toUpperCase()}`,
+      remoteCount: remote.languages?.[lang]?.testimonials?.items?.length || 0,
+      nextCount: contentData.languages?.[lang]?.testimonials?.items?.length || 0
+    }))
+  ].filter((item) => item.remoteCount > item.nextCount);
   if (!losses.length) return;
-  const detail = losses.map((item) => `${item.lang.toUpperCase()}: ${item.remoteCount} publicadas -> ${item.nextCount}`).join("\n");
-  const ok = confirm(`Atención: esta publicación tiene menos testimonios que la web publicada.\n\n${detail}\n\nSi publicas así, esos testimonios dejarán de verse. ¿Quieres continuar igualmente?`);
-  if (!ok) throw new Error("Publicación cancelada para no perder testimonios publicados.");
+  const detail = losses.map((item) => `${item.label}: ${item.remoteCount} publicado(s) -> ${item.nextCount}`).join("\n");
+  const ok = confirm(`Atención: esta publicación reduce contenido importante.\n\n${detail}\n\nSi publicas así, ese contenido dejará de verse. Continúa solo si lo has eliminado a propósito.`);
+  if (!ok) throw new Error("Publicación cancelada para no perder contenido publicado.");
 }
 
 function parseSkbcContentJs(text) {
@@ -1908,22 +1911,21 @@ document.querySelector("#import").addEventListener("change", async (event) => {
   if (!file) return;
   try {
     data = deepMerge(cloneDefault(), JSON.parse(await file.text()));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    dirty = false;
+    dirty = true;
     render();
-    setStatus("Archivo importado y guardado", "ok");
+    setStatus("Archivo importado en esta sesión. Revisa y publica en GitHub para guardarlo.", "warning");
   } catch {
     setStatus("No se pudo importar el archivo JSON", "danger");
   }
 });
 
 document.querySelector("#reset").addEventListener("click", () => {
-  if (!confirm("Â¿Restaurar el contenido original de esta propuesta?")) return;
+  if (!confirm("¿Descartar los cambios no publicados y recargar el contenido publicado?")) return;
   data = cloneDefault();
   localStorage.removeItem(STORAGE_KEY);
   dirty = false;
   render();
-  setStatus("Contenido original restaurado", "ok");
+  setStatus("Contenido publicado recargado. No se ha tocado GitHub.", "ok");
 });
 
 window.addEventListener("beforeunload", (event) => {
