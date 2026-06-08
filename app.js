@@ -302,7 +302,9 @@ function calendarMonths() {
 
 function nextThreeMonths() {
   const now = new Date();
-  return Array.from({ length: 3 }, (_, index) => new Date(now.getFullYear(), now.getMonth() + index, 1));
+  const year = now.getFullYear();
+  return Array.from({ length: 3 }, (_, index) => new Date(year, now.getMonth() + index, 1))
+    .filter((month) => month.getFullYear() === year);
 }
 
 function fullYearMonths() {
@@ -313,13 +315,29 @@ function fullYearMonths() {
 function upcomingEvents(events) {
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-  const until = new Date(today.getFullYear(), today.getMonth() + 3, 0).getTime();
+  const threeMonthLimit = new Date(today.getFullYear(), today.getMonth() + 3, 0).getTime();
+  const yearLimit = new Date(today.getFullYear(), 11, 31).getTime();
+  const until = Math.min(threeMonthLimit, yearLimit);
   return events.filter((event) => {
     for (let time = start; time <= until; time += 24 * 60 * 60 * 1000) {
       if (eventTouchesDate(event, new Date(time))) return true;
     }
     return false;
   }).slice(0, 8);
+}
+
+function eventTouchesYear(event, year) {
+  const start = new Date(year, 0, 1).getTime();
+  const until = new Date(year, 11, 31).getTime();
+  for (let time = start; time <= until; time += 24 * 60 * 60 * 1000) {
+    if (eventTouchesDate(event, new Date(time))) return true;
+  }
+  return false;
+}
+
+function publicCalendarEvents(events) {
+  const year = new Date().getFullYear();
+  return events.filter((event) => eventTouchesYear(event, year));
 }
 
 function printEventNumber(event, eventNumbers) {
@@ -427,7 +445,8 @@ function openPrintableCalendar() {
 }
 
 function calendarSection(settings, copy) {
-  const events = (settings.events || []).filter((event) => event.enabled !== false);
+  const events = publicCalendarEvents((settings.events || []).filter((event) => event.enabled !== false));
+  const upcoming = upcomingEvents(events);
   return `<section class="section calendar-section" id="calendario">
     <div class="section-heading">
       <p class="eyebrow">${copy.calendar.eyebrow}</p>
@@ -441,7 +460,7 @@ function calendarSection(settings, copy) {
       ${nextThreeMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
     </div>
     <div class="calendar-list">
-      ${upcomingEvents(events).length ? upcomingEvents(events).map((event) => {
+      ${upcoming.length ? upcoming.map((event) => {
         const text = eventCopy(event);
         return `<article style="--event-color:${event.color || "#1f6fa9"}">
           <span>${eventDateLabel(event)}</span>
