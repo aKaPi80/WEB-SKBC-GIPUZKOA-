@@ -532,6 +532,27 @@ window.SKBC_CONTENT = {
             "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
           }
         }
+      },
+      {
+        "enabled": true,
+        "date": "2026-06-08",
+        "color": "#1fa89f",
+        "image": "assets/uploads/1780948628594-dingle-seminar.png",
+        "url": "",
+        "languages": {
+          "es": {
+            "title": "SEMINARIO OFICIAL IKA DINGLE (IRLANDA)",
+            "text": "PROXIMO SEMINARIO OFICIAL IKA 2026 EN DINGLE (IRLANDA) UNA REPRESENTACION DE SKBC GIPUZKOA ESTARA EN ESTE SEMINARIO TAN ESPECIAL."
+          },
+          "eu": {
+            "title": "IKA DINGLE IKASTARO OFIZIALA (IRLANDA)",
+            "text": "HURRENGO IKA IKASTARO OFIZIALA 2026AN DINGLE-N (IRLANDA) SKBC GIPUZKOAKO ORDEZKARITZA BAT EGONGO DA IKASTARO BEREZI HONETAN."
+          },
+          "en": {
+            "title": "IKA DINGLE OFFICIAL SEMINAR (IRELAND)",
+            "text": "NEXT OFFICIAL IKA 2026 SEMINAR IN DINGLE (IRELAND) A REPRESENTATION OF SKBC GIPUZKOA WILL BE IN THIS VERY SPECIAL SEMINAR."
+          }
+        }
       }
     ],
     "testimonialInbox": {
