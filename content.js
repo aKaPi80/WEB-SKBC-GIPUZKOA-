@@ -22,7 +22,7 @@ window.SKBC_CONTENT = {
           "intensity": "medium",
           "start": "2026-12-20",
           "end": "2027-01-07",
-          "message": "Felices fiestas"
+          "message": "FELIZ NAVIDAD!!"
         },
         {
           "enabled": true,
@@ -38,7 +38,7 @@ window.SKBC_CONTENT = {
           "intensity": "medium",
           "start": "2027-10-01",
           "end": "2027-11-15",
-          "message": "Otono en el dojo"
+          "message": "Otoño en el dojo"
         }
       ]
     },
