@@ -200,7 +200,8 @@ aside {
   font-weight: 900;
 }
 
-.intro-actions input {
+.intro-actions input,
+.intro-actions select {
   width: 112px;
   min-height: 42px;
   border: 1px solid var(--line);
@@ -210,6 +211,10 @@ aside {
   background: #fff;
   font: inherit;
   font-weight: 850;
+}
+
+.intro-actions select {
+  width: min(330px, 100%);
 }
 
 .event-bulk-actions {
@@ -600,13 +605,21 @@ button.danger {
   font-weight: 850;
 }
 
-.event-bulk-actions input {
+.event-bulk-actions input,
+.event-bulk-actions select {
   width: 112px;
   min-height: 42px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 0 10px;
   font: inherit;
+}
+
+.event-bulk-actions select {
+  width: min(330px, 100%);
+  color: var(--ink);
+  background: #fff;
+  font-weight: 850;
 }
 
 .repeat-date-list {

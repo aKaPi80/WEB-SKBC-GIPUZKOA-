@@ -481,6 +481,11 @@ function renderEvents() {
     ${renderIntro(`<div class="intro-actions event-bulk-actions">
       <button id="add-event" class="primary" type="button">Añadir evento</button>
       <label>Duplicar todo a <input id="copy-events-year" type="number" min="2026" max="2100" value="${new Date().getFullYear() + 1}" /></label>
+      <label>Método <select id="copy-events-mode">
+        <option value="smart">Inteligente: conservar patrón semanal</option>
+        <option value="exact">Fechas exactas: mismo día y mes</option>
+        <option value="weekend">Forzar fin de semana</option>
+      </select></label>
       <button id="copy-events" type="button">Duplicar calendario</button>
     </div>`)}
     ${events.length ? `
@@ -751,33 +756,111 @@ function shiftDateYear(value, targetYear) {
   return formatDateInput(new Date(targetYear, date.getMonth(), date.getDate()));
 }
 
-function shiftEventToYear(event, targetYear) {
+function addDays(date, days) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+}
+
+function daysBetween(start, end) {
+  const oneDay = 24 * 60 * 60 * 1000;
+  return Math.round((parseDateInput(end) - parseDateInput(start)) / oneDay);
+}
+
+function daysInMonth(year, monthIndex) {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function isLastWeekdayOfMonth(date) {
+  return date.getDate() + 7 > daysInMonth(date.getFullYear(), date.getMonth());
+}
+
+function sameOrdinalWeekdayInYear(date, targetYear) {
+  const weekday = date.getDay();
+  const month = date.getMonth();
+  if (isLastWeekdayOfMonth(date)) {
+    for (let day = daysInMonth(targetYear, month); day >= 1; day -= 1) {
+      const candidate = new Date(targetYear, month, day);
+      if (candidate.getDay() === weekday) return candidate;
+    }
+  }
+  const ordinal = Math.floor((date.getDate() - 1) / 7) + 1;
+  let count = 0;
+  for (let day = 1; day <= daysInMonth(targetYear, month); day += 1) {
+    const candidate = new Date(targetYear, month, day);
+    if (candidate.getDay() !== weekday) continue;
+    count += 1;
+    if (count === ordinal) return candidate;
+  }
+  return nearestWeekdayToDate(new Date(targetYear, month, Math.min(date.getDate(), daysInMonth(targetYear, month))), weekday);
+}
+
+function nearestWeekdayToDate(date, weekday) {
+  let best = date;
+  let bestDistance = Infinity;
+  for (let offset = -7; offset <= 7; offset += 1) {
+    const candidate = addDays(date, offset);
+    if (candidate.getDay() !== weekday) continue;
+    const distance = Math.abs(offset);
+    if (distance < bestDistance) {
+      best = candidate;
+      bestDistance = distance;
+    }
+  }
+  return best;
+}
+
+function nearestWeekendToDate(date, preferredWeekday) {
+  const preferred = preferredWeekday === 0 ? 0 : 6;
+  const alternate = preferred === 6 ? 0 : 6;
+  const preferredDate = nearestWeekdayToDate(date, preferred);
+  const alternateDate = nearestWeekdayToDate(date, alternate);
+  return Math.abs(daysBetween(formatDateInput(date), formatDateInput(preferredDate))) <= Math.abs(daysBetween(formatDateInput(date), formatDateInput(alternateDate)))
+    ? preferredDate
+    : alternateDate;
+}
+
+function smartDateToYear(value, targetYear, mode) {
+  if (!value) return value;
+  if (mode === "exact") return shiftDateYear(value, targetYear);
+  const original = parseDateInput(value);
+  const exactTarget = parseDateInput(shiftDateYear(value, targetYear));
+  if (mode === "weekend") return formatDateInput(nearestWeekendToDate(exactTarget, original.getDay()));
+  return formatDateInput(sameOrdinalWeekdayInYear(original, targetYear));
+}
+
+function shiftEventToYear(event, targetYear, mode = "smart") {
   const copy = structuredClone(event);
-  copy.start = shiftDateYear(copy.start, targetYear);
-  copy.end = shiftDateYear(copy.end, targetYear);
-  copy.dates = (copy.dates || []).map((date) => shiftDateYear(date, targetYear));
-  copy.excludedDates = (copy.excludedDates || []).map((date) => shiftDateYear(date, targetYear));
+  const duration = copy.start && copy.end ? Math.max(0, daysBetween(copy.start, copy.end)) : 0;
+  copy.start = smartDateToYear(copy.start, targetYear, mode);
+  copy.end = copy.start ? formatDateInput(addDays(parseDateInput(copy.start), duration)) : smartDateToYear(copy.end, targetYear, mode);
+  copy.dates = [...new Set((copy.dates || []).map((date) => smartDateToYear(date, targetYear, mode)))].sort();
+  copy.excludedDates = [...new Set((copy.excludedDates || []).map((date) => smartDateToYear(date, targetYear, mode)))].sort();
   if (copy.repeat) {
-    copy.repeat.start = shiftDateYear(copy.repeat.start || copy.start, targetYear);
-    copy.repeat.until = shiftDateYear(copy.repeat.until || copy.end || copy.start, targetYear);
+    copy.repeat.start = smartDateToYear(copy.repeat.start || event.start, targetYear, mode);
+    copy.repeat.until = smartDateToYear(copy.repeat.until || event.end || event.start, targetYear, mode);
   }
   return copy;
 }
 
 function copyEventsToYear() {
   const targetYear = Number(document.querySelector("#copy-events-year")?.value);
+  const mode = document.querySelector("#copy-events-mode")?.value || "smart";
   if (!targetYear) {
     setStatus("Indica el año al que quieres duplicar el calendario.", "danger");
     return;
   }
   const events = data.settings.events || [];
   if (!events.length) return;
-  if (!confirm(`¿Duplicar los ${events.length} eventos al año ${targetYear}? Luego podrás modificar fechas, colores o eliminar lo que no necesites.`)) return;
-  const copies = events.map((event) => shiftEventToYear(event, targetYear));
+  const modeLabel = {
+    smart: "conservando patrón semanal",
+    exact: "manteniendo día y mes exactos",
+    weekend: "forzando fines de semana"
+  }[mode] || "conservando patrón semanal";
+  if (!confirm(`¿Duplicar los ${events.length} eventos al año ${targetYear} ${modeLabel}? Luego podrás modificar fechas, colores o eliminar lo que no necesites.`)) return;
+  const copies = events.map((event) => shiftEventToYear(event, targetYear, mode));
   data.settings.events.push(...copies);
   currentEventIndex = null;
   markDirty();
-  setStatus(`Calendario duplicado a ${targetYear}. Revisa y elimina lo que no necesites.`, "warning");
+  setStatus(`Calendario duplicado a ${targetYear} ${modeLabel}. Revisa fechas concretas antes de publicar.`, "warning");
   renderEvents();
 }
 
