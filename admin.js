@@ -1684,7 +1684,7 @@ async function uploadImageFile(file) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ path: assetPath, content })
   });
-  const result = await response.json();
+  const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(result.error || "No se pudo subir la imagen");
   return result.path;
 }
@@ -1802,7 +1802,10 @@ function wait(ms) {
 }
 
 function shouldUseGithubApi() {
-  return location.hostname.endsWith("github.io") || location.hostname.endsWith("skbcgipuzkoa.com");
+  return location.hostname.endsWith("github.io")
+    || location.hostname.endsWith("skbcgipuzkoa.com")
+    || location.hostname === "localhost"
+    || location.hostname === "127.0.0.1";
 }
 
 async function githubToken() {
