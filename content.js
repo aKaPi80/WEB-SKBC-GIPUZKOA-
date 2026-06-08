@@ -12,10 +12,35 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "specialVisual": {
-      "mode": "none",
+      "mode": "christmas",
       "intensity": "medium",
       "message": "",
-      "schedule": []
+      "schedule": [
+        {
+          "enabled": true,
+          "mode": "christmas",
+          "intensity": "medium",
+          "start": "2026-12-20",
+          "end": "2027-01-07",
+          "message": "Felices fiestas"
+        },
+        {
+          "enabled": true,
+          "mode": "womensDay",
+          "intensity": "medium",
+          "start": "2027-03-08",
+          "end": "2027-03-08",
+          "message": "8M · respeto, igualdad y confianza"
+        },
+        {
+          "enabled": true,
+          "mode": "autumn",
+          "intensity": "medium",
+          "start": "2027-10-01",
+          "end": "2027-11-15",
+          "message": "Otoño en el dojo"
+        }
+      ]
     },
     "socialFeeds": {
       "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\nhttps://www.instagram.com/reel/DZTJzzoPn76/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\n",
