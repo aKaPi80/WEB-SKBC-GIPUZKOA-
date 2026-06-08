@@ -426,6 +426,277 @@ window.SKBC_CONTENT = {
             "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
           }
         }
+      },
+      {
+        "enabled": true,
+        "start": "2027-06-26",
+        "end": "2027-06-27",
+        "color": "#1f6fa9",
+        "location": "Irlanda",
+        "languages": {
+          "es": {
+            "title": "Curso internacional IKA en Irlanda",
+            "description": "Entrenamiento y convivencia con otros practicantes."
+          },
+          "eu": {
+            "title": "IKA Nazioarteko ikastaroa Irlandan",
+            "description": "Beste praktikatzaileekin entrenamendua eta bizikidetza."
+          },
+          "en": {
+            "title": "IKA International course in Ireland",
+            "description": "Training and exchange with other practitioners."
+          }
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-06-05",
+        "end": "2027-06-06",
+        "color": "#c52727",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "Curso SKBC en Tolosa",
+            "description": "Seminario abierto para alumnos del club e invitados."
+          },
+          "eu": {
+            "title": "SKBC Ikastaroa Tolosan",
+            "description": "Klubeko ikasleentzat eta gonbidatuentzat mintegia."
+          },
+          "en": {
+            "title": "SKBC Course in Tolosa",
+            "description": "Seminar for club students and guests."
+          }
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-07-07",
+        "end": "2027-08-05",
+        "color": "#1fa853",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "SHAKUJO Y ENTRENAMIENTO AIRE LIBRE",
+            "description": "SHAKUJO Y ENTRENAMIENTOS AL AIRE LIBRE DURANTE TODO JULIO"
+          },
+          "eu": {
+            "title": "SHAKUJO ETA KAMPOKO ENTRENAMENDUAK",
+            "description": "SHAKUJO ETA ENTRENAMENDUAK MENDIAN, HONDARTZAN...."
+          },
+          "en": {
+            "title": "SHAKUJO AND OUTSIDE TRAININGS",
+            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS.... "
+          }
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-08-07",
+        "end": "2027-09-06",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "languages": {
+          "es": {
+            "title": "VACACIONES",
+            "description": "VACACIONES DE VERANO"
+          },
+          "eu": {
+            "title": "OPORRAK",
+            "description": "UDAKO OPORRAK"
+          },
+          "en": {
+            "title": "HOLYDAYS",
+            "description": "HOLYDAYS"
+          }
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-09-04",
+        "end": "2027-12-30",
+        "color": "#43ad8d",
+        "location": "Tolosa",
+        "dates": [
+          "2027-12-18"
+        ],
+        "repeat": {
+          "enabled": true,
+          "start": "2027-09-04",
+          "until": "2027-12-30",
+          "everyDays": "14"
+        },
+        "languages": {
+          "es": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "eu": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "en": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          }
+        },
+        "excludedDates": [
+          "2027-12-11",
+          "2027-12-25"
+        ]
+      },
+      {
+        "enabled": true,
+        "start": "2027-12-14",
+        "end": "2027-12-14",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-03",
+          "until": "2027-06-03",
+          "everyDays": ""
+        },
+        "languages": {
+          "es": {
+            "title": "PUENTE DICIEMBRE",
+            "description": "Descripción del evento."
+          },
+          "eu": {
+            "title": "ABENDUKO ZUBIA",
+            "description": "Ekitaldiaren deskribapena."
+          },
+          "en": {
+            "title": "HOLYDAY",
+            "description": "Event description."
+          }
+        },
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-12-23",
+        "end": "2027-12-30",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-03",
+          "until": "2027-06-03",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "VACACIONES DE NAVIDAD",
+            "description": ""
+          },
+          "eu": {
+            "title": "ABENDUKO OPORRAK",
+            "description": ""
+          },
+          "en": {
+            "title": "WINTER HOLIDAYS",
+            "description": ""
+          }
+        },
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-12-09",
+        "end": "2027-12-09",
+        "color": "#c3f2c0",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-03",
+          "until": "2027-06-03",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "EXAMENES",
+            "description": "2 CONVOCATORIA EXAMENES DEL AÑO"
+          },
+          "eu": {
+            "title": "AZTERKETAK",
+            "description": "URTEKO 2. AZTERKETA SAIOA"
+          },
+          "en": {
+            "title": "TESTS",
+            "description": "2 EXAMS OF THE YEAR"
+          }
+        },
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-09-09",
+        "end": "2027-09-09",
+        "color": "#515176",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-03",
+          "until": "2027-06-03",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "CONFERENCIA DE SKBC GIPUZKOA",
+            "description": "CHARLA SOBRE SHORINJI KEMPO ABIERTA A TODOS, PADRES Y MADRES DE MIEMBROS DEL CLUB, MIEMBROS DEL CLUB Y GENTE INTERESADA EN SABER QUE ES SHORINJI KEMPO."
+          },
+          "eu": {
+            "title": "SKBC GIPUZKOAKO HITZALDIA",
+            "description": "SHORINJI KEMPO HITZALDIA GUZTIONTZAT IREKITA, KLUB BAZKIDEEN GURASOENTZAT, KLUB BAZKIDEENTZAT ETA SHORINJI KEMPO ZER DEN JAKITEKO INTERESA DUTEN PERTSONENTZAT."
+          },
+          "en": {
+            "title": "SKBC GIPUZKOA CONFERENCE",
+            "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
+          }
+        },
+        "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "start": "2027-12-11",
+        "end": "2027-12-11",
+        "color": "#a8961f",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-12-11",
+          "until": "2027-12-11",
+          "everyDays": "15"
+        },
+        "languages": {
+          "es": {
+            "title": "SKBC REUNION Y CENA DE FIN DE AÑO",
+            "description": "REUNION DIRECTIVA SKBC GIPUZKOA FY CENA DE DESPEDIDA DE AÑO CON TODO EL CLUB"
+          },
+          "eu": {
+            "title": "SKBC URTEBERRIKO BILERA ETA AFARIA",
+            "description": "SKBC Gipuzkoako  Zuzendaritza Batzordearen Bilera eta Urte Amaierako Agurra Klub Osoarekin"
+          },
+          "en": {
+            "title": "SKBC YEAR-END MEETING & DINNER",
+            "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
+          }
+        },
+        "excludedDates": []
       }
     ],
     "galleryLinks": [
