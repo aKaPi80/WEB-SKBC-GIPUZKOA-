@@ -258,7 +258,7 @@ function load() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     const base = cloneDefault();
     const loaded = saved ? deepMerge(base, saved) : base;
-    const cleaned = replaceLegacyCanvaMedia(loaded, base);
+    const cleaned = keepPublishedTestimonialsIfLocalCopyIsOlder(replaceLegacyCanvaMedia(loaded, base), base);
     if (saved && JSON.stringify(cleaned) !== JSON.stringify(loaded)) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
     }
@@ -270,6 +270,18 @@ function load() {
 
 function cloneDefault() {
   return structuredClone(window.SKBC_CONTENT);
+}
+
+function keepPublishedTestimonialsIfLocalCopyIsOlder(currentData, publishedData) {
+  ["es", "eu", "en"].forEach((lang) => {
+    const localItems = currentData.languages?.[lang]?.testimonials?.items;
+    const publishedItems = publishedData.languages?.[lang]?.testimonials?.items;
+    if (!Array.isArray(localItems) || !Array.isArray(publishedItems)) return;
+    if (localItems.length < publishedItems.length) {
+      currentData.languages[lang].testimonials.items = structuredClone(publishedItems);
+    }
+  });
+  return currentData;
 }
 
 function deepMerge(base, override) {
