@@ -535,7 +535,7 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "date": "2026-06-08",
+        "date": "2026-06-27",
         "color": "#1fa89f",
         "image": "assets/uploads/1780948628594-dingle-seminar.png",
         "url": "",
