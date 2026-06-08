@@ -809,7 +809,7 @@ window.SKBC_CONTENT = {
         "enabled": true,
         "date": "2026-06-27",
         "color": "#1fa89f",
-        "image": "assets/uploads/1780948628594-dingle-seminar.png",
+        "image": "assets/uploads/1780955554543-dingle-ika.png",
         "url": "",
         "languages": {
           "es": {
