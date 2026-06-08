@@ -11,8 +11,8 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "socialFeeds": {
-      "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      "youtubeUrls": "https://youtu.be/gcqSNxgEf74?si=nOr2_fWOr3nOIakt"
+      "instagramUrls": "",
+      "youtubeUrls": ""
     },
     "merch": {
       "enabled": true,
@@ -65,7 +65,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/logo-skbc.png",
+          "image": "assets/uploads/1780688813446-polooo.png",
           "price": "15",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -470,10 +470,10 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780604041486-manji.jpg",
+      "hero": "assets/uploads/1780685194448-esta-es-la-ultima.png",
       "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
       "adults": "assets/uploads/1780604082854-adultos.jpg",
-      "learn": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg",
+      "learn": "assets/uploads/1780687199393-img-0434.jpg",
       "gallery": [
         "assets/uploads/1780604072168-grupo-ninos.jpg",
         "assets/uploads/1780604041486-manji.jpg",
@@ -505,32 +505,33 @@ window.SKBC_CONTENT = {
         "iturrioz": "assets/people/inaki-iturrioz.jpg",
         "bharat": "assets/people/bharat-martin.png",
         "pablo": "assets/people/pablo-sanchez.png",
-        "uxue": "assets/people/uxue-garikano.jpg",
+        "uxue": "assets/uploads/1780946868173-uxue.jpg",
         "jorge": "assets/people/jorge-redondo.jpg",
-        "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
+        "technicalTeam": "assets/people/equipo-tecnico.jpg"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-04",
+        "date": "2026-06-06",
         "color": "#1f6fa9",
         "url": "",
         "languages": {
           "es": {
-            "title": "Calendario anual disponible",
-            "text": "Ya puedes consultar los proximos cursos, seminarios y actividades del club desde la web."
+            "title": "CURSO DE VERANO SKBC GIPUZKOA 2026",
+            "text": "YA ESTA AQUI EL CURSO DE VERANO DE SKBC GIPUZKOA! VEN A DISFRUTARLO JUNTO A NOSOTROS!"
           },
           "eu": {
-            "title": "Urteko egutegia eskuragarri",
-            "text": "Klubeko hurrengo ikastaroak, mintegiak eta jarduerak webgunean kontsulta ditzakezu."
+            "title": "SKBC GIPUZKOAKO UDAKO IKASTAROA 2026",
+            "text": "SKBC GIPUZKOAKO UDAKO IKASTAROA HEMEN DA! ZATOZ GUREKIN ETA GOZATU!"
           },
           "en": {
-            "title": "Annual calendar available",
-            "text": "You can now check upcoming courses, seminars and club activities on the website."
+            "title": "SKBC GIPUZKOA 2026 SUMMER COURSE",
+            "text": "SKBC GIPUZKOA SUMMER COURSE IS HERE! COME AND ENJOY IT WITH US!"
           }
-        }
+        },
+        "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
       }
     ],
     "testimonialInbox": {
@@ -868,7 +869,7 @@ window.SKBC_CONTENT = {
       },
       "news": {
         "eyebrow": "Noticias",
-        "title": "Pr?ximas noticias",
+        "title": "Proximas noticias",
         "text": "Avisos, novedades y comunicaciones importantes del club.",
         "empty": "Sin noticias publicadas"
       },
@@ -879,44 +880,9 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
-          ],
-          [
-            "Practicante",
-            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
-            "Estrellita",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Clases muy entrenidas y divertidas.",
-            "Cameron",
-            "",
-            5
-          ],
-          [
-            "Practicante",
-            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
-            "unodostres",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
-            "Ekaitz",
-            "",
-            5
-          ],
-          [
-            "Padre/madre",
-            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
-            "Arene",
-            "",
-            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1299,44 +1265,9 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
-          ],
-          [
-            "Practicante",
-            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
-            "Estrellita",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Clases muy entrenidas y divertidas.",
-            "Cameron",
-            "",
-            5
-          ],
-          [
-            "Practicante",
-            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
-            "unodostres",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
-            "Ekaitz",
-            "",
-            5
-          ],
-          [
-            "Padre/madre",
-            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
-            "Arene",
-            "",
-            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -1719,44 +1650,9 @@ window.SKBC_CONTENT = {
         "items": [
           [
             "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
+            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teniamos dudas sobre como llevaria clases de una hora, pero el mes de prueba nos permitio comprobar que se adapto perfectamente.\nLas clases son dinamicas, entretenidas y estan muy bien adaptadas a los niños, que aprenden mientras se divierten.\nQueremos destacar especialmente el cariño, la paciencia y la dedicacion con los que tratan a cada alumno, haciendo que se sientan comodos y valorados desde el primer dia.\nAdemas, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad. \nLo recomendamos sin ninguna duda.",
             "ENKI",
             ""
-          ],
-          [
-            "Practicante",
-            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
-            "Estrellita",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Clases muy entrenidas y divertidas.",
-            "Cameron",
-            "",
-            5
-          ],
-          [
-            "Practicante",
-            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
-            "unodostres",
-            "",
-            5
-          ],
-          [
-            "Alumno adulto",
-            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
-            "Ekaitz",
-            "",
-            5
-          ],
-          [
-            "Padre/madre",
-            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
-            "Arene",
-            "",
-            5
           ]
         ],
         "empty": "No testimonials yet.",
