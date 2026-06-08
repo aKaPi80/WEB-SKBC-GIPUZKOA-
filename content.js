@@ -801,7 +801,7 @@ window.SKBC_CONTENT = {
       "people": {
         "alvaro": "assets/people/alvaro-calvo.jpg",
         "inaki": "assets/people/inaki-ventureira.png",
-        "andoni": "assets/uploads/1780960880618-andoni.png",
+        "andoni": "assets/uploads/1780961917548-andonii.jpg",
         "oskar": "assets/people/oskar-mateos.png",
         "asier": "assets/people/asier-azurmendi.jpg",
         "igone": "assets/people/igone-lasa.png",
