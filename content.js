@@ -514,24 +514,24 @@ window.SKBC_CONTENT = {
     "news": [
       {
         "enabled": true,
-        "date": "2026-06-06",
+        "date": "2026-06-08",
         "color": "#1f6fa9",
-        "url": "",
+        "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
+        "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9",
         "languages": {
           "es": {
-            "title": "CURSO DE VERANO SKBC GIPUZKOA 2026",
-            "text": "YA ESTA AQUI EL CURSO DE VERANO DE SKBC GIPUZKOA! VEN A DISFRUTARLO JUNTO A NOSOTROS!"
+            "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
+            "text": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO"
           },
           "eu": {
-            "title": "SKBC GIPUZKOAKO UDAKO IKASTAROA 2026",
-            "text": "SKBC GIPUZKOAKO UDAKO IKASTAROA HEMEN DA! ZATOZ GUREKIN ETA GOZATU!"
+            "title": "PATATA TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA.",
+            "text": "PATATA-TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA"
           },
           "en": {
-            "title": "SKBC GIPUZKOA 2026 SUMMER COURSE",
-            "text": "SKBC GIPUZKOA SUMMER COURSE IS HERE! COME AND ENJOY IT WITH US!"
+            "title": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY.",
+            "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
           }
-        },
-        "image": "assets/uploads/1780609597514-2b4298e4-74e4-457a-833b-62a2e2a24d39.jpeg"
+        }
       }
     ],
     "testimonialInbox": {
