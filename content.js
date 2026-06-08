@@ -12,9 +12,9 @@ window.SKBC_CONTENT = {
       "heroOverlay": "strong"
     },
     "specialVisual": {
-      "mode": "mourning",
+      "mode": "none",
       "intensity": "high",
-      "message": "aaaaaaaa",
+      "message": "uuuuuu",
       "schedule": [
         {
           "enabled": true,
