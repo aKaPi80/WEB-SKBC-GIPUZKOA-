@@ -14,7 +14,7 @@ window.SKBC_CONTENT = {
     "specialVisual": {
       "mode": "none",
       "intensity": "high",
-      "message": "uuuuuu",
+      "message": "",
       "schedule": [
         {
           "enabled": true,
