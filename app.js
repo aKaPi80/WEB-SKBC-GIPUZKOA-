@@ -1113,7 +1113,7 @@ function render() {
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
       <div class="hero-bg" style="background-image:url('${settings.images.hero}')"></div>
-      <img class="hero-logo" src="assets/logo-skbc.png" alt="Logo SKBC GIPUZKOA" />
+      <div class="hero-logo"><img src="assets/logo-skbc.png" alt="Logo SKBC GIPUZKOA" /></div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>

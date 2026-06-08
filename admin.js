@@ -452,11 +452,12 @@ function isImageField(label, path) {
 }
 
 function controlTemplate(id, encodedPath, value, type) {
-  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList" || type === "specialVisualSchedule") {
+  if (type === "specialVisualSchedule") {
+    return specialVisualScheduleTemplate(id, encodedPath, value);
+  }
+  if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList") {
     const rows = type === "matrix" ? 6 : 4;
-    const hint = type === "specialVisualSchedule"
-      ? `<small>Una línea por programación: true | christmas | medium | 2026-12-20 | 2027-01-07 | Mensaje opcional</small>`
-      : type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
+    const hint = type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
     return `${hint}<textarea id="${id}" data-type="${type}" data-path="${encodedPath}" rows="${rows}">${escapeHtml(value)}</textarea>`;
   }
   if (type === "date") {
@@ -491,6 +492,42 @@ function controlTemplate(id, encodedPath, value, type) {
     return selectTemplate(id, encodedPath, value, [["normal", "Normal"], ["soft", "Fondo claro"], ["dark", "Fondo oscuro"]], type);
   }
   return `<input id="${id}" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;
+}
+
+function specialVisualScheduleTemplate(id, encodedPath, value) {
+  const items = parseFieldValue(value, "specialVisualSchedule");
+  const rows = items.length ? items : [{ enabled: true, mode: "christmas", intensity: "medium", start: "", end: "", message: "" }];
+  return `
+    <div class="special-schedule-builder" data-hidden-id="${id}">
+      <small>Programa efectos por fechas sin tocar la web pública. Si hoy entra dentro de una programación activa, se aplicará automáticamente.</small>
+      <textarea id="${id}" class="special-schedule-raw" data-type="specialVisualSchedule" data-path="${encodedPath}" hidden>${escapeHtml(value)}</textarea>
+      <div class="special-schedule-rows">
+        ${rows.map((item) => specialVisualScheduleRow(item)).join("")}
+      </div>
+      <button class="secondary add-special-schedule" type="button">Añadir programación</button>
+    </div>
+  `;
+}
+
+function specialVisualScheduleRow(item = {}) {
+  const enabled = item.enabled === false ? "false" : "true";
+  const mode = item.mode || "christmas";
+  const intensity = item.intensity || "medium";
+  return `
+    <div class="special-schedule-row">
+      <label>Estado ${selectPlain("enabled", enabled, [["true", "Activa"], ["false", "Pausada"]])}</label>
+      <label>Efecto ${selectPlain("mode", mode, [["christmas", "Navidad: nieve"], ["autumn", "Otoño: hojas"], ["carnival", "Carnaval: confeti"], ["womensDay", "Día de la Mujer"], ["mourning", "Luto"]])}</label>
+      <label>Intensidad ${selectPlain("intensity", intensity, [["low", "Suave"], ["medium", "Media"], ["high", "Alta"]])}</label>
+      <label>Desde <input data-schedule-field="start" type="date" value="${escapeHtml(item.start || "")}" /></label>
+      <label>Hasta <input data-schedule-field="end" type="date" value="${escapeHtml(item.end || "")}" /></label>
+      <label class="special-schedule-message">Mensaje <input data-schedule-field="message" value="${escapeHtml(item.message || "")}" placeholder="Opcional" /></label>
+      <button class="danger remove-special-schedule" type="button">Eliminar</button>
+    </div>
+  `;
+}
+
+function selectPlain(field, value, options) {
+  return `<select data-schedule-field="${field}">${options.map(([optionValue, label]) => `<option value="${optionValue}" ${String(value) === optionValue ? "selected" : ""}>${label}</option>`).join("")}</select>`;
 }
 
 function selectTemplate(id, encodedPath, value, options, type = "input") {
@@ -1742,6 +1779,34 @@ function bindFields(root) {
   });
   root.querySelectorAll("[data-upload-path]").forEach((button) => {
     button.addEventListener("click", () => uploadImageForPath(button));
+  });
+  bindSpecialVisualSchedules(root);
+}
+
+function bindSpecialVisualSchedules(root) {
+  root.querySelectorAll(".special-schedule-builder").forEach((builder) => {
+    const hidden = builder.querySelector(".special-schedule-raw");
+    const rows = builder.querySelector(".special-schedule-rows");
+    const sync = () => {
+      const value = Array.from(rows.querySelectorAll(".special-schedule-row")).map((row) => {
+        const get = (field) => row.querySelector(`[data-schedule-field="${field}"]`)?.value?.trim() || "";
+        return `${get("enabled") || "true"} | ${get("mode") || "christmas"} | ${get("intensity") || "medium"} | ${get("start")} | ${get("end")} | ${get("message")}`;
+      }).join("\n");
+      hidden.value = value;
+      hidden.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    builder.querySelector(".add-special-schedule")?.addEventListener("click", () => {
+      rows.insertAdjacentHTML("beforeend", specialVisualScheduleRow({ enabled: true, mode: "christmas", intensity: "medium" }));
+      sync();
+    });
+    rows.addEventListener("input", sync);
+    rows.addEventListener("change", sync);
+    rows.addEventListener("click", (event) => {
+      const button = event.target.closest(".remove-special-schedule");
+      if (!button) return;
+      button.closest(".special-schedule-row")?.remove();
+      sync();
+    });
   });
 }
 

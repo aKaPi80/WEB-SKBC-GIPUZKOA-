@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
-    <link rel="stylesheet" href="admin.css?v=20260609-seasonal-schedule" />
+    <link rel="stylesheet" href="admin.css?v=20260609-seasonal-ui-polish" />
     <style>
       .admin-login {
         display: grid;
@@ -145,7 +145,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260609-seasonal-schedule";
+          script.src = "admin.js?v=20260609-seasonal-ui-polish";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

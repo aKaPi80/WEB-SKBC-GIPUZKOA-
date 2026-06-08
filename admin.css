@@ -749,6 +749,70 @@ button.danger {
   border-color: var(--blue);
 }
 
+.special-schedule-builder {
+  display: grid;
+  gap: 12px;
+}
+
+.special-schedule-builder small {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.special-schedule-rows {
+  display: grid;
+  gap: 12px;
+}
+
+.special-schedule-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.special-schedule-row label {
+  display: grid;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.special-schedule-row input,
+.special-schedule-row select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-weight: 750;
+}
+
+.special-schedule-message {
+  grid-column: span 2;
+}
+
+.add-special-schedule {
+  width: fit-content;
+  color: var(--ink);
+  border-color: var(--line);
+  background: #fff;
+}
+
+.remove-special-schedule {
+  align-self: end;
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+
 @media (max-width: 900px) {
   .admin-header {
     display: block;
@@ -791,5 +855,13 @@ button.danger {
   .events-sidebar {
     position: static;
     max-height: none;
+  }
+
+  .special-schedule-row {
+    grid-template-columns: 1fr;
+  }
+
+  .special-schedule-message {
+    grid-column: auto;
   }
 }
