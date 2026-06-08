@@ -149,37 +149,24 @@ button, input, select, textarea { font: inherit; }
   right: clamp(16px, 4vw, 54px);
   top: clamp(92px, 9vw, 132px);
   display: grid;
-  width: min(210px, calc(100vw - 32px));
+  width: min(260px, calc(100vw - 32px));
   justify-items: center;
-  gap: 8px;
-  padding: 18px;
+  gap: 10px;
+  padding: 20px 18px 18px;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.88);
   transform: none;
 }
-.special-badge--mourning span {
-  position: relative;
-  width: 78px;
-  height: 118px;
-  border-radius: 42px 42px 8px 8px;
-  background: #050505;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.12);
-  transform: rotate(-18deg);
-}
-.special-badge--mourning span::after {
-  position: absolute;
-  right: -28px;
-  bottom: 12px;
-  width: 72px;
-  height: 28px;
-  content: "";
-  border-radius: 5px 22px 22px 5px;
-  background: #050505;
-  transform: rotate(-35deg);
+.mourning-ribbon {
+  width: 148px;
+  max-width: 68vw;
+  height: auto;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.42));
 }
 .special-badge--mourning strong {
   text-align: center;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.18;
 }
 
 [data-special-visual="christmas"] .card,
@@ -246,14 +233,20 @@ button, input, select, textarea { font: inherit; }
 [data-special-visual="carnival"] .club-logo-panel::before,
 [data-special-visual="carnival"] .ika-badge::before {
   position: absolute;
-  top: -2px;
-  left: 8%;
-  right: 8%;
-  height: 10px;
+  top: -3px;
+  left: 6%;
+  right: 6%;
+  height: 16px;
   content: "";
-  border-radius: 0 0 999px 999px;
-  background: linear-gradient(180deg, #fff, #e9f6ff);
-  box-shadow: 0 2px 9px rgba(255, 255, 255, 0.65);
+  border-radius: 0 0 999px 999px / 0 0 70% 70%;
+  background:
+    radial-gradient(circle at 8% 100%, #fff 0 10px, transparent 11px),
+    radial-gradient(circle at 24% 92%, #fff 0 13px, transparent 14px),
+    radial-gradient(circle at 43% 98%, #fff 0 9px, transparent 10px),
+    radial-gradient(circle at 61% 90%, #fff 0 14px, transparent 15px),
+    radial-gradient(circle at 82% 100%, #fff 0 11px, transparent 12px),
+    linear-gradient(180deg, #fff, #edf8ff);
+  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.68), 0 5px 8px rgba(31, 111, 169, 0.12);
   pointer-events: none;
   z-index: 3;
 }
@@ -267,9 +260,16 @@ button, input, select, textarea { font: inherit; }
 [data-special-visual="autumn"] .hero-logo::before,
 [data-special-visual="autumn"] .club-logo-panel::before,
 [data-special-visual="autumn"] .ika-badge::before {
-  height: 12px;
-  background: linear-gradient(90deg, #8a3e20 0 18%, #d59a2f 18% 42%, #b85c2a 42% 66%, #8a3e20 66% 100%);
-  box-shadow: 0 2px 8px rgba(106, 54, 25, 0.24);
+  height: 18px;
+  border-radius: 0 0 18px 18px;
+  background:
+    radial-gradient(ellipse at 8% 72%, #8a3e20 0 9px, transparent 10px),
+    radial-gradient(ellipse at 22% 90%, #d59a2f 0 12px, transparent 13px),
+    radial-gradient(ellipse at 38% 72%, #b85c2a 0 9px, transparent 10px),
+    radial-gradient(ellipse at 55% 95%, #8a3e20 0 13px, transparent 14px),
+    radial-gradient(ellipse at 74% 74%, #d59a2f 0 10px, transparent 11px),
+    radial-gradient(ellipse at 91% 88%, #b85c2a 0 12px, transparent 13px);
+  box-shadow: 0 2px 8px rgba(106, 54, 25, 0.28);
 }
 [data-special-visual="carnival"] .card::before,
 [data-special-visual="carnival"] .split-media::before,
@@ -281,8 +281,16 @@ button, input, select, textarea { font: inherit; }
 [data-special-visual="carnival"] .hero-logo::before,
 [data-special-visual="carnival"] .club-logo-panel::before,
 [data-special-visual="carnival"] .ika-badge::before {
-  height: 9px;
-  background: linear-gradient(90deg, #f4c542 0 16%, #d63b8c 16% 34%, #2aa8d8 34% 54%, #4bbf73 54% 72%, #f4c542 72% 100%);
+  height: 14px;
+  border-radius: 0 0 14px 14px;
+  background:
+    radial-gradient(circle at 10% 80%, #f4c542 0 5px, transparent 6px),
+    radial-gradient(circle at 24% 72%, #d63b8c 0 4px, transparent 5px),
+    radial-gradient(circle at 38% 90%, #2aa8d8 0 6px, transparent 7px),
+    radial-gradient(circle at 54% 75%, #4bbf73 0 4px, transparent 5px),
+    radial-gradient(circle at 68% 88%, #f4c542 0 5px, transparent 6px),
+    radial-gradient(circle at 84% 74%, #d63b8c 0 4px, transparent 5px),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
   box-shadow: 0 2px 8px rgba(24, 30, 40, 0.18);
 }
 [data-special-visual="womensDay"] body::before {

@@ -1087,7 +1087,27 @@ function specialVisualLayer(settings) {
   const message = escapeHtml(visual.message || specialVisualCopy(visual.mode));
   const particles = seasonalParticles(visual.mode);
   const layer = particles ? `<div class="seasonal-layer seasonal-layer--${visual.mode}" aria-hidden="true">${particles}</div>` : "";
-  const badge = message ? `<div class="special-badge special-badge--${visual.mode}"><span aria-hidden="true"></span><strong>${message}</strong></div>` : "";
+  const icon = visual.mode === "mourning"
+    ? `<svg class="mourning-ribbon" viewBox="0 0 220 300" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="mourningRibbonA" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#0b0f10" />
+            <stop offset="0.48" stop-color="#293134" />
+            <stop offset="1" stop-color="#050505" />
+          </linearGradient>
+          <linearGradient id="mourningRibbonB" x1="1" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#111719" />
+            <stop offset="0.5" stop-color="#4a5356" />
+            <stop offset="1" stop-color="#030303" />
+          </linearGradient>
+        </defs>
+        <path d="M110 20C63 20 38 55 47 98c7 34 31 70 63 111 31-41 56-77 63-111 9-43-16-78-63-78Zm0 34c24 0 36 16 32 39-4 20-17 44-32 68-16-24-29-48-33-68-4-23 9-39 33-39Z" fill="url(#mourningRibbonA)" />
+        <path d="M102 143 28 272h55l73-128c15-26 21-47 16-71-3-17-11-31-24-40 6 33-5 65-46 110Z" fill="url(#mourningRibbonA)" />
+        <path d="M119 143 192 272h-55L64 144C49 118 43 97 48 73c3-17 11-31 24-40-6 33 5 65 47 110Z" fill="url(#mourningRibbonB)" />
+        <path d="M80 244h35l-31 43-15-29 11-14Zm60 0h-35l31 43 15-29-11-14Z" fill="#050505" />
+      </svg>`
+    : `<span aria-hidden="true"></span>`;
+  const badge = message ? `<div class="special-badge special-badge--${visual.mode}">${icon}<strong>${message}</strong></div>` : "";
   return `${layer}${badge}`;
 }
 
