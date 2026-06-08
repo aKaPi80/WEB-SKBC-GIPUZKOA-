@@ -9,10 +9,10 @@ window.SKBC_CONTENT = {
     "maps": "https://www.google.com/maps?q=Garmendiola%20aldapa%202%20Tolosa",
     "theme": {
       "palette": "skbc",
-      "heroOverlay": "classic"
+      "heroOverlay": "strong"
     },
     "specialVisual": {
-      "mode": "womensDay",
+      "mode": "none",
       "intensity": "high",
       "message": "",
       "schedule": [
