@@ -12,9 +12,9 @@ window.SKBC_CONTENT = {
       "heroOverlay": "classic"
     },
     "specialVisual": {
-      "mode": "autumn",
+      "mode": "mourning",
       "intensity": "high",
-      "message": "FELIZ NAVIDAD",
+      "message": "",
       "schedule": [
         {
           "enabled": true,
