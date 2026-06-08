@@ -1016,11 +1016,74 @@ function renderNav(copy) {
   document.querySelector(".whatsapp-float").href = whatsappLink(copy.contact.title);
 }
 
+function specialVisualSettings(settings) {
+  const visual = settings.specialVisual || {};
+  const allowedModes = new Set(["none", "christmas", "autumn", "carnival", "womensDay", "mourning"]);
+  const allowedIntensities = new Set(["low", "medium", "high"]);
+  return {
+    mode: allowedModes.has(visual.mode) ? visual.mode : "none",
+    intensity: allowedIntensities.has(visual.intensity) ? visual.intensity : "medium",
+    message: String(visual.message || "").trim()
+  };
+}
+
+function specialVisualCopy(mode) {
+  const labels = {
+    es: {
+      christmas: "Felices fiestas",
+      autumn: "OtoÃ±o en el dojo",
+      carnival: "Carnavales en Tolosa",
+      womensDay: "8M · respeto, igualdad y confianza",
+      mourning: "SKBC GIPUZKOA se suma al luto"
+    },
+    eu: {
+      christmas: "Jai zoriontsuak",
+      autumn: "Udazkena dojon",
+      carnival: "Inauteriak Tolosan",
+      womensDay: "M8 · errespetua, berdintasuna eta konfiantza",
+      mourning: "SKBC GIPUZKOA doluarekin bat egiten du"
+    },
+    en: {
+      christmas: "Happy holidays",
+      autumn: "Autumn at the dojo",
+      carnival: "Carnival in Tolosa",
+      womensDay: "8M · respect, equality and confidence",
+      mourning: "SKBC GIPUZKOA joins in mourning"
+    }
+  };
+  return (labels[state.lang] || labels.es)[mode] || "";
+}
+
+function seasonalParticles(mode) {
+  if (!["christmas", "autumn", "carnival"].includes(mode)) return "";
+  return Array.from({ length: 42 }, (_, index) => {
+    const x = (index * 17) % 101;
+    const delay = -((index * 0.73) % 14).toFixed(2);
+    const duration = 9 + (index % 9);
+    const size = 6 + (index % 8);
+    const drift = ((index % 2 ? 1 : -1) * (16 + (index % 5) * 8));
+    return `<span style="--x:${x};--delay:${delay}s;--duration:${duration}s;--size:${size}px;--drift:${drift}px"></span>`;
+  }).join("");
+}
+
+function specialVisualLayer(settings) {
+  const visual = specialVisualSettings(settings);
+  if (visual.mode === "none") return "";
+  const message = escapeHtml(visual.message || specialVisualCopy(visual.mode));
+  const particles = seasonalParticles(visual.mode);
+  const layer = particles ? `<div class="seasonal-layer seasonal-layer--${visual.mode}" aria-hidden="true">${particles}</div>` : "";
+  const badge = message ? `<div class="special-badge special-badge--${visual.mode}"><span aria-hidden="true"></span><strong>${message}</strong></div>` : "";
+  return `${layer}${badge}`;
+}
+
 function render() {
   const copy = t();
   const { settings } = state.content;
+  const visual = specialVisualSettings(settings);
   document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
   document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
+  document.documentElement.dataset.specialVisual = visual.mode;
+  document.documentElement.dataset.specialIntensity = visual.intensity;
   const peopleImages = settings.images.people || {};
   const socialEmbeds = embeddedSocial(settings);
   const galleryImages = uniqueImages(settings.images.gallery, [
@@ -1210,6 +1273,7 @@ function render() {
         </form>
       </div>
     </section>
+    ${specialVisualLayer(settings)}
   `;
 
   document.querySelector(".contact-form").addEventListener("submit", (event) => {

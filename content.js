@@ -11,6 +11,11 @@ window.SKBC_CONTENT = {
       "palette": "skbc",
       "heroOverlay": "classic"
     },
+    "specialVisual": {
+      "mode": "none",
+      "intensity": "medium",
+      "message": ""
+    },
     "socialFeeds": {
       "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\nhttps://www.instagram.com/reel/DZTJzzoPn76/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\n",
       "youtubeUrls": "https://youtu.be/gcqSNxgEf74?si=nOr2_fWOr3nOIakt"

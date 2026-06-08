@@ -89,10 +89,13 @@ const settingsGroups = [
   },
   {
     title: "Estilo visual",
-    help: "Elige una paleta sugerida y el tipo de oscurecido de la foto principal.",
+    help: "Elige una paleta sugerida, el contraste de la foto principal y efectos especiales temporales como Navidad, otoÃ±o, carnaval, DÃ­a de la Mujer o luto.",
     fields: [
       ["Paleta visual", ["settings", "theme", "palette"], "palette"],
-      ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"]
+      ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"],
+      ["Efecto especial manual", ["settings", "specialVisual", "mode"], "specialVisualMode"],
+      ["Intensidad del efecto", ["settings", "specialVisual", "intensity"], "specialVisualIntensity"],
+      ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"]
     ]
   },
   {
@@ -442,6 +445,19 @@ function controlTemplate(id, encodedPath, value, type) {
   }
   if (type === "overlay") {
     return selectTemplate(id, encodedPath, value, [["classic", "Contraste normal"], ["soft", "MÃ¡s luminoso"], ["strong", "MÃ¡s oscuro"]]);
+  }
+  if (type === "specialVisualMode") {
+    return selectTemplate(id, encodedPath, value || "none", [
+      ["none", "Normal, sin efecto"],
+      ["christmas", "Navidad: nieve"],
+      ["autumn", "OtoÃ±o: hojas"],
+      ["carnival", "Carnaval: confeti"],
+      ["womensDay", "DÃ­a de la Mujer: morado"],
+      ["mourning", "Luto: lazo negro"]
+    ], type);
+  }
+  if (type === "specialVisualIntensity") {
+    return selectTemplate(id, encodedPath, value || "medium", [["low", "Suave"], ["medium", "Media"], ["high", "Alta"]], type);
   }
   if (type === "booleanText") {
     return selectTemplate(id, encodedPath, value, [["true", "Activa"], ["false", "Oculta"]], type);
