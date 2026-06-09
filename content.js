@@ -32,7 +32,7 @@ window.SKBC_CONTENT = {
         "enabled": true,
         "preset": "paper",
         "customImage": "",
-        "opacity": "0.08",
+        "opacity": "0.10",
         "size": "520px",
         "position": "center top",
         "scope": "light"
