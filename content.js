@@ -30,9 +30,9 @@ window.SKBC_CONTENT = {
       },
       "decorativeBackground": {
         "enabled": true,
-        "preset": "paper",
+        "preset": "waves",
         "customImage": "",
-        "opacity": "0.30",
+        "opacity": "0.10",
         "size": "520px",
         "position": "center top",
         "scope": "light"
