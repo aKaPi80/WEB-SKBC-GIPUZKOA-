@@ -18,6 +18,7 @@ let dirty = false;
 
 const panelTitles = {
   settings: "Ajustes generales",
+  system: "SEO y sistema",
   es: "Textos en espaÃ±ol",
   eu: "Textos en euskera",
   en: "Textos en inglÃ©s",
@@ -27,6 +28,7 @@ const panelTitles = {
 
 const labels = {
   es: "EspaÃ±ol",
+  system: "SEO/Sistema",
   eu: "Euskera",
   en: "InglÃ©s",
   people: "Personas",
@@ -129,6 +131,45 @@ const settingsGroups = [
       ["Pablo SÃ¡nchez", ["settings", "images", "people", "pablo"], "input"],
       ["Uxue Garikano", ["settings", "images", "people", "uxue"], "input"],
       ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"]
+    ]
+  }
+];
+
+const systemGroups = [
+  {
+    title: "Marca y logos globales",
+    help: "Cambia logos y nombre visible de la cabecera. Usa rutas tipo assets/logo-skbc.png o assets/uploads/imagen.jpg.",
+    fields: [
+      ["Nombre de la web", ["settings", "system", "siteName"], "input"],
+      ["Subtítulo cabecera", ["settings", "system", "brandSubtitle"], "input"],
+      ["Logo cabecera", ["settings", "system", "brandLogo"], "input"],
+      ["Logo grande del hero", ["settings", "system", "heroLogo"], "input"],
+      ["Logo sección Club", ["settings", "system", "clubLogo"], "input"],
+      ["Favicon/icono navegador", ["settings", "system", "favicon"], "input"],
+      ["Imagen social/Google", ["settings", "system", "socialImage"], "input"]
+    ]
+  },
+  {
+    title: "Menú principal",
+    help: "Edita las etiquetas del menú base. Mantén el orden separado por |. Las áreas nuevas se siguen añadiendo automáticamente.",
+    fields: [
+      ["Menú ES", ["settings", "system", "navLabels", "es"], "input"],
+      ["Menú EU", ["settings", "system", "navLabels", "eu"], "input"],
+      ["Menú EN", ["settings", "system", "navLabels", "en"], "input"]
+    ]
+  },
+  {
+    title: "SEO técnico local",
+    help: "Datos usados para metadatos sociales y schema. No modifica dominio, GitHub Pages ni DNS.",
+    fields: [
+      ["Nombre alternativo", ["settings", "system", "alternateName"], "input"],
+      ["Descripción schema", ["settings", "system", "schemaDescription"], "textarea"],
+      ["Dirección", ["settings", "system", "streetAddress"], "input"],
+      ["Localidad", ["settings", "system", "addressLocality"], "input"],
+      ["Provincia", ["settings", "system", "addressRegion"], "input"],
+      ["País", ["settings", "system", "addressCountry"], "input"],
+      ["Deporte/actividad", ["settings", "system", "sport"], "input"],
+      ["Temas SEO", ["settings", "system", "knowsAbout"], "input"]
     ]
   }
 ];
@@ -395,6 +436,7 @@ function render() {
   });
 
   if (currentPanel === "custom") return renderCustom();
+  if (currentPanel === "system") return renderGroups(systemGroups);
   if (currentPanel === "people") return renderPeople();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();

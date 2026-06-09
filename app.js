@@ -184,6 +184,27 @@ const NAV_TEXT = {
   en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", news: "News", merch: "Merchandising", contact: "Contact" }
 };
 
+const NAV_KEYS = ["kids", "adults", "club", "team", "schedule", "calendar", "gallery", "testimonials", "news", "merch", "contact"];
+
+function systemSettings() {
+  return state.content.settings.system || {};
+}
+
+function systemLogo(key, fallback) {
+  return systemSettings()[key] || fallback;
+}
+
+function navLabels() {
+  const fallback = NAV_TEXT[state.lang] || NAV_TEXT.es;
+  const configured = systemSettings().navLabels?.[state.lang];
+  if (!configured) return fallback;
+  const parts = String(configured).split("|").map((part) => part.trim());
+  return NAV_KEYS.reduce((labels, key, index) => {
+    labels[key] = parts[index] || fallback[key];
+    return labels;
+  }, {});
+}
+
 function uniqueNavItems(items) {
   const seenHrefs = new Set();
   const seenLabels = new Set();
@@ -972,16 +993,19 @@ function setLink(selector, attrs) {
 }
 
 function setMeta(copy) {
+  const system = systemSettings();
   document.documentElement.lang = state.lang;
   document.title = copy.seoTitle;
   document.querySelector("meta[name='description']").setAttribute("content", copy.seoDescription);
   const url = localizedUrl(state.lang);
-  const image = absoluteUrl(state.content.settings.images?.hero || "assets/logo-skbc-full.png");
+  const image = absoluteUrl(system.socialImage || state.content.settings.images?.hero || "assets/logo-skbc-full.png");
   setLink("link[rel='canonical']", { rel: "canonical", href: url });
   setLink("link[rel='alternate'][hreflang='es']", { rel: "alternate", hreflang: "es", href: localizedUrl("es") });
   setLink("link[rel='alternate'][hreflang='eu']", { rel: "alternate", hreflang: "eu", href: localizedUrl("eu") });
   setLink("link[rel='alternate'][hreflang='en']", { rel: "alternate", hreflang: "en", href: localizedUrl("en") });
   setLink("link[rel='alternate'][hreflang='x-default']", { rel: "alternate", hreflang: "x-default", href: localizedUrl("es") });
+  setLink("link[rel='icon']", { rel: "icon", href: system.favicon || "assets/logo-skbc.png" });
+  setLink("link[rel='apple-touch-icon']", { rel: "apple-touch-icon", href: system.favicon || "assets/logo-skbc.png" });
   setMetaContent("meta[property='og:locale']", { property: "og:locale" }, state.lang === "eu" ? "eu_ES" : state.lang === "en" ? "en_GB" : "es_ES");
   setMetaContent("meta[property='og:title']", { property: "og:title" }, copy.seoTitle);
   setMetaContent("meta[property='og:description']", { property: "og:description" }, copy.seoDescription);
@@ -990,10 +1014,46 @@ function setMeta(copy) {
   setMetaContent("meta[name='twitter:title']", { name: "twitter:title" }, copy.seoTitle);
   setMetaContent("meta[name='twitter:description']", { name: "twitter:description" }, copy.seoDescription);
   setMetaContent("meta[name='twitter:image']", { name: "twitter:image" }, image);
+  const schema = document.querySelector("#structured-data");
+  if (schema) {
+    schema.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": ["SportsActivityLocation", "LocalBusiness"],
+      "@id": "https://www.skbcgipuzkoa.com/#club",
+      name: system.siteName || "SKBC GIPUZKOA",
+      alternateName: system.alternateName || "Kempo Basque Country Gipuzkoa",
+      description: system.schemaDescription || copy.seoDescription,
+      url: "https://www.skbcgipuzkoa.com/",
+      logo: absoluteUrl(system.brandLogo || "assets/logo-skbc.png"),
+      image,
+      telephone: `+${state.content.settings.whatsapp || ""}`,
+      sport: system.sport || "Shorinji Kempo",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: system.streetAddress || "Garmendiola aldapa 2",
+        addressLocality: system.addressLocality || "Tolosa",
+        addressRegion: system.addressRegion || "Gipuzkoa",
+        addressCountry: system.addressCountry || "ES"
+      },
+      areaServed: [system.addressLocality || "Tolosa", system.addressRegion || "Gipuzkoa", "Euskadi", "España"],
+      sameAs: [state.content.settings.instagram, state.content.settings.facebook, state.content.settings.youtube, state.content.settings.ikaUrl].filter(Boolean),
+      knowsAbout: String(system.knowsAbout || "Shorinji Kempo | artes marciales | defensa personal").split("|").map((item) => item.trim()).filter(Boolean)
+    }, null, 2);
+  }
 }
 
 function renderNav(copy) {
-  const labels = NAV_TEXT[state.lang] || NAV_TEXT.es;
+  const labels = navLabels();
+  const system = systemSettings();
+  const brandImage = document.querySelector(".brand-mark img");
+  if (brandImage) {
+    brandImage.src = systemLogo("brandLogo", "assets/logo-skbc.png");
+    brandImage.alt = `Logo ${system.siteName || "SKBC GIPUZKOA"}`;
+  }
+  const brandTitle = document.querySelector(".brand strong");
+  if (brandTitle) brandTitle.textContent = system.siteName || "SKBC GIPUZKOA";
+  const brandSubtitle = document.querySelector(".brand small");
+  if (brandSubtitle) brandSubtitle.textContent = system.brandSubtitle || "Shorinji Kempo · Tolosa";
   const baseNav = uniqueNavItems([
     { label: labels.kids, href: "#ninos" },
     { label: labels.adults, href: "#adultos" },
@@ -1116,6 +1176,7 @@ function specialVisualLayer(settings) {
 function render() {
   const copy = t();
   const { settings } = state.content;
+  const system = systemSettings();
   const visual = specialVisualSettings(settings);
   document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
   document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
@@ -1135,7 +1196,7 @@ function render() {
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
       <div class="hero-bg" style="background-image:url('${settings.images.hero}')"></div>
-      <div class="hero-logo"><img src="assets/logo-skbc.png" alt="Logo SKBC GIPUZKOA" /></div>
+      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" /></div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>
@@ -1188,7 +1249,7 @@ function render() {
     <section class="section" id="club">
       <div class="club-intro">
         <div class="club-logo-panel">
-          <img src="assets/logo-skbc-full.png" alt="Logo completo SKBC GIPUZKOA" />
+          <img src="${systemLogo("clubLogo", "assets/logo-skbc-full.png")}" alt="Logo completo ${system.siteName || "SKBC GIPUZKOA"}" />
         </div>
         <div>
           <p class="eyebrow">${copy.club.eyebrow}</p>

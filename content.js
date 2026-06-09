@@ -7,6 +7,28 @@ window.SKBC_CONTENT = {
     "facebook": "https://www.facebook.com/100094925771992",
     "youtube": "https://www.youtube.com/@SKBCGIPUZKOA",
     "maps": "https://www.google.com/maps?q=Garmendiola%20aldapa%202%20Tolosa",
+    "system": {
+      "siteName": "SKBC GIPUZKOA",
+      "brandSubtitle": "Shorinji Kempo · Tolosa",
+      "brandLogo": "assets/logo-skbc.png",
+      "heroLogo": "assets/logo-skbc.png",
+      "clubLogo": "assets/logo-skbc-full.png",
+      "favicon": "assets/logo-skbc.png",
+      "socialImage": "assets/logo-skbc-full.png",
+      "schemaDescription": "Club de Shorinji Kempo en Tolosa, Gipuzkoa, con clases para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
+      "alternateName": "Kempo Basque Country Gipuzkoa",
+      "streetAddress": "Garmendiola aldapa 2",
+      "addressLocality": "Tolosa",
+      "addressRegion": "Gipuzkoa",
+      "addressCountry": "ES",
+      "sport": "Shorinji Kempo",
+      "knowsAbout": "Shorinji Kempo | artes marciales | defensa personal | clases infantiles | disciplina | respeto",
+      "navLabels": {
+        "es": "Niños | Adultos | Club | Equipo | Horarios | Calendario | Galería | Testimonios | Noticias | Merchandising | Contacto",
+        "eu": "Haurrak | Helduak | Kluba | Taldea | Ordutegiak | Egutegia | Galeria | Testigantzak | Albisteak | Merchandising | Kontaktua",
+        "en": "Kids | Adults | Club | Team | Schedule | Calendar | Gallery | Testimonials | News | Merchandising | Contact"
+      }
+    },
     "theme": {
       "palette": "skbc",
       "heroOverlay": "strong"
