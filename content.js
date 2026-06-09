@@ -29,7 +29,7 @@ window.SKBC_CONTENT = {
         "en": "Kids | Adults | Club | Team | Schedule | Calendar | Gallery | Testimonials | News | Merchandising | Contact"
       },
       "decorativeBackground": {
-        "enabled": false,
+        "enabled": true,
         "preset": "paper",
         "customImage": "",
         "opacity": "0.08",
