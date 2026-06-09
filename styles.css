@@ -84,34 +84,34 @@ button, input, select, textarea { font: inherit; }
 
 [data-decorative-background="paper"] .section::after {
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(16, 17, 19, 0.08) 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 64%, rgba(31, 111, 169, 0.08) 0 1px, transparent 2px),
-    linear-gradient(90deg, rgba(16, 17, 19, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(16, 17, 19, 0.035) 1px, transparent 1px);
+    radial-gradient(circle at 18% 22%, rgba(16, 17, 19, 0.55) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 64%, rgba(31, 111, 169, 0.45) 0 1px, transparent 2px),
+    linear-gradient(90deg, rgba(16, 17, 19, 0.22) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(16, 17, 19, 0.2) 1px, transparent 1px);
   background-size: 180px 180px, 240px 240px, 42px 42px, 42px 42px;
 }
 
 [data-decorative-background="kanji"] .section::after {
   background-image:
-    radial-gradient(ellipse at 30% 25%, rgba(16, 17, 19, 0.08) 0 12%, transparent 13%),
-    linear-gradient(110deg, transparent 0 43%, rgba(16, 17, 19, 0.09) 44% 46%, transparent 47%),
-    linear-gradient(20deg, transparent 0 48%, rgba(16, 17, 19, 0.06) 49% 52%, transparent 53%);
+    radial-gradient(ellipse at 30% 25%, rgba(16, 17, 19, 0.55) 0 12%, transparent 13%),
+    linear-gradient(110deg, transparent 0 43%, rgba(16, 17, 19, 0.7) 44% 46%, transparent 47%),
+    linear-gradient(20deg, transparent 0 48%, rgba(16, 17, 19, 0.48) 49% 52%, transparent 53%);
   background-size: var(--decorative-bg-size, 520px);
 }
 
 [data-decorative-background="waves"] .section::after {
   background-image:
-    radial-gradient(ellipse at 50% 120%, transparent 0 48%, rgba(31, 111, 169, 0.2) 49% 51%, transparent 52%),
-    radial-gradient(ellipse at 0% 120%, transparent 0 48%, rgba(31, 111, 169, 0.14) 49% 51%, transparent 52%),
-    radial-gradient(ellipse at 100% 120%, transparent 0 48%, rgba(31, 111, 169, 0.14) 49% 51%, transparent 52%);
+    radial-gradient(ellipse at 50% 120%, transparent 0 48%, rgba(31, 111, 169, 0.8) 49% 51%, transparent 52%),
+    radial-gradient(ellipse at 0% 120%, transparent 0 48%, rgba(31, 111, 169, 0.62) 49% 51%, transparent 52%),
+    radial-gradient(ellipse at 100% 120%, transparent 0 48%, rgba(31, 111, 169, 0.62) 49% 51%, transparent 52%);
   background-size: 150px 72px;
 }
 
 [data-decorative-background="dojo"] .section::after {
   background-image:
-    linear-gradient(135deg, rgba(197, 39, 39, 0.08) 0 8%, transparent 9% 100%),
-    linear-gradient(45deg, transparent 0 46%, rgba(203, 164, 81, 0.12) 47% 49%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(16, 17, 19, 0.1) 0 2px, transparent 3px);
+    linear-gradient(135deg, rgba(197, 39, 39, 0.58) 0 8%, transparent 9% 100%),
+    linear-gradient(45deg, transparent 0 46%, rgba(203, 164, 81, 0.76) 47% 49%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(16, 17, 19, 0.68) 0 2px, transparent 3px);
   background-size: var(--decorative-bg-size, 520px);
 }
 

@@ -449,7 +449,7 @@ function render() {
   });
 
   if (currentPanel === "custom") return renderCustom();
-  if (currentPanel === "system") return renderGroups(systemGroups);
+  if (currentPanel === "system") return renderSystem();
   if (currentPanel === "people") return renderPeople();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();
@@ -476,6 +476,75 @@ function renderGroups(groups) {
   editor.innerHTML = `${renderIntro()}${groups.map(groupTemplate).join("")}`;
   bindFields(editor);
   bindSectionTranslations(editor);
+}
+
+function renderSystem() {
+  const editor = document.querySelector("#editor");
+  editor.innerHTML = `${renderIntro(`<p class="advanced-warning">La previsualización del fondo decorativo aparece al final de esta pantalla. Puedes probarlo aquí antes de guardar/publicar.</p>`)}${systemGroups.map(groupTemplate).join("")}${decorativePreviewTemplate()}`;
+  bindFields(editor);
+  bindDecorativePreview(editor);
+}
+
+function decorativeBackgroundConfig() {
+  const config = data.settings?.system?.decorativeBackground || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    preset: ["paper", "kanji", "waves", "dojo", "custom"].includes(config.preset) ? config.preset : "paper",
+    customImage: String(config.customImage || "").trim(),
+    opacity: String(config.opacity || "0.08").trim(),
+    size: String(config.size || "520px").trim(),
+    position: String(config.position || "center top").trim(),
+    scope: ["light", "all", "soft"].includes(config.scope) ? config.scope : "light"
+  };
+}
+
+function decorativePreviewTemplate() {
+  const config = decorativeBackgroundConfig();
+  return `
+    <article class="editor-group decorative-preview-card">
+      <header>
+        <div>
+          <h3>Previsualización del fondo decorativo</h3>
+          <p>Vista aproximada de cómo se verá en una sección clara de la web. No publica nada hasta que pulses Guardar cambios.</p>
+        </div>
+      </header>
+      <div class="decorative-preview"
+        data-preview-enabled="${config.enabled ? "true" : "false"}"
+        data-preview-preset="${escapeHtml(config.preset)}"
+        style="--preview-opacity:${escapeHtml(config.opacity)}; --preview-size:${escapeHtml(config.size)}; --preview-position:${escapeHtml(config.position)}; --preview-image:${config.preset === "custom" && config.customImage ? `url('${escapeHtml(config.customImage)}')` : "none"};">
+        <div class="decorative-preview__hero">
+          <span>SKBC GIPUZKOA</span>
+          <strong>Shorinji Kempo en Tolosa</strong>
+        </div>
+        <div class="decorative-preview__section">
+          <p>Sección clara con contenido real</p>
+          <h4>Confianza, disciplina y defensa personal</h4>
+          <div class="decorative-preview__tiles">
+            <span>Niños</span>
+            <span>Adultos</span>
+            <span>Club</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function bindDecorativePreview(editor) {
+  const preview = editor.querySelector(".decorative-preview");
+  if (!preview) return;
+  const refresh = () => {
+    const config = decorativeBackgroundConfig();
+    preview.dataset.previewEnabled = config.enabled ? "true" : "false";
+    preview.dataset.previewPreset = config.preset;
+    preview.style.setProperty("--preview-opacity", config.opacity);
+    preview.style.setProperty("--preview-size", config.size);
+    preview.style.setProperty("--preview-position", config.position);
+    preview.style.setProperty("--preview-image", config.preset === "custom" && config.customImage ? `url("${config.customImage}")` : "none");
+  };
+  editor.addEventListener("input", refresh);
+  editor.addEventListener("change", refresh);
+  refresh();
 }
 
 function parseEditorPerson(person) {
