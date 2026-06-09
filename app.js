@@ -1037,6 +1037,33 @@ function setLink(selector, attrs) {
   Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
 }
 
+function analyticsId() {
+  const id = String(systemSettings().googleAnalyticsId || "").trim();
+  return /^G-[A-Z0-9]+$/i.test(id) ? id : "";
+}
+
+function setupAnalytics() {
+  const id = analyticsId();
+  if (!id || document.querySelector("script[data-google-analytics]")) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag(){ window.dataLayer.push(arguments); };
+  window.gtag("js", new Date());
+  window.gtag("config", id, { anonymize_ip: true });
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+  script.dataset.googleAnalytics = "true";
+  document.head.appendChild(script);
+}
+
+function trackEvent(name, params = {}) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("event", name, {
+    page_language: state.lang,
+    ...params
+  });
+}
+
 function setMeta(copy) {
   const system = systemSettings();
   document.documentElement.lang = state.lang;
@@ -1243,6 +1270,7 @@ function render() {
     settings.images.learn
   ]);
   setMeta(copy);
+  setupAnalytics();
   renderNav(copy);
 
   document.querySelector("#app").innerHTML = `
@@ -1443,11 +1471,16 @@ function render() {
     };
     try {
       await submitLeadToSupabase(lead);
+      trackEvent("contact_submit", { interest: lead.interest, saved: true });
     } catch (error) {
       console.warn(error);
+      trackEvent("contact_submit", { interest: lead.interest, saved: false });
     }
     const text = `${lead.name} · ${lead.phone || "-"} · ${lead.email || "-"} · ${lead.interest} · ${lead.message}`;
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
+  });
+  document.querySelectorAll("a[href*='wa.me']").forEach((link) => {
+    link.addEventListener("click", () => trackEvent("whatsapp_click", { label: link.textContent.trim().slice(0, 80) }));
   });
   bindTestimonials(copy);
   bindTestimonialCards(copy);
@@ -1650,6 +1683,7 @@ document.querySelectorAll("[data-lang]").forEach((button) => {
   button.addEventListener("click", () => {
     state.lang = button.dataset.lang;
     localStorage.setItem("skbc_lang", state.lang);
+    trackEvent("language_change", { language: state.lang });
     render();
   });
 });

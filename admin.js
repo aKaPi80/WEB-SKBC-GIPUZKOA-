@@ -184,7 +184,8 @@ const systemGroups = [
       ["Provincia", ["settings", "system", "addressRegion"], "input"],
       ["País", ["settings", "system", "addressCountry"], "input"],
       ["Deporte/actividad", ["settings", "system", "sport"], "input"],
-      ["Temas SEO", ["settings", "system", "knowsAbout"], "input"]
+      ["Temas SEO", ["settings", "system", "knowsAbout"], "input"],
+      ["Google Analytics ID", ["settings", "system", "googleAnalyticsId"], "input"]
     ]
   },
   {

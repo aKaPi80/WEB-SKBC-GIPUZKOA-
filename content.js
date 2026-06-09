@@ -23,6 +23,7 @@ window.SKBC_CONTENT = {
       "addressCountry": "ES",
       "sport": "Shorinji Kempo",
       "knowsAbout": "Shorinji Kempo | artes marciales | defensa personal | clases infantiles | disciplina | respeto",
+      "googleAnalyticsId": "",
       "navLabels": {
         "es": "Niños | Adultos | Club | Equipo | Horarios | Calendario | Galería | Testimonios | Noticias | Merchandising | Contacto",
         "eu": "Haurrak | Helduak | Kluba | Taldea | Ordutegiak | Egutegia | Galeria | Testigantzak | Albisteak | Merchandising | Kontaktua",
