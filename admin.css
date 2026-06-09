@@ -941,7 +941,7 @@ button.danger {
   color: #fff;
   background:
     linear-gradient(180deg, rgba(17, 19, 22, .35), rgba(17, 19, 22, .82)),
-    url("assets/uploads/1780604041486-manji.jpg") center/cover;
+    var(--preview-hero-image) center/cover;
 }
 
 .decorative-preview__hero span {

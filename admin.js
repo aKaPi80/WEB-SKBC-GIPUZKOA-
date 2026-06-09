@@ -500,6 +500,7 @@ function decorativeBackgroundConfig() {
 
 function decorativePreviewTemplate() {
   const config = decorativeBackgroundConfig();
+  const heroImage = data.settings?.images?.hero || "assets/uploads/1780604041486-manji.jpg";
   return `
     <article class="editor-group decorative-preview-card">
       <header>
@@ -511,7 +512,7 @@ function decorativePreviewTemplate() {
       <div class="decorative-preview"
         data-preview-enabled="${config.enabled ? "true" : "false"}"
         data-preview-preset="${escapeHtml(config.preset)}"
-        style="--preview-opacity:${escapeHtml(config.opacity)}; --preview-size:${escapeHtml(config.size)}; --preview-position:${escapeHtml(config.position)}; --preview-image:${config.preset === "custom" && config.customImage ? `url('${escapeHtml(config.customImage)}')` : "none"};">
+        style="--preview-opacity:${escapeHtml(config.opacity)}; --preview-size:${escapeHtml(config.size)}; --preview-position:${escapeHtml(config.position)}; --preview-image:${config.preset === "custom" && config.customImage ? `url('${escapeHtml(config.customImage)}')` : "none"}; --preview-hero-image:url('${escapeHtml(heroImage)}');">
         <div class="decorative-preview__hero">
           <span>SKBC GIPUZKOA</span>
           <strong>Shorinji Kempo en Tolosa</strong>
@@ -535,12 +536,14 @@ function bindDecorativePreview(editor) {
   if (!preview) return;
   const refresh = () => {
     const config = decorativeBackgroundConfig();
+    const heroImage = data.settings?.images?.hero || "assets/uploads/1780604041486-manji.jpg";
     preview.dataset.previewEnabled = config.enabled ? "true" : "false";
     preview.dataset.previewPreset = config.preset;
     preview.style.setProperty("--preview-opacity", config.opacity);
     preview.style.setProperty("--preview-size", config.size);
     preview.style.setProperty("--preview-position", config.position);
     preview.style.setProperty("--preview-image", config.preset === "custom" && config.customImage ? `url("${config.customImage}")` : "none");
+    preview.style.setProperty("--preview-hero-image", `url("${heroImage}")`);
   };
   editor.addEventListener("input", refresh);
   editor.addEventListener("change", refresh);
