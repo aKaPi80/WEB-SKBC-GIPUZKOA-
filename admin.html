@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
-    <link rel="stylesheet" href="admin.css?v=20260609-news-sidebar" />
+    <link rel="stylesheet" href="admin.css?v=20260609-dashboard-leads-seo" />
     <style>
       .admin-login {
         display: grid;
@@ -99,7 +99,8 @@
 
       <main>
         <aside>
-          <button class="tab active" data-panel="settings" type="button">Ajustes</button>
+          <button class="tab active" data-panel="dashboard" type="button">Panel</button>
+          <button class="tab" data-panel="settings" type="button">Ajustes</button>
           <button class="tab" data-panel="system" type="button">SEO/Sistema</button>
           <button class="tab" data-panel="es" type="button">Español</button>
           <button class="tab" data-panel="eu" type="button">Euskera</button>
@@ -107,6 +108,7 @@
           <button class="tab" data-panel="people" type="button">Personas</button>
           <button class="tab" data-panel="events" type="button">Eventos</button>
           <button class="tab" data-panel="news" type="button">Noticias</button>
+          <button class="tab" data-panel="leads" type="button">Contactos</button>
           <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
           <button class="tab" data-panel="merch" type="button">Tienda</button>
           <button class="tab" data-panel="orders" type="button">Pedidos</button>
@@ -147,7 +149,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260609-news-sidebar";
+          script.src = "admin.js?v=20260609-dashboard-leads-seo";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

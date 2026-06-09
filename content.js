@@ -902,6 +902,12 @@ window.SKBC_CONTENT = {
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_merch_orders",
       "emailWebhookUrl": "https://script.google.com/macros/s/AKfycbzItZhZGJrHe5B4IMZTRLfsbqYplIIWJtO8h47UplZUvTAhnl3wnZRP7PvOZwDulmR8/exec"
+    },
+    "leadInbox": {
+      "enabled": true,
+      "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
+      "table": "skbc_leads"
     }
   },
   "languages": {
@@ -1212,6 +1218,8 @@ window.SKBC_CONTENT = {
         "title": "Prueba Shorinji Kempo sin compromiso",
         "text": "Escríbenos por WhatsApp y te ayudamos a empezar.",
         "name": "Nombre",
+        "phone": "Teléfono",
+        "email": "Email",
         "interest": "Me interesa",
         "message": "Mensaje",
         "submit": "Enviar por WhatsApp",
@@ -1632,6 +1640,8 @@ window.SKBC_CONTENT = {
         "title": "Probatu Shorinji Kempo konpromisorik gabe",
         "text": "Idatzi WhatsApp bidez eta hasten lagunduko dizugu.",
         "name": "Izena",
+        "phone": "Telefonoa",
+        "email": "Emaila",
         "interest": "Interesa",
         "message": "Mezua",
         "submit": "WhatsApp bidez bidali",
@@ -2052,6 +2062,8 @@ window.SKBC_CONTENT = {
         "title": "Try Shorinji Kempo with no commitment",
         "text": "Write to us on WhatsApp and we will help you get started.",
         "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
         "interest": "I am interested in",
         "message": "Message",
         "submit": "Send by WhatsApp",

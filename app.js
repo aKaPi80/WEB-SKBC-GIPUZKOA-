@@ -659,6 +659,34 @@ function orderInboxConfig() {
   };
 }
 
+function leadInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = state.content.settings.leadInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_leads"
+  };
+}
+
+async function submitLeadToSupabase(lead) {
+  const config = leadInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify(lead)
+  });
+  if (!response.ok) throw new Error("No se pudo guardar el contacto en Supabase");
+  return true;
+}
+
 async function uploadTestimonialPhoto(file) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
@@ -1389,6 +1417,8 @@ function render() {
         </div>
         <form class="contact-form">
           <label>${copy.contact.name}<input name="name" required /></label>
+          <label>${copy.contact.phone || "Teléfono"}<input name="phone" inputmode="tel" /></label>
+          <label>${copy.contact.email || "Email"}<input name="email" type="email" /></label>
           <label>${copy.contact.interest}<select name="interest">${copy.contact.options.map((option) => `<option>${option}</option>`).join("")}</select></label>
           <label>${copy.contact.message}<textarea name="message" rows="4" required></textarea></label>
           <button class="button" type="submit">${copy.contact.submit}</button>
@@ -1398,10 +1428,25 @@ function render() {
     ${specialVisualLayer(settings)}
   `;
 
-  document.querySelector(".contact-form").addEventListener("submit", (event) => {
+  document.querySelector(".contact-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const text = `${data.get("name")} · ${data.get("interest")} · ${data.get("message")}`;
+    const lead = {
+      name: String(data.get("name") || "").trim(),
+      phone: String(data.get("phone") || "").trim(),
+      email: String(data.get("email") || "").trim(),
+      interest: String(data.get("interest") || "").trim(),
+      message: String(data.get("message") || "").trim(),
+      status: "new",
+      source: "website_contact",
+      page_lang: state.lang
+    };
+    try {
+      await submitLeadToSupabase(lead);
+    } catch (error) {
+      console.warn(error);
+    }
+    const text = `${lead.name} · ${lead.phone || "-"} · ${lead.email || "-"} · ${lead.interest} · ${lead.message}`;
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
   });
   bindTestimonials(copy);

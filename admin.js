@@ -12,12 +12,13 @@ const MEDIA_REPLACEMENTS = {
 
 let data = load();
 let publishedContentSignature = contentSignature(cloneDefault());
-let currentPanel = "settings";
+let currentPanel = "dashboard";
 let currentEventIndex = null;
 let currentNewsIndex = null;
 let dirty = false;
 
 const panelTitles = {
+  dashboard: "Panel de control",
   settings: "Ajustes generales",
   system: "SEO y sistema",
   es: "Textos en espaÃ±ol",
@@ -28,6 +29,7 @@ const panelTitles = {
 };
 
 const labels = {
+  dashboard: "Panel",
   es: "EspaÃ±ol",
   system: "SEO/Sistema",
   eu: "Euskera",
@@ -41,6 +43,8 @@ panelTitles.events = "Calendario de eventos";
 labels.events = "Calendario";
 panelTitles.news = "Próximas noticias";
 labels.news = "Noticias";
+panelTitles.leads = "Captación y seguimiento";
+labels.leads = "Contactos";
 panelTitles.people = "Personas del equipo y directiva";
 labels.people = "Personas";
 panelTitles.testimonials = "Testimonios";
@@ -80,6 +84,16 @@ const settingsGroups = [
       ["Supabase URL", ["settings", "testimonialInbox", "supabaseUrl"], "input"],
       ["Supabase anon key", ["settings", "testimonialInbox", "anonKey"], "textarea"],
       ["Tabla", ["settings", "testimonialInbox", "table"], "input"]
+    ]
+  },
+  {
+    title: "Contactos y prueba gratis con Supabase",
+    help: "Guarda automáticamente los formularios de contacto de la web para poder hacer seguimiento desde la pestaña Contactos.",
+    fields: [
+      ["Contactos activos", ["settings", "leadInbox", "enabled"], "booleanText"],
+      ["Supabase URL", ["settings", "leadInbox", "supabaseUrl"], "input"],
+      ["Supabase anon key", ["settings", "leadInbox", "anonKey"], "textarea"],
+      ["Tabla contactos", ["settings", "leadInbox", "table"], "input"]
     ]
   },
   {
@@ -309,6 +323,8 @@ function languageGroups(lang) {
         ["Botón enviar pedido", [...root, "merch", "send"], "input"],
         ["TÃ­tulo contacto", [...root, "contact", "title"], "input"],
         ["Texto contacto", [...root, "contact", "text"], "textarea"],
+        ["Campo teléfono contacto", [...root, "contact", "phone"], "input"],
+        ["Campo email contacto", [...root, "contact", "email"], "input"],
         ["Opciones formulario", [...root, "contact", "options"], "array"],
         ["BotÃ³n formulario", [...root, "contact", "submit"], "input"]
       ]
@@ -450,10 +466,12 @@ function render() {
   });
 
   if (currentPanel === "custom") return renderCustom();
+  if (currentPanel === "dashboard") return renderDashboard();
   if (currentPanel === "system") return renderSystem();
   if (currentPanel === "people") return renderPeople();
   if (currentPanel === "events") return renderEvents();
   if (currentPanel === "news") return renderNews();
+  if (currentPanel === "leads") return renderLeads();
   if (currentPanel === "testimonials") return renderTestimonialsInbox();
   if (currentPanel === "merch") return renderMerch();
   if (currentPanel === "orders") return renderOrders();
@@ -479,11 +497,136 @@ function renderGroups(groups) {
   bindSectionTranslations(editor);
 }
 
+function renderDashboard() {
+  const editor = document.querySelector("#editor");
+  const events = data.settings.events || [];
+  const news = data.settings.news || [];
+  const today = new Date().toISOString().slice(0, 10);
+  const upcomingEvents = events.flatMap((event) => generatedEventDates(event).map((date) => ({ event, date })))
+    .filter((item) => item.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 5);
+  const activeNews = news.filter((item) => item.enabled !== false).length;
+  const publishedTestimonials = data.languages?.es?.testimonials?.items?.length || 0;
+  const seoIssues = seoChecklistItems().filter((item) => !item.ok);
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions"><button id="refresh-dashboard" class="primary" type="button">Actualizar datos privados</button><a class="button-like" href="index.html" target="_blank" rel="noreferrer">Ver web</a></div>`)}
+    <div class="dashboard-grid">
+      ${dashboardMetric("Eventos próximos", upcomingEvents.length, "Según el calendario publicado")}
+      ${dashboardMetric("Noticias activas", activeNews, "Visibles en la web")}
+      ${dashboardMetric("Testimonios publicados", publishedTestimonials, "Aprobados y visibles")}
+      ${dashboardMetric("SEO pendiente", seoIssues.length, seoIssues.length ? "Revisar SEO/Sistema" : "Base correcta")}
+    </div>
+    <div class="dashboard-layout">
+      <article class="editor-group">
+        <header><div><h3>Próximos eventos</h3><p>Primeros eventos visibles desde hoy.</p></div></header>
+        <div class="dashboard-list">
+          ${upcomingEvents.length ? upcomingEvents.map(({ event, date }) => `<div><strong>${escapeHtml(event.languages?.es?.title || "Evento")}</strong><span>${escapeHtml(date)}</span></div>`).join("") : `<p class="empty-note">No hay próximos eventos publicados.</p>`}
+        </div>
+      </article>
+      <article class="editor-group">
+        <header><div><h3>Bandejas privadas</h3><p>Conecta con Supabase para ver pendientes sin salir del admin.</p></div></header>
+        <div id="dashboard-private" class="dashboard-private">
+          <p class="empty-note">Pulsa Actualizar datos privados.</p>
+        </div>
+      </article>
+      <article class="editor-group">
+        <header><div><h3>Acciones recomendadas</h3><p>Lo más útil para captación y posicionamiento.</p></div></header>
+        <div class="dashboard-actions">
+          <button type="button" data-open-panel="leads">Gestionar contactos</button>
+          <button type="button" data-open-panel="news">Publicar noticia</button>
+          <button type="button" data-open-panel="system">Revisar SEO</button>
+          <button type="button" data-open-panel="events">Actualizar calendario</button>
+        </div>
+      </article>
+    </div>
+  `;
+  editor.querySelector("#refresh-dashboard")?.addEventListener("click", refreshDashboardPrivateData);
+  editor.querySelectorAll("[data-open-panel]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentPanel = button.dataset.openPanel;
+      render();
+    });
+  });
+}
+
+function dashboardMetric(label, value, note) {
+  return `<article class="dashboard-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><p>${escapeHtml(note)}</p></article>`;
+}
+
+async function refreshDashboardPrivateData() {
+  const target = document.querySelector("#dashboard-private");
+  if (!target) return;
+  target.innerHTML = `<p class="empty-note">Consultando Supabase...</p>`;
+  const results = await Promise.allSettled([
+    supabaseCount(leadInboxConfig(), "status=in.(new,contacted,trial_scheduled)"),
+    supabaseCount(testimonialInboxConfig(), "status=eq.pending"),
+    supabaseCount(orderInboxConfig(), "status=in.(pending,seen,contacted,payment_pending)")
+  ]);
+  const [leads, testimonials, orders] = results.map((result) => result.status === "fulfilled" ? result.value : null);
+  target.innerHTML = `
+    ${dashboardPrivateRow("Contactos abiertos", leads)}
+    ${dashboardPrivateRow("Testimonios pendientes", testimonials)}
+    ${dashboardPrivateRow("Pedidos abiertos", orders)}
+  `;
+}
+
+function dashboardPrivateRow(label, value) {
+  return `<div><strong>${escapeHtml(label)}</strong><span>${value === null ? "No disponible" : escapeHtml(value)}</span></div>`;
+}
+
+async function supabaseCount(config, filter = "") {
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey || !supabaseSession()?.access_token) return null;
+  const query = filter ? `?${filter}&select=id` : "?select=id";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}${query}`, {
+    method: "HEAD",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "count=exact" }
+  });
+  if (!response.ok) return null;
+  return Number(response.headers.get("content-range")?.split("/")?.[1] || 0);
+}
+
 function renderSystem() {
   const editor = document.querySelector("#editor");
-  editor.innerHTML = `${renderIntro(`<p class="advanced-warning">La previsualización del fondo decorativo aparece al final de esta pantalla. Puedes probarlo aquí antes de guardar/publicar.</p>`)}${systemGroups.map(groupTemplate).join("")}${decorativePreviewTemplate()}`;
+  editor.innerHTML = `${renderIntro(`<p class="advanced-warning">La previsualización del fondo decorativo aparece al final de esta pantalla. Puedes probarlo aquí antes de guardar/publicar.</p>`)}${seoControlTemplate()}${systemGroups.map(groupTemplate).join("")}${decorativePreviewTemplate()}`;
   bindFields(editor);
   bindDecorativePreview(editor);
+}
+
+function seoChecklistItems() {
+  const system = data.settings?.system || {};
+  return [
+    { label: "Título SEO en español", ok: Boolean(data.languages?.es?.seoTitle), note: data.languages?.es?.seoTitle || "Falta" },
+    { label: "Descripción SEO en español", ok: Boolean(data.languages?.es?.seoDescription), note: data.languages?.es?.seoDescription || "Falta" },
+    { label: "Títulos SEO multidioma", ok: ["es", "eu", "en"].every((lang) => data.languages?.[lang]?.seoTitle), note: "ES / EU / EN" },
+    { label: "Descripciones SEO multidioma", ok: ["es", "eu", "en"].every((lang) => data.languages?.[lang]?.seoDescription), note: "ES / EU / EN" },
+    { label: "Schema local", ok: Boolean(system.schemaDescription && system.streetAddress && system.addressLocality), note: system.addressLocality || "Revisar dirección" },
+    { label: "Imagen social", ok: Boolean(system.socialImage), note: system.socialImage || "Falta imagen" },
+    { label: "Redes enlazadas", ok: Boolean(data.settings?.instagram && data.settings?.youtube), note: "Instagram / YouTube" },
+    { label: "Sitemap y robots", ok: true, note: "sitemap.xml y robots.txt publicados" }
+  ];
+}
+
+function seoControlTemplate() {
+  const items = seoChecklistItems();
+  const missing = items.filter((item) => !item.ok).length;
+  return `
+    <article class="editor-group seo-control">
+      <header>
+        <div>
+          <h3>Control SEO rápido</h3>
+          <p>${missing ? `${missing} punto(s) por revisar.` : "Base SEO correcta. Mantén noticias y eventos actualizados."}</p>
+        </div>
+        <div class="seo-links">
+          <a class="button-like" href="sitemap.xml" target="_blank" rel="noreferrer">Sitemap</a>
+          <a class="button-like" href="robots.txt" target="_blank" rel="noreferrer">Robots</a>
+        </div>
+      </header>
+      <div class="seo-checklist">
+        ${items.map((item) => `<div class="${item.ok ? "ok" : "warn"}"><strong>${item.ok ? "OK" : "REVISAR"}</strong><span>${escapeHtml(item.label)}</span><small>${escapeHtml(item.note)}</small></div>`).join("")}
+      </div>
+    </article>
+  `;
 }
 
 function decorativeBackgroundConfig() {
@@ -1038,6 +1181,13 @@ function generatedRepeatDates(event) {
   return dates;
 }
 
+function generatedEventDates(event) {
+  const dates = new Set(Array.isArray(event.dates) ? event.dates.filter(Boolean) : []);
+  if (event.start) dates.add(event.start);
+  generatedRepeatDates(event).forEach((date) => dates.add(date));
+  return Array.from(dates).sort();
+}
+
 function parseDateInput(value) {
   const [year, month, day] = String(value || "").split("-").map(Number);
   return new Date(year || new Date().getFullYear(), (month || 1) - 1, day || 1);
@@ -1572,6 +1722,17 @@ function orderInboxConfig() {
   };
 }
 
+function leadInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = data.settings.leadInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_leads"
+  };
+}
+
 function supabaseSession() {
   try {
     return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -1794,6 +1955,190 @@ async function updatePendingTestimonialStatus(id, status) {
     const result = await response.json().catch(() => ({}));
     throw new Error(result.message || "No se pudo actualizar el testimonio");
   }
+}
+
+function renderLeads() {
+  const editor = document.querySelector("#editor");
+  const config = leadInboxConfig();
+  const session = supabaseSession();
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions">
+      <button id="load-leads" class="primary" type="button">Cargar contactos</button>
+      <button id="delete-closed-leads" type="button">Limpiar cerrados</button>
+      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
+    </div>`)}
+    ${groupTemplate({
+      title: "Conexión contactos",
+      help: "La web guardará aquí los formularios de contacto/prueba gratis antes de abrir WhatsApp.",
+      fields: [
+        ["Contactos activos", ["settings", "leadInbox", "enabled"], "booleanText"],
+        ["Supabase URL", ["settings", "leadInbox", "supabaseUrl"], "input"],
+        ["Supabase anon key", ["settings", "leadInbox", "anonKey"], "textarea"],
+        ["Tabla contactos", ["settings", "leadInbox", "table"], "input"]
+      ]
+    })}
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Acceso privado</h3>
+          <p>Usa tu usuario de Supabase Auth. El admin lee y gestiona; la web pública solo inserta contactos.</p>
+        </div>
+      </header>
+      <div class="field-grid">
+        <label class="field"><span>Email Supabase</span><input id="leads-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
+        <label class="field"><span>Contraseña Supabase</span><input id="leads-supabase-password" type="password" /></label>
+        <button id="leads-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
+      </div>
+    </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Seguimiento de contactos</h3>
+          <p id="lead-inbox-status">${config.enabled ? "Pulsa Cargar contactos." : "Activa y configura Supabase primero."}</p>
+        </div>
+      </header>
+      <div id="lead-inbox-list" class="lead-inbox-list"></div>
+    </article>
+  `;
+  bindFields(editor);
+  document.querySelector("#leads-login-supabase").addEventListener("click", loginLeadsSupabase);
+  document.querySelector("#load-leads").addEventListener("click", loadLeads);
+  document.querySelector("#delete-closed-leads").addEventListener("click", deleteClosedLeads);
+  document.querySelector("#logout-supabase").addEventListener("click", () => {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    setStatus("Sesión de Supabase cerrada.", "ok");
+    renderLeads();
+  });
+}
+
+async function loginLeadsSupabase() {
+  const config = leadInboxConfig();
+  const email = document.querySelector("#leads-supabase-email")?.value.trim();
+  const password = document.querySelector("#leads-supabase-password")?.value;
+  if (!config.supabaseUrl || !config.anonKey || !email || !password) {
+    setStatus("Configura Supabase URL, anon key, email y contraseña.", "danger");
+    return;
+  }
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: { apikey: config.anonKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudo iniciar sesión: ${result.error_description || result.msg || "error"}`, "danger");
+    return;
+  }
+  localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(result));
+  setStatus("Sesión de Supabase iniciada.", "ok");
+  renderLeads();
+}
+
+async function loadLeads() {
+  const config = leadInboxConfig();
+  const list = document.querySelector("#lead-inbox-list");
+  const status = document.querySelector("#lead-inbox-status");
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para ver contactos.", "danger");
+    return;
+  }
+  status.textContent = "Cargando contactos...";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?select=*&order=created_at.desc&limit=100`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const items = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudieron cargar contactos: ${items.message || "error"}`, "danger");
+    return;
+  }
+  status.textContent = items.length ? `${items.length} contacto(s).` : "No hay contactos registrados.";
+  list.innerHTML = items.length ? items.map(leadTemplate).join("") : `<p class="empty-note">No hay contactos registrados.</p>`;
+  list.querySelectorAll("[data-lead-status]").forEach((select) => {
+    select.addEventListener("change", () => updateLeadStatus(select.dataset.leadStatus, select.value));
+  });
+  list.querySelectorAll("[data-delete-lead]").forEach((button) => {
+    button.addEventListener("click", () => deleteLead(button.dataset.deleteLead));
+  });
+}
+
+function leadTemplate(lead) {
+  const phone = String(lead.phone || "").replace(/\D/g, "");
+  const whatsappUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(`Hola ${lead.name || ""}, soy Álvaro de SKBC GIPUZKOA. Te escribo por tu consulta sobre ${lead.interest || "Shorinji Kempo"}.`)}` : "";
+  const emailUrl = lead.email ? `mailto:${lead.email}?subject=${encodeURIComponent("SKBC GIPUZKOA - consulta recibida")}` : "";
+  return `<article class="lead-card" data-status="${escapeHtml(lead.status || "new")}">
+    <header>
+      <div>
+        <span>${escapeHtml(lead.created_at ? String(lead.created_at).slice(0, 10) : "Sin fecha")} · ${escapeHtml(lead.page_lang || "es")}</span>
+        <h3>${escapeHtml(lead.name || "Sin nombre")}</h3>
+      </div>
+      <select data-lead-status="${escapeHtml(lead.id)}">
+        ${["new", "contacted", "trial_scheduled", "enrolled", "discarded"].map((status) => `<option value="${status}" ${status === lead.status ? "selected" : ""}>${status}</option>`).join("")}
+      </select>
+    </header>
+    <p><strong>${escapeHtml(lead.interest || "Sin interés")}</strong></p>
+    <p>${escapeHtml(lead.message || "")}</p>
+    <div class="lead-meta">
+      ${lead.phone ? `<span>${escapeHtml(lead.phone)}</span>` : ""}
+      ${lead.email ? `<span>${escapeHtml(lead.email)}</span>` : ""}
+      ${lead.source ? `<span>${escapeHtml(lead.source)}</span>` : ""}
+    </div>
+    <div class="lead-actions">
+      ${whatsappUrl ? `<a class="button-like" href="${whatsappUrl}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
+      ${emailUrl ? `<a class="button-like" href="${emailUrl}">Email</a>` : ""}
+      <button class="danger" type="button" data-delete-lead="${escapeHtml(lead.id)}">Eliminar</button>
+    </div>
+  </article>`;
+}
+
+async function updateLeadStatus(id, status) {
+  const config = leadInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" },
+    body: JSON.stringify({ status, updated_at: new Date().toISOString() })
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(`No se pudo actualizar contacto: ${result.message || "error"}`, "danger");
+    return;
+  }
+  setStatus("Contacto actualizado.", "ok");
+}
+
+async function deleteLead(id) {
+  if (!confirm("¿Eliminar este contacto?")) return;
+  const config = leadInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(`No se pudo eliminar contacto: ${result.message || "error"}`, "danger");
+    return;
+  }
+  setStatus("Contacto eliminado.", "ok");
+  loadLeads();
+}
+
+async function deleteClosedLeads() {
+  if (!confirm("¿Eliminar contactos descartados e inscritos?")) return;
+  const config = leadInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?status=in.(discarded,enrolled)`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(`No se pudieron limpiar contactos: ${result.message || "error"}`, "danger");
+    return;
+  }
+  setStatus("Contactos cerrados eliminados.", "ok");
+  loadLeads();
 }
 
 function renderOrders() {
