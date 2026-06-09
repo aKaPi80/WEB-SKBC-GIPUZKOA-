@@ -492,6 +492,138 @@ button.danger {
   font-weight: 750;
 }
 
+.news-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 18px;
+  align-items: start;
+}
+
+.news-editor {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.empty-news-editor {
+  min-height: 220px;
+}
+
+.empty-news-editor header {
+  display: grid;
+  min-height: 170px;
+  align-content: center;
+}
+
+.news-sidebar {
+  position: sticky;
+  top: 106px;
+  max-height: calc(100vh - 126px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.news-sidebar header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fbfcfa;
+}
+
+.news-sidebar h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.news-sidebar p,
+.empty-news-list {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.news-mini-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.news-mini {
+  border: 1px solid var(--line);
+  border-left: 8px solid var(--news-color);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.news-mini.active {
+  border-color: rgba(31, 111, 169, .42);
+  box-shadow: 0 12px 30px rgba(31, 111, 169, .12);
+}
+
+.news-mini > button {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 10px;
+  width: 100%;
+  min-height: 86px;
+  padding: 10px;
+  border: 0;
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+}
+
+.news-mini.no-image > button {
+  grid-template-columns: 1fr;
+}
+
+.news-mini img {
+  width: 62px;
+  height: 62px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--soft);
+}
+
+.news-mini span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.news-mini strong,
+.news-mini small,
+.news-mini em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.news-mini strong {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.news-mini small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.news-mini em {
+  display: -webkit-box;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .events-mini-list {
   display: grid;
   gap: 8px;
@@ -1034,7 +1166,16 @@ button.danger {
     grid-template-columns: 1fr;
   }
 
+  .news-workspace {
+    grid-template-columns: 1fr;
+  }
+
   .events-sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .news-sidebar {
     position: static;
     max-height: none;
   }

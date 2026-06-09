@@ -14,6 +14,7 @@ let data = load();
 let publishedContentSignature = contentSignature(cloneDefault());
 let currentPanel = "settings";
 let currentEventIndex = null;
+let currentNewsIndex = null;
 let dirty = false;
 
 const panelTitles = {
@@ -1365,6 +1366,7 @@ async function translateValue(value, target, type) {
 function renderNews() {
   const editor = document.querySelector("#editor");
   const news = data.settings.news || [];
+  if (currentNewsIndex !== null && currentNewsIndex > news.length - 1) currentNewsIndex = news.length ? news.length - 1 : null;
   const sectionCopy = ["es", "eu", "en"].map((lang) => groupTemplate({
     title: `Cabecera de noticias (${lang.toUpperCase()})`,
     help: "Estos textos son los que se ven encima de las noticias en la web.",
@@ -1377,11 +1379,31 @@ function renderNews() {
   })).join("");
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions"><button id="add-news" class="primary" type="button">Añadir noticia</button></div>`)}
-    <div class="custom-card">${sectionCopy}<button class="translate-section" data-translate-news-copy type="button">Traducir cabecera de noticias</button></div>
-    ${news.length ? news.map(newsTemplate).join("") : `<article class="editor-group"><header><h3>No hay noticias</h3><p>Pulsa Añadir noticia para crear avisos visibles en la web.</p></header></article>`}
+    <div class="news-workspace">
+      <div class="news-editor">
+        <div class="custom-card">${sectionCopy}<button class="translate-section" data-translate-news-copy type="button">Traducir cabecera de noticias</button></div>
+        ${news.length && currentNewsIndex !== null ? newsTemplate(news[currentNewsIndex], currentNewsIndex) : emptyNewsEditor(news.length)}
+      </div>
+      <aside class="news-sidebar">
+        <header>
+          <h3>Noticias</h3>
+          <p>Tenlas siempre a mano. Pulsa una tarjeta para abrirla y editarla.</p>
+        </header>
+        <div class="news-mini-list">
+          ${news.length ? news.map(newsMiniCard).join("") : `<p class="empty-news-list">Todavía no hay noticias creadas.</p>`}
+        </div>
+      </aside>
+    </div>
   `;
   bindFields(editor);
   document.querySelector("#add-news").addEventListener("click", addNews);
+  editor.querySelectorAll("[data-select-news]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const index = Number(button.dataset.selectNews);
+      currentNewsIndex = currentNewsIndex === index ? null : index;
+      renderNews();
+    });
+  });
   editor.querySelectorAll("[data-remove-news]").forEach((button) => {
     button.addEventListener("click", () => removeNews(Number(button.dataset.removeNews)));
   });
@@ -1389,6 +1411,40 @@ function renderNews() {
   editor.querySelectorAll("[data-translate-news]").forEach((button) => {
     button.addEventListener("click", () => translateNewsItem(Number(button.dataset.translateNews), button));
   });
+}
+
+function emptyNewsEditor(count) {
+  return `
+    <article class="editor-group empty-news-editor">
+      <header>
+        <div>
+          <h3>${count ? "Selecciona una noticia" : "No hay noticias"}</h3>
+          <p>${count ? "Pulsa una tarjeta del lado derecho para abrir su edición aquí." : "Pulsa Añadir noticia para crear avisos visibles en la web."}</p>
+        </div>
+      </header>
+    </article>
+  `;
+}
+
+function newsMiniCard(item, index) {
+  const copy = item.languages?.es || {};
+  const title = copy.title || `Noticia ${index + 1}`;
+  const text = copy.text || "";
+  const date = item.date || "Sin fecha";
+  const enabled = item.enabled === false ? "Oculta" : "Activa";
+  const image = item.image ? `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" />` : "";
+  return `
+    <article class="news-mini ${currentNewsIndex === index ? "active" : ""} ${item.image ? "" : "no-image"}" style="--news-color:${escapeHtml(item.color || "#1f6fa9")}">
+      <button type="button" data-select-news="${index}">
+        ${image}
+        <span>
+          <strong>${escapeHtml(title)}</strong>
+          <small>${escapeHtml(date)} · ${enabled}</small>
+          ${text ? `<em>${escapeHtml(text.slice(0, 92))}${text.length > 92 ? "..." : ""}</em>` : ""}
+        </span>
+      </button>
+    </article>
+  `;
 }
 
 function newsTemplate(item, index) {
@@ -1480,6 +1536,7 @@ function addNews() {
       en: { title: "New update", text: "News text." }
     }
   });
+  currentNewsIndex = data.settings.news.length - 1;
   markDirty();
   renderNews();
 }
@@ -1487,6 +1544,8 @@ function addNews() {
 function removeNews(index) {
   if (!confirm("¿Eliminar esta noticia?")) return;
   data.settings.news.splice(index, 1);
+  if (currentNewsIndex === index) currentNewsIndex = null;
+  if (currentNewsIndex !== null && currentNewsIndex > index) currentNewsIndex -= 1;
   markDirty();
   renderNews();
 }
