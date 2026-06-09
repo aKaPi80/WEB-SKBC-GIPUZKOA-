@@ -540,6 +540,17 @@ function renderDashboard() {
           <button type="button" data-open-panel="events">Actualizar calendario</button>
         </div>
       </article>
+      <article class="editor-group">
+        <header><div><h3>Estadísticas web</h3><p>Accesos rápidos para ver visitas, búsquedas y comportamiento de usuarios.</p></div></header>
+        <div class="dashboard-actions">
+          <a class="button-like" href="https://analytics.google.com/" target="_blank" rel="noreferrer">Google Analytics</a>
+          <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Tiempo real</a>
+          <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Eventos</a>
+          <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Adquisición</a>
+          <a class="button-like" href="https://search.google.com/search-console?resource_id=sc-domain%3Askbcgipuzkoa.com" target="_blank" rel="noreferrer">Search Console</a>
+          <a class="button-like" href="sitemap.xml" target="_blank" rel="noreferrer">Sitemap</a>
+        </div>
+      </article>
     </div>
   `;
   editor.querySelector("#refresh-dashboard")?.addEventListener("click", refreshDashboardPrivateData);
