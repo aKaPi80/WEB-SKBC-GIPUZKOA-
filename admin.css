@@ -517,6 +517,55 @@ button.danger {
   background: #fff;
 }
 
+.system-health header {
+  align-items: center;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 18px;
+}
+
+.health-item {
+  display: grid;
+  gap: 5px;
+  min-height: 112px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-top: 6px solid #f59e0b;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.health-item.ok {
+  border-top-color: #137a3d;
+}
+
+.health-item strong {
+  color: #b45309;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.health-item.ok strong {
+  color: #137a3d;
+}
+
+.health-item span {
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.health-item small {
+  color: var(--muted);
+  font-weight: 750;
+  line-height: 1.35;
+}
+
 .seo-control header {
   align-items: center;
 }
@@ -1351,6 +1400,7 @@ button.danger {
 
   .dashboard-grid,
   .dashboard-layout,
+  .health-grid,
   .seo-checklist {
     grid-template-columns: 1fr;
   }

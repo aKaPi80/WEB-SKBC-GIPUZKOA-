@@ -518,6 +518,7 @@ function renderDashboard() {
       ${dashboardMetric("Testimonios publicados", publishedTestimonials, "Aprobados y visibles")}
       ${dashboardMetric("SEO pendiente", seoIssues.length, seoIssues.length ? "Revisar SEO/Sistema" : "Base correcta")}
     </div>
+    ${systemHealthTemplate()}
     <div class="dashboard-layout">
       <article class="editor-group">
         <header><div><h3>Próximos eventos</h3><p>Primeros eventos visibles desde hoy.</p></div></header>
@@ -564,6 +565,45 @@ function renderDashboard() {
 
 function dashboardMetric(label, value, note) {
   return `<article class="dashboard-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><p>${escapeHtml(note)}</p></article>`;
+}
+
+function systemHealthItems() {
+  const settings = data.settings || {};
+  const system = settings.system || {};
+  const images = settings.images || {};
+  const futureEvents = (settings.events || []).some((event) => generatedEventDates(event).some((date) => date >= new Date().toISOString().slice(0, 10)));
+  const languageSeoOk = ["es", "eu", "en"].every((lang) => data.languages?.[lang]?.seoTitle && data.languages?.[lang]?.seoDescription);
+  const contactCopyOk = ["es", "eu", "en"].every((lang) => data.languages?.[lang]?.contact?.phone && data.languages?.[lang]?.contact?.email);
+  return [
+    { level: system.googleAnalyticsId ? "ok" : "warn", label: "Google Analytics", note: system.googleAnalyticsId ? system.googleAnalyticsId : "Falta pegar el ID G-..." },
+    { level: settings.leadInbox?.enabled ? "ok" : "warn", label: "Contactos Supabase", note: settings.leadInbox?.table || "No activo" },
+    { level: settings.orderInbox?.enabled ? "ok" : "warn", label: "Pedidos Supabase", note: settings.orderInbox?.table || "No activo" },
+    { level: settings.testimonialInbox?.enabled ? "ok" : "warn", label: "Testimonios Supabase", note: settings.testimonialInbox?.table || "No activo" },
+    { level: futureEvents ? "ok" : "warn", label: "Eventos futuros", note: futureEvents ? "Hay eventos próximos" : "Revisar calendario" },
+    { level: (settings.news || []).some((item) => item.enabled !== false) ? "ok" : "warn", label: "Noticias", note: "Noticias activas en web" },
+    { level: images.hero && images.kids && images.adults ? "ok" : "warn", label: "Imágenes principales", note: "Hero, niños y adultos" },
+    { level: languageSeoOk ? "ok" : "warn", label: "SEO multidioma", note: languageSeoOk ? "ES/EU/EN completo" : "Faltan títulos o descripciones" },
+    { level: contactCopyOk ? "ok" : "warn", label: "Formulario contacto", note: contactCopyOk ? "Teléfono/email en 3 idiomas" : "Revisar textos" },
+    { level: "ok", label: "Sitemap/robots", note: "Publicados" }
+  ];
+}
+
+function systemHealthTemplate() {
+  const items = systemHealthItems();
+  const warnings = items.filter((item) => item.level !== "ok").length;
+  return `
+    <article class="editor-group system-health">
+      <header>
+        <div>
+          <h3>Centro de salud del sistema</h3>
+          <p>${warnings ? `${warnings} punto(s) a revisar. Nada crítico, pero conviene mirarlo.` : "Todo lo esencial está en verde."}</p>
+        </div>
+      </header>
+      <div class="health-grid">
+        ${items.map((item) => `<div class="health-item ${item.level}"><strong>${item.level === "ok" ? "Verde" : "Revisar"}</strong><span>${escapeHtml(item.label)}</span><small>${escapeHtml(item.note)}</small></div>`).join("")}
+      </div>
+    </article>
+  `;
 }
 
 async function refreshDashboardPrivateData() {
@@ -1762,6 +1802,15 @@ function supabaseHeaders(session = supabaseSession(), config = testimonialInboxC
   };
 }
 
+function friendlySupabaseError(result, fallback = "No se pudo completar la operación.") {
+  const raw = String(result?.message || result?.msg || result?.error_description || result?.error || fallback);
+  if (/jwt expired|invalid jwt|jwt/i.test(raw)) {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    return "La sesión privada de Supabase ha caducado. Vuelve a iniciar sesión y pulsa cargar de nuevo.";
+  }
+  return raw;
+}
+
 function renderTestimonialsInbox() {
   const editor = document.querySelector("#editor");
   const config = testimonialInboxConfig();
@@ -1908,7 +1957,9 @@ async function loadPendingTestimonials() {
   });
   const items = await response.json();
   if (!response.ok) {
-    setStatus(`No se pudieron cargar testimonios: ${items.message || "error"}`, "danger");
+    const message = friendlySupabaseError(items, "No se pudieron cargar testimonios.");
+    status.textContent = message;
+    setStatus(message, "danger");
     return;
   }
   status.textContent = items.length ? `${items.length} testimonio(s) pendiente(s).` : "No hay testimonios pendientes.";
@@ -1965,7 +2016,7 @@ async function updatePendingTestimonialStatus(id, status) {
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    throw new Error(result.message || "No se pudo actualizar el testimonio");
+    throw new Error(friendlySupabaseError(result, "No se pudo actualizar el testimonio"));
   }
 }
 
@@ -2064,7 +2115,9 @@ async function loadLeads() {
   });
   const items = await response.json();
   if (!response.ok) {
-    setStatus(`No se pudieron cargar contactos: ${items.message || "error"}`, "danger");
+    const message = friendlySupabaseError(items, "No se pudieron cargar contactos.");
+    status.textContent = message;
+    setStatus(message, "danger");
     return;
   }
   status.textContent = items.length ? `${items.length} contacto(s).` : "No hay contactos registrados.";
@@ -2115,7 +2168,7 @@ async function updateLeadStatus(id, status) {
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    setStatus(`No se pudo actualizar contacto: ${result.message || "error"}`, "danger");
+    setStatus(friendlySupabaseError(result, "No se pudo actualizar contacto."), "danger");
     return;
   }
   setStatus("Contacto actualizado.", "ok");
@@ -2130,7 +2183,7 @@ async function deleteLead(id) {
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    setStatus(`No se pudo eliminar contacto: ${result.message || "error"}`, "danger");
+    setStatus(friendlySupabaseError(result, "No se pudo eliminar contacto."), "danger");
     return;
   }
   setStatus("Contacto eliminado.", "ok");
@@ -2146,7 +2199,7 @@ async function deleteClosedLeads() {
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    setStatus(`No se pudieron limpiar contactos: ${result.message || "error"}`, "danger");
+    setStatus(friendlySupabaseError(result, "No se pudieron limpiar contactos."), "danger");
     return;
   }
   setStatus("Contactos cerrados eliminados.", "ok");
@@ -2254,7 +2307,9 @@ async function loadOrders() {
   });
   const items = await response.json();
   if (!response.ok) {
-    setStatus(`No se pudieron cargar pedidos: ${items.message || "error"}`, "danger");
+    const message = friendlySupabaseError(items, "No se pudieron cargar pedidos.");
+    status.textContent = message;
+    setStatus(message, "danger");
     return;
   }
   status.textContent = items.length ? `${items.length} pedido(s) recibido(s).` : "No hay pedidos.";
