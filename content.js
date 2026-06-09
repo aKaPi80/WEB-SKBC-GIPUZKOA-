@@ -27,6 +27,15 @@ window.SKBC_CONTENT = {
         "es": "Niños | Adultos | Club | Equipo | Horarios | Calendario | Galería | Testimonios | Noticias | Merchandising | Contacto",
         "eu": "Haurrak | Helduak | Kluba | Taldea | Ordutegiak | Egutegia | Galeria | Testigantzak | Albisteak | Merchandising | Kontaktua",
         "en": "Kids | Adults | Club | Team | Schedule | Calendar | Gallery | Testimonials | News | Merchandising | Contact"
+      },
+      "decorativeBackground": {
+        "enabled": false,
+        "preset": "paper",
+        "customImage": "",
+        "opacity": "0.08",
+        "size": "520px",
+        "position": "center top",
+        "scope": "light"
       }
     },
     "theme": {

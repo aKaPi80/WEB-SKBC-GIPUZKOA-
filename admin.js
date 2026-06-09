@@ -171,6 +171,19 @@ const systemGroups = [
       ["Deporte/actividad", ["settings", "system", "sport"], "input"],
       ["Temas SEO", ["settings", "system", "knowsAbout"], "input"]
     ]
+  },
+  {
+    title: "Fondo decorativo japonés",
+    help: "Opcional. Si está desactivado, la web se ve como ahora. Usa opacidades bajas: 0.04 a 0.12 suele ser suficiente.",
+    fields: [
+      ["Activar fondo decorativo", ["settings", "system", "decorativeBackground", "enabled"], "booleanText"],
+      ["Preset", ["settings", "system", "decorativeBackground", "preset"], "decorativePreset"],
+      ["Imagen personalizada", ["settings", "system", "decorativeBackground", "customImage"], "input"],
+      ["Opacidad", ["settings", "system", "decorativeBackground", "opacity"], "input"],
+      ["Tamaño", ["settings", "system", "decorativeBackground", "size"], "input"],
+      ["Posición", ["settings", "system", "decorativeBackground", "position"], "input"],
+      ["Aplicar en", ["settings", "system", "decorativeBackground", "scope"], "decorativeScope"]
+    ]
   }
 ];
 
@@ -725,6 +738,12 @@ function controlTemplate(id, encodedPath, value, type) {
   }
   if (type === "sectionStyle") {
     return selectTemplate(id, encodedPath, value, [["normal", "Normal"], ["soft", "Fondo claro"], ["dark", "Fondo oscuro"]], type);
+  }
+  if (type === "decorativePreset") {
+    return selectTemplate(id, encodedPath, value || "paper", [["paper", "Papel japonés claro"], ["kanji", "Kanji muy tenue"], ["waves", "Ondas tradicionales"], ["dojo", "Dojo sobrio"], ["custom", "Imagen personalizada"]], type);
+  }
+  if (type === "decorativeScope") {
+    return selectTemplate(id, encodedPath, value || "light", [["light", "Solo secciones claras"], ["all", "Toda la web"], ["soft", "Solo fondos suaves"]], type);
   }
   return `<input id="${id}" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;
 }

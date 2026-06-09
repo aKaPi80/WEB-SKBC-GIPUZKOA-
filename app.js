@@ -194,6 +194,23 @@ function systemLogo(key, fallback) {
   return systemSettings()[key] || fallback;
 }
 
+function decorativeBackgroundSettings() {
+  const config = systemSettings().decorativeBackground || {};
+  const enabled = config.enabled === true || config.enabled === "true";
+  const preset = ["paper", "kanji", "waves", "dojo", "custom"].includes(config.preset) ? config.preset : "paper";
+  const opacity = Math.max(0, Math.min(0.35, Number(config.opacity || 0.08)));
+  const scope = ["light", "all", "soft"].includes(config.scope) ? config.scope : "light";
+  return {
+    enabled,
+    preset,
+    customImage: String(config.customImage || "").trim(),
+    opacity: Number.isFinite(opacity) ? opacity : 0.08,
+    size: String(config.size || "520px").trim(),
+    position: String(config.position || "center top").trim(),
+    scope
+  };
+}
+
 function navLabels() {
   const fallback = NAV_TEXT[state.lang] || NAV_TEXT.es;
   const configured = systemSettings().navLabels?.[state.lang];
@@ -1177,11 +1194,18 @@ function render() {
   const copy = t();
   const { settings } = state.content;
   const system = systemSettings();
+  const decorative = decorativeBackgroundSettings();
   const visual = specialVisualSettings(settings);
   document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
   document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
   document.documentElement.dataset.specialVisual = visual.mode;
   document.documentElement.dataset.specialIntensity = visual.intensity;
+  document.documentElement.dataset.decorativeBackground = decorative.enabled ? decorative.preset : "none";
+  document.documentElement.dataset.decorativeScope = decorative.scope;
+  document.documentElement.style.setProperty("--decorative-bg-size", decorative.size);
+  document.documentElement.style.setProperty("--decorative-bg-position", decorative.position);
+  document.documentElement.style.setProperty("--decorative-bg-opacity", decorative.opacity);
+  document.documentElement.style.setProperty("--decorative-bg-image", decorative.preset === "custom" && decorative.customImage ? `url("${decorative.customImage}")` : "none");
   const peopleImages = settings.images.people || {};
   const socialEmbeds = embeddedSocial(settings);
   const galleryImages = uniqueImages(settings.images.gallery, [
