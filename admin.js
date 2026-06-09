@@ -547,7 +547,7 @@ function renderDashboard() {
           <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Tiempo real</a>
           <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Eventos</a>
           <a class="button-like" href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer">Adquisición</a>
-          <a class="button-like" href="https://search.google.com/search-console?resource_id=sc-domain%3Askbcgipuzkoa.com" target="_blank" rel="noreferrer">Search Console</a>
+          <a class="button-like" href="https://search.google.com/search-console" target="_blank" rel="noreferrer">Search Console</a>
           <a class="button-like" href="sitemap.xml" target="_blank" rel="noreferrer">Sitemap</a>
         </div>
       </article>
