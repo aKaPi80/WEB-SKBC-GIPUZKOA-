@@ -812,7 +812,7 @@ function controlTemplate(id, encodedPath, value, type) {
     return selectTemplate(id, encodedPath, value, [["normal", "Normal"], ["soft", "Fondo claro"], ["dark", "Fondo oscuro"]], type);
   }
   if (type === "decorativePreset") {
-    return selectTemplate(id, encodedPath, value || "paper", [["paper", "Papel japonés claro"], ["kanji", "Kanji muy tenue"], ["waves", "Ondas tradicionales"], ["dojo", "Dojo sobrio"], ["custom", "Imagen personalizada"]], type);
+    return selectTemplate(id, encodedPath, value || "paper", [["paper", "Textura washi suave"], ["kanji", "Marca SKBC tenue"], ["waves", "Ondas tradicionales"], ["dojo", "Tatami sobrio"], ["custom", "Imagen personalizada"]], type);
   }
   if (type === "decorativeScope") {
     return selectTemplate(id, encodedPath, value || "light", [["light", "Solo secciones claras"], ["all", "Toda la web"], ["soft", "Solo fondos suaves"]], type);

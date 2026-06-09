@@ -894,18 +894,19 @@ button.danger {
 
 .decorative-preview[data-preview-preset="paper"]::before {
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(16, 17, 19, .55) 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 64%, rgba(31, 111, 169, .45) 0 1px, transparent 2px),
-    linear-gradient(90deg, rgba(16, 17, 19, .22) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(16, 17, 19, .2) 1px, transparent 1px);
-  background-size: 180px 180px, 240px 240px, 42px 42px, 42px 42px;
+    linear-gradient(115deg, rgba(255, 255, 255, .82), rgba(238, 234, 224, .42) 48%, rgba(255, 255, 255, .72)),
+    repeating-linear-gradient(82deg, rgba(16, 17, 19, .18) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(8deg, rgba(203, 164, 81, .16) 0 1px, transparent 1px 52px);
+  background-size: 100% 100%, 220px 220px, 280px 280px;
 }
 
 .decorative-preview[data-preview-preset="kanji"]::before {
   background-image:
-    radial-gradient(ellipse at 30% 25%, rgba(16, 17, 19, .55) 0 12%, transparent 13%),
-    linear-gradient(110deg, transparent 0 43%, rgba(16, 17, 19, .7) 44% 46%, transparent 47%),
-    linear-gradient(20deg, transparent 0 48%, rgba(16, 17, 19, .48) 49% 52%, transparent 53%);
+    url("assets/logo-skbc-full.png"),
+    radial-gradient(circle at 24% 30%, rgba(31, 111, 169, .34), transparent 26%),
+    radial-gradient(circle at 78% 68%, rgba(197, 39, 39, .26), transparent 28%);
+  background-size: min(360px, var(--preview-size, 520px)) auto, 620px 620px, 680px 680px;
+  background-repeat: no-repeat, repeat, repeat;
 }
 
 .decorative-preview[data-preview-preset="waves"]::before {
@@ -918,9 +919,10 @@ button.danger {
 
 .decorative-preview[data-preview-preset="dojo"]::before {
   background-image:
-    linear-gradient(135deg, rgba(197, 39, 39, .58) 0 8%, transparent 9% 100%),
-    linear-gradient(45deg, transparent 0 46%, rgba(203, 164, 81, .76) 47% 49%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(16, 17, 19, .68) 0 2px, transparent 3px);
+    repeating-linear-gradient(90deg, rgba(16, 17, 19, .22) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(0deg, rgba(203, 164, 81, .28) 0 1px, transparent 1px 64px),
+    linear-gradient(135deg, rgba(197, 39, 39, .14), transparent 42%, rgba(31, 111, 169, .1));
+  background-size: 100% 100%, 100% 100%, var(--preview-size, 520px);
 }
 
 .decorative-preview[data-preview-preset="custom"]::before {
