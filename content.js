@@ -30,9 +30,9 @@ window.SKBC_CONTENT = {
       },
       "decorativeBackground": {
         "enabled": true,
-        "preset": "waves",
-        "customImage": "",
-        "opacity": "0.10",
+        "preset": "custom",
+        "customImage": "assets/uploads/1781000961499-fondo-web.png",
+        "opacity": "0.20",
         "size": "520px",
         "position": "center top",
         "scope": "light"
