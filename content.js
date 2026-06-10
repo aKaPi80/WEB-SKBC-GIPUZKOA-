@@ -1,5 +1,5 @@
 window.SKBC_CONTENT = {
-  "publishedAt": "2026-06-08Tnews-testimonials-sync-2",
+  "publishedAt": "2026-06-11Tlearn-section-fix",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -1101,8 +1101,8 @@ window.SKBC_CONTENT = {
       },
       "learn": {
         "eyebrow": "Qué aprenden nuestros alumnos",
-        "title": "Técnica, filosofía y recursos interactivos",
-        "text": "La web mantiene el acceso a los materiales interactivos del club para consultar conceptos como Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi y otros contenidos de práctica.",
+        "title": "Técnica, filosofía y confianza paso a paso",
+        "text": "En SKBC GIPUZKOA el aprendizaje combina práctica física, defensa personal, respeto y trabajo en equipo. Cada alumno avanza desde lo básico, con acompañamiento cercano y objetivos adaptados a su edad y nivel.",
         "items": [
           [
             "Técnica",
@@ -1113,8 +1113,8 @@ window.SKBC_CONTENT = {
             "Respeto, cooperación, autocontrol y desarrollo personal dentro y fuera del dojo."
           ],
           [
-            "Recursos",
-            "Materiales de consulta para repasar conceptos, nombres y contenidos de práctica."
+            "Confianza",
+            "Más seguridad, autocontrol y capacidad para afrontar retos dentro y fuera del dojo."
           ]
         ],
         "concepts": [
@@ -1130,8 +1130,8 @@ window.SKBC_CONTENT = {
           "Randori",
           "..."
         ],
-        "button": "Ver recursos",
-        "url": "#galeria"
+        "button": "Ver horarios para probar",
+        "url": "#horarios"
       },
       "schedule": {
         "eyebrow": "Horarios y ubicación",
@@ -1530,11 +1530,11 @@ window.SKBC_CONTENT = {
       },
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
-        "title": "Teknika, filosofia eta baliabide interaktiboak",
-        "text": "Webguneak klubeko material interaktiboetarako sarbidea mantentzen du: Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi eta beste praktika eduki batzuk.",
+        "title": "Teknika, filosofia eta konfiantza pausoz pauso",
+        "text": "SKBC GIPUZKOAn ikaskuntzak praktika fisikoa, defentsa pertsonala, errespetua eta talde-lana uztartzen ditu. Ikasle bakoitzak oinarrietatik egiten du aurrera, hurbileko laguntzarekin eta bere adinera eta mailara egokitutako helburuekin.",
         "items": [
           [
-            "TEKNIKOA",
+            "Teknika",
             "Oinarriak, mugimenduak, erasoak, defentsak eta aplikazio progresiboak maila bakoitzera egokituta."
           ],
           [
@@ -1542,8 +1542,8 @@ window.SKBC_CONTENT = {
             "Errespetua, lankidetza, autokontrola eta garapen pertsonala dojoaren barruan eta kanpoan."
           ],
           [
-            "Baliabideak",
-            "Kontzeptuak, izenak eta praktikaren edukia berrikusteko erreferentziazko materialak."
+            "Konfiantza",
+            "Segurtasun handiagoa, autokontrola eta erronkei aurre egiteko gaitasuna dojoan eta dojotik kanpo."
           ]
         ],
         "concepts": [
@@ -1559,8 +1559,8 @@ window.SKBC_CONTENT = {
           "Randori",
           "..."
         ],
-        "button": "Ikusi baliabideak",
-        "url": "#galeria"
+        "button": "Ikusi probatzeko ordutegiak",
+        "url": "#horarios"
       },
       "schedule": {
         "eyebrow": "Ordutegiak eta kokapena",
@@ -1959,20 +1959,20 @@ window.SKBC_CONTENT = {
       },
       "learn": {
         "eyebrow": "What students learn",
-        "title": "Technique, philosophy and interactive resources",
-        "text": "The website keeps access to the club's interactive materials for concepts such as Chinkon Gyo, Howa, Taiso, Kihon, Waza, Kappo, Appo, Seiho, Embu, Randori, Ukemi and other training content.",
+        "title": "Technique, philosophy and confidence step by step",
+        "text": "At SKBC GIPUZKOA, learning combines physical practice, self-defence, respect and teamwork. Each student progresses from the basics with close guidance and goals adapted to their age and level.",
         "items": [
           [
-            "Technical",
-            "Bases, displacements, attacks, defenses and progressive applications adapted to each level."
+            "Technique",
+            "Basics, footwork, attacks, defences and progressive applications adapted to each level."
           ],
           [
             "Philosophy",
             "Respect, cooperation, self-control and personal development inside and outside the dojo."
           ],
           [
-            "Resources",
-            "Reference materials to review concepts, names and practice contents."
+            "Confidence",
+            "More security, self-control and ability to face challenges inside and outside the dojo."
           ]
         ],
         "concepts": [
@@ -1982,14 +1982,14 @@ window.SKBC_CONTENT = {
           "Kihon",
           "Waza",
           "Kappo",
-          "2006 Oaxaca protests",
+          "Appo",
           "Seiho",
           "Embu",
           "Randori",
-          "We..."
+          "..."
         ],
-        "button": "View Resources",
-        "url": "gallery"
+        "button": "See trial class times",
+        "url": "#horarios"
       },
       "schedule": {
         "eyebrow": "Schedule and location",
