@@ -129,7 +129,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/logo-skbc.png",
+          "image": "assets/uploads/1781135899632-polooo.png",
           "price": "15",
           "personalization": "Impresión SKBC",
           "sizes": [
