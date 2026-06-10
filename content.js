@@ -1304,7 +1304,7 @@ window.SKBC_CONTENT = {
         "message": "Testimonio",
         "consent": "Al enviarlo, aceptas que SKBC GIPUZKOA lo publique en la web.",
         "submit": "Enviar testimonio",
-        "thanks": "Gracias. Revisaremos el testimonio antes de publicarlo.",
+        "thanks": "Gracias por contar a los demas tu experiencia con nosotros!",
         "photo": "Foto opcional",
         "rating": "Valoracion",
         "readFull": "Leer completo"
@@ -1733,7 +1733,7 @@ window.SKBC_CONTENT = {
         "message": "Testigantza",
         "consent": "Bidaltzean, ados zaude SKBC GIPUZKOAk webgunean argitaratzea.",
         "submit": "Testigantza WhatsApp bidez bidali",
-        "thanks": "Eskerrik asko. Testigantza berrikusiko dugu argitaratu aurretik.",
+        "thanks": "Eskerrik asko zure esperientzia gurekin besteei kontatzeagatik!",
         "photo": "Aukerako argazkia",
         "rating": "Balorazioa",
         "readFull": "Osorik irakurri"
@@ -2162,7 +2162,7 @@ window.SKBC_CONTENT = {
         "message": "Testimonial",
         "consent": "By sending it, you agree that SKBC GIPUZKOA publishes it on the web.",
         "submit": "Send testimonial by WhatsApp",
-        "thanks": "Thank you. We will review the testimonial before publishing it.",
+        "thanks": "Thank you for sharing your experience with us with others!",
         "photo": "Optional photo",
         "rating": "Rating",
         "readFull": "Read full"
