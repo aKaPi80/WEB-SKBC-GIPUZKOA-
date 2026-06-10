@@ -488,6 +488,43 @@ button.danger {
   padding: 18px;
 }
 
+.dashboard-supabase {
+  display: grid;
+  gap: 12px;
+  margin: 18px 18px 0;
+  padding: 14px;
+  border: 1px solid #bfd7ee;
+  border-radius: 8px;
+  background: #f4f9ff;
+}
+
+.dashboard-supabase strong {
+  display: block;
+  font-weight: 950;
+}
+
+.dashboard-supabase span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.dashboard-supabase-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto auto;
+  gap: 8px;
+}
+
+.dashboard-supabase-fields input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+}
+
 .dashboard-list div,
 .dashboard-private div {
   display: flex;
@@ -1400,6 +1437,7 @@ button.danger {
 
   .dashboard-grid,
   .dashboard-layout,
+  .dashboard-supabase-fields,
   .health-grid,
   .seo-checklist {
     grid-template-columns: 1fr;

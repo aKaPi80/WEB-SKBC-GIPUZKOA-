@@ -528,6 +528,7 @@ function renderDashboard() {
       </article>
       <article class="editor-group">
         <header><div><h3>Bandejas privadas</h3><p>Conecta con Supabase para ver pendientes sin salir del admin.</p></div></header>
+        ${dashboardSupabaseLoginTemplate()}
         <div id="dashboard-private" class="dashboard-private">
           <p class="empty-note">Pulsa Actualizar datos privados.</p>
         </div>
@@ -554,6 +555,12 @@ function renderDashboard() {
       </article>
     </div>
   `;
+  editor.querySelector("#dashboard-login-supabase")?.addEventListener("click", loginDashboardSupabase);
+  editor.querySelector("#dashboard-logout-supabase")?.addEventListener("click", () => {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    setStatus("Sesión de Supabase cerrada.", "ok");
+    renderDashboard();
+  });
   editor.querySelector("#refresh-dashboard")?.addEventListener("click", refreshDashboardPrivateData);
   editor.querySelectorAll("[data-open-panel]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -565,6 +572,51 @@ function renderDashboard() {
 
 function dashboardMetric(label, value, note) {
   return `<article class="dashboard-metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><p>${escapeHtml(note)}</p></article>`;
+}
+
+function dashboardSupabaseLoginTemplate() {
+  const session = supabaseSession();
+  return `
+    <div class="dashboard-supabase">
+      <div>
+        <strong>${session?.access_token ? "Supabase conectado" : "Reconexión rápida Supabase"}</strong>
+        <span>${session?.access_token ? `Sesión activa: ${escapeHtml(session?.user?.email || "usuario conectado")}` : "Inicia sesión aquí para consultar contactos, testimonios y pedidos."}</span>
+      </div>
+      <div class="dashboard-supabase-fields">
+        <input id="dashboard-supabase-email" type="email" placeholder="Email Supabase" value="${escapeHtml(session?.user?.email || "")}" />
+        <input id="dashboard-supabase-password" type="password" placeholder="Contraseña Supabase" />
+        <button id="dashboard-login-supabase" class="primary" type="button">${session?.access_token ? "Renovar" : "Conectar"}</button>
+        <button id="dashboard-logout-supabase" type="button">Cerrar</button>
+      </div>
+    </div>
+  `;
+}
+
+async function loginDashboardSupabase() {
+  const config = testimonialInboxConfig();
+  const email = document.querySelector("#dashboard-supabase-email")?.value.trim();
+  const password = document.querySelector("#dashboard-supabase-password")?.value;
+  if (!config.supabaseUrl || !config.anonKey || !email || !password) {
+    setStatus("Escribe email y contraseña de Supabase para conectar.", "danger");
+    return;
+  }
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudo iniciar sesión: ${result.error_description || result.msg || "error"}`, "danger");
+    return;
+  }
+  localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(result));
+  setStatus("Sesión de Supabase iniciada desde el Panel.", "ok");
+  renderDashboard();
+  refreshDashboardPrivateData();
 }
 
 function systemHealthItems() {
