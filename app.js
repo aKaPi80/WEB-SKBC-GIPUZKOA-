@@ -845,12 +845,14 @@ function merchProductCard(product, index, copy) {
     </div>
     <div class="merch-product__body">
       <span>${copy.merch.base}: ${product.jhkName || "JHK"} · ${copy.merch.ref}: ${product.jhkRef || "Consultar"}</span>
-      <h3>${product.name}</h3>
+      <div class="merch-product__title">
+        <h3>${product.name}</h3>
+        <strong>${money(product.price)}</strong>
+      </div>
       <p>${copy.merch.personalization}: ${product.personalization || "SKBC"}</p>
       <div class="swatches">
         ${colors.map((color) => `<i title="${color.code || ""} ${color.name || ""}" style="--swatch:${color.hex || "#d9dee7"}"></i>`).join("")}
       </div>
-      <strong>${money(product.price)}</strong>
       <div class="merch-controls">
         <label>${copy.merch.size}<select data-merch-size="${index}">${sizes.map((size) => `<option>${size}</option>`).join("")}</select></label>
         <label>${copy.merch.color}<select data-merch-color="${index}">${colors.map(colorOption).join("")}</select></label>
@@ -872,7 +874,7 @@ function merchCartHtml(copy) {
   if (!state.merchCart.length) return `<p class="merch-empty">${copy.merch.emptyOrder}</p>`;
   return `<ul class="merch-cart-list">
     ${state.merchCart.map((item, index) => `<li>
-      <span><strong>${item.name}</strong>${item.size} · ${item.color} · x${item.quantity}</span>
+      <span><strong>${item.name}</strong><small>${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity || 1))}</small></span>
       <button type="button" data-remove-merch="${index}">${copy.merch.remove}</button>
     </li>`).join("")}
   </ul>
@@ -956,15 +958,27 @@ function merchSection(settings, copy) {
   if (settings.merch?.enabled === false) return "";
   const products = merchProducts(settings);
   return `<section class="section merch-section" id="merchandising">
-    <div class="section-heading">
-      <p class="eyebrow">${copy.merch.eyebrow}</p>
-      <h2>${copy.merch.title}</h2>
-      <p>${copy.merch.text}</p>
+    <div class="merch-hero">
+      <div>
+        <p class="eyebrow">${copy.merch.eyebrow}</p>
+        <h2>${copy.merch.title}</h2>
+        <p>${copy.merch.text}</p>
+      </div>
+      <ol class="merch-steps">
+        <li><strong>01</strong><span>${copy.merch.stepChoose || "Elige prenda, talla, color y cantidad."}</span></li>
+        <li><strong>02</strong><span>${copy.merch.stepReserve || "Envia la reserva sin pago online."}</span></li>
+        <li><strong>03</strong><span>${copy.merch.stepConfirm || "Te contactamos para confirmar disponibilidad y pago."}</span></li>
+      </ol>
     </div>
     <div class="merch-layout">
       <div class="merch-catalog">
+        <div class="merch-subheading">
+          <span>${copy.merch.readyLabel || "Productos SKBC preparados"}</span>
+          <p>${copy.merch.readyText || "Selecciona una de las prendas configuradas por el club."}</p>
+        </div>
         ${products.map((product, index) => merchProductCard(product, index, copy)).join("")}
         <article class="merch-custom">
+          <span>${copy.merch.customLabel || "Pedido especial"}</span>
           <h3>${copy.merch.customTitle}</h3>
           <p>${copy.merch.customText}</p>
           <a class="button secondary" href="${settings.merch?.catalogUrl || "https://www.jhktshirt.com/es/"}" target="_blank" rel="noreferrer">${copy.merch.catalog}</a>
@@ -972,6 +986,7 @@ function merchSection(settings, copy) {
       </div>
       <aside class="merch-order">
         <h3>${copy.merch.orderTitle}</h3>
+        <p class="merch-order-note">${copy.merch.orderIntro || "Revisa tu reserva. No se realiza ningun pago online."}</p>
         <div id="merchCart">${merchCartHtml(copy)}</div>
         <form class="merch-form">
           <h4>${copy.merch.buyerTitle}</h4>
