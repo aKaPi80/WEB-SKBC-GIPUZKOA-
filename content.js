@@ -1240,7 +1240,7 @@ window.SKBC_CONTENT = {
       "testimonials": {
         "eyebrow": "Testimonios",
         "title": "Testimonios reales del club",
-        "text": "Publicamos unicamente testimonios enviados por alumnos o familias y revisados antes de aparecer en la web.",
+        "text": "Animate y cuenta a los demas tu experiencia como familiar o miembro del club.",
         "items": [
           [
             "Padre/madre",
@@ -1669,7 +1669,7 @@ window.SKBC_CONTENT = {
       "testimonials": {
         "eyebrow": "Testigantzak",
         "title": "Klubeko benetako testigantzak",
-        "text": "Ikasleek edo familiek bidalitako eta webgunean agertu aurretik berrikusitako testigantzak soilik argitaratzen ditugu.",
+        "text": "Anima zaitez eta konta iezaiezu besteei zure esperientzia familiar gisa edo klubeko kide gisa.",
         "items": [
           [
             "Padre/madre",
@@ -2098,7 +2098,7 @@ window.SKBC_CONTENT = {
       "testimonials": {
         "eyebrow": "Testimonials",
         "title": "Real club testimonials",
-        "text": "We only publish testimonials sent by students or families and reviewed before they appear on the website.",
+        "text": "Get excited and tell others about your experience as a family member or club member.",
         "items": [
           [
             "Padre/madre",
