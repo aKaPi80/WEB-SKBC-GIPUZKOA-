@@ -802,6 +802,10 @@ window.SKBC_CONTENT = {
       {
         "label": "Gurasoekin entrenamendua 2025",
         "url": "https://photos.app.goo.gl/aSuxcfwsB8GL9yk46"
+      },
+      {
+        "label": "SKBC GIPUZKOA UDAKO IKASTAROA",
+        "url": "https://photos.app.goo.gl/jmdbGN2sQHLKXTcY9"
       }
     ],
     "images": {
