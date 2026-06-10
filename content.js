@@ -1282,6 +1282,13 @@ window.SKBC_CONTENT = {
             "Arene",
             "",
             5
+          ],
+          [
+            "Alumno adulto",
+            "Un club para encontrarse a uno mismo a traves del shorinji kempo, aprender valores y compartir experiencias con los compañeros...",
+            "Uxue",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1704,6 +1711,13 @@ window.SKBC_CONTENT = {
             "Arene",
             "",
             5
+          ],
+          [
+            "Alumno adulto",
+            "Un club para encontrarse a uno mismo a traves del shorinji kempo, aprender valores y compartir experiencias con los compañeros...",
+            "Uxue",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
+            5
           ]
         ],
         "empty": "Oraingoz ez dago testigantzarik.",
@@ -2125,6 +2139,13 @@ window.SKBC_CONTENT = {
             "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
             "Arene",
             "",
+            5
+          ],
+          [
+            "Alumno adulto",
+            "Un club para encontrarse a uno mismo a traves del shorinji kempo, aprender valores y compartir experiencias con los compañeros...",
+            "Uxue",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
             5
           ]
         ],
