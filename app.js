@@ -666,8 +666,45 @@ function leadInboxConfig() {
     enabled: config.enabled === true || config.enabled === "true",
     supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
     anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
-    table: config.table || "skbc_leads"
+    table: config.table || "skbc_leads",
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
   };
+}
+
+function privateNotificationWebhookUrl() {
+  const orderConfig = state.content.settings.orderInbox || {};
+  const leadConfig = state.content.settings.leadInbox || {};
+  const testimonialConfig = state.content.settings.testimonialInbox || {};
+  return String(
+    orderConfig.emailWebhookUrl ||
+    leadConfig.emailWebhookUrl ||
+    testimonialConfig.emailWebhookUrl ||
+    ""
+  ).trim();
+}
+
+function postPrivateNotification(type, subject, lines, payload = {}) {
+  const url = privateNotificationWebhookUrl();
+  if (!url) return;
+  const message = Array.isArray(lines) ? lines.filter(Boolean).join("\n") : String(lines || "");
+  fetch(url, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      notification_type: type,
+      type,
+      subject,
+      title: subject,
+      message,
+      email_to: "alvarocalvo8@gmail.com",
+      page_lang: state.lang,
+      source: "website",
+      submitted_at: new Date().toISOString(),
+      payload,
+      ...payload
+    })
+  }).catch(() => {});
 }
 
 async function submitLeadToSupabase(lead) {
@@ -684,6 +721,19 @@ async function submitLeadToSupabase(lead) {
     body: JSON.stringify(lead)
   });
   if (!response.ok) throw new Error("No se pudo guardar el contacto en Supabase");
+  postPrivateNotification("contact", "Nuevo contacto abierto en SKBC GIPUZKOA", [
+    "Nuevo contacto abierto en la bandeja privada.",
+    "",
+    `Nombre: ${lead.name || "No indicado"}`,
+    `Teléfono: ${lead.phone || "No indicado"}`,
+    `Email: ${lead.email || "No indicado"}`,
+    `Interés: ${lead.interest || "No indicado"}`,
+    `Idioma: ${lead.page_lang || state.lang}`,
+    "",
+    `Mensaje: ${lead.message || "Sin mensaje"}`,
+    "",
+    "Revísalo en el admin de SKBC GIPUZKOA."
+  ], lead);
   return true;
 }
 
@@ -738,6 +788,19 @@ async function submitTestimonialToSupabase(payload, photoFile) {
     response = await insert(fallbackBody);
   }
   if (!response.ok) throw new Error("No se pudo guardar el testimonio en Supabase");
+  postPrivateNotification("testimonial", "Nuevo testimonio pendiente en SKBC GIPUZKOA", [
+    "Hay un nuevo testimonio pendiente de revisar.",
+    "",
+    `Nombre: ${body.name || "No indicado"}`,
+    `Perfil: ${body.role || "No indicado"}`,
+    `Estrellas: ${body.rating || "No indicado"}`,
+    `Idioma: ${body.page_lang || state.lang}`,
+    body.photo_url ? `Foto: ${body.photo_url}` : "",
+    "",
+    `Testimonio: ${body.message || "Sin texto"}`,
+    "",
+    "Apruébalo o descártalo desde el admin."
+  ], body);
   return true;
 }
 
@@ -885,14 +948,7 @@ async function submitMerchOrderToSupabase(order) {
     body: JSON.stringify(body)
   });
   if (!response.ok) throw new Error("No se pudo guardar el pedido en Supabase");
-  if (config.emailWebhookUrl) {
-    fetch(config.emailWebhookUrl, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(order)
-    }).catch(() => {});
-  }
+  postPrivateNotification("order", "Nuevo pedido abierto en SKBC GIPUZKOA", merchWhatsappLines(order, t()), order);
   return true;
 }
 
