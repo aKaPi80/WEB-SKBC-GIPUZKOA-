@@ -416,6 +416,46 @@ button, input, select, textarea { font: inherit; }
 .main-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 16px; font-size: 13px; font-weight: 850; }
 .main-nav a { opacity: 0.82; }
 .main-nav a:hover { opacity: 1; }
+.nav-more {
+  position: relative;
+}
+.nav-more summary {
+  cursor: pointer;
+  list-style: none;
+  opacity: 0.82;
+}
+.nav-more summary::-webkit-details-marker {
+  display: none;
+}
+.nav-more summary::after {
+  content: " +";
+}
+.nav-more[open] summary,
+.nav-more summary:hover {
+  opacity: 1;
+}
+.nav-more div {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  min-width: 180px;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(16, 17, 19, 0.96);
+  box-shadow: var(--shadow);
+}
+.nav-more div a {
+  padding: 8px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.nav-more div a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
 .language-switch {
   display: inline-flex;
   padding: 3px;
@@ -1647,6 +1687,20 @@ textarea { resize: vertical; }
     box-shadow: var(--shadow);
   }
   .main-nav.is-open a { padding: 12px; }
+  .main-nav.is-open .nav-more {
+    display: grid;
+    gap: 8px;
+  }
+  .main-nav.is-open .nav-more div {
+    position: static;
+    min-width: 0;
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+  }
+  .main-nav.is-open .nav-more div a {
+    white-space: normal;
+  }
   .hero-proof, .grid-2, .grid-3, .grid-4, .split, .contact-layout, .profile-list, .ika-layout, .instructor-layout, .team-feature, .club-intro, .embed-layout, .calendar-grid--year, .calendar-grid--quarter, .calendar-list, .news-grid, .testimonial-grid, .merch-layout, .merch-product, .learn-layout, .learn-cards { grid-template-columns: 1fr; }
   .merch-order { position: static; }
   .split-reverse .split-media { order: initial; }

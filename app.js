@@ -179,12 +179,12 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", news: "Noticias", merch: "Merchandising", contact: "Contacto" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", news: "Albisteak", merch: "Merchandising", contact: "Kontaktua" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", news: "News", merch: "Merchandising", contact: "Contact" }
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", contact: "Contacto", more: "M\u00e1s" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", contact: "Kontaktua", more: "Gehiago" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", contact: "Contact", more: "More" }
 };
 
-const NAV_KEYS = ["kids", "adults", "club", "team", "schedule", "calendar", "gallery", "testimonials", "news", "merch", "contact"];
+const NAV_KEYS = ["kids", "adults", "club", "team", "learn", "schedule", "calendar", "gallery", "testimonials", "faq", "news", "social", "merch", "contact"];
 
 function systemSettings() {
   return state.content.settings.system || {};
@@ -613,7 +613,7 @@ function learnSection(settings, copy) {
   const concepts = copy.learn.concepts || ["Chinkon Gyo", "Howa", "Taiso", "Kihon", "Waza", "Kappo", "Appo", "Seiho", "Embu", "Randori", "Ukemi"];
   const url = copy.learn.url || "#galeria";
   const externalAttrs = /^https?:\/\//.test(url) ? ` target="_blank" rel="noreferrer"` : "";
-  return `<section class="section dark learn-section">
+  return `<section class="section dark learn-section" id="aprendizaje">
     <div class="learn-layout">
       <div class="learn-copy">
         <p class="eyebrow">${copy.learn.eyebrow}</p>
@@ -1187,16 +1187,25 @@ function renderNav(copy) {
     { label: labels.adults, href: "#adultos" },
     { label: labels.club, href: "#club" },
     { label: labels.team, href: "#equipo" },
+    { label: labels.learn, href: "#aprendizaje" },
     { label: labels.schedule, href: "#horarios" },
     { label: labels.calendar, href: "#calendario" },
     { label: labels.gallery, href: "#galeria" },
     { label: labels.testimonials, href: "#testimonios" },
+    { label: labels.faq, href: "#faq" },
     { label: labels.news, href: "#noticias" },
+    { label: labels.social, href: "#redes" },
     { label: labels.merch, href: "#merchandising" },
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
-  document.querySelector(".main-nav").innerHTML = baseNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("");
+  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#contacto"]);
+  const primaryNav = baseNav.filter((item) => primaryHrefs.has(item.href));
+  const secondaryNav = baseNav.filter((item) => !primaryHrefs.has(item.href));
+  document.querySelector(".main-nav").innerHTML = [
+    ...primaryNav.map((item) => `<a href="${item.href}">${item.label}</a>`),
+    secondaryNav.length ? `<details class="nav-more"><summary>${labels.more || "Más"}</summary><div>${secondaryNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("")}</div></details>` : ""
+  ].join("");
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
   document.querySelectorAll("[data-lang]").forEach((button) => {

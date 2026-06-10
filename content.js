@@ -1,5 +1,5 @@
 window.SKBC_CONTENT = {
-  "publishedAt": "2026-06-11Tlearn-section-fix",
+  "publishedAt": "2026-06-11Tnav-quick-links",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -25,9 +25,9 @@ window.SKBC_CONTENT = {
       "knowsAbout": "Shorinji Kempo | artes marciales | defensa personal | clases infantiles | disciplina | respeto",
       "googleAnalyticsId": "G-PX39QZ2QFG",
       "navLabels": {
-        "es": "Niños | Adultos | Club | Equipo | Horarios | Calendario | Galería | Testimonios | Noticias | Merchandising | Contacto",
-        "eu": "Haurrak | Helduak | Kluba | Taldea | Ordutegiak | Egutegia | Galeria | Testigantzak | Albisteak | Merchandising | Kontaktua",
-        "en": "Kids | Adults | Club | Team | Schedule | Calendar | Gallery | Testimonials | News | Merchandising | Contact"
+        "es": "Niños | Adultos | Club | Equipo | Aprendizaje | Horarios | Calendario | Galería | Testimonios | FAQ | Noticias | Redes | Tienda | Contacto",
+        "eu": "Haurrak | Helduak | Kluba | Taldea | Ikaskuntza | Ordutegiak | Egutegia | Galeria | Testigantzak | FAQ | Albisteak | Sareak | Denda | Kontaktua",
+        "en": "Kids | Adults | Club | Team | Learning | Schedule | Calendar | Gallery | Testimonials | FAQ | News | Social | Shop | Contact"
       },
       "decorativeBackground": {
         "enabled": true,
