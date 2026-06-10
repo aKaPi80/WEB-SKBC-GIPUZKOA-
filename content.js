@@ -804,7 +804,7 @@ window.SKBC_CONTENT = {
         "url": "https://photos.app.goo.gl/aSuxcfwsB8GL9yk46"
       },
       {
-        "label": "SKBC GIPUZKOA UDAKO IKASTAROA",
+        "label": "SKBC GIPUZKOA UDAKO IKASTAROA 2026",
         "url": "https://photos.app.goo.gl/jmdbGN2sQHLKXTcY9"
       }
     ],
