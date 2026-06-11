@@ -128,7 +128,7 @@ const settingsGroups = [
       ["Foto adultos", ["settings", "images", "adults"], "input"],
       ["Foto tÃ©cnica/aprendizaje", ["settings", "images", "learn"], "input"],
       ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"],
-      ["Imágenes de galería", ["settings", "images", "gallery"], "array"]
+      ["Imágenes de galería", ["settings", "images", "gallery"], "galleryImages"]
     ]
   },
   {
@@ -1023,6 +1023,9 @@ function controlTemplate(id, encodedPath, value, type) {
   if (type === "specialVisualSchedule") {
     return specialVisualScheduleTemplate(id, encodedPath, value);
   }
+  if (type === "galleryImages") {
+    return galleryImagesTemplate(id, encodedPath, parseFieldValue(value, "array"));
+  }
   if (type === "textarea" || type === "array" || type === "matrix" || type === "linkList" || type === "colorList") {
     const rows = type === "matrix" ? 6 : 4;
     const hint = type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
@@ -1283,6 +1286,37 @@ function generatedRepeatDates(event) {
     current = new Date(current.getFullYear(), current.getMonth(), current.getDate() + interval);
   }
   return dates;
+}
+
+function galleryImagesTemplate(id, encodedPath, items = []) {
+  const images = Array.isArray(items) ? items.filter(Boolean) : [];
+  return `
+    <div class="gallery-admin" data-gallery-path="${encodedPath}">
+      <input id="${id}" data-type="array" data-path="${encodedPath}" value="${escapeHtml(images.join("\n"))}" hidden />
+      <small>Estas son las miniaturas visibles en “Actividades, seminarios y vida del club”. Puedes subir, quitar y ordenar sin tocar rutas.</small>
+      <div class="gallery-admin-grid">
+        ${images.map((image, index) => galleryImageItemTemplate(image, index)).join("")}
+      </div>
+      <div class="gallery-admin-actions">
+        <button class="primary add-gallery-image" type="button">Añadir imagen</button>
+      </div>
+    </div>
+  `;
+}
+
+function galleryImageItemTemplate(image, index) {
+  return `
+    <article class="gallery-admin-item" data-gallery-index="${index}">
+      <div class="gallery-admin-thumb" style="background-image:url('${escapeAttr(image)}')"></div>
+      <input value="${escapeHtml(image)}" aria-label="Ruta de imagen ${index + 1}" />
+      <div class="gallery-admin-buttons">
+        <button type="button" data-gallery-action="upload">Cambiar</button>
+        <button type="button" data-gallery-action="up">Subir</button>
+        <button type="button" data-gallery-action="down">Bajar</button>
+        <button class="danger" type="button" data-gallery-action="remove">Quitar</button>
+      </div>
+    </article>
+  `;
 }
 
 function generatedEventDates(event) {
@@ -2629,7 +2663,104 @@ function bindFields(root) {
   root.querySelectorAll("[data-upload-path]").forEach((button) => {
     button.addEventListener("click", () => uploadImageForPath(button));
   });
+  bindGalleryImages(root);
   bindSpecialVisualSchedules(root);
+}
+
+function bindGalleryImages(root) {
+  root.querySelectorAll(".gallery-admin").forEach((gallery) => {
+    const hidden = gallery.querySelector("[data-path]");
+    const grid = gallery.querySelector(".gallery-admin-grid");
+    const path = JSON.parse(decodeURIComponent(gallery.dataset.galleryPath));
+    const getItems = () => Array.from(grid.querySelectorAll(".gallery-admin-item input"))
+      .map((input) => input.value.trim())
+      .filter(Boolean);
+    const renderItems = (items) => {
+      grid.innerHTML = items.map((image, index) => galleryImageItemTemplate(image, index)).join("");
+    };
+    const sync = () => {
+      const items = getItems();
+      hidden.value = items.join("\n");
+      setByPath(data, path, items);
+      markDirty();
+    };
+    grid.addEventListener("input", (event) => {
+      const input = event.target.closest(".gallery-admin-item input");
+      if (!input) return;
+      input.closest(".gallery-admin-item").querySelector(".gallery-admin-thumb").style.backgroundImage = `url('${input.value.trim()}')`;
+      sync();
+    });
+    grid.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-gallery-action]");
+      if (!button) return;
+      const item = button.closest(".gallery-admin-item");
+      const index = Number(item.dataset.galleryIndex);
+      const items = getItems();
+      if (button.dataset.galleryAction === "remove") {
+        items.splice(index, 1);
+        renderItems(items);
+        sync();
+        return;
+      }
+      if (button.dataset.galleryAction === "up" && index > 0) {
+        [items[index - 1], items[index]] = [items[index], items[index - 1]];
+        renderItems(items);
+        sync();
+        return;
+      }
+      if (button.dataset.galleryAction === "down" && index < items.length - 1) {
+        [items[index + 1], items[index]] = [items[index], items[index + 1]];
+        renderItems(items);
+        sync();
+        return;
+      }
+      if (button.dataset.galleryAction === "upload") {
+        const uploaded = await chooseAndUploadGalleryImage(button);
+        if (!uploaded) return;
+        items[index] = uploaded;
+        renderItems(items);
+        sync();
+      }
+    });
+    gallery.querySelector(".add-gallery-image")?.addEventListener("click", async () => {
+      const uploaded = await chooseAndUploadGalleryImage(gallery.querySelector(".add-gallery-image"));
+      if (!uploaded) return;
+      const items = getItems();
+      items.push(uploaded);
+      renderItems(items);
+      sync();
+    });
+  });
+}
+
+function chooseAndUploadGalleryImage(button) {
+  return new Promise((resolveUpload) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/png,image/jpeg,image/webp,image/gif";
+    input.addEventListener("change", async () => {
+      const [file] = input.files;
+      if (!file) {
+        resolveUpload("");
+        return;
+      }
+      try {
+        button.disabled = true;
+        const originalText = button.textContent;
+        button.textContent = "Subiendo...";
+        const assetPath = await uploadImageFile(file);
+        setStatus("Imagen añadida a galería. Falta publicar en GitHub.", "warning");
+        resolveUpload(assetPath);
+        button.textContent = originalText;
+      } catch (error) {
+        setStatus(`Error al subir imagen: ${error.message}`, "danger");
+        resolveUpload("");
+      } finally {
+        button.disabled = false;
+      }
+    });
+    input.click();
+  });
 }
 
 function bindSpecialVisualSchedules(root) {
@@ -2752,6 +2883,10 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replaceAll("'", "&#39;");
 }
 
 document.querySelectorAll(".tab").forEach((tab) => {
