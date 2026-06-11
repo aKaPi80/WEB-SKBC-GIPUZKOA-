@@ -438,7 +438,7 @@ function parseFieldValue(value, type) {
 
 function formatFieldValue(value, type) {
   if (type === "booleanText") return value === false ? "false" : "true";
-  if (type === "array") return Array.isArray(value) ? value.join("\n") : "";
+  if (type === "array" || type === "galleryImages") return Array.isArray(value) ? value.join("\n") : "";
   if (type === "linkList") return Array.isArray(value) ? value.map((item) => `${item.label || ""} | ${item.url || ""}`).join("\n") : "";
   if (type === "colorList") return Array.isArray(value) ? value.map((item) => `${item.code || ""} | ${item.name || ""} | ${item.hex || "#d9dee7"}`).join("\n") : "";
   if (type === "specialVisualSchedule") {
@@ -855,7 +855,7 @@ function instructorEditorTemplate() {
       <div class="people-rows">
         <div class="person-editor-row person-editor-row--instructor">
           <label>Nombre<input data-instructor-field="title" data-lang="all" value="${escapeHtml(data.languages.es.instructor.title || "")}" /></label>
-          <label>Foto principal<input data-instructor-field="image" value="${escapeHtml(image)}" placeholder="assets/uploads/foto.jpg" /></label>
+          <label>Foto principal<span class="image-field-row"><input data-instructor-field="image" value="${escapeHtml(image)}" placeholder="assets/uploads/foto.jpg" /><button class="upload-person-image" data-person-upload="instructor" type="button">Subir imagen</button></span></label>
           <label>Etiqueta ES<input data-instructor-field="eyebrow" data-lang="es" value="${escapeHtml(data.languages.es.instructor.eyebrow || "")}" /></label>
           <label>Etiqueta EU<input data-instructor-field="eyebrow" data-lang="eu" value="${escapeHtml(data.languages.eu.instructor.eyebrow || "")}" /></label>
           <label>Etiqueta EN<input data-instructor-field="eyebrow" data-lang="en" value="${escapeHtml(data.languages.en.instructor.eyebrow || "")}" /></label>
@@ -877,7 +877,7 @@ function peopleSectionTemplate(title, kind, people, hasText) {
       <header>
         <div>
           <h3>${title}</h3>
-          <p>Añade, elimina o cambia personas. Foto opcional: pega una ruta tipo assets/uploads/foto.jpg.</p>
+          <p>Añade, elimina o cambia personas. Puedes pegar una ruta o usar Subir imagen.</p>
         </div>
         <button class="primary add-person" type="button" data-add-person="${kind}">Añadir persona</button>
       </header>
@@ -892,7 +892,7 @@ function personRowTemplate(kind, person = {}, hasText = false) {
   return `
     <div class="person-editor-row" data-person-kind="${kind}">
       <label>Nombre<input data-person-field="name" value="${escapeHtml(person.name || "")}" /></label>
-      <label>Foto opcional<input data-person-field="image" value="${escapeHtml(person.image || "")}" placeholder="assets/uploads/foto.jpg" /></label>
+      <label>Foto opcional<span class="image-field-row"><input data-person-field="image" value="${escapeHtml(person.image || "")}" placeholder="assets/uploads/foto.jpg" /><button class="upload-person-image" data-person-upload="row" type="button">Subir imagen</button></span></label>
       <label>Cargo ES<input data-person-field="esRole" value="${escapeHtml(person.esRole || "")}" /></label>
       <label>Cargo EU<input data-person-field="euRole" value="${escapeHtml(person.euRole || "")}" /></label>
       <label>Cargo EN<input data-person-field="enRole" value="${escapeHtml(person.enRole || "")}" /></label>
@@ -983,8 +983,47 @@ function bindPeopleEditor(editor) {
     if (remove) {
       remove.closest(".person-editor-row")?.remove();
       sync();
+      return;
+    }
+    const upload = event.target.closest(".upload-person-image");
+    if (upload) {
+      uploadPeopleImage(upload, syncInstructor, sync);
     }
   });
+}
+
+function uploadPeopleImage(button, syncInstructor, syncPeople) {
+  const row = button.closest(".person-editor-row");
+  const input = button.dataset.personUpload === "instructor"
+    ? row?.querySelector('[data-instructor-field="image"]')
+    : row?.querySelector('[data-person-field="image"]');
+  if (!input) return;
+  const picker = document.createElement("input");
+  picker.type = "file";
+  picker.accept = "image/png,image/jpeg,image/webp,image/gif";
+  picker.addEventListener("change", async () => {
+    const [file] = picker.files;
+    if (!file) return;
+    const originalText = button.textContent;
+    try {
+      button.disabled = true;
+      button.textContent = "Subiendo...";
+      const assetPath = await uploadImageFile(file);
+      input.value = assetPath;
+      if (button.dataset.personUpload === "instructor") {
+        syncInstructor();
+      } else {
+        syncPeople();
+      }
+      setStatus("Imagen de persona subida. Falta publicar en GitHub.", "warning");
+    } catch (error) {
+      setStatus(`Error al subir imagen: ${error.message}`, "danger");
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  });
+  picker.click();
 }
 
 function groupTemplate(group) {

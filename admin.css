@@ -283,6 +283,21 @@ aside {
   background: var(--red);
 }
 
+.image-field-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.image-field-row button {
+  min-height: 38px;
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
+  white-space: nowrap;
+}
+
 .event-bulk-actions {
   padding: 12px;
   border: 1px solid rgba(31, 111, 169, .22);
