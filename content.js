@@ -1,5 +1,5 @@
 window.SKBC_CONTENT = {
-  "publishedAt": "2026-06-11-seo-performance-pass",
+  "publishedAt": "2026-06-11-gallery-activity-thumbs",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -829,11 +829,14 @@ window.SKBC_CONTENT = {
       "adults": "assets/optimized/1780604082854-adultos.webp",
       "learn": "assets/optimized/1781132391840-img-0427.webp",
       "gallery": [
-        "assets/optimized/equipo-tecnico.webp",
-        "assets/optimized/alvaro-calvo.webp",
-        "assets/optimized/inaki-ventureira.webp",
-        "assets/optimized/andoni-dominguez.webp",
-        "assets/optimized/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.webp"
+        "assets/optimized/1780604072168-grupo-ninos.webp",
+        "assets/optimized/1780604082854-adultos.webp",
+        "assets/optimized/1780684453801-hero-1.webp",
+        "assets/optimized/1780684830629-chatgpt-image-5-jun-2026-20-40-02.webp",
+        "assets/optimized/1780685194448-esta-es-la-ultima.webp",
+        "assets/optimized/1780687199393-img-0434.webp",
+        "assets/optimized/1781132391840-img-0427.webp",
+        "assets/optimized/1780604041486-manji.webp"
       ],
       "profiles": [
         "assets/optimized/alvaro-calvo.webp",
