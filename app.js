@@ -59,7 +59,12 @@ function cardGrid(items, columns = 4) {
 
 function uniqueImages(images, excluded = []) {
   const blocked = new Set(excluded.filter(Boolean));
-  return [...new Set((images || []).filter(Boolean))].filter((image) => !blocked.has(image));
+  const list = Array.isArray(images)
+    ? images
+    : String(images || "")
+      .split(/\r?\n|,/)
+      .map((image) => image.trim());
+  return [...new Set(list.filter(Boolean))].filter((image) => !blocked.has(image));
 }
 
 function linesFrom(value) {

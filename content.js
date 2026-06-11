@@ -1,5 +1,5 @@
 window.SKBC_CONTENT = {
-  "publishedAt": "2026-06-11-gallery-activity-thumbs",
+  "publishedAt": "2026-06-11-gallery-normalized",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -828,7 +828,17 @@ window.SKBC_CONTENT = {
       "kids": "assets/optimized/1780604072168-grupo-ninos.webp",
       "adults": "assets/optimized/1780604082854-adultos.webp",
       "learn": "assets/optimized/1781132391840-img-0427.webp",
-      "gallery": "assets/uploads/1781182090114-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp",
+      "gallery": [
+        "assets/optimized/1780604072168-grupo-ninos.webp",
+        "assets/optimized/1780604082854-adultos.webp",
+        "assets/optimized/1780684453801-hero-1.webp",
+        "assets/optimized/1780684830629-chatgpt-image-5-jun-2026-20-40-02.webp",
+        "assets/optimized/1780685194448-esta-es-la-ultima.webp",
+        "assets/optimized/1780687199393-img-0434.webp",
+        "assets/optimized/1781132391840-img-0427.webp",
+        "assets/optimized/1780604041486-manji.webp",
+        "assets/uploads/1781182090114-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp"
+      ],
       "profiles": [
         "assets/optimized/alvaro-calvo.webp",
         "assets/optimized/inaki-ventureira.webp",
