@@ -636,6 +636,19 @@ function testimonialsSection(copy) {
   </section>`;
 }
 
+function galleryCarousel(images = [], copy = t()) {
+  const photos = Array.isArray(images) ? [...new Set(images.filter(Boolean))] : [];
+  if (!photos.length) return "";
+  const loopPhotos = photos.length > 1 ? [...photos, ...photos] : photos;
+  return `<div class="gallery-carousel ${photos.length > 1 ? "is-animated" : ""}" aria-label="${copy.media?.title || "Galería"}">
+    <div class="gallery-track">
+      ${loopPhotos.map((image, index) => `<button class="gallery-photo" type="button" data-gallery-image="${escapeHtml(image)}" data-gallery-index="${index % photos.length}">
+        <img src="${image}" alt="${copy.media?.title || "SKBC GIPUZKOA"} ${index % photos.length + 1}" loading="lazy" />
+      </button>`).join("")}
+    </div>
+  </div>`;
+}
+
 function learnSection(settings, copy) {
   const items = copy.learn.items || [
     ["Técnica", "Bases, desplazamientos, ataques, defensas y aplicaciones progresivas."],
@@ -1384,12 +1397,7 @@ function render() {
   document.documentElement.style.setProperty("--decorative-bg-image", decorative.preset === "custom" && decorative.customImage ? `url("${decorative.customImage}")` : "none");
   const peopleImages = settings.images.people || {};
   const socialEmbeds = embeddedSocial(settings);
-  const galleryImages = uniqueImages(settings.images.gallery, [
-    settings.images.hero,
-    settings.images.kids,
-    settings.images.adults,
-    settings.images.learn
-  ]);
+  const galleryImages = uniqueImages(settings.images.gallery);
   setMeta(copy);
   setupAnalytics();
   renderNav(copy);
@@ -1514,9 +1522,7 @@ function render() {
 
     <section class="section" id="galeria">
       <div class="section-heading"><p class="eyebrow">${copy.media.eyebrow}</p><h2>${copy.media.title}</h2><p>${copy.media.text}</p></div>
-      ${galleryImages.length ? `<div class="photo-grid photo-grid--compact">
-        ${galleryImages.slice(0, 8).map((image) => `<div class="photo" style="background-image:url('${image}')"></div>`).join("")}
-      </div>` : ""}
+      ${galleryCarousel(galleryImages, copy)}
       <div class="link-list">${(settings.galleryLinks || []).map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.label}</a>`).join("")}</div>
     </section>
 
@@ -1610,6 +1616,7 @@ function render() {
   });
   bindTestimonials(copy);
   bindTestimonialCards(copy);
+  bindGalleryPhotos();
   bindProfiles();
   bindCalendar();
   bindMerch(copy);
@@ -1661,6 +1668,12 @@ function bindProfiles() {
     button.addEventListener("click", () => {
       openProfile(JSON.parse(button.dataset.profile));
     });
+  });
+}
+
+function bindGalleryPhotos() {
+  document.querySelectorAll("[data-gallery-image]").forEach((button) => {
+    button.addEventListener("click", () => openGalleryImage(button.dataset.galleryImage));
   });
 }
 
@@ -1782,6 +1795,16 @@ function openProfile(profile) {
   modal.setAttribute("aria-hidden", "false");
 }
 
+function openGalleryImage(image) {
+  if (!image) return;
+  const modal = document.querySelector("#galleryModal");
+  const imageElement = modal.querySelector("#galleryModalImage");
+  imageElement.src = image;
+  imageElement.alt = t().media?.title || "Galería SKBC GIPUZKOA";
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
 function openTestimonial(item, copy) {
   const [audience, quote, name, image, rating] = item;
   const modal = document.querySelector("#testimonialModal");
@@ -1814,6 +1837,14 @@ function closeProfile() {
   modal.setAttribute("aria-hidden", "true");
 }
 
+function closeGalleryImage() {
+  const modal = document.querySelector("#galleryModal");
+  const imageElement = modal.querySelector("#galleryModalImage");
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  imageElement.removeAttribute("src");
+}
+
 document.querySelectorAll("[data-lang]").forEach((button) => {
   button.addEventListener("click", () => {
     state.lang = button.dataset.lang;
@@ -1837,9 +1868,14 @@ document.querySelector(".testimonial-modal__close").addEventListener("click", cl
 document.querySelector("#testimonialModal").addEventListener("click", (event) => {
   if (event.target.id === "testimonialModal") closeTestimonial();
 });
+document.querySelector(".gallery-modal__close").addEventListener("click", closeGalleryImage);
+document.querySelector("#galleryModal").addEventListener("click", (event) => {
+  if (event.target.id === "galleryModal") closeGalleryImage();
+});
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeProfile();
+    closeGalleryImage();
     closeTestimonial();
   }
 });
