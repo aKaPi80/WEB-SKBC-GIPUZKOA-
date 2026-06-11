@@ -1293,7 +1293,7 @@ function galleryImagesTemplate(id, encodedPath, items = []) {
   return `
     <div class="gallery-admin" data-gallery-path="${encodedPath}">
       <input id="${id}" data-type="array" data-path="${encodedPath}" value="${escapeHtml(images.join("\n"))}" hidden />
-      <small>Estas son las miniaturas visibles en “Actividades, seminarios y vida del club”. Puedes subir, quitar y ordenar sin tocar rutas.</small>
+      <small>Estas son las miniaturas visibles en “Actividades, seminarios y vida del club”. Puedes añadir tantas como quieras. Al subir una imagen, el editor la reduce y la convierte a WebP automáticamente cuando compensa.</small>
       <div class="gallery-admin-grid">
         ${images.map((image, index) => galleryImageItemTemplate(image, index)).join("")}
       </div>
@@ -2824,7 +2824,9 @@ async function uploadImageForPath(button) {
 }
 
 async function uploadImageFile(file) {
-  const extension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "jpg";
+  const optimized = await optimizeImageForWeb(file);
+  const uploadFile = optimized.file;
+  const extension = optimized.extension;
   const safeBase = file.name
     .replace(/\.[^.]+$/, "")
     .normalize("NFD")
@@ -2834,7 +2836,7 @@ async function uploadImageFile(file) {
     .replace(/^-|-$/g, "")
     .slice(0, 42) || "imagen";
   const assetPath = `assets/uploads/${Date.now()}-${safeBase}.${extension}`;
-  const content = await fileToBase64(file);
+  const content = await fileToBase64(uploadFile);
 
   if (shouldUseGithubApi()) {
     const token = await githubToken();
@@ -2854,6 +2856,37 @@ async function uploadImageFile(file) {
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(result.error || "No se pudo subir la imagen");
   return result.path;
+}
+
+async function optimizeImageForWeb(file) {
+  const originalExtension = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "jpg";
+  if (!file.type.startsWith("image/") || file.type === "image/gif") {
+    return { file, extension: originalExtension };
+  }
+  try {
+    const bitmap = await createImageBitmap(file);
+    const maxSide = 1600;
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { alpha: false });
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, width, height);
+    context.drawImage(bitmap, 0, 0, width, height);
+    const blob = await new Promise((resolveBlob) => canvas.toBlob(resolveBlob, "image/webp", 0.82));
+    bitmap.close?.();
+    if (!blob || blob.size >= file.size) return { file, extension: originalExtension };
+    const optimizedName = file.name.replace(/\.[^.]+$/, "") + ".webp";
+    return {
+      file: new File([blob], optimizedName, { type: "image/webp" }),
+      extension: "webp"
+    };
+  } catch {
+    return { file, extension: originalExtension };
+  }
 }
 
 function fileToBase64(file) {
