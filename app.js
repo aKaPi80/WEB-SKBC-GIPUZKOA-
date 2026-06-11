@@ -1040,7 +1040,15 @@ function merchSection(settings, copy) {
 
 function parsePerson(person) {
   if (Array.isArray(person)) {
-    return { name: person[0], role: person[1], text: person[2] || "", image: person[3] || "" };
+    const rawName = String(person[0] || "");
+    const rawRole = String(person[1] || "");
+    const [nameFromCombined, roleFromCombined = ""] = rawName.split(/\s*·\s*/);
+    return {
+      name: rawRole ? rawName : nameFromCombined,
+      role: rawRole || roleFromCombined,
+      text: person[2] || "",
+      image: person[3] || ""
+    };
   }
   const [name, role] = String(person).split(" · ");
   return { name, role: role || "", text: "", image: "" };
@@ -1073,7 +1081,7 @@ function normalizeName(name) {
 function personImage(profile, index) {
   if (profile.image) return profile.image;
   const people = state.content.settings.images.people || {};
-  const name = profile.name || "";
+  const name = String(profile.name || "").split(/\s*·\s*|\s*Â·\s*/)[0];
   const normalized = normalizeName(name);
   if (normalized === "alvaro calvo") return people.alvaro;
   if (normalized === "inaki ventureira") return people.inaki;
@@ -1095,7 +1103,8 @@ function personButton(person, group, index) {
   const data = JSON.stringify({
     name: profile.name,
     role: profile.role,
-    text: profileText(profile, group)
+    text: profileText(profile, group),
+    image
   });
   return `<button class="person-card" type="button" data-profile='${escapeHtml(data)}'>
     ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" /></span>` : ""}
@@ -1757,6 +1766,15 @@ function bindMerch(copy = t()) {
 
 function openProfile(profile) {
   const modal = document.querySelector("#profileModal");
+  const imageElement = modal.querySelector("#profileImage");
+  if (profile.image) {
+    imageElement.src = profile.image;
+    imageElement.alt = profile.name;
+    imageElement.hidden = false;
+  } else {
+    imageElement.hidden = true;
+    imageElement.removeAttribute("src");
+  }
   modal.querySelector("#profileRole").textContent = profile.role;
   modal.querySelector("#profileTitle").textContent = profile.name;
   modal.querySelector("#profileText").textContent = profile.text;

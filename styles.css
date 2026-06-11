@@ -1821,6 +1821,18 @@ textarea { resize: vertical; }
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
 }
 .profile-modal__content { padding: clamp(28px, 5vw, 56px); align-self: center; }
+.profile-modal__content #profileImage {
+  width: min(220px, 55vw);
+  aspect-ratio: 1;
+  display: block;
+  object-fit: cover;
+  object-position: center 18%;
+  margin: 0 0 22px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: #d7d7d5;
+}
+.profile-modal__content #profileImage[hidden] { display: none; }
 .profile-modal__content h2 { color: var(--ink); }
 .profile-modal__content p:not(.eyebrow) { color: var(--muted); font-size: 18px; }
 .profile-modal__close {
