@@ -1790,11 +1790,11 @@ window.SKBC_CONTENT = {
       },
       "schedule": {
         "eyebrow": "Ordutegiak eta kokapena",
-        "title": "Etorri Tolosan probatzera",
-        "text": "Etorri aurretik idatzi eta probatzeko egunik egokiena, zer ekarri eta lehen hilabete doakoa nola den azalduko dizugu.",
+        "title": "Zatoz eta probatu Tolosara",
+        "text": "Idatzi iezaguzu etorri aurretik eta esango dizugu zein den probatzeko egunik onena, zer ekarri behar duzun eta nola funtzionatzen duen lehen doako hilabeteak.",
         "kids": "Haurrak · 5-13 urte · Astearte eta ostegunetan · 17:30-18:30",
         "adults": "Gazteak eta helduak · 13+ urte · Astearte eta ostegunetan · 18:30-20:00",
-        "place": "Garmendiola aldapa 2, Tolosa",
+        "place": "GAINBERRI Garmendiola aldapa 2, Tolosa",
         "maps": "Google Mapsen ireki"
       },
       "calendar": {
@@ -1815,8 +1815,8 @@ window.SKBC_CONTENT = {
       },
       "media": {
         "eyebrow": "Argazkiak eta bideoak",
-        "title": "Jarduerak, mintegiak eta klubeko bizitza",
-        "text": "Klubeko mintegi, entrenamendu, bidaia, topaketa eta jarduera berezien galeriak ikus ditzakezu.",
+        "title": "Jarduerak, mintegiak eta klubaren bizitza",
+        "text": "Sartu mintegien, prestakuntza saioen, bidaien, bileren eta klubaren jarduera berezien galerietara.",
         "videos": "Bideoak",
         "galleryButton": "Galeria ireki"
       },
@@ -1824,21 +1824,21 @@ window.SKBC_CONTENT = {
         "eyebrow": "Albisteak eta sareak",
         "title": "JARRAITU GAITZAZU INSTAGRAM, FACEBOOK ETA YOUTUBE-N",
         "text": "Azken berri eta eguneratze guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
-        "instagram": "Instagram · azken argitalpenak",
-        "facebook": "Facebook · orri ofiziala",
-        "youtube": "YouTube · bideoak"
+        "instagram": "Instagram · Azken argitalpenak",
+        "facebook": "Facebook · Orrialde Ofiziala",
+        "youtube": "YouTubeko bideoak"
       },
       "merch": {
         "eyebrow": "Merchandising",
-        "title": "SKBC erreserba denda",
-        "text": "Klubeko jantziak erreserbatu edo JHK katalogoko beste erreferentzia bat aukeratu pertsonalizatzeko. Ez da online ordaintzen: eskaera jasoko dugu eta erabilgarritasuna, neurria, kolorea, azken prezioa eta ordainketa modua baieztatzeko jarriko gara harremanetan.",
+        "title": "SKBC Erreserba Denda",
+        "text": "Erreserbatu klubeko arropa edo aukeratu beste elementu bat JHK katalogotik pertsonalizatzeko. Ordainketa ez da online egiten: zure eskaera jasoko dugu eta zurekin harremanetan jarriko gara erabilgarritasuna, neurria, kolorea, azken prezioa eta ordainketa-metodoa baieztatzeko.",
         "items": [
           "Kamiseta inprimatua · 10€",
           "Poloa inprimatua · 15€",
           "Jantzi bordatua · 30€",
           "Sudadera bordatua · 35€"
         ],
-        "catalog": "JHK katalogoa ikusi",
+        "catalog": "KATALOGOA IKUSI",
         "base": "JHK oinarria",
         "ref": "REF",
         "personalization": "Pertsonalizazioa",
@@ -1850,7 +1850,7 @@ window.SKBC_CONTENT = {
         "emptyOrder": "Oraindik ez duzu produkturik gehitu.",
         "remove": "Kendu",
         "total": "Gutxi gorabeherako guztira",
-        "buyerTitle": "Eskaera baieztatzeko datuak",
+        "buyerTitle": "Eskaera berresteko informazioa",
         "name": "Izena",
         "phone": "Telefonoa",
         "email": "Emaila",
@@ -1858,9 +1858,9 @@ window.SKBC_CONTENT = {
         "paymentDojo": "Dojon ordainduko dut",
         "paymentContact": "Jarri nirekin harremanetan ordainketa ixteko",
         "comments": "Oharrak",
-        "send": "Bidali erreserba",
+        "send": "Erreserba bidali",
         "customTitle": "JHK katalogoko beste jantzi bat nahi duzu?",
-        "customText": "JHK katalogo osoa oinarri gisa kontsulta daiteke. Idatzi erreferentzia edo itsatsi esteka, eta SKBC GIPUZKOArekin pertsonaliza daitekeen baieztatuko dizugu.",
+        "customText": "JHK katalogo osoa erabil daiteke erreferentzia gisa. Eman erreferentzia zenbakia edo itsatsi esteka, eta SKBC GIPUZKOArekin pertsonaliza daitekeen baieztatuko dizugu.",
         "customReference": "JHK erreferentzia edo esteka",
         "customDetails": "Pertsonalizazioa eta xehetasunak",
         "noteTitle": "Garrantzitsua",
@@ -1880,94 +1880,94 @@ window.SKBC_CONTENT = {
       "contact": {
         "eyebrow": "Kontaktua",
         "title": "Probatu Shorinji Kempo konpromisorik gabe",
-        "text": "Idatzi WhatsApp bidez eta hasten lagunduko dizugu.",
+        "text": "Idatzi iezaguzu WhatsApp bidez eta lagunduko dizugu hasteko.",
         "name": "Izena",
         "phone": "Telefonoa",
-        "email": "Emaila",
+        "email": "Email-a",
         "interest": "Interesa",
         "message": "Mezua",
-        "submit": "WhatsApp bidez bidali",
+        "submit": "Bidali WhatsApp bidez",
         "options": [
           "Haurren klasea",
           "Helduen klasea",
-          "Lehen hilabetea doan",
+          "Lehenengo hilabetea doan",
           "Informazio orokorra"
         ]
       },
       "news": {
-        "eyebrow": "Albisteak",
-        "title": "Hurrengo albisteak",
-        "text": "Klubeko oharrak, berriak eta komunikazio garrantzitsuak.",
-        "empty": "Albisterik gabe"
+        "eyebrow": "Berriak",
+        "title": "Hurrengo berriak",
+        "text": "Klubaren oharrak, berriak eta komunikazio garrantzitsuak.",
+        "empty": "Ez da albisterik argitaratu"
       },
       "testimonials": {
         "eyebrow": "Testigantzak",
-        "title": "Klubeko benetako testigantzak",
-        "text": "Anima zaitez eta konta iezaiezu besteei zure esperientzia familiar gisa edo klubeko kide gisa.",
+        "title": "Klubaren benetako testigantzak",
+        "text": "Anima zaitez eta kontatu besteei zure esperientzia familiako kide edo klubeko kide gisa.",
         "items": [
           [
-            "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
+            "Aita/ama",
+            "QUERY LENGTH LIMIT EXCEEDED. MAX ALLOWED QUERY : 500 CHARS",
             "ENKI",
             ""
           ],
           [
-            "Practicante",
-            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
-            "Estrellita",
+            "Praktikatzen",
+            "Benetan gustatzen zaizkit klaseak. Motibatzen naute eta aurrera jarraitzeko determinazioa ematen didate. Ikasle eta irakasle guztien arteko errespetua izugarria da. Oso gomendagarria ⭐️⭐️⭐️⭐️⭐️.",
+            "Izar txikia",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Clases muy entrenidas y divertidas.",
+            "Ikasle heldua",
+            "Oso klase entretenigarriak eta dibertigarriak.",
             "Cameron",
             "",
-            5
+            "5"
           ],
           [
-            "Practicante",
-            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
-            "unodostres",
+            "Praktikatzen",
+            "Klaseak bikainak dira. Ondo pasatzen dut eta ikasten dut aldi berean. Oso gomendagarriak dira.",
+            "bat bi hiru",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Ikasle heldua",
+            "Zoragarria da, ondo irakasten dute, azalpenak zehatzak eta erraz ulertzekoak dira... Mirari bat.",
             "Ekaitz",
             "",
-            5
+            "5"
           ],
           [
-            "Padre/madre",
-            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
+            "Aita/ama",
+            "Klaseak asko gustatzen zaizkit, oso ondo pasatzen dut, eta senseiaren smint-ak ere gustatzen zaizkit. 🥹",
             "Arene",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Un club para encontrarse a uno mismo a traves del shorinji kempo, aprender valores y compartir experiencias con los compañeros...",
+            "Ikasle heldua",
+            "Shorinji kempoaren bidez zeure burua aurkitzeko, balioak ikasteko eta kideekin esperientziak partekatzeko klub bat...",
             "Uxue",
             "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
-            5
+            "5"
           ]
         ],
-        "empty": "Oraingoz ez dago testigantzarik.",
-        "formTitle": "Testigantza bidali",
+        "empty": "Momentuz ez dago testigantzarik.",
+        "formTitle": "Bidali testigantza bat",
         "name": "Izena",
-        "role": "Klubarekin duzun harremana",
+        "role": "Klubarekin harremana.",
         "roles": [
           "Aita/ama",
           "Ikasle heldua",
-          "Praktikatzailea",
-          "Beste bat"
+          "Praktikatzen",
+          "Bestelakoa"
         ],
         "message": "Testigantza",
-        "consent": "Bidaltzean, ados zaude SKBC GIPUZKOAk webgunean argitaratzea.",
-        "submit": "Testigantza WhatsApp bidez bidali",
-        "thanks": "Eskerrik asko zure esperientzia gurekin besteei kontatzeagatik!",
+        "consent": "Bidaltzean, SKBC GIPUZKOAk webgunean argitaratzea onartzen duzu.",
+        "submit": "Bidali testigantza",
+        "thanks": "Eskerrik asko zure esperientzia gurekin partekatzeagatik!",
         "photo": "Aukerako argazkia",
         "rating": "Balorazioa",
         "readFull": "Osorik irakurri",
@@ -1977,47 +1977,47 @@ window.SKBC_CONTENT = {
       "faq": {
         "eyebrow": "Ohiko galderak",
         "title": "Probatzera etorri aurretik",
-        "text": "Ohiko zalantzak argitzen ditugu lasai etor zaitezen.",
+        "text": "Lasai etor zaitezen, ohiko galderak erantzuten ditugu.",
         "items": [
           [
-            "Aurretik esperientzia behar dut?",
-            "Ez. Oinarrizkotik hasten gara eta praktika zure adinera, sasoi fisikora eta erritmora egokitzen dugu."
+            "Aurretiko esperientzia behar al dut?",
+            "Ez. Oinarrietatik hasten gara eta praktika zure adinera, sasoi mailara eta erritmoara egokitzen dugu."
           ],
           [
-            "Zaharregia naiz hasteko?",
-            "Ez. Helduaroan hasten diren pertsonak ere pixkanaka aurrera egiten dute. Garrantzitsuena ikasteko gogoa izatea da."
+            "Zaharregia al naiz hasteko?",
+            "Ez. Batzuek heldu gisa hasten dira eta pixkanaka aurrera egiten dute. Garrantzitsuena ikasteko gogoarekin etortzea da."
           ],
           [
-            "Zer arropa behar dut probatzeko?",
-            "Lehen hilabeterako kirol arropa erosoa nahikoa da. Jarraitu nahi baduzu, uniformeari eta materialari buruz lagunduko dizugu."
+            "Zein arropa probatu behar dut?",
+            "Lehenengo hilabetean, kirol-arropa erosoa besterik ez duzu behar. Jarraitzea erabakitzen baduzu, uniformea ​​eta ekipamendua aukeratuko ditugu."
           ],
           [
-            "Doan probatu dezaket?",
-            "Bai. Lehen hilabetea doakoa da eta konpromisorik gabe, giroa, taldea eta entrenatzeko modua ezagutzeko."
+            "Doan probatu al dezaket?",
+            "Bai. Lehenengo hilabetea doakoa eta konpromisorik gabekoa da, giroa, taldea eta entrenamendu estiloa ezagutu ahal izateko."
           ],
           [
-            "Lehiaketarik dago?",
-            "Klubaren ikuspegi nagusia hezitzailea da: teknika, lankidetza, defentsa pertsonala eta garapen pertsonala. Jarduerak badaude, garaiz azalduko dira."
+            "Ba al dago lehiaketarik?",
+            "Klubaren ardatz nagusia entrenamendua da: teknika, talde lana, autodefentsa eta garapen pertsonala. Baina lehiaketak ere baditugu, eta jarduera edo partidarik baldin badago, aldez aurretik iragartzen ditugu."
           ],
           [
-            "Eta sasoi onean ez banago?",
-            "Ez da arazorik. Klaseak pixkanaka hobetzen lagunduko dizu, zure erritmoa errespetatuz."
+            "Zer gertatzen da forman ez banago?",
+            "Ondo dago hori. Klaseak pixkanaka hobetzen laguntzen dizu, zuk baino gehiago eskatu gabe."
           ],
           [
-            "Non entrenatzen dugu?",
-            "Tolosan entrenatzen dugu, Gipuzkoan. Ordutegien atalean kokapena eta Google Maps esteka dituzu."
+            "Non entrenatzen gara?",
+            "Gainberrin entrenatzen dugu, Tolosa, GIpuzkoan. Kokapena eta Google Maps-erako esteka ordutegien atalean daude."
           ],
           [
-            "Haurrek eta helduek probatu dezakete?",
-            "Bai. Haur taldeak eta helduentzako taldeak ditugu, bakoitzaren helburu eta erritmora egokituta."
+            "Haurrek eta helduek probatu al dezakete?",
+            "Bai. Haurren eta helduen klaseak ditugu, talde bakoitzerako egokiak diren helburu eta erritmoekin."
           ],
           [
-            "Lehen egunean nire seme-alabarekin egon naiteke?",
-            "Bai. Familiek ingurunea ezagutu nahi izatea normala da; klasea nola antolatzen den azalduko dizugu."
+            "Nire semearekin edo alabarekin joan naiteke lehenengo egunean?",
+            "Bai. Ulertzen dugu familiek ingurunea ezagutu nahi dutela hasi aurretik; azalduko dizuegu nola funtzionatzen duen klaseak."
           ],
           [
-            "Iraupen-konpromisorik edo matrikularik dago?",
-            "Lehen hilabetea konpromisorik gabe probatzeko da. Ondoren, klubaren aukerak argi azalduko dizkizugu erabaki aurretik."
+            "Ba al dago gutxieneko izen-emate epea edo derrigorrezko izena ematea?",
+            "Ez, ez dago gutxieneko iraupenik edo izen-emate kuotarik. Lehenengo hilabetea inolako konpromisorik gabeko proba da. Baina klubaren aukera guztiak argi eta garbi azalduko dizkizugu hasieratik erabakia hartu aurretik."
           ]
         ]
       },
@@ -2346,11 +2346,11 @@ window.SKBC_CONTENT = {
       },
       "schedule": {
         "eyebrow": "Schedule and location",
-        "title": "Come and try in Tolosa",
-        "text": "Write to us before coming and we will tell you the best day to try, what to bring and how the free first month works.",
-        "kids": "Children · ages 5-13 · Tuesday and Thursday · 17:30-18:30",
-        "adults": "Teens and adults · 13+ · Tuesday and Thursday · 18:30-20:00",
-        "place": "Garmendiola aldapa 2, Tolosa",
+        "title": "Come and try in Toulouse",
+        "text": "Write us before you come and we'll let you know the best day to try, what to bring, and how the first free month works.",
+        "kids": "Children · 5-13 years · Tuesday and Thursday · 17:30-18:30",
+        "adults": "Youth and adults · 13+ years · Tuesday and Thursday · 18:30-20:00",
+        "place": "GAINBERRI      Garmendiola aldapa 2, Toulouse",
         "maps": "Open in Google Maps"
       },
       "calendar": {
@@ -2372,29 +2372,29 @@ window.SKBC_CONTENT = {
       "media": {
         "eyebrow": "Photos and videos",
         "title": "Activities, seminars and club life",
-        "text": "Access galleries of seminars, training sessions, trips, meetings and special club activities.",
+        "text": "Access galleries of seminars, trainings, trips, meetings and special club activities.",
         "videos": "Videos",
         "galleryButton": "Open gallery"
       },
       "social": {
         "eyebrow": "News and social media",
         "title": "FOLLOW US ON INSTAGRAM, FACEBOOK AND YOUTUBE",
-        "text": "If you want to stay up to date with all the latest news and updates, follow us on our social media!",
+        "text": "IF YOU WANT TO STAY UP TO DATE WITH ALL THE NEWS AND DEVELOPMENTS FOLLOW US ON OUR SOCIAL NETWORKS!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
         "youtube": "YouTube · videos"
       },
       "merch": {
         "eyebrow": "Merchandising",
-        "title": "SKBC reservation shop",
-        "text": "Reserve club clothing or choose another JHK catalogue reference to personalise. There is no online payment: we receive your request and contact you to confirm availability, size, colour, final price and payment method.",
+        "title": "SKBC Booking Store",
+        "text": "Book clothes from the club or choose another reference from the JHK catalogue to personalise it. It is not paid online: we received your request and contacted you to confirm availability, size, color, final price and payment method.",
         "items": [
           "Printed T-shirt · 10€",
           "Printed polo · 15€",
           "Embroidered garment · 30€",
           "Embroidered hoodie · 35€"
         ],
-        "catalog": "View JHK catalogue",
+        "catalog": "See catalogue",
         "base": "JHK base",
         "ref": "REF",
         "personalization": "Customisation",
@@ -2414,9 +2414,9 @@ window.SKBC_CONTENT = {
         "paymentDojo": "I will pay at the dojo",
         "paymentContact": "Contact me to arrange payment",
         "comments": "Notes",
-        "send": "Send reservation",
+        "send": "Booking Submission",
         "customTitle": "Would you like another JHK catalogue item?",
-        "customText": "The full JHK catalogue can be used as a base. Add the reference or paste the link, and we will confirm whether it can be personalised for SKBC GIPUZKOA.",
+        "customText": "The entire JHK catalogue can be consulted as a basis. Indicate the reference or paste the link, and we will confirm if it can be customized with SKBC GIPUZKOA.",
         "customReference": "JHK reference or link",
         "customDetails": "Personalisation and details",
         "noteTitle": "Important",
@@ -2435,95 +2435,95 @@ window.SKBC_CONTENT = {
       },
       "contact": {
         "eyebrow": "Contact",
-        "title": "Try Shorinji Kempo with no commitment",
-        "text": "Write to us on WhatsApp and we will help you get started.",
+        "title": "Try Shorinji Kempo with no obligation",
+        "text": "Write to us on WhatsApp and we'll help you get started.",
         "name": "Name",
-        "phone": "Phone",
-        "email": "Email",
+        "phone": "Phone no.",
+        "email": "E-mail",
         "interest": "I am interested in",
         "message": "Message",
         "submit": "Send by WhatsApp",
         "options": [
-          "Children's class",
+          "CHILDREN'S CLASS",
           "Adult class",
-          "First month free",
-          "General information"
+          "First Month For Free",
+          "Background information"
         ]
       },
       "news": {
         "eyebrow": "News",
         "title": "Upcoming news",
-        "text": "Club notices, updates and important communications.",
-        "empty": "No news published"
+        "text": "Important club announcements, news and communications.",
+        "empty": "News Posts"
       },
       "testimonials": {
         "eyebrow": "Testimonials",
-        "title": "Real club testimonials",
-        "text": "Get excited and tell others about your experience as a family member or club member.",
+        "title": "Real Club Testimonials",
+        "text": "Go ahead and tell others about your experience as a family member or club member.",
         "items": [
           [
-            "Padre/madre",
-            "Apuntamos a nuestro hijo con 5 años y estamos encantados con la experiencia. Al principio teníamos dudas sobre cómo llevaría clases de una hora, pero el mes de prueba nos permitió comprobar que se adaptó perfectamente.\nLas clases son dinámicas, entretenidas y están muy bien adaptadas a los niños, que aprenden mientras se divierten. Queremos destacar especialmente el cariño, la paciencia y la dedicación con los que tratan a cada alumno, haciendo que se sientan cómodos y valorados desde el primer día.\nAdemás, el trato con las familias es excelente y hacen un gran esfuerzo por crear un ambiente cercano y un verdadero sentimiento de comunidad.\nLo recomendamos sin ninguna duda.",
-            "ENKI",
+            "Parent",
+            "QUERY LENGTH LIMIT EXCEEDED. MAX ALLOWED QUERY : 500 CHARS",
+            "Enki",
             ""
           ],
           [
-            "Practicante",
-            "Me gustan mucho las clases. Me hacen tener motivación y determinación para seguir adelante. El respeto que se tiene entre todos los alumnos y maestros es increíble.  Muy recomendable ⭐️⭐️⭐️⭐️⭐️.",
+            "Intern",
+            "I really like classes. They make me have motivation and determination to keep going. The respect that you have among all students and teachers is incredible.  Highly recommended⭐️⭐️⭐️⭐️⭐️.",
             "Estrellita",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Clases muy entrenidas y divertidas.",
+            "Adult student",
+            "Very trained and fun classes.",
             "Cameron",
             "",
-            5
+            "5"
           ],
           [
-            "Practicante",
-            "Las clases están genial. Me divierto y aprendo al mismo tiempo. Es totalmente recomendable.",
+            "Intern",
+            "Classes are great. I have fun and learn at the same time. It is highly recommended.",
             "unodostres",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Se está de maravilla, enseñan bien, explicaciones detalladas entendibles... Una maravilla",
+            "Adult student",
+            "It's wonderful, they teach well, detailed explanations understandable... A wonder",
             "Ekaitz",
             "",
-            5
+            "5"
           ],
           [
-            "Padre/madre",
-            "me gustan mucho las clases,  me lo paso genial y también me gustan los smints del sensei. 🥹",
-            "Arene",
+            "Parent",
+            "i really like classes,  I have a great time and I also like sensei smints. 🥹",
+            "Arenas",
             "",
-            5
+            "5"
           ],
           [
-            "Alumno adulto",
-            "Un club para encontrarse a uno mismo a traves del shorinji kempo, aprender valores y compartir experiencias con los compañeros...",
+            "Adult student",
+            "A club to find yourself through the kempo shorinji, learn values and share experiences with colleagues...",
             "Uxue",
             "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
-            5
+            "5"
           ]
         ],
-        "empty": "No testimonials yet.",
-        "formTitle": "Send a testimonial",
+        "empty": "No testimonials at the moment.",
+        "formTitle": "Submit a testimonial",
         "name": "Name",
         "role": "Relationship with the club",
         "roles": [
           "Parent",
           "Adult student",
-          "Practitioner",
+          "Intern",
           "Other"
         ],
-        "message": "Testimonial",
-        "consent": "By sending it, you agree that SKBC GIPUZKOA publishes it on the web.",
-        "submit": "Send testimonial by WhatsApp",
-        "thanks": "Thank you for sharing your experience with us with others!",
+        "message": "Expert testimony ",
+        "consent": "By submitting it, you agree that SKBC GIPUZKOA will publish it on the website.",
+        "submit": "Submit Testimonial",
+        "thanks": "Thank you for sharing your experience with us!",
         "photo": "Optional photo",
         "rating": "Rating",
         "readFull": "Read full",
@@ -2532,48 +2532,48 @@ window.SKBC_CONTENT = {
       },
       "faq": {
         "eyebrow": "FAQ",
-        "title": "Before coming to try a class",
-        "text": "Answers to common questions so you can come with confidence.",
+        "title": "Before you come to try",
+        "text": "We solve the most common doubts so you can come with peace of mind.",
         "items": [
           [
             "Do I need previous experience?",
-            "No. We start from the basics and adapt practice to your age, fitness and pace."
+            "No. We start from the basics and adapt the practice to your age, fitness and pace."
           ],
           [
             "Am I too old to start?",
-            "No. Many people start as adults and progress step by step. The important thing is wanting to learn."
+            "No. There are people who start as adults and progress little by little. The important thing is to come with a desire to learn."
           ],
           [
-            "What clothes do I need to try?",
-            "For the first month, comfortable sports clothing is enough. If you decide to continue, we will guide you on uniform and equipment."
+            "What clothes do I need to try on?",
+            "Comfortable sportswear is enough for the first month. If you decide to continue, we guide you with the uniform and material."
           ],
           [
             "Can I try for free?",
-            "Yes. The first month is free and with no commitment, so you can get to know the atmosphere, the group and the training style."
+            "Yes. The first month is free and without obligation so you can get to know the atmosphere, the group and the way to train."
           ],
           [
             "Is there competition?",
-            "The club’s main focus is educational: technique, cooperation, self-defence and personal development. If there are activities or events, we explain them in advance."
+            "The main focus of the club is formative: technical, cooperation, self-defense and personal development. But we also have competitions and if there are activities or meetings, they are explained in advance."
           ],
           [
-            "What if I am not fit?",
-            "That is fine. Class helps you improve little by little, respecting your pace."
+            "What if I'm out of shape?",
+            "It's okay. The class helps you improve little by little, without demanding more than you can take on."
           ],
           [
             "Where do we train?",
-            "We train in Tolosa, Gipuzkoa. The schedule section includes the location and Google Maps link."
+            "We trained in Gainberri, Toulouse, Gipuzkoa. In the hours section you have the location and the link to Google Maps."
           ],
           [
-            "Can kids and adults try?",
-            "Yes. We have children’s classes and adult classes, with suitable goals and pace for each group."
+            "Can you try children and adults?",
+            "Yes. We have kindergarten classes and adult classes, with goals and pace appropriate to each group."
           ],
           [
-            "Can I accompany my child on the first day?",
-            "Yes. We understand families may want to see the environment first; we will explain how the class works."
+            "Can I accompany my son or daughter on the first day?",
+            "Yes. We understand that families want to know the environment before they start; we will explain how the class works."
           ],
           [
-            "Is there a mandatory membership period or registration fee?",
-            "The first month is for trying with no commitment. After that, we explain the club options clearly before you decide."
+            "Is there compulsory permanence or registration?",
+            "No, there is no permanence or enrollment. The first month is for no-obligation testing. But from the beginning we explain the options of the club clearly before deciding."
           ]
         ]
       },
