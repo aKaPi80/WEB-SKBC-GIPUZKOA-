@@ -1089,36 +1089,113 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Ventureira",
             "3º DAN",
-            "Aporta una mirada madura, técnica y sensata al entrenamiento."
+            "Aporta una mirada madura, técnica y sensata al entrenamiento.",
+            ""
           ],
           [
             "Andoni Domínguez",
             "3º DAN",
-            "Transmite experiencia, cercanía y comprensión natural del arte."
+            "Transmite experiencia, cercanía y comprensión natural del arte.",
+            ""
           ]
         ],
         "members": [
-          "Oskar Mateos · 2º DAN",
-          "Asier Azurmendi · 1º DAN",
-          "Igone Lasa · 1º DAN",
-          "Iñaki Iturrioz · 1º DAN",
-          "Bharat Martin · 1º DAN",
-          "Pablo Sánchez · 1º DAN",
-          "Jorge Redondo · 1º DAN"
+          [
+            "Oskar Mateos · 2º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Igone Lasa · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Bharat Martin · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Jorge Redondo · 1º DAN",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "board": {
         "eyebrow": "Directiva",
         "title": "Directiva SKBC GIPUZKOA",
         "members": [
-          "Oskar Mateos · Presidente",
-          "Iñaki Ventureira · Vicepresidente",
-          "Andoni Domínguez · Tesorero",
-          "Pablo Sánchez · Secretario",
-          "Iñaki Iturrioz · Vocal",
-          "Uxue Garikano · Vocal",
-          "Asier Azurmendi · Vocal",
-          "Álvaro Calvo · Vocal"
+          [
+            "Oskar Mateos · Presidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Ventureira · Vicepresidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Andoni Domínguez · Tesorero",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · Secretario",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Uxue Garikano · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo · Vocal",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "learn": {
@@ -1364,7 +1441,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "¿Hay competición?",
-            "El enfoque principal del club es formativo: técnica, cooperación, defensa personal y desarrollo personal. Si hay actividades o encuentros, se explican con tiempo."
+            "El enfoque principal del club es formativo: técnica, cooperación, defensa personal y desarrollo personal. Pero tambien tenemos competiciones y si hay actividades o encuentros, se explican con tiempo."
           ],
           [
             "¿Y si no estoy en forma?",
@@ -1372,7 +1449,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "¿Dónde entrenamos?",
-            "Entrenamos en Tolosa, Gipuzkoa. En la sección de horarios tienes la ubicación y el enlace a Google Maps."
+            "Entrenamos en Gainberri, Tolosa, Gipuzkoa. En la sección de horarios tienes la ubicación y el enlace a Google Maps."
           ],
           [
             "¿Pueden probar niños y adultos?",
@@ -1384,7 +1461,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "¿Hay permanencia o matrícula obligatoria?",
-            "El primer mes es para probar sin compromiso. Después te explicamos las opciones del club con claridad antes de decidir."
+            "No, no hay permanencia o matricula. El primer mes es para probar sin compromiso. Pero desde el principio te explicamos las opciones del club con claridad antes de decidir."
           ]
         ]
       },
@@ -1568,36 +1645,113 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Ventureira",
             "3. DAN",
-            "Entrenamendura ikuspegi heldu, tekniko eta zentzuzkoa ekartzen du."
+            "Entrenamendura ikuspegi heldu, tekniko eta zentzuzkoa ekartzen du.",
+            ""
           ],
           [
             "Andoni Domínguez",
             "3. DAN",
-            "Esperientzia, hurbiltasuna eta artearen ulermen naturala transmititzen ditu."
+            "Esperientzia, hurbiltasuna eta artearen ulermen naturala transmititzen ditu.",
+            ""
           ]
         ],
         "members": [
-          "Oskar Mateos · 2. DAN",
-          "Asier Azurmendi · 1. DAN",
-          "Igone Lasa · 1. DAN",
-          "Iñaki Iturrioz · 1. DAN",
-          "Bharat Martin · 1. DAN",
-          "Pablo Sánchez · 1. DAN",
-          "Jorge Redondo · 1. DAN"
+          [
+            "Oskar Mateos · 2º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Igone Lasa · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Bharat Martin · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Jorge Redondo · 1º DAN",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "board": {
         "eyebrow": "Zuzendaritza",
         "title": "SKBC GIPUZKOAko zuzendaritza",
         "members": [
-          "Oskar Mateos · Presidentea",
-          "Iñaki Ventureira · Presidenteordea",
-          "Andoni Domínguez · Diruzaina",
-          "Pablo Sánchez · Idazkaria",
-          "Iñaki Iturrioz · Bokala",
-          "Uxue Garikano · Bokala",
-          "Asier Azurmendi · Bokala",
-          "Álvaro Calvo · Bokala"
+          [
+            "Oskar Mateos · Presidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Ventureira · Vicepresidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Andoni Domínguez · Tesorero",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · Secretario",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Uxue Garikano · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo · Vocal",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "learn": {
@@ -2047,36 +2201,113 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Ventureira",
             "3rd DAN",
-            "Brings a mature, technical and sensible view to training."
+            "Brings a mature, technical and sensible view to training.",
+            ""
           ],
           [
             "Andoni Domínguez",
             "3rd DAN",
-            "Transmits experience, closeness and a natural understanding of the art."
+            "Transmits experience, closeness and a natural understanding of the art.",
+            ""
           ]
         ],
         "members": [
-          "Oskar Mateos · 2nd DAN",
-          "Asier Azurmendi · 1st DAN",
-          "Igone Lasa · 1st DAN",
-          "Iñaki Iturrioz · 1st DAN",
-          "Bharat Martin · 1st DAN",
-          "Pablo Sánchez · 1st DAN",
-          "Jorge Redondo · 1st DAN"
+          [
+            "Oskar Mateos · 2º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Igone Lasa · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Bharat Martin · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · 1º DAN",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Jorge Redondo · 1º DAN",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "board": {
         "eyebrow": "Board",
         "title": "SKBC GIPUZKOA board",
         "members": [
-          "Oskar Mateos · President",
-          "Iñaki Ventureira · Vice-president",
-          "Andoni Domínguez · Treasurer",
-          "Pablo Sánchez · Secretary",
-          "Iñaki Iturrioz · Board member",
-          "Uxue Garikano · Board member",
-          "Asier Azurmendi · Board member",
-          "Álvaro Calvo · Board member"
+          [
+            "Oskar Mateos · Presidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Ventureira · Vicepresidente",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Andoni Domínguez · Tesorero",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Pablo Sánchez · Secretario",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Uxue Garikano · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi · Vocal",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo · Vocal",
+            "",
+            "",
+            ""
+          ]
         ]
       },
       "learn": {
