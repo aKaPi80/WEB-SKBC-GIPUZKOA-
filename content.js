@@ -831,13 +831,10 @@ window.SKBC_CONTENT = {
       "gallery": [
         "assets/optimized/1780604072168-grupo-ninos.webp",
         "assets/optimized/1780604082854-adultos.webp",
-        "assets/optimized/1780684453801-hero-1.webp",
-        "assets/optimized/1780684830629-chatgpt-image-5-jun-2026-20-40-02.webp",
-        "assets/optimized/1780685194448-esta-es-la-ultima.webp",
-        "assets/optimized/1780687199393-img-0434.webp",
         "assets/optimized/1781132391840-img-0427.webp",
-        "assets/optimized/1780604041486-manji.webp",
-        "assets/uploads/1781182090114-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp"
+        "assets/uploads/1781182090114-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp",
+        "assets/uploads/1781183794312-43ea90f9-b941-414c-9d3b-6fc876bd3140.webp",
+        "assets/uploads/1781183804405-img-20260606-wa0032.webp"
       ],
       "profiles": [
         "assets/optimized/alvaro-calvo.webp",
