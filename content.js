@@ -155,6 +155,11 @@ window.SKBC_CONTENT = {
               "code": "NY",
               "name": "Navy",
               "hex": "#17233f"
+            },
+            {
+              "code": "RD",
+              "name": "Rojo",
+              "hex": "#c52727"
             }
           ]
         },
@@ -177,6 +182,11 @@ window.SKBC_CONTENT = {
           ],
           "colors": [
             {
+              "code": "WH",
+              "name": "Blanco",
+              "hex": "#ffffff"
+            },
+            {
               "code": "BK",
               "name": "Negro",
               "hex": "#111111"
@@ -187,9 +197,9 @@ window.SKBC_CONTENT = {
               "hex": "#17233f"
             },
             {
-              "code": "GY",
-              "name": "Gris",
-              "hex": "#8f949b"
+              "code": "RD",
+              "name": "Rojo",
+              "hex": "#c52727"
             }
           ]
         },
@@ -212,6 +222,11 @@ window.SKBC_CONTENT = {
           ],
           "colors": [
             {
+              "code": "WH",
+              "name": "Blanco",
+              "hex": "#ffffff"
+            },
+            {
               "code": "BK",
               "name": "Negro",
               "hex": "#111111"
@@ -222,9 +237,9 @@ window.SKBC_CONTENT = {
               "hex": "#17233f"
             },
             {
-              "code": "GY",
-              "name": "Gris",
-              "hex": "#8f949b"
+              "code": "RD",
+              "name": "Rojo",
+              "hex": "#c52727"
             }
           ]
         }
