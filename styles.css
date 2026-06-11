@@ -1798,6 +1798,40 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 }
 .person-card strong { display: block; font-size: 20px; line-height: 1.12; }
 .person-grid .person-card { min-height: 112px; }
+.person-carousel {
+  max-width: 1120px;
+  margin: 34px auto 0;
+  overflow: hidden;
+  padding: 8px 2px 18px;
+}
+.person-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+}
+.person-carousel.is-animated .person-track {
+  animation: person-scroll 54s linear infinite;
+}
+.person-carousel.is-animated:hover .person-track {
+  animation-play-state: paused;
+}
+@keyframes person-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.person-card--carousel {
+  width: clamp(210px, 20vw, 280px);
+  min-height: 0;
+  flex: 0 0 auto;
+  padding: 14px;
+}
+.person-card--carousel .person-card__photo {
+  aspect-ratio: 1;
+  margin-bottom: 12px;
+}
+.person-card--carousel strong {
+  font-size: 19px;
+}
 .team-feature {
   display: grid;
   grid-template-columns: minmax(260px, 420px) minmax(0, 1fr);

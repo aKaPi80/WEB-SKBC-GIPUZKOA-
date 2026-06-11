@@ -1110,7 +1110,7 @@ function personImage(profile, index) {
   return "";
 }
 
-function personButton(person, group, index) {
+function personButton(person, group, index, extraClass = "") {
   const profile = parsePerson(person);
   const image = personImage(profile, index);
   const data = JSON.stringify({
@@ -1119,11 +1119,22 @@ function personButton(person, group, index) {
     text: profileText(profile, group),
     image
   });
-  return `<button class="person-card" type="button" data-profile='${escapeHtml(data)}'>
+  return `<button class="person-card ${extraClass}" type="button" data-profile='${escapeHtml(data)}'>
     ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" /></span>` : ""}
     <span>${profile.role}</span>
     <strong>${profile.name}</strong>
   </button>`;
+}
+
+function personCarousel(items = [], group = "technical", startIndex = 0) {
+  const people = Array.isArray(items) ? items.filter(Boolean) : [];
+  if (!people.length) return "";
+  const loopPeople = people.length > 1 ? [...people, ...people] : people;
+  return `<div class="person-carousel ${people.length > 1 ? "is-animated" : ""}">
+    <div class="person-track">
+      ${loopPeople.map((item, index) => personButton(item, group, startIndex + (index % people.length), "person-card--carousel")).join("")}
+    </div>
+  </div>`;
 }
 
 function absoluteUrl(path = "") {
@@ -1509,13 +1520,12 @@ function render() {
           <p>${copy.technicalTeam.groupText || copy.technicalTeam.text}</p>
         </div>
       </div>
-      <div class="grid-2 person-grid">${copy.technicalTeam.leads.map((item, index) => personButton(item, "technical", index)).join("")}</div>
-      <div class="profile-list">${copy.technicalTeam.members.map((item, index) => personButton(item, "technical", index + copy.technicalTeam.leads.length)).join("")}</div>
+      ${personCarousel([...(copy.technicalTeam.leads || []), ...(copy.technicalTeam.members || [])], "technical")}
     </section>
 
     <section class="section">
       <div class="section-heading"><p class="eyebrow">${copy.board.eyebrow}</p><h2>${copy.board.title}</h2></div>
-      <div class="profile-list">${copy.board.members.map((item, index) => personButton(item, "board", index)).join("")}</div>
+      ${personCarousel(copy.board.members || [], "board")}
     </section>
 
     ${learnSection(settings, copy)}
