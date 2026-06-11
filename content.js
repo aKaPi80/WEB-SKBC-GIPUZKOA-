@@ -1,5 +1,5 @@
 window.SKBC_CONTENT = {
-  "publishedAt": "2026-06-11-merch-reservation-shop",
+  "publishedAt": "2026-06-11-seo-performance-pass",
   "settings": {
     "defaultLanguage": "es",
     "whatsapp": "34657701165",
@@ -89,7 +89,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1780564872665-camiseta-blanca.png",
+          "image": "assets/optimized/1780564872665-camiseta-blanca.webp",
           "price": "10",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -129,7 +129,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1781135899632-polooo.png",
+          "image": "assets/optimized/1781135899632-polooo.webp",
           "price": "15",
           "personalization": "Impresión SKBC",
           "sizes": [
@@ -169,7 +169,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1780565070624-sudadera-negra.png",
+          "image": "assets/optimized/1780565070624-sudadera-negra.webp",
           "price": "30",
           "personalization": "Bordado SKBC",
           "sizes": [
@@ -209,7 +209,7 @@ window.SKBC_CONTENT = {
           "jhkName": "Prenda base JHK",
           "jhkRef": "REF pendiente",
           "jhkUrl": "https://www.jhktshirt.com/es/",
-          "image": "assets/uploads/1780565086940-sudadera-negra-kanji.png",
+          "image": "assets/optimized/1780565086940-sudadera-negra-kanji.webp",
           "price": "35",
           "personalization": "Bordado SKBC",
           "sizes": [
@@ -824,44 +824,44 @@ window.SKBC_CONTENT = {
       }
     ],
     "images": {
-      "hero": "assets/uploads/1780955986965-chatgpt-image-8-jun-2026-23-59-12.png",
-      "kids": "assets/uploads/1780604072168-grupo-ninos.jpg",
-      "adults": "assets/uploads/1780604082854-adultos.jpg",
-      "learn": "assets/uploads/1781132391840-img-0427.jpg",
+      "hero": "assets/optimized/1780955986965-chatgpt-image-8-jun-2026-23-59-12.webp",
+      "kids": "assets/optimized/1780604072168-grupo-ninos.webp",
+      "adults": "assets/optimized/1780604082854-adultos.webp",
+      "learn": "assets/optimized/1781132391840-img-0427.webp",
       "gallery": [
-        "assets/people/equipo-tecnico.jpg",
-        "assets/people/alvaro-calvo.jpg",
-        "assets/people/inaki-ventureira.png",
-        "assets/people/andoni-dominguez.png",
-        "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
+        "assets/optimized/equipo-tecnico.webp",
+        "assets/optimized/alvaro-calvo.webp",
+        "assets/optimized/inaki-ventureira.webp",
+        "assets/optimized/andoni-dominguez.webp",
+        "assets/optimized/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.webp"
       ],
       "profiles": [
-        "assets/people/alvaro-calvo.jpg",
-        "assets/people/inaki-ventureira.png",
-        "assets/people/andoni-dominguez.png",
-        "assets/people/equipo-tecnico.jpg",
-        "assets/people/oskar-mateos.png",
-        "assets/people/asier-azurmendi.jpg",
-        "assets/people/igone-lasa.png",
-        "assets/people/inaki-iturrioz.jpg",
-        "assets/people/bharat-martin.png",
-        "assets/people/pablo-sanchez.png",
-        "assets/people/uxue-garikano.jpg",
-        "assets/people/jorge-redondo.jpg"
+        "assets/optimized/alvaro-calvo.webp",
+        "assets/optimized/inaki-ventureira.webp",
+        "assets/optimized/andoni-dominguez.webp",
+        "assets/optimized/equipo-tecnico.webp",
+        "assets/optimized/oskar-mateos.webp",
+        "assets/optimized/asier-azurmendi.webp",
+        "assets/optimized/igone-lasa.webp",
+        "assets/optimized/inaki-iturrioz.webp",
+        "assets/optimized/bharat-martin.webp",
+        "assets/optimized/pablo-sanchez.webp",
+        "assets/optimized/uxue-garikano.webp",
+        "assets/optimized/jorge-redondo.webp"
       ],
       "people": {
-        "alvaro": "assets/people/alvaro-calvo.jpg",
-        "inaki": "assets/people/inaki-ventureira.png",
-        "andoni": "assets/uploads/1780961917548-andonii.jpg",
-        "oskar": "assets/people/oskar-mateos.png",
-        "asier": "assets/people/asier-azurmendi.jpg",
-        "igone": "assets/people/igone-lasa.png",
-        "iturrioz": "assets/people/inaki-iturrioz.jpg",
-        "bharat": "assets/people/bharat-martin.png",
-        "pablo": "assets/people/pablo-sanchez.png",
-        "uxue": "assets/uploads/1780960891857-uxue.jpg",
-        "jorge": "assets/people/jorge-redondo.jpg",
-        "technicalTeam": "assets/uploads/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.jpg"
+        "alvaro": "assets/optimized/alvaro-calvo.webp",
+        "inaki": "assets/optimized/inaki-ventureira.webp",
+        "andoni": "assets/optimized/1780961917548-andonii.webp",
+        "oskar": "assets/optimized/oskar-mateos.webp",
+        "asier": "assets/optimized/asier-azurmendi.webp",
+        "igone": "assets/optimized/igone-lasa.webp",
+        "iturrioz": "assets/optimized/inaki-iturrioz.webp",
+        "bharat": "assets/optimized/bharat-martin.webp",
+        "pablo": "assets/optimized/pablo-sanchez.webp",
+        "uxue": "assets/optimized/1780960891857-uxue.webp",
+        "jorge": "assets/optimized/jorge-redondo.webp",
+        "technicalTeam": "assets/optimized/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.webp"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",
@@ -933,8 +933,8 @@ window.SKBC_CONTENT = {
   "languages": {
     "es": {
       "languageName": "Español",
-      "seoTitle": "Shorinji Kempo en Tolosa | SKBC GIPUZKOA",
-      "seoDescription": "Clases de Shorinji Kempo en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
+      "seoTitle": "Shorinji Kempo en Tolosa | Artes marciales y defensa personal",
+      "seoDescription": "Clases de Shorinji Kempo, artes marciales y defensa personal en Tolosa para niños, jóvenes y adultos. Primer mes gratis para probar sin compromiso.",
       "nav": [
         "Niños",
         "Adultos",
@@ -1121,7 +1121,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Qué aprenden nuestros alumnos",
         "title": "Técnica, filosofía y confianza paso a paso",
-        "text": "En SKBC GIPUZKOA el aprendizaje combina práctica física, defensa personal, respeto y trabajo en equipo. Cada alumno avanza desde lo básico, con acompañamiento cercano y objetivos adaptados a su edad y nivel.",
+        "text": "En SKBC GIPUZKOA aprenderás Shorinji Kempo en Tolosa de forma progresiva: técnica, defensa personal, autocontrol, filosofía y cooperación. El objetivo no es solo entrenar más fuerte, sino ganar confianza y entender lo que practicas.",
         "items": [
           [
             "Técnica",
@@ -1334,7 +1334,9 @@ window.SKBC_CONTENT = {
         "thanks": "Gracias por contar a los demas tu experiencia con nosotros!",
         "photo": "Foto opcional",
         "rating": "Valoracion",
-        "readFull": "Leer completo"
+        "readFull": "Leer completo",
+        "cta": "Comparte tu experiencia",
+        "formIntro": "Puedes enviar un testimonio real. Quedará pendiente hasta que el club lo revise y lo apruebe."
       },
       "faq": {
         "eyebrow": "Preguntas frecuentes",
@@ -1342,36 +1344,76 @@ window.SKBC_CONTENT = {
         "text": "Resolvemos las dudas mas habituales para que puedas venir con tranquilidad.",
         "items": [
           [
-            "Necesito experiencia?",
-            "No. Puedes empezar desde cero. Adaptamos el entrenamiento a tu nivel y te acompañamos paso a paso."
+            "¿Necesito experiencia previa?",
+            "No. Empezamos desde lo básico y adaptamos la práctica a tu edad, forma física y ritmo."
           ],
           [
-            "Soy demasiado mayor?",
-            "No. Hay adultos que empiezan sin experiencia previa. Lo importante es entrenar con constancia y a tu ritmo."
+            "¿Soy demasiado mayor para empezar?",
+            "No. Hay personas que empiezan de adultas y progresan poco a poco. Lo importante es venir con ganas de aprender."
           ],
           [
-            "Que ropa necesito?",
-            "Para probar basta con ropa deportiva cómoda y una botella de agua. Mas adelante te explicaremos el material del club."
+            "¿Qué ropa necesito para probar?",
+            "Para el primer mes basta con ropa deportiva cómoda. Si decides continuar, te orientamos con el uniforme y el material."
           ],
           [
-            "Puedo probar gratis?",
-            "Si. El primer mes es gratis para que puedas conocer el grupo, las clases y el ambiente sin compromiso."
+            "¿Puedo probar gratis?",
+            "Sí. El primer mes es gratis y sin compromiso para que puedas conocer el ambiente, el grupo y la forma de entrenar."
           ],
           [
-            "Hay competición?",
-            "El enfoque principal del club es la practica, la defensa personal, la cooperación y el desarrollo personal. Pero también tenemos un apartado en que podrás competir en kata,embu o combate (Randori)"
+            "¿Hay competición?",
+            "El enfoque principal del club es formativo: técnica, cooperación, defensa personal y desarrollo personal. Si hay actividades o encuentros, se explican con tiempo."
           ],
           [
-            "Y si no estoy en forma?",
-            "No pasa nada. La forma física mejora poco a poco con la practica. Nadie empieza sabiendo ni estando perfecto."
+            "¿Y si no estoy en forma?",
+            "No pasa nada. La clase te ayuda a mejorar poco a poco, sin exigirte más de lo que puedas asumir."
+          ],
+          [
+            "¿Dónde entrenamos?",
+            "Entrenamos en Tolosa, Gipuzkoa. En la sección de horarios tienes la ubicación y el enlace a Google Maps."
+          ],
+          [
+            "¿Pueden probar niños y adultos?",
+            "Sí. Tenemos clases infantiles y clases para adultos, con objetivos y ritmo adecuados a cada grupo."
+          ],
+          [
+            "¿Puedo acompañar a mi hijo o hija el primer día?",
+            "Sí. Entendemos que las familias quieran conocer el entorno antes de empezar; te explicaremos cómo funciona la clase."
+          ],
+          [
+            "¿Hay permanencia o matrícula obligatoria?",
+            "El primer mes es para probar sin compromiso. Después te explicamos las opciones del club con claridad antes de decidir."
           ]
         ]
+      },
+      "trial": {
+        "eyebrow": "Primer mes gratis",
+        "title": "Prueba Shorinji Kempo sin compromiso",
+        "text": "Ven durante un mes, conoce el dojo y decide con calma. Te indicamos qué día venir, qué traer y qué clase encaja mejor para niños, adultos o personas sin experiencia.",
+        "steps": [
+          [
+            "01",
+            "Escríbenos",
+            "Cuéntanos edad, experiencia y disponibilidad."
+          ],
+          [
+            "02",
+            "Ven a probar",
+            "Entrena a tu ritmo con acompañamiento cercano."
+          ],
+          [
+            "03",
+            "Decide sin presión",
+            "Si encaja contigo, seguimos. Si no, no pasa nada."
+          ]
+        ],
+        "cta": "Quiero probar gratis",
+        "secondary": "Ver horarios"
       }
     },
     "eu": {
       "languageName": "Euskera",
-      "seoTitle": "Shorinji Kempo Tolosan | SKBC GIPUZKOA",
-      "seoDescription": "Shorinji Kempo eskolak Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan, konpromisorik gabe probatzeko.",
+      "seoTitle": "Shorinji Kempo Tolosan | Arte martzialak eta defentsa pertsonala",
+      "seoDescription": "Shorinji Kempo, arte martzialak eta defentsa pertsonala Tolosan haur, gazte eta helduentzat. Lehen hilabetea doan, konpromisorik gabe probatzeko.",
       "nav": [
         "Haurrak",
         "Helduak",
@@ -1558,7 +1600,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "Zer ikasten dute ikasleek",
         "title": "Teknika, filosofia eta konfiantza pausoz pauso",
-        "text": "SKBC GIPUZKOAn ikaskuntzak praktika fisikoa, defentsa pertsonala, errespetua eta talde-lana uztartzen ditu. Ikasle bakoitzak oinarrietatik egiten du aurrera, hurbileko laguntzarekin eta bere adinera eta mailara egokitutako helburuekin.",
+        "text": "SKBC GIPUZKOAn Shorinji Kempo Tolosan modu progresiboan ikasiko duzu: teknika, defentsa pertsonala, autokontrola, filosofia eta lankidetza. Helburua ez da indartsuago entrenatzea bakarrik, baizik eta konfiantza irabaztea eta praktikatzen duzuna ulertzea.",
         "items": [
           [
             "Teknika",
@@ -1771,7 +1813,9 @@ window.SKBC_CONTENT = {
         "thanks": "Eskerrik asko zure esperientzia gurekin besteei kontatzeagatik!",
         "photo": "Aukerako argazkia",
         "rating": "Balorazioa",
-        "readFull": "Osorik irakurri"
+        "readFull": "Osorik irakurri",
+        "cta": "Partekatu zure esperientzia",
+        "formIntro": "Benetako testigantza bidal dezakezu. Klubak berrikusi eta onartu arte zain geratuko da."
       },
       "faq": {
         "eyebrow": "Ohiko galderak",
@@ -1779,36 +1823,76 @@ window.SKBC_CONTENT = {
         "text": "Ohiko zalantzak argitzen ditugu lasai etor zaitezen.",
         "items": [
           [
-            "Esperientzia behar dut?",
-            "Ez. Hutsetik has zaitezke. Entrenamendua zure mailara egokitzen dugu eta pausoz pauso laguntzen dizugu."
+            "Aurretik esperientzia behar dut?",
+            "Ez. Oinarrizkotik hasten gara eta praktika zure adinera, sasoi fisikora eta erritmora egokitzen dugu."
           ],
           [
-            "Zaharregia al naiz?",
-            "Ez. Heldu asko esperientziarik gabe hasten dira. Garrantzitsuena konstantziaz eta zure erritmoan entrenatzea da."
+            "Zaharregia naiz hasteko?",
+            "Ez. Helduaroan hasten diren pertsonak ere pixkanaka aurrera egiten dute. Garrantzitsuena ikasteko gogoa izatea da."
           ],
           [
-            "Zer arropa behar dut?",
-            "Probatzeko nahikoa da kirol-arropa erosoa eta ur botila bat ekartzea. Gero klubeko materiala azalduko dizugu."
+            "Zer arropa behar dut probatzeko?",
+            "Lehen hilabeterako kirol arropa erosoa nahikoa da. Jarraitu nahi baduzu, uniformeari eta materialari buruz lagunduko dizugu."
           ],
           [
             "Doan probatu dezaket?",
-            "Bai. Lehen hilabetea doakoa da taldea, eskolak eta giroa konpromisorik gabe ezagutzeko."
+            "Bai. Lehen hilabetea doakoa da eta konpromisorik gabe, giroa, taldea eta entrenatzeko modua ezagutzeko."
           ],
           [
             "Lehiaketarik dago?",
-            "Klubaren ikuspegi nagusia praktika, defentsa pertsonala, lankidetza eta garapen pertsonala dira. Hala ere badugu lehiatzeko atal batzuk bai kata,embu moduan eta borroka librean ere bai."
+            "Klubaren ikuspegi nagusia hezitzailea da: teknika, lankidetza, defentsa pertsonala eta garapen pertsonala. Jarduerak badaude, garaiz azalduko dira."
           ],
           [
-            "Eta sasoian ez banago?",
-            "Ez da ezer gertatzen. Forma fisikoa praktikarekin pixkanaka hobetzen da. Inor ez da dena jakinda hasten."
+            "Eta sasoi onean ez banago?",
+            "Ez da arazorik. Klaseak pixkanaka hobetzen lagunduko dizu, zure erritmoa errespetatuz."
+          ],
+          [
+            "Non entrenatzen dugu?",
+            "Tolosan entrenatzen dugu, Gipuzkoan. Ordutegien atalean kokapena eta Google Maps esteka dituzu."
+          ],
+          [
+            "Haurrek eta helduek probatu dezakete?",
+            "Bai. Haur taldeak eta helduentzako taldeak ditugu, bakoitzaren helburu eta erritmora egokituta."
+          ],
+          [
+            "Lehen egunean nire seme-alabarekin egon naiteke?",
+            "Bai. Familiek ingurunea ezagutu nahi izatea normala da; klasea nola antolatzen den azalduko dizugu."
+          ],
+          [
+            "Iraupen-konpromisorik edo matrikularik dago?",
+            "Lehen hilabetea konpromisorik gabe probatzeko da. Ondoren, klubaren aukerak argi azalduko dizkizugu erabaki aurretik."
           ]
         ]
+      },
+      "trial": {
+        "eyebrow": "Lehen hilabetea doan",
+        "title": "Probatu Shorinji Kempo konpromisorik gabe",
+        "text": "Hilabete batez etorri, dojoa ezagutu eta lasai erabaki. Zein egunetan etorri, zer ekarri eta zein talde egokitzen zaizun azalduko dizugu.",
+        "steps": [
+          [
+            "01",
+            "Idatzi guri",
+            "Adina, esperientzia eta ordutegi aukera kontatu."
+          ],
+          [
+            "02",
+            "Etorri probatzera",
+            "Zure erritmoan entrenatu, gertuko laguntzarekin."
+          ],
+          [
+            "03",
+            "Lasai erabaki",
+            "Zuretzat egokia bada, jarraituko dugu. Bestela, ez dago arazorik."
+          ]
+        ],
+        "cta": "Doan probatu nahi dut",
+        "secondary": "Ordutegiak ikusi"
       }
     },
     "en": {
       "languageName": "English",
-      "seoTitle": "Shorinji Kempo in Tolosa | SKBC GIPUZKOA",
-      "seoDescription": "Shorinji Kempo classes in Tolosa for children, teens and adults. First month free with no commitment.",
+      "seoTitle": "Shorinji Kempo in Tolosa | Martial arts and self-defence",
+      "seoDescription": "Shorinji Kempo, martial arts and self-defence classes in Tolosa for kids, teens and adults. First month free with no commitment.",
       "nav": [
         "Kids",
         "Adults",
@@ -1995,7 +2079,7 @@ window.SKBC_CONTENT = {
       "learn": {
         "eyebrow": "What students learn",
         "title": "Technique, philosophy and confidence step by step",
-        "text": "At SKBC GIPUZKOA, learning combines physical practice, self-defence, respect and teamwork. Each student progresses from the basics with close guidance and goals adapted to their age and level.",
+        "text": "At SKBC GIPUZKOA you learn Shorinji Kempo in Tolosa step by step: technique, self-defence, self-control, philosophy and cooperation. The aim is not only to train harder, but to gain confidence and understand what you practise.",
         "items": [
           [
             "Technique",
@@ -2208,7 +2292,9 @@ window.SKBC_CONTENT = {
         "thanks": "Thank you for sharing your experience with us with others!",
         "photo": "Optional photo",
         "rating": "Rating",
-        "readFull": "Read full"
+        "readFull": "Read full",
+        "cta": "Share your experience",
+        "formIntro": "You can send a real testimonial. It will stay pending until the club reviews and approves it."
       },
       "faq": {
         "eyebrow": "FAQ",
@@ -2216,30 +2302,70 @@ window.SKBC_CONTENT = {
         "text": "Answers to common questions so you can come with confidence.",
         "items": [
           [
-            "Do I need experience?",
-            "No. You can start from zero. Training is adapted to your level and you will be guided step by step."
+            "Do I need previous experience?",
+            "No. We start from the basics and adapt practice to your age, fitness and pace."
           ],
           [
-            "Am I too old?",
-            "No. Many adults begin with no previous experience. What matters is training consistently and at your own pace."
+            "Am I too old to start?",
+            "No. Many people start as adults and progress step by step. The important thing is wanting to learn."
           ],
           [
-            "What clothes do I need?",
-            "For a trial class, comfortable sportswear and a bottle of water are enough. Later we will explain the club equipment."
+            "What clothes do I need to try?",
+            "For the first month, comfortable sports clothing is enough. If you decide to continue, we will guide you on uniform and equipment."
           ],
           [
             "Can I try for free?",
-            "Yes. The first month is free so you can discover the group, classes and atmosphere with no commitment."
+            "Yes. The first month is free and with no commitment, so you can get to know the atmosphere, the group and the training style."
           ],
           [
             "Is there competition?",
-            "The club mainly focuses on practice, self-defence, cooperation and personal development."
+            "The club’s main focus is educational: technique, cooperation, self-defence and personal development. If there are activities or events, we explain them in advance."
           ],
           [
             "What if I am not fit?",
-            "That is perfectly fine. Fitness improves gradually with practice. Nobody starts knowing everything or being perfect."
+            "That is fine. Class helps you improve little by little, respecting your pace."
+          ],
+          [
+            "Where do we train?",
+            "We train in Tolosa, Gipuzkoa. The schedule section includes the location and Google Maps link."
+          ],
+          [
+            "Can kids and adults try?",
+            "Yes. We have children’s classes and adult classes, with suitable goals and pace for each group."
+          ],
+          [
+            "Can I accompany my child on the first day?",
+            "Yes. We understand families may want to see the environment first; we will explain how the class works."
+          ],
+          [
+            "Is there a mandatory membership period or registration fee?",
+            "The first month is for trying with no commitment. After that, we explain the club options clearly before you decide."
           ]
         ]
+      },
+      "trial": {
+        "eyebrow": "First month free",
+        "title": "Try Shorinji Kempo with no commitment",
+        "text": "Come for a month, meet the dojo and decide calmly. We will tell you which day to come, what to bring and which class fits best for kids, adults or complete beginners.",
+        "steps": [
+          [
+            "01",
+            "Message us",
+            "Tell us age, experience and availability."
+          ],
+          [
+            "02",
+            "Come and try",
+            "Train at your own pace with close guidance."
+          ],
+          [
+            "03",
+            "Decide calmly",
+            "If it fits, we continue. If not, no pressure."
+          ]
+        ],
+        "cta": "I want to try for free",
+        "secondary": "See schedule"
       }
     }
   }

@@ -566,6 +566,31 @@ function upcomingNewsSection(settings, copy) {
   </section>`;
 }
 
+function trialSection(copy) {
+  if (!copy.trial) return "";
+  const steps = copy.trial.steps || [];
+  return `<section class="section trial-section" id="primer-mes-gratis">
+    <div class="trial-layout">
+      <div class="trial-copy">
+        <p class="eyebrow">${copy.trial.eyebrow}</p>
+        <h2>${copy.trial.title}</h2>
+        <p>${copy.trial.text}</p>
+        <div class="trial-actions">
+          <a class="button" href="${whatsappLink(copy.trial.cta)}" target="_blank" rel="noreferrer">${copy.trial.cta}</a>
+          <a class="button secondary" href="#horarios">${copy.trial.secondary || copy.hero?.secondary || "Ver horarios"}</a>
+        </div>
+      </div>
+      <div class="trial-steps">
+        ${steps.map((step) => `<article>
+          <span>${escapeHtml(step[0] || "")}</span>
+          <h3>${escapeHtml(step[1] || "")}</h3>
+          <p>${escapeHtml(step[2] || "")}</p>
+        </article>`).join("")}
+      </div>
+    </div>
+  </section>`;
+}
+
 function testimonialsSection(copy) {
   const testimonials = copy.testimonials?.items || [];
   const carouselItems = testimonials.length > 2 ? [...testimonials, ...testimonials] : testimonials;
@@ -574,6 +599,7 @@ function testimonialsSection(copy) {
       <p class="eyebrow">${copy.testimonials.eyebrow || "Testimonios"}</p>
       <h2>${copy.testimonials.title}</h2>
       <p>${copy.testimonials.text}</p>
+      <a class="button secondary testimonial-jump" href="#testimonialForm">${copy.testimonials.cta || copy.testimonials.submit || "Enviar testimonio"}</a>
     </div>
     ${testimonials.length ? `<div class="testimonial-carousel ${testimonials.length > 2 ? "is-animated" : ""}" aria-label="${copy.testimonials.title}">
       <div class="testimonial-track">
@@ -591,8 +617,9 @@ function testimonialsSection(copy) {
       }).join("")}
       </div>
     </div>` : `<p class="testimonial-empty">${copy.testimonials.empty || "Sin testimonios por el momento."}</p>`}
-    <form class="testimonial-form">
+    <form class="testimonial-form" id="testimonialForm">
       <h3>${copy.testimonials.formTitle || copy.testimonials.title}</h3>
+      ${copy.testimonials.formIntro ? `<p>${copy.testimonials.formIntro}</p>` : ""}
       <label>${copy.testimonials.name || "Nombre"}<input name="name" required /></label>
       <label>${copy.testimonials.role || "Relación con el club"}<select name="role">${(copy.testimonials.roles || []).map((role) => `<option>${role}</option>`).join("")}</select></label>
       <label>${copy.testimonials.rating || "Valoración"}<select name="rating">${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} / 5</option>`).join("")}</select></label>
@@ -1381,6 +1408,8 @@ function render() {
       ${cardGrid(copy.shorinji.blocks, 4)}
     </section>
 
+    ${trialSection(copy)}
+
     <section class="section" id="ninos">
       <div class="split">
         <div class="split-media" style="background-image:url('${settings.images.kids}')"></div>
@@ -1471,6 +1500,9 @@ function render() {
 
     <section class="section" id="galeria">
       <div class="section-heading"><p class="eyebrow">${copy.media.eyebrow}</p><h2>${copy.media.title}</h2><p>${copy.media.text}</p></div>
+      ${galleryImages.length ? `<div class="photo-grid photo-grid--compact">
+        ${galleryImages.slice(0, 8).map((image) => `<div class="photo" style="background-image:url('${image}')"></div>`).join("")}
+      </div>` : ""}
       <div class="link-list">${(settings.galleryLinks || []).map((item) => `<a href="${item.url}" target="_blank" rel="noreferrer">${item.label}</a>`).join("")}</div>
     </section>
 
