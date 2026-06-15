@@ -1099,44 +1099,44 @@ window.SKBC_CONTENT = {
         ],
         "members": [
           [
-            "Oskar Mateos · 2º DAN",
-            "",
+            "Oskar Mateos",
+            "2º DAN",
+            "Oskar Mateos es el presidente de SKBC GIPUZKOA y lleva muchos años vinculado a la práctica del Shorinji Kempo. Dentro del club destaca por su seriedad, firmeza y criterio propio, aportando una presencia estable tanto en la organización como en la vida diaria del grupo.\n\nEn 2023 obtuvo el 2º Dan en un examen certificado por la BSKF, reflejo de una trayectoria basada en la constancia, el compromiso y el respeto por la disciplina.",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "1º DAN",
+            "Asier Azurmendi conoce el Shorinji Kempo desde hace muchos años y forma parte del grupo de practicantes veteranos del club. A lo largo de su trayectoria ha tenido que superar varias lesiones que le han impedido avanzar al ritmo que le habría gustado, pero nunca ha perdido su vínculo con la práctica ni su comprensión del arte marcial.\n\nSu experiencia, su criterio y su forma clara de distinguir lo correcto de lo incorrecto aportan al club una mirada madura, honesta y muy valiosa.",
+            ""
+          ],
+          [
+            "Igone Lasa",
+            "1º DAN",
+            "Igone Lasa está vinculada al Shorinji Kempo desde pequeña. Por diferentes momentos de la vida tuvo que detener su trayectoria durante un tiempo, pero cuando ha tenido la ocasión no ha dudado en volver al entrenamiento con ganas.\n\nEs una practicante siempre dispuesta a ayudar, cercana al grupo y constante en su aprendizaje. Participa de forma habitual en cursos del club y también en encuentros internacionales, manteniendo una actitud activa y comprometida con la práctica.",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz",
+            "1º DAN",
+            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
+            ""
+          ],
+          [
+            "Bharat Martin",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Igone Lasa · 1º DAN",
-            "",
+            "Pablo Sánchez",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Bharat Martin · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Jorge Redondo · 1º DAN",
-            "",
+            "Jorge Redondo",
+            "1º DAN",
             "",
             ""
           ]
@@ -1147,50 +1147,50 @@ window.SKBC_CONTENT = {
         "title": "Directiva SKBC GIPUZKOA",
         "members": [
           [
-            "Oskar Mateos · Presidente",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Iñaki Ventureira · Vicepresidente",
-            "",
+            "Oskar Mateos",
+            "Presidente",
             "",
             ""
           ],
           [
-            "Andoni Domínguez · Tesorero",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · Secretario",
-            "",
+            "Iñaki Ventureira",
+            "Vicepresidente",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · Vocal",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Uxue Garikano · Vocal",
-            "",
+            "Andoni Domínguez",
+            "Tesorero",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · Vocal",
-            "",
+            "Pablo Sánchez",
+            "Secretario",
             "",
             ""
           ],
           [
-            "Álvaro Calvo · Vocal",
+            "Iñaki Iturrioz",
+            "Vocal",
             "",
+            ""
+          ],
+          [
+            "Uxue Garikano",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo",
+            "Vocal",
             "",
             ""
           ]
@@ -1655,44 +1655,44 @@ window.SKBC_CONTENT = {
         ],
         "members": [
           [
-            "Oskar Mateos · 2º DAN",
-            "",
+            "Oskar Mateos",
+            "2. DAN",
+            "Oskar Mateos SKBC GIpuzkoaren presidentea da eta urte asko daramatza Shorinji Kempo praktikatzen. Klubaren barruan, bere seriotasunagatik, irmotasunagatik eta epaiketa independenteagatik da ezaguna, presentzia egonkorra eskainiz bai erakundean bai taldearen eguneroko bizitzan.&#10;&#10; 2023an 2. Dan lortu zuen BSKF-k ziurtatutako azterketa batean, koherentzian, konpromisoan eta diziplinarekiko errespetuan oinarritutako ibilbide baten isla.",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "1. DAN",
+            "Asier Azurmendik urte asko daramatza Shorinji Kempo ezagutzen eta klubeko praktikatzaile beteranoen taldeko kidea da. Bere ibilbidean zehar, hainbat lesio gainditu behar izan ditu, nahi zuen erritmoan aurrera egitea eragotzi diotenak, baina ez du inoiz galdu praktikarekin duen lotura edo arte martzialen ulermena.&#10;&#10; Bere esperientziak, bere irizpideak eta ongia eta gaizkia bereizteko duen modu argiak ikuspegi heldua, zintzoa eta oso baliotsua ekartzen diote klubari.",
+            ""
+          ],
+          [
+            "Igone Lasa",
+            "1. DAN",
+            "Igone Lasa txikitatik egon da Shorinji Kempo-n. Bere bizitzako hainbat egoera direla eta, entrenamendua denbora batez eten behar izan zuen, baina aukera izan zuenean, ez zuen zalantzarik izan ilusioz entrenamenduetara itzultzeko.&#10;&#10; Beti laguntzeko prest dagoen praktikatzailea da, taldearekin atsegina da eta bere ikaskuntzari eskainia dago. Klub ikastaroetan eta nazioarteko ekitaldietan parte hartzen du aldizka, kirolarekiko jarrera aktibo eta konprometitua mantenduz.",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz",
+            "1. DAN",
+            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
+            ""
+          ],
+          [
+            "Bharat Martin",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Igone Lasa · 1º DAN",
-            "",
+            "Pablo Sánchez",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Bharat Martin · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Jorge Redondo · 1º DAN",
-            "",
+            "Jorge Redondo",
+            "1º DAN",
             "",
             ""
           ]
@@ -1703,50 +1703,50 @@ window.SKBC_CONTENT = {
         "title": "SKBC GIPUZKOAko zuzendaritza",
         "members": [
           [
-            "Oskar Mateos · Presidente",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Iñaki Ventureira · Vicepresidente",
-            "",
+            "Oskar Mateos",
+            "Presidente",
             "",
             ""
           ],
           [
-            "Andoni Domínguez · Tesorero",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · Secretario",
-            "",
+            "Iñaki Ventureira",
+            "Vicepresidente",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · Vocal",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Uxue Garikano · Vocal",
-            "",
+            "Andoni Domínguez",
+            "Tesorero",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · Vocal",
-            "",
+            "Pablo Sánchez",
+            "Secretario",
             "",
             ""
           ],
           [
-            "Álvaro Calvo · Vocal",
+            "Iñaki Iturrioz",
+            "Vocal",
             "",
+            ""
+          ],
+          [
+            "Uxue Garikano",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo",
+            "Vocal",
             "",
             ""
           ]
@@ -2211,44 +2211,44 @@ window.SKBC_CONTENT = {
         ],
         "members": [
           [
-            "Oskar Mateos · 2º DAN",
-            "",
+            "Oskar Mateos",
+            "2nd DAN",
+            "Oskar Mateos is the president of SKBC GIPUZKOA and has been linked to the practice of Shorinji Kempo for many years. Within the club, he stands out for his seriousness, firmness and his own criteria, providing a stable presence both in the organization and in the daily life of the group.\n\nIn 2023 he obtained the 2nd Dan in an exam certified by the BSKF, reflecting a trajectory based on perseverance, commitment and respect for discipline.",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "1st DAN",
+            "Asier Azurmendi has known Shorinji Kempo for many years and is part of the club's group of veteran practitioners. Throughout his career he has had to overcome several injuries that have prevented him from advancing at the pace he would have liked, but he has never lost his link with practice or his understanding of the martial art.\n\nHis experience, his criteria and his clear way of distinguishing right from wrong give the club a mature, honest and very valuable look.",
+            ""
+          ],
+          [
+            "Igone Lasa",
+            "1st DAN",
+            "Igone Lasa has been linked to Shorinji Kempo since she was a child. For different moments in life he had to stop his trajectory for a while, but when he had the opportunity he did not hesitate to return to training eagerly.\n\nShe is a practitioner always willing to help, close to the group and constant in her learning. He regularly participates in club courses and also in international meetings, maintaining an active attitude and committed to practice.",
+            ""
+          ],
+          [
+            "Iñaki Iturrioz",
+            "1st DAN",
+            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
+            ""
+          ],
+          [
+            "Bharat Martin",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Igone Lasa · 1º DAN",
-            "",
+            "Pablo Sánchez",
+            "1º DAN",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Bharat Martin · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · 1º DAN",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Jorge Redondo · 1º DAN",
-            "",
+            "Jorge Redondo",
+            "1º DAN",
             "",
             ""
           ]
@@ -2259,50 +2259,50 @@ window.SKBC_CONTENT = {
         "title": "SKBC GIPUZKOA board",
         "members": [
           [
-            "Oskar Mateos · Presidente",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Iñaki Ventureira · Vicepresidente",
-            "",
+            "Oskar Mateos",
+            "Presidente",
             "",
             ""
           ],
           [
-            "Andoni Domínguez · Tesorero",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Pablo Sánchez · Secretario",
-            "",
+            "Iñaki Ventureira",
+            "Vicepresidente",
             "",
             ""
           ],
           [
-            "Iñaki Iturrioz · Vocal",
-            "",
-            "",
-            ""
-          ],
-          [
-            "Uxue Garikano · Vocal",
-            "",
+            "Andoni Domínguez",
+            "Tesorero",
             "",
             ""
           ],
           [
-            "Asier Azurmendi · Vocal",
-            "",
+            "Pablo Sánchez",
+            "Secretario",
             "",
             ""
           ],
           [
-            "Álvaro Calvo · Vocal",
+            "Iñaki Iturrioz",
+            "Vocal",
             "",
+            ""
+          ],
+          [
+            "Uxue Garikano",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Asier Azurmendi",
+            "Vocal",
+            "",
+            ""
+          ],
+          [
+            "Álvaro Calvo",
+            "Vocal",
             "",
             ""
           ]
