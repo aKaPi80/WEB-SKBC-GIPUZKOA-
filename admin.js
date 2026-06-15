@@ -121,16 +121,17 @@ const settingsGroups = [
   },
   {
     title: "Cinta de aviso temporal",
-    help: "Banner diagonal para vacaciones, avisos puntuales o mensajes importantes. Puede estar siempre oculto, activarse manualmente o caducar tras las horas que indiques.",
+    help: "Banner diagonal para vacaciones, avisos puntuales o mensajes importantes. Caduca el es la fecha real que manda. Activar durante horas solo rellena esa fecha automáticamente desde ahora.",
     fields: [
       ["Cinta activa", ["settings", "alertBanner", "enabled"], "booleanText"],
       ["Estilo de cinta", ["settings", "alertBanner", "style"], "alertBannerStyle"],
       ["Texto ES", ["settings", "alertBanner", "text", "es"], "input"],
       ["Texto EU", ["settings", "alertBanner", "text", "eu"], "input"],
       ["Texto EN", ["settings", "alertBanner", "text", "en"], "input"],
+      ["Traducir texto", ["settings", "alertBanner", "text"], "alertBannerTranslate"],
       ["Enlace opcional", ["settings", "alertBanner", "url"], "input"],
-      ["Caduca el", ["settings", "alertBanner", "expiresAt"], "datetime"],
-      ["Activar durante horas", ["settings", "alertBanner", "durationHours"], "alertBannerDuration"]
+      ["Caduca el (manda sobre todo)", ["settings", "alertBanner", "expiresAt"], "datetime"],
+      ["Activar durante X horas", ["settings", "alertBanner", "durationHours"], "alertBannerDuration"]
     ]
   },
   {
@@ -1174,10 +1175,18 @@ function controlTemplate(id, encodedPath, value, type) {
     return `
       <div class="alert-duration-control">
         <input id="${id}" type="number" min="1" step="1" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "48")}" />
-        <button class="secondary activate-alert-banner" type="button">Activar ahora</button>
+        <button class="secondary activate-alert-banner" type="button">Activar y calcular caducidad</button>
         <button class="secondary clear-alert-expiry" type="button">Sin caducidad</button>
       </div>
-      <small>Ejemplo: escribe 48 y pulsa Activar ahora. La cinta se ocultará sola al terminar ese plazo.</small>
+      <small>Esto solo rellena el campo Caduca el. Si después cambias Caduca el a otra fecha, manda esa fecha.</small>
+    `;
+  }
+  if (type === "alertBannerTranslate") {
+    return `
+      <div class="alert-translate-control">
+        <button class="secondary translate-alert-banner" type="button">Traducir ES a EU/EN</button>
+      </div>
+      <small>Traduce el texto español de la cinta. Revisa siempre euskera e inglés antes de publicar.</small>
     `;
   }
   if (type === "booleanText") {
@@ -2824,6 +2833,7 @@ function bindFields(root) {
   bindGalleryImages(root);
   bindSpecialVisualSchedules(root);
   bindAlertBannerControls(root);
+  bindAlertBannerTranslation(root);
 }
 
 function bindGalleryImages(root) {
@@ -2979,6 +2989,38 @@ function bindAlertBannerControls(root) {
       updateFieldValue(["settings", "alertBanner", "expiresAt"], "");
       markDirty();
       setStatus("Caducidad eliminada. La cinta seguirá según el campo Activa/Oculta.", "warning");
+    });
+  });
+}
+
+function bindAlertBannerTranslation(root) {
+  root.querySelectorAll(".translate-alert-banner").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const source = String(data.settings?.alertBanner?.text?.es || "").trim();
+      if (!source) {
+        setStatus("Escribe primero el texto ES de la cinta.", "danger");
+        return;
+      }
+      const previous = button.textContent;
+      try {
+        button.disabled = true;
+        button.textContent = "Traduciendo...";
+        const [eu, en] = await Promise.all([
+          translateText(source, "eu"),
+          translateText(source, "en")
+        ]);
+        setByPath(data, ["settings", "alertBanner", "text", "eu"], eu || source);
+        setByPath(data, ["settings", "alertBanner", "text", "en"], en || source);
+        updateFieldValue(["settings", "alertBanner", "text", "eu"], eu || source);
+        updateFieldValue(["settings", "alertBanner", "text", "en"], en || source);
+        markDirty();
+        setStatus("Texto de la cinta traducido. Revisa EU/EN antes de publicar.", "warning");
+      } catch (error) {
+        setStatus(`No se pudo traducir la cinta: ${error.message}`, "danger");
+      } finally {
+        button.disabled = false;
+        button.textContent = previous;
+      }
     });
   });
 }
