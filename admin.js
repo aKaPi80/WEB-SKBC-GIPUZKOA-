@@ -1676,11 +1676,45 @@ async function translateEvent(index, button) {
 
 async function translateText(text, target) {
   if (!text) return "";
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=es|${target}`;
+  const chunks = splitTranslationText(String(text), 450);
+  if (chunks.length > 1) {
+    const translatedChunks = [];
+    for (const chunk of chunks) {
+      translatedChunks.push(await translateText(chunk, target));
+      await wait(180);
+    }
+    return translatedChunks.join("").replace(/\n{3,}/g, "\n\n").trim();
+  }
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(String(text))}&langpair=es|${target}`;
   const response = await fetch(url);
   if (!response.ok) throw new Error("servicio de traducción no disponible");
   const result = await response.json();
+  if (result.responseStatus && Number(result.responseStatus) >= 400) {
+    throw new Error(result.responseDetails || "servicio de traducción no disponible");
+  }
   return result.responseData?.translatedText || "";
+}
+
+function splitTranslationText(text, maxLength = 450) {
+  const normalized = String(text || "");
+  if (normalized.length <= maxLength) return [normalized];
+  const pieces = [];
+  let remaining = normalized;
+  while (remaining.length > maxLength) {
+    let cut = Math.max(
+      remaining.lastIndexOf("\n\n", maxLength),
+      remaining.lastIndexOf(". ", maxLength),
+      remaining.lastIndexOf("; ", maxLength),
+      remaining.lastIndexOf(", ", maxLength),
+      remaining.lastIndexOf(" ", maxLength)
+    );
+    if (cut < Math.floor(maxLength * 0.55)) cut = maxLength;
+    const separatorLength = remaining.slice(cut, cut + 2) === "\n\n" ? 2 : 1;
+    pieces.push(remaining.slice(0, cut + separatorLength));
+    remaining = remaining.slice(cut + separatorLength);
+  }
+  if (remaining) pieces.push(remaining);
+  return pieces;
 }
 
 function bindSectionTranslations(root) {
