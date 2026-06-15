@@ -121,7 +121,7 @@ const settingsGroups = [
   },
   {
     title: "Cinta de aviso temporal",
-    help: "Banner diagonal para vacaciones, avisos puntuales o mensajes importantes. Caduca el es la fecha real que manda. Activar durante horas solo rellena esa fecha automáticamente desde ahora.",
+    help: "Banner diagonal para vacaciones, avisos puntuales o mensajes importantes. Puedes dejarlo manual sin caducidad o activarlo con temporizador. Caduca el es la fecha real que manda.",
     fields: [
       ["Cinta activa", ["settings", "alertBanner", "enabled"], "booleanText"],
       ["Estilo de cinta", ["settings", "alertBanner", "style"], "alertBannerStyle"],
@@ -1176,9 +1176,10 @@ function controlTemplate(id, encodedPath, value, type) {
       <div class="alert-duration-control">
         <input id="${id}" type="number" min="1" step="1" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "48")}" />
         <button class="secondary activate-alert-banner" type="button">Activar y calcular caducidad</button>
+        <button class="secondary activate-alert-manual" type="button">Activar manual sin caducidad</button>
         <button class="secondary clear-alert-expiry" type="button">Sin caducidad</button>
       </div>
-      <small>Esto solo rellena el campo Caduca el. Si después cambias Caduca el a otra fecha, manda esa fecha.</small>
+      <small>Temporizador: rellena Caduca el. Manual: deja Caduca el vacío y la cinta seguirá activa hasta que la ocultes tú.</small>
     `;
   }
   if (type === "alertBannerTranslate") {
@@ -2983,6 +2984,14 @@ function bindAlertBannerControls(root) {
       updateFieldValue(["settings", "alertBanner", "expiresAt"], expiresAt);
       markDirty();
       setStatus(`Cinta activada durante ${hours} horas. Falta guardar/publicar cambios.`, "warning");
+    });
+    control.querySelector(".activate-alert-manual")?.addEventListener("click", () => {
+      setByPath(data, ["settings", "alertBanner", "enabled"], true);
+      setByPath(data, ["settings", "alertBanner", "expiresAt"], "");
+      updateFieldValue(["settings", "alertBanner", "enabled"], "true");
+      updateFieldValue(["settings", "alertBanner", "expiresAt"], "");
+      markDirty();
+      setStatus("Cinta activada en modo manual. Seguirá visible hasta que la ocultes.", "warning");
     });
     control.querySelector(".clear-alert-expiry")?.addEventListener("click", () => {
       setByPath(data, ["settings", "alertBanner", "expiresAt"], "");
