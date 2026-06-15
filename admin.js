@@ -3166,10 +3166,13 @@ async function publishWithGithubApi(contentData) {
   const apiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
   const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
   const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
-  if (contentSignature(remote) !== publishedContentSignature) {
-    throw new Error("La web publicada ha cambiado desde que abriste el editor. Recarga el admin antes de publicar para no pisar noticias, testimonios, calendario u otros cambios.");
-  }
+  const remoteChangedSinceOpen = contentSignature(remote) !== publishedContentSignature;
   await confirmNoPublishedCriticalContentWillDisappear(remote, contentData);
+  if (remoteChangedSinceOpen) {
+    const ok = confirm("GitHub tiene una versión más reciente que la que cargó este editor. Esto suele pasar justo después de publicar, porque la web tarda unos minutos en refrescar.\n\nNo se ha detectado una pérdida de noticias, eventos, productos o testimonios por cantidad.\n\n¿Quieres publicar igualmente estos cambios?");
+    if (!ok) throw new Error("Publicación cancelada para no pisar la versión más reciente de GitHub.");
+    publishedContentSignature = contentSignature(remote);
+  }
   const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`);
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
