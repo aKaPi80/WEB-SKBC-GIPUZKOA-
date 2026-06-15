@@ -43,6 +43,18 @@ window.SKBC_CONTENT = {
       "palette": "skbc",
       "heroOverlay": "strong"
     },
+    "alertBanner": {
+      "enabled": false,
+      "style": "vacation",
+      "text": {
+        "es": "Aviso importante de SKBC GIPUZKOA",
+        "eu": "SKBC GIPUZKOAren ohar garrantzitsua",
+        "en": "Important SKBC GIPUZKOA notice"
+      },
+      "url": "",
+      "durationHours": "48",
+      "expiresAt": ""
+    },
     "specialVisual": {
       "mode": "none",
       "intensity": "high",

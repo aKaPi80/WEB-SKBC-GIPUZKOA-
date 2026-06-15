@@ -1390,16 +1390,52 @@ function specialVisualLayer(settings) {
   return `${layer}${badge}`;
 }
 
+function alertBannerSettings(settings) {
+  const banner = settings.alertBanner || {};
+  const enabled = banner.enabled === true || banner.enabled === "true";
+  const expiresAt = String(banner.expiresAt || "").trim();
+  const expiresDate = expiresAt ? new Date(expiresAt) : null;
+  const isExpired = expiresDate && Number.isFinite(expiresDate.getTime()) && expiresDate.getTime() <= Date.now();
+  const allowedStyles = new Set(["construction", "vacation", "dojo", "info", "urgent"]);
+  const textSource = banner.text && typeof banner.text === "object" ? banner.text : { es: banner.text || "" };
+  const text = String(textSource[state.lang] || textSource.es || "").trim();
+  return {
+    enabled: enabled && !isExpired && Boolean(text),
+    style: allowedStyles.has(banner.style) ? banner.style : "vacation",
+    text,
+    url: String(banner.url || "").trim()
+  };
+}
+
+function alertBannerLayer(settings) {
+  const banner = alertBannerSettings(settings);
+  if (!banner.enabled) return "";
+  const text = escapeHtml(banner.text);
+  const repeatedText = Array.from({ length: 6 }, () => text).join(" · ");
+  const content = `<span>${repeatedText} · </span><span aria-hidden="true">${repeatedText} · </span>`;
+  const tag = banner.url ? "a" : "div";
+  const attrs = banner.url ? ` href="${banner.url}" target="_blank" rel="noreferrer"` : "";
+  return `
+    <aside class="alert-ribbon alert-ribbon--${banner.style}" aria-label="${text}">
+      <${tag} class="alert-ribbon__track"${attrs}>
+        ${content}
+      </${tag}>
+    </aside>
+  `;
+}
+
 function render() {
   const copy = t();
   const { settings } = state.content;
   const system = systemSettings();
   const decorative = decorativeBackgroundSettings();
   const visual = specialVisualSettings(settings);
+  const alertBanner = alertBannerSettings(settings);
   document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
   document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
   document.documentElement.dataset.specialVisual = visual.mode;
   document.documentElement.dataset.specialIntensity = visual.intensity;
+  document.documentElement.dataset.alertBanner = alertBanner.enabled ? alertBanner.style : "none";
   document.documentElement.dataset.decorativeBackground = decorative.enabled ? decorative.preset : "none";
   document.documentElement.dataset.decorativeScope = decorative.scope;
   document.documentElement.style.setProperty("--decorative-bg-size", decorative.size);
@@ -1595,6 +1631,7 @@ function render() {
         </form>
       </div>
     </section>
+    ${alertBannerLayer(settings)}
     ${specialVisualLayer(settings)}
   `;
 

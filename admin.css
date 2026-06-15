@@ -1299,6 +1299,21 @@ button.danger {
   background: var(--red);
 }
 
+.alert-duration-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.alert-duration-control input {
+  max-width: 150px;
+}
+
+.alert-duration-control button {
+  min-height: 42px;
+}
+
 .people-rows {
   display: grid;
   gap: 14px;

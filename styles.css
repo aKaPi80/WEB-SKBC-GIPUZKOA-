@@ -2063,3 +2063,83 @@ textarea { resize: vertical; }
   }
 }
 
+.alert-ribbon {
+  position: fixed;
+  top: clamp(76px, 7vw, 126px);
+  left: -10vw;
+  right: -10vw;
+  z-index: 85;
+  transform: rotate(-2.4deg);
+  pointer-events: none;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.22));
+}
+
+.alert-ribbon__track {
+  display: flex;
+  width: 120vw;
+  min-height: clamp(46px, 4.7vw, 66px);
+  align-items: center;
+  overflow: hidden;
+  color: #101113;
+  text-decoration: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.28);
+  pointer-events: auto;
+}
+
+.alert-ribbon__track span {
+  flex: 0 0 auto;
+  min-width: max-content;
+  padding: 12px 0;
+  font-weight: 950;
+  font-size: clamp(1rem, 1.8vw, 1.38rem);
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: alert-ribbon-scroll 31s linear infinite;
+}
+
+.alert-ribbon:hover .alert-ribbon__track span {
+  animation-play-state: paused;
+}
+
+.alert-ribbon--construction .alert-ribbon__track {
+  background: repeating-linear-gradient(135deg, #ffd400 0 30px, #111 30px 60px);
+  color: #fff;
+  text-shadow: 0 2px 0 #000, 0 0 12px rgba(0, 0, 0, 0.65);
+}
+
+.alert-ribbon--vacation .alert-ribbon__track {
+  background: linear-gradient(90deg, #35c1a4, #f6d365, #ff8a5c, #35c1a4);
+  color: #101113;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.alert-ribbon--dojo .alert-ribbon__track {
+  background: linear-gradient(90deg, #9f1f1f, #d8b15d, #111, #9f1f1f);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.alert-ribbon--info .alert-ribbon__track {
+  background: linear-gradient(90deg, #1f6fa9, #53c7d5, #1f6fa9);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.alert-ribbon--urgent .alert-ribbon__track {
+  background: linear-gradient(90deg, #111, #c52727, #111);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+@keyframes alert-ribbon-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+

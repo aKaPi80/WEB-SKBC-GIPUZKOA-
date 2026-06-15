@@ -120,6 +120,20 @@ const settingsGroups = [
     ]
   },
   {
+    title: "Cinta de aviso temporal",
+    help: "Banner diagonal para vacaciones, avisos puntuales o mensajes importantes. Puede estar siempre oculto, activarse manualmente o caducar tras las horas que indiques.",
+    fields: [
+      ["Cinta activa", ["settings", "alertBanner", "enabled"], "booleanText"],
+      ["Estilo de cinta", ["settings", "alertBanner", "style"], "alertBannerStyle"],
+      ["Texto ES", ["settings", "alertBanner", "text", "es"], "input"],
+      ["Texto EU", ["settings", "alertBanner", "text", "eu"], "input"],
+      ["Texto EN", ["settings", "alertBanner", "text", "en"], "input"],
+      ["Enlace opcional", ["settings", "alertBanner", "url"], "input"],
+      ["Caduca el", ["settings", "alertBanner", "expiresAt"], "datetime"],
+      ["Activar durante horas", ["settings", "alertBanner", "durationHours"], "alertBannerDuration"]
+    ]
+  },
+  {
     title: "ImÃ¡genes principales",
     help: "Estas son las fotos de fondo principales de la web. Pega una URL o una ruta local dentro de esta carpeta.",
     fields: [
@@ -1122,6 +1136,9 @@ function controlTemplate(id, encodedPath, value, type) {
   if (type === "date") {
     return `<input id="${id}" type="date" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;
   }
+  if (type === "datetime") {
+    return `<input id="${id}" type="datetime-local" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;
+  }
   if (type === "color") {
     return `<input id="${id}" type="color" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "#1f6fa9")}" />`;
   }
@@ -1143,6 +1160,25 @@ function controlTemplate(id, encodedPath, value, type) {
   }
   if (type === "specialVisualIntensity") {
     return selectTemplate(id, encodedPath, value || "medium", [["low", "Suave"], ["medium", "Media"], ["high", "Alta"]], type);
+  }
+  if (type === "alertBannerStyle") {
+    return selectTemplate(id, encodedPath, value || "vacation", [
+      ["vacation", "Vacaciones / alegre"],
+      ["construction", "Obras amarillo-negro"],
+      ["dojo", "Dojo SKBC"],
+      ["info", "Aviso azul"],
+      ["urgent", "Urgente rojo-negro"]
+    ], type);
+  }
+  if (type === "alertBannerDuration") {
+    return `
+      <div class="alert-duration-control">
+        <input id="${id}" type="number" min="1" step="1" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "48")}" />
+        <button class="secondary activate-alert-banner" type="button">Activar ahora</button>
+        <button class="secondary clear-alert-expiry" type="button">Sin caducidad</button>
+      </div>
+      <small>Ejemplo: escribe 48 y pulsa Activar ahora. La cinta se ocultará sola al terminar ese plazo.</small>
+    `;
   }
   if (type === "booleanText") {
     return selectTemplate(id, encodedPath, value, [["true", "Activa"], ["false", "Oculta"]], type);
@@ -2787,6 +2823,7 @@ function bindFields(root) {
   });
   bindGalleryImages(root);
   bindSpecialVisualSchedules(root);
+  bindAlertBannerControls(root);
 }
 
 function bindGalleryImages(root) {
@@ -2908,6 +2945,40 @@ function bindSpecialVisualSchedules(root) {
       if (!button) return;
       button.closest(".special-schedule-row")?.remove();
       sync();
+    });
+  });
+}
+
+function toDatetimeLocalValue(date) {
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function updateFieldValue(path, value) {
+  const encodedPath = encodeURIComponent(JSON.stringify(path));
+  const field = document.querySelector(`[data-path="${encodedPath}"]`);
+  if (field) field.value = value;
+}
+
+function bindAlertBannerControls(root) {
+  root.querySelectorAll(".alert-duration-control").forEach((control) => {
+    const input = control.querySelector("input");
+    control.querySelector(".activate-alert-banner")?.addEventListener("click", () => {
+      const hours = Math.max(1, Number(input.value || 48));
+      const expiresAt = toDatetimeLocalValue(new Date(Date.now() + hours * 60 * 60 * 1000));
+      setByPath(data, ["settings", "alertBanner", "durationHours"], String(hours));
+      setByPath(data, ["settings", "alertBanner", "enabled"], true);
+      setByPath(data, ["settings", "alertBanner", "expiresAt"], expiresAt);
+      updateFieldValue(["settings", "alertBanner", "enabled"], "true");
+      updateFieldValue(["settings", "alertBanner", "expiresAt"], expiresAt);
+      markDirty();
+      setStatus(`Cinta activada durante ${hours} horas. Falta guardar/publicar cambios.`, "warning");
+    });
+    control.querySelector(".clear-alert-expiry")?.addEventListener("click", () => {
+      setByPath(data, ["settings", "alertBanner", "expiresAt"], "");
+      updateFieldValue(["settings", "alertBanner", "expiresAt"], "");
+      markDirty();
+      setStatus("Caducidad eliminada. La cinta seguirá según el campo Activa/Oculta.", "warning");
     });
   });
 }
