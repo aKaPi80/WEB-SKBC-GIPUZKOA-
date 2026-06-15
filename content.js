@@ -1125,7 +1125,7 @@ window.SKBC_CONTENT = {
           [
             "Bharat Martin",
             "1º DAN",
-            "",
+            "Bharat Martin es, en muchos sentidos, el eterno aprendiz. Es uno de los practicantes más veteranos del club y uno de los nombres con una trayectoria más larga vinculada al Shorinji Kempo dentro de SKBC GIPUZKOA.\n\nDespués de pasar muchos años sin practicar, volvió al club con fuerza, ilusión y compromiso. Desde entonces se ha convertido en una de las piezas clave del grupo, aportando experiencia, serenidad y una forma muy valiosa de entender el entrenamiento.\n\nSu recorrido como gran maestro de yoga también enriquece su manera de practicar y de acompañar a los demás. Además, participa habitualmente en formaciones del club y en encuentros internacionales, manteniendo siempre una actitud abierta de aprendizaje.\n\nBuena parte de lo que hoy es SKBC GIPUZKOA no se entendería sin su presencia, su apoyo y su implicación.",
             ""
           ],
           [
@@ -1137,7 +1137,7 @@ window.SKBC_CONTENT = {
           [
             "Jorge Redondo",
             "1º DAN",
-            "",
+            "Jorge Redondo practica Shorinji Kempo desde muy pequeño y forma parte del grupo de practicantes veteranos del club. Al igual que Iñaki Iturrioz, dejó el anterior club y durante años no había vuelto a entrenar, pero su vínculo con el arte marcial se mantuvo presente.\n\nSu regreso al tatami en SKBC GIPUZKOA ha sido con ganas, compromiso y muy buena disposición. A pesar del tiempo sin práctica, conserva una calidad técnica notable y una comprensión sólida del trabajo marcial.\n\nPor su trayectoria, experiencia y forma de practicar, Jorge aporta al club una presencia veterana, cercana y muy valiosa dentro del grupo.",
             ""
           ]
         ]
@@ -1675,13 +1675,13 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Iturrioz",
             "1. DAN",
-            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
+            "Iñaki Iturrioz Shorinji Kempo praktikatzaile esperientziadunenetako bat da. Urte askotan praktikatu, irakatsi eta bere bizitza arte martzialei eskaini die.&#10;&#10; Aurreko kluba uzteko erabakia hartu ondoren, denbora luzez entrenamenduetatik kanpo egon ondoren, SKBC GIPUNKORA itzuli zen entrenatzera, eta bertan laguntza, esperientzia eta trebetasun tekniko maila altua eskaintzen ditu. Bere iraunkortasunari eta konpromisoari esker, kirolaren oso eguneratuta dago.lan teknikoa, maila baxuenen oinarrietatik hasi eta maila altuagoetako edukietaraino.",
             ""
           ],
           [
             "Bharat Martin",
-            "1º DAN",
-            "",
+            "1. DAN",
+            "Bharat Martin, hainbat modutan, ikasle betikoa da. Klubeko praktikatzaile beteranoenetako bat da eta SKBC GIPUZKOA barruan Shorinji Kempoarekin lotutako historia luzeena duen izenetako bat.&#10;&#10; Kiroletik urte asko eman ondoren, energia, ilusio eta konpromiso berrituarekin itzuli zen klubera. Ordutik, taldeko jokalari gakoa bihurtu da, esperientzia, lasaitasuna eta jokoari buruzko ikuspegi baliotsua emanez.prestakuntza.&#10;&#10; Yoga maisu ospetsu gisa duen esperientziak ere aberasten du bere praktika eta besteak gidatzeko modua. Gainera, aldizka parte hartzen du klubetako prestakuntza programetan eta nazioarteko topaketetan, beti ikaskuntzarekiko jarrera irekia mantenduz.&#10;&#10; SKBC GIPUZKOA gaur egun denaren zati handi bat ezin izango litzateke ulertu haien presentziarik, laguntzarik eta inplikaziorik gabe.",
             ""
           ],
           [
@@ -1692,8 +1692,8 @@ window.SKBC_CONTENT = {
           ],
           [
             "Jorge Redondo",
-            "1º DAN",
-            "",
+            "1. DAN",
+            "Jorge Redondok oso gaztetatik praktikatzen du Shorinji Kempoa eta klubeko praktikatzaile beteranoen taldeko kidea da. Iñaki Iturrioz bezala, aurreko kluba utzi zuen eta urteetan ez zuen entrenatu, baina arte martzialekin zuen lotura sendoa izaten jarraitu zuen.&#10;&#10; SKBC GIPUNKORAKO TASARA itzultzean, ilusioa, konpromisoa eta jarrera oso positiboa izan ditu ezaugarri. Entrenamenduetatik kanpo egon den arren, trebetasun tekniko eta ulermen bikaina mantentzen du.arte martzialen entrenamendu sendoa.&#10;&#10; Bere ibilbide profesionalagatik, esperientziagatik eta praktikatzeko moduagatik, Jorgek beteranoa, hurbila eta oso baliotsua den presentzia ekartzen dio klubari taldean.",
             ""
           ]
         ]
@@ -2231,13 +2231,13 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Iturrioz",
             "1st DAN",
-            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
+            "Iñaki Iturrioz is one of the practitioners with the longest career in Shorinji Kempo. For many years he has practiced, taught and maintained his life linked to this martial art.\n\nAfter a long period without training, after deciding to leave the previous club, he returned to practice at SKBC GIPUZKOA, where he brings help, experience and a great technical level. Thanks to his perseverance and involvement, he is keeping very up to date on thetechnical work, from the fundamentals of the lowest grades to the contents of higher grades.",
             ""
           ],
           [
             "Bharat Martin",
-            "1º DAN",
-            "",
+            "1st DAN",
+            "Bharat Martin is, in many ways, the eternal apprentice. He is one of the club's longest-serving practitioners and one of the longest-serving names linked to Shorinji Kempo within SKBC GIPUZKOA.\n\nAfter many years without practising, he returned to the club with strength, enthusiasm and commitment. Since then it has become one of the key pieces of the group, providing experience, serenity and a very valuable way of understanding thetraining.\n\nHis journey as a great yoga teacher also enriches his way of practicing and accompanying others. In addition, he regularly participates in club formations and international meetings, always maintaining an open attitude of learning.\n\nMuch of what is now SKBC GIPUZKOA would not be understood without their presence, support and involvement.",
             ""
           ],
           [
@@ -2248,8 +2248,8 @@ window.SKBC_CONTENT = {
           ],
           [
             "Jorge Redondo",
-            "1º DAN",
-            "",
+            "1st DAN",
+            "Jorge Redondo has been practicing Shorinji Kempo since he was very young and is part of the group of veteran practitioners of the club. Like Iñaki Iturrioz, he left the previous club and had not trained again for years, but his link to the martial art remained present.\n\nHis return to the tatami in SKBC GIPUZKOA has been with desire, commitment and very good disposition. Despite time without practice, he retains remarkable technical quality and understandingof martial work.\n\nDue to his career, experience and way of practicing, Jorge brings to the club a veteran, close and very valuable presence within the group.",
             ""
           ]
         ]
