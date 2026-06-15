@@ -1340,6 +1340,17 @@ button.danger {
   resize: vertical;
 }
 
+.person-editor-row label:has(textarea) {
+  grid-column: span 1;
+}
+
+.person-editor-row .translate-person {
+  align-self: end;
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
 .person-editor-row .remove-person {
   align-self: end;
   color: #fff;

@@ -800,9 +800,17 @@ function bindDecorativePreview(editor) {
 
 function parseEditorPerson(person) {
   if (Array.isArray(person)) {
-    return { name: person[0] || "", role: person[1] || "", text: person[2] || "", image: person[3] || "" };
+    const rawName = String(person[0] || "");
+    const rawRole = String(person[1] || "");
+    const [nameFromCombined, roleFromCombined = ""] = rawName.split(/\s*·\s*/);
+    return {
+      name: rawRole ? rawName : nameFromCombined,
+      role: rawRole || roleFromCombined,
+      text: person[2] || "",
+      image: person[3] || ""
+    };
   }
-  const [name, role] = String(person || "").split(" Â· ");
+  const [name, role] = String(person || "").split(/\s*·\s*/);
   return { name: name || "", role: role || "", text: "", image: "" };
 }
 
@@ -871,7 +879,7 @@ function instructorEditorTemplate() {
   `;
 }
 
-function peopleSectionTemplate(title, kind, people, hasText) {
+function peopleSectionTemplate(title, kind, people) {
   return `
     <article class="editor-group people-editor" data-people-section="${kind}">
       <header>
@@ -882,13 +890,13 @@ function peopleSectionTemplate(title, kind, people, hasText) {
         <button class="primary add-person" type="button" data-add-person="${kind}">Añadir persona</button>
       </header>
       <div class="people-rows">
-        ${people.map((person) => personRowTemplate(kind, person, hasText)).join("")}
+        ${people.map((person) => personRowTemplate(kind, person)).join("")}
       </div>
     </article>
   `;
 }
 
-function personRowTemplate(kind, person = {}, hasText = false) {
+function personRowTemplate(kind, person = {}) {
   return `
     <div class="person-editor-row" data-person-kind="${kind}">
       <label>Nombre<input data-person-field="name" value="${escapeHtml(person.name || "")}" /></label>
@@ -896,11 +904,10 @@ function personRowTemplate(kind, person = {}, hasText = false) {
       <label>Cargo ES<input data-person-field="esRole" value="${escapeHtml(person.esRole || "")}" /></label>
       <label>Cargo EU<input data-person-field="euRole" value="${escapeHtml(person.euRole || "")}" /></label>
       <label>Cargo EN<input data-person-field="enRole" value="${escapeHtml(person.enRole || "")}" /></label>
-      ${hasText ? `
-        <label>Descripción ES<textarea data-person-field="esText" rows="3">${escapeHtml(person.esText || "")}</textarea></label>
-        <label>Descripción EU<textarea data-person-field="euText" rows="3">${escapeHtml(person.euText || "")}</textarea></label>
-        <label>Descripción EN<textarea data-person-field="enText" rows="3">${escapeHtml(person.enText || "")}</textarea></label>
-      ` : ""}
+      <label>Ficha ES<textarea data-person-field="esText" rows="3" placeholder="Texto que se abre al pulsar la tarjeta">${escapeHtml(person.esText || "")}</textarea></label>
+      <label>Ficha EU<textarea data-person-field="euText" rows="3">${escapeHtml(person.euText || "")}</textarea></label>
+      <label>Ficha EN<textarea data-person-field="enText" rows="3">${escapeHtml(person.enText || "")}</textarea></label>
+      <button class="translate-person" type="button">Traducir ficha y cargo a EU/EN</button>
       <button class="danger remove-person" type="button">Eliminar persona</button>
     </div>
   `;
@@ -956,12 +963,12 @@ function bindPeopleEditor(editor) {
     write("es", "technicalTeam", "leads", leads, "esRole", "esText");
     write("eu", "technicalTeam", "leads", leads, "euRole", "euText");
     write("en", "technicalTeam", "leads", leads, "enRole", "enText");
-    write("es", "technicalTeam", "members", members, "esRole");
-    write("eu", "technicalTeam", "members", members, "euRole");
-    write("en", "technicalTeam", "members", members, "enRole");
-    write("es", "board", "members", board, "esRole");
-    write("eu", "board", "members", board, "euRole");
-    write("en", "board", "members", board, "enRole");
+    write("es", "technicalTeam", "members", members, "esRole", "esText");
+    write("eu", "technicalTeam", "members", members, "euRole", "euText");
+    write("en", "technicalTeam", "members", members, "enRole", "enText");
+    write("es", "board", "members", board, "esRole", "esText");
+    write("eu", "board", "members", board, "euRole", "euText");
+    write("en", "board", "members", board, "enRole", "enText");
     markDirty();
   };
   editor.addEventListener("input", (event) => {
@@ -975,8 +982,13 @@ function bindPeopleEditor(editor) {
     const add = event.target.closest("[data-add-person]");
     if (add) {
       const section = editor.querySelector(`[data-people-section="${add.dataset.addPerson}"] .people-rows`);
-      section.insertAdjacentHTML("beforeend", personRowTemplate(add.dataset.addPerson, {}, add.dataset.addPerson === "lead"));
+      section.insertAdjacentHTML("beforeend", personRowTemplate(add.dataset.addPerson, {}));
       sync();
+      return;
+    }
+    const translate = event.target.closest(".translate-person");
+    if (translate) {
+      translatePersonRow(translate.closest(".person-editor-row"), translate, sync);
       return;
     }
     const remove = event.target.closest(".remove-person");
@@ -1024,6 +1036,43 @@ function uploadPeopleImage(button, syncInstructor, syncPeople) {
     }
   });
   picker.click();
+}
+
+async function translatePersonRow(row, button, syncPeople) {
+  if (!row) return;
+  const value = (field) => row.querySelector(`[data-person-field="${field}"]`)?.value?.trim() || "";
+  const setValue = (field, text) => {
+    const input = row.querySelector(`[data-person-field="${field}"]`);
+    if (input) input.value = text || "";
+  };
+  const esRole = value("esRole");
+  const esText = value("esText");
+  if (!esRole && !esText) {
+    setStatus("Escribe primero el cargo o la ficha en castellano.", "danger");
+    return;
+  }
+  const originalText = button.textContent;
+  try {
+    button.disabled = true;
+    button.textContent = "Traduciendo...";
+    const [euRole, enRole, euText, enText] = await Promise.all([
+      translateText(esRole, "eu"),
+      translateText(esRole, "en"),
+      translateText(esText, "eu"),
+      translateText(esText, "en")
+    ]);
+    setValue("euRole", euRole || esRole);
+    setValue("enRole", enRole || esRole);
+    setValue("euText", euText || esText);
+    setValue("enText", enText || esText);
+    syncPeople();
+    setStatus("Ficha traducida a euskera e inglés. Revisa antes de publicar.", "warning");
+  } catch (error) {
+    setStatus(`No se pudo traducir la ficha: ${error.message}`, "danger");
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
 }
 
 function groupTemplate(group) {
