@@ -44,7 +44,7 @@ window.SKBC_CONTENT = {
       "heroOverlay": "strong"
     },
     "alertBanner": {
-      "enabled": true,
+      "enabled": false,
       "style": "construction",
       "text": {
         "es": "Aviso importante de SKBC GIPUZKOA",
