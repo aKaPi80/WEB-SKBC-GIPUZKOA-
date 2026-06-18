@@ -1406,6 +1406,13 @@ window.SKBC_CONTENT = {
             "Uxue",
             "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
             5
+          ],
+          [
+            "Padre/madre",
+            "100%recomendado. Soy madre de un niño de 6 años que este año decidimos apuntaló a kempo ya que muchos nos habían hablado de el. Mi hijo es un niño que siempre le ha costado mucho el tema escolar o todo lo que tenga que ver con profesorado,ya estábamos un poco sin saber cómo hacer para poder ayudarlo, Sin embargo desde que lo hemos apuntado este año en kempo el peque es otro niño sin duda alguna, ha aprendido a gestionar sus emociones a trabajar sus inseguridades, en cojer confianza en si mismo etc en kempo no solo aprenden técnicas de defensa sino mucho más...Yo lo recomiendo para todos pero sobre todos ánimo ha aquellos padres que duden x miedo a como se integrará .arriesgar es ganar y en nuestro caso hemos ganado. Hemos ganado un niño mucho más seguro de si mismo y empático a la vez. Y nosotros como padres o por lo menos yo como madre paz mental,en el sentido de que cuando el peque tiene que ir al cole o cualquier circunstancia incomoda el saber que tiene herramientas para estar bien me da una tranquilidad increíble.",
+            "Alazne",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781821195963-92309.jpg",
+            5
           ]
         ],
         "empty": "Sin testimonios por el momento.",
@@ -1962,6 +1969,13 @@ window.SKBC_CONTENT = {
             "Uxue",
             "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
             "5"
+          ],
+          [
+            "Padre/madre",
+            "100%recomendado. Soy madre de un niño de 6 años que este año decidimos apuntaló a kempo ya que muchos nos habían hablado de el. Mi hijo es un niño que siempre le ha costado mucho el tema escolar o todo lo que tenga que ver con profesorado,ya estábamos un poco sin saber cómo hacer para poder ayudarlo, Sin embargo desde que lo hemos apuntado este año en kempo el peque es otro niño sin duda alguna, ha aprendido a gestionar sus emociones a trabajar sus inseguridades, en cojer confianza en si mismo etc en kempo no solo aprenden técnicas de defensa sino mucho más...Yo lo recomiendo para todos pero sobre todos ánimo ha aquellos padres que duden x miedo a como se integrará .arriesgar es ganar y en nuestro caso hemos ganado. Hemos ganado un niño mucho más seguro de si mismo y empático a la vez. Y nosotros como padres o por lo menos yo como madre paz mental,en el sentido de que cuando el peque tiene que ir al cole o cualquier circunstancia incomoda el saber que tiene herramientas para estar bien me da una tranquilidad increíble.",
+            "Alazne",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781821195963-92309.jpg",
+            5
           ]
         ],
         "empty": "Momentuz ez dago testigantzarik.",
@@ -2518,6 +2532,13 @@ window.SKBC_CONTENT = {
             "Uxue",
             "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781114729107-133498.jpg",
             "5"
+          ],
+          [
+            "Padre/madre",
+            "100%recomendado. Soy madre de un niño de 6 años que este año decidimos apuntaló a kempo ya que muchos nos habían hablado de el. Mi hijo es un niño que siempre le ha costado mucho el tema escolar o todo lo que tenga que ver con profesorado,ya estábamos un poco sin saber cómo hacer para poder ayudarlo, Sin embargo desde que lo hemos apuntado este año en kempo el peque es otro niño sin duda alguna, ha aprendido a gestionar sus emociones a trabajar sus inseguridades, en cojer confianza en si mismo etc en kempo no solo aprenden técnicas de defensa sino mucho más...Yo lo recomiendo para todos pero sobre todos ánimo ha aquellos padres que duden x miedo a como se integrará .arriesgar es ganar y en nuestro caso hemos ganado. Hemos ganado un niño mucho más seguro de si mismo y empático a la vez. Y nosotros como padres o por lo menos yo como madre paz mental,en el sentido de que cuando el peque tiene que ir al cole o cualquier circunstancia incomoda el saber que tiene herramientas para estar bien me da una tranquilidad increíble.",
+            "Alazne",
+            "https://wucxazuhrgokvtajqmsr.supabase.co/storage/v1/object/public/skbc-testimonials/1781821195963-92309.jpg",
+            5
           ]
         ],
         "empty": "No testimonials at the moment.",
