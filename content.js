@@ -909,7 +909,17 @@ window.SKBC_CONTENT = {
           "center center",
           "center center",
           "center center",
-          "center center"
+          "center center",
+          null,
+          null,
+          null,
+          null,
+          "46% 12%",
+          null,
+          null,
+          null,
+          null,
+          "29% 35%"
         ]
       }
     },
