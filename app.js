@@ -1240,6 +1240,8 @@ function parsePerson(person) {
 
 function profileText(person, group) {
   if (person.text) return person.text;
+  const samePersonText = findPersonTextByName(person.name);
+  if (samePersonText) return samePersonText;
   if (state.lang === "eu") {
     if (group === "technical") {
       return `${person.name} SKBC GIPUZKOAko talde teknikoaren parte da, eta klubaren espirituari leiala den praktika hurbila eta jarraitua transmititzen laguntzen du.`;
@@ -1256,6 +1258,24 @@ function profileText(person, group) {
     return `${person.name} forma parte del equipo técnico de SKBC GIPUZKOA y ayuda a transmitir una práctica cercana, constante y fiel al espíritu del club.`;
   }
   return `${person.name} forma parte de la directiva de SKBC GIPUZKOA, colaborando en la organización y el funcionamiento diario del club.`;
+}
+
+function findPersonTextByName(name = "") {
+  const normalized = normalizeName(String(name || "").split(/\s*Â·\s*|\s*Ã‚Â·\s*/)[0]);
+  if (!normalized) return "";
+  const copy = t();
+  if (normalizeName(copy.instructor?.title || "") === normalized) {
+    return [copy.instructor?.text, copy.instructor?.extra].filter(Boolean).join("\n\n");
+  }
+  const candidates = [
+    ...(copy.technicalTeam?.leads || []),
+    ...(copy.technicalTeam?.members || [])
+  ];
+  for (const item of candidates) {
+    const profile = parsePerson(item);
+    if (normalizeName(profile.name || "") === normalized && profile.text) return profile.text;
+  }
+  return "";
 }
 
 function normalizeName(name) {

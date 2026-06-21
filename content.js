@@ -1159,13 +1159,13 @@ window.SKBC_CONTENT = {
           [
             "Iñaki Ventureira",
             "3º DAN",
-            "Aporta una mirada madura, técnica y sensata al entrenamiento.",
+            "Iñaki Ventureira aporta una mirada madura, técnica y sensata al entrenamiento. Lleva muchos años practicando Shorinji Kempo y es uno de los grados más altos del club.\n\nEs meticuloso y metódico, y trabaja con especial atención en comprender la técnica correctamente, buscando una práctica fiel al Shorinji Kempo original.",
             ""
           ],
           [
             "Andoni Domínguez",
             "3º DAN",
-            "Transmite experiencia, cercanía y comprensión natural del arte.",
+            "Andoni Domínguez transmite experiencia, cercanía y una comprensión natural del arte. Es tesorero del club y una parte muy importante de SKBC GIPUZKOA, además de ser uno de los primeros en formar parte del proyecto.\n\nSiempre está dispuesto a trabajar por el club y ayudar en lo que sea necesario. Es un practicante fiel a casi todos los entrenamientos, muy implicado tanto en la parte técnica como en la gestión del club. Andoni es, sin lugar a dudas, una pieza clave de SKBC GIPUZKOA.",
             ""
           ]
         ],
@@ -1197,7 +1197,7 @@ window.SKBC_CONTENT = {
           [
             "Bharat Martin",
             "1º DAN",
-            "",
+            "Bharat Martin es el eterno aprendiz y uno de los practicantes más veteranos del club. Tras muchos años sin practicar, volvió a SKBC GIPUZKOA con fuerza y actualmente es una de las piezas importantes del grupo.\n\nSu experiencia como gran maestro de yoga también aporta una mirada especial al entrenamiento. Participa habitualmente en formaciones del club e internacionales, manteniendo una actitud abierta, constante y profundamente vinculada al aprendizaje.",
             ""
           ],
           [
@@ -1209,7 +1209,7 @@ window.SKBC_CONTENT = {
           [
             "Jorge Redondo",
             "1º DAN",
-            "",
+            "Jorge Redondo practica Shorinji Kempo desde muy pequeño. Al igual que otros veteranos, dejó el anterior club y pasó muchos años sin volver al tatami, pero regresó a la práctica con muchas ganas.\n\nSu calidad técnica se ha mantenido a pesar del tiempo sin entrenar, y por trayectoria forma parte del grupo de practicantes veteranos de SKBC GIPUZKOA.",
             ""
           ]
         ]
@@ -1221,49 +1221,49 @@ window.SKBC_CONTENT = {
           [
             "Oskar Mateos",
             "Presidente",
-            "",
+            "Oskar Mateos es el presidente de SKBC GIPUZKOA y lleva muchos años vinculado a la práctica del Shorinji Kempo. Dentro del club destaca por su seriedad, firmeza y criterio propio, aportando una presencia estable tanto en la organización como en la vida diaria del grupo.\n\nEn 2023 obtuvo el 2º Dan en un examen certificado por la BSKF, reflejo de una trayectoria basada en la constancia, el compromiso y el respeto por la disciplina.",
             ""
           ],
           [
             "Iñaki Ventureira",
             "Vicepresidente",
-            "",
+            "Iñaki Ventureira aporta una mirada madura, técnica y sensata al entrenamiento. Lleva muchos años practicando Shorinji Kempo y es uno de los grados más altos del club.\n\nEs meticuloso y metódico, y trabaja con especial atención en comprender la técnica correctamente, buscando una práctica fiel al Shorinji Kempo original.",
             ""
           ],
           [
             "Andoni Domínguez",
             "Tesorero",
-            "",
+            "Andoni Domínguez transmite experiencia, cercanía y una comprensión natural del arte. Es tesorero del club y una parte muy importante de SKBC GIPUZKOA, además de ser uno de los primeros en formar parte del proyecto.\n\nSiempre está dispuesto a trabajar por el club y ayudar en lo que sea necesario. Es un practicante fiel a casi todos los entrenamientos, muy implicado tanto en la parte técnica como en la gestión del club. Andoni es, sin lugar a dudas, una pieza clave de SKBC GIPUZKOA.",
             ""
           ],
           [
             "Pablo Sánchez",
             "Secretario",
-            "",
+            "Pablo Sánchez forma parte de la directiva de SKBC GIPUZKOA como secretario, colaborando en la organización, la coordinación interna y el funcionamiento diario del club.\n\nSu aportación ayuda a mantener una estructura ordenada y cercana, facilitando que la actividad del club pueda desarrollarse con continuidad.",
             ""
           ],
           [
             "Iñaki Iturrioz",
             "Vocal",
-            "",
+            "Iñaki Iturrioz es uno de los practicantes con mayor trayectoria dentro del Shorinji Kempo. Durante muchos años ha practicado, impartido clases y mantenido su vida vinculada a este arte marcial.\n\nTras un largo periodo sin entrenar, después de decidir dejar el anterior club, volvió a la práctica en SKBC GIPUZKOA, donde aporta ayuda, experiencia y un gran nivel técnico. Gracias a su perseverancia e implicación, está manteniéndose muy al día en el trabajo técnico, desde los fundamentos de los grados más bajos hasta los contenidos propios de grados superiores.",
             ""
           ],
           [
             "Uxue Garikano",
             "Vocal",
-            "",
+            "Uxue Garikano es otra pieza clave de SKBC GIPUZKOA. Conoció el Shorinji Kempo en los inicios del club y participa activamente en la gestión como vocal de la directiva.\n\nEs asidua tanto a la práctica diaria como a eventos y cursos internacionales. Cuando se necesita ayuda, siempre está, colaborando en todo y buscando soluciones a los pequeños inconvenientes que puedan surgir. Una kenshi verdadera y muy valiosa para SKBC GIPUZKOA.",
             ""
           ],
           [
             "Asier Azurmendi",
             "Vocal",
-            "",
+            "Asier Azurmendi conoce el Shorinji Kempo desde hace muchos años y forma parte del grupo de practicantes veteranos del club. A lo largo de su trayectoria ha tenido que superar varias lesiones que le han impedido avanzar al ritmo que le habría gustado, pero nunca ha perdido su vínculo con la práctica ni su comprensión del arte marcial.\n\nSu experiencia, su criterio y su forma clara de distinguir lo correcto de lo incorrecto aportan al club una mirada madura, honesta y muy valiosa.",
             ""
           ],
           [
             "Álvaro Calvo",
             "Vocal",
-            "",
+            "Álvaro Calvo es el responsable técnico de SKBC GIPUZKOA y lleva vinculado al Shorinji Kempo desde los 5 años. Ha dedicado gran parte de su vida a la práctica y a la enseñanza, buscando siempre una línea de trabajo fiel al Shorinji Kempo original.\n\nSu formación se ha enriquecido a través de numerosos cursos internacionales y del contacto directo con maestros de diferentes países, con quienes mantiene una relación cercana de aprendizaje, respeto y amistad. Además de su labor técnica, también forma parte de la directiva del club como vocal.",
             ""
           ]
         ]
