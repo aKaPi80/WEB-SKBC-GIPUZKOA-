@@ -882,6 +882,7 @@ window.SKBC_CONTENT = {
       {
         "enabled": true,
         "date": "2026-06-25",
+        "expiresAt": "",
         "color": "#1f6fa9",
         "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
         "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9",
@@ -903,6 +904,7 @@ window.SKBC_CONTENT = {
       {
         "enabled": true,
         "date": "2026-06-27",
+        "expiresAt": "",
         "color": "#1fa89f",
         "image": "assets/uploads/1780955554543-dingle-ika.png",
         "url": "",

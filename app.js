@@ -545,28 +545,48 @@ function calendarSection(settings, copy) {
   </section>`;
 }
 
+function newsExpiryTime(item) {
+  const expiresAt = String(item?.expiresAt || "").trim();
+  if (!expiresAt) return null;
+  const expiresDate = new Date(expiresAt);
+  return Number.isFinite(expiresDate.getTime()) ? expiresDate.getTime() : null;
+}
+
+function visibleNewsItems(settings) {
+  const now = Date.now();
+  return (settings.news || [])
+    .filter((item) => {
+      if (!item || item.enabled === false) return false;
+      const expiry = newsExpiryTime(item);
+      return expiry === null || expiry > now;
+    })
+    .sort((a, b) => String(a.date || "9999-12-31").localeCompare(String(b.date || "9999-12-31")));
+}
+
 function upcomingNewsSection(settings, copy) {
-  const news = (settings.news || []).filter((item) => item.enabled !== false);
+  const news = visibleNewsItems(settings);
+  const cards = news.map((item) => {
+    const text = item.languages?.[state.lang] || item.languages?.es || {};
+    const image = item.image ? `<img src="${item.image}" alt="${text.title || ""}" />` : "";
+    const inner = `
+      ${image}
+      <span style="--news-color:${item.color || "#1f6fa9"}">${item.date || ""}</span>
+      <h3>${text.title || ""}</h3>
+      <p>${text.text || ""}</p>
+    `;
+    return item.url
+      ? `<a class="news-card" href="${item.url}" target="_blank" rel="noreferrer">${inner}</a>`
+      : `<article class="news-card">${inner}</article>`;
+  });
+  const carouselCards = cards.length > 1 ? [...cards, ...cards] : cards;
   return `<section class="section soft" id="noticias">
     <div class="section-heading">
       <p class="eyebrow">${copy.news.eyebrow}</p>
       <h2>${copy.news.title}</h2>
       <p>${copy.news.text}</p>
     </div>
-    <div class="news-grid">
-      ${news.length ? news.map((item) => {
-        const text = item.languages?.[state.lang] || item.languages?.es || {};
-        const image = item.image ? `<img src="${item.image}" alt="${text.title || ""}" />` : "";
-        const inner = `
-          ${image}
-          <span style="--news-color:${item.color || "#1f6fa9"}">${item.date || ""}</span>
-          <h3>${text.title || ""}</h3>
-          <p>${text.text || ""}</p>
-        `;
-        return item.url
-          ? `<a class="news-card" href="${item.url}" target="_blank" rel="noreferrer">${inner}</a>`
-          : `<article class="news-card">${inner}</article>`;
-      }).join("") : `<p>${copy.news.empty}</p>`}
+    <div class="news-carousel ${cards.length > 1 ? "is-animated" : ""}">
+      ${cards.length ? `<div class="news-track">${carouselCards.join("")}</div>` : `<p>${copy.news.empty}</p>`}
     </div>
   </section>`;
 }

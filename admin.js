@@ -1822,6 +1822,9 @@ async function translateValue(value, target, type) {
 function renderNews() {
   const editor = document.querySelector("#editor");
   const news = data.settings.news || [];
+  const sortedNews = news
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => String(a.item.date || "9999-12-31").localeCompare(String(b.item.date || "9999-12-31")));
   if (currentNewsIndex !== null && currentNewsIndex > news.length - 1) currentNewsIndex = news.length ? news.length - 1 : null;
   const sectionCopy = ["es", "eu", "en"].map((lang) => groupTemplate({
     title: `Cabecera de noticias (${lang.toUpperCase()})`,
@@ -1846,7 +1849,7 @@ function renderNews() {
           <p>Tenlas siempre a mano. Pulsa una tarjeta para abrirla y editarla.</p>
         </header>
         <div class="news-mini-list">
-          ${news.length ? news.map(newsMiniCard).join("") : `<p class="empty-news-list">Todavía no hay noticias creadas.</p>`}
+          ${sortedNews.length ? sortedNews.map(({ item, index }) => newsMiniCard(item, index)).join("") : `<p class="empty-news-list">Todavía no hay noticias creadas.</p>`}
         </div>
       </aside>
     </div>
@@ -1863,10 +1866,22 @@ function renderNews() {
   editor.querySelectorAll("[data-remove-news]").forEach((button) => {
     button.addEventListener("click", () => removeNews(Number(button.dataset.removeNews)));
   });
+  editor.querySelectorAll("[data-clear-news-expiry]").forEach((button) => {
+    button.addEventListener("click", () => clearNewsExpiry(Number(button.dataset.clearNewsExpiry)));
+  });
   editor.querySelector("[data-translate-news-copy]")?.addEventListener("click", (event) => translateNewsCopy(event.currentTarget));
   editor.querySelectorAll("[data-translate-news]").forEach((button) => {
     button.addEventListener("click", () => translateNewsItem(Number(button.dataset.translateNews), button));
   });
+}
+
+function newsExpiryStatus(item) {
+  const expiresAt = String(item?.expiresAt || "").trim();
+  if (!expiresAt) return { expired: false, label: "" };
+  const date = new Date(expiresAt);
+  if (!Number.isFinite(date.getTime())) return { expired: false, label: "Caducidad no válida" };
+  const label = `Caduca ${expiresAt.replace("T", " ")}`;
+  return { expired: date.getTime() <= Date.now(), label };
 }
 
 function emptyNewsEditor(count) {
@@ -1887,15 +1902,16 @@ function newsMiniCard(item, index) {
   const title = copy.title || `Noticia ${index + 1}`;
   const text = copy.text || "";
   const date = item.date || "Sin fecha";
-  const enabled = item.enabled === false ? "Oculta" : "Activa";
+  const expiry = newsExpiryStatus(item);
+  const enabled = item.enabled === false ? "Oculta" : expiry.expired ? "Caducada" : "Activa";
   const image = item.image ? `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" />` : "";
   return `
-    <article class="news-mini ${currentNewsIndex === index ? "active" : ""} ${item.image ? "" : "no-image"}" style="--news-color:${escapeHtml(item.color || "#1f6fa9")}">
+    <article class="news-mini ${currentNewsIndex === index ? "active" : ""} ${item.image ? "" : "no-image"} ${expiry.expired ? "expired" : ""}" style="--news-color:${escapeHtml(item.color || "#1f6fa9")}">
       <button type="button" data-select-news="${index}">
         ${image}
         <span>
           <strong>${escapeHtml(title)}</strong>
-          <small>${escapeHtml(date)} · ${enabled}</small>
+          <small>${escapeHtml(date)} · ${enabled}${expiry.label ? ` · ${escapeHtml(expiry.label)}` : ""}</small>
           ${text ? `<em>${escapeHtml(text.slice(0, 92))}${text.length > 92 ? "..." : ""}</em>` : ""}
         </span>
       </button>
@@ -1907,10 +1923,11 @@ function newsTemplate(item, index) {
   const base = ["settings", "news", index];
   const groups = [{
     title: `Noticia ${index + 1}`,
-    help: "Puedes poner fecha, color, enlace opcional y textos en los tres idiomas.",
+    help: "Puedes poner fecha, caducidad opcional, color, enlace opcional y textos en los tres idiomas. Si Caduca el queda vacío, la noticia no caduca automáticamente.",
     fields: [
       ["Activa", [...base, "enabled"], "booleanText"],
       ["Fecha", [...base, "date"], "date"],
+      ["Caduca el", [...base, "expiresAt"], "datetime"],
       ["Color de fondo/acento", [...base, "color"], "color"],
       ["Imagen de la noticia", [...base, "image"], "input"],
       ["URL opcional", [...base, "url"], "input"],
@@ -1922,7 +1939,7 @@ function newsTemplate(item, index) {
       ["EN texto", [...base, "languages", "en", "text"], "textarea"]
     ]
   }];
-  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="translate-section" data-translate-news="${index}" type="button">Traducir esta noticia a EU/EN</button><button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
+  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="secondary clear-news-expiry" data-clear-news-expiry="${index}" type="button">Dejar sin caducidad</button><button class="translate-section" data-translate-news="${index}" type="button">Traducir esta noticia a EU/EN</button><button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
 }
 
 async function translateNewsCopy(button) {
@@ -1983,6 +2000,7 @@ function addNews() {
   data.settings.news.push({
     enabled: true,
     date,
+    expiresAt: "",
     color: "#1f6fa9",
     image: "",
     url: "",
@@ -1994,6 +2012,14 @@ function addNews() {
   });
   currentNewsIndex = data.settings.news.length - 1;
   markDirty();
+  renderNews();
+}
+
+function clearNewsExpiry(index) {
+  if (!data.settings.news?.[index]) return;
+  data.settings.news[index].expiresAt = "";
+  markDirty();
+  setStatus("Caducidad eliminada de la noticia. Falta publicar.", "warning");
   renderNews();
 }
 

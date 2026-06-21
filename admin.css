@@ -919,6 +919,11 @@ button.danger {
   box-shadow: 0 12px 30px rgba(31, 111, 169, .12);
 }
 
+.news-mini.expired {
+  opacity: .62;
+  background: #f6f1f1;
+}
+
 .news-mini > button {
   display: grid;
   grid-template-columns: 62px 1fr;
