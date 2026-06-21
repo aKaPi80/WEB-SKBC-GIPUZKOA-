@@ -3244,9 +3244,11 @@ async function publishWithGithubApi(contentData) {
   const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
   const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
   const remoteChangedSinceOpen = contentSignature(remote) !== publishedContentSignature;
+  const preserved = preserveRemoteTestimonials(remote, contentData);
   await confirmNoPublishedCriticalContentWillDisappear(remote, contentData);
   if (remoteChangedSinceOpen) {
-    const ok = confirm("GitHub tiene una versión más reciente que la que cargó este editor. Esto suele pasar justo después de publicar, porque la web tarda unos minutos en refrescar.\n\nNo se ha detectado una pérdida de noticias, eventos, productos o testimonios por cantidad.\n\n¿Quieres publicar igualmente estos cambios?");
+    const preservedMessage = preserved ? `\n\nAdemás, se han conservado automáticamente ${preserved} testimonio(s) que estaban en GitHub y no estaban cargados en este editor.` : "";
+    const ok = confirm(`GitHub tiene una versión más reciente que la que cargó este editor. Esto suele pasar justo después de publicar, porque la web tarda unos minutos en refrescar.\n\nNo se ha detectado una pérdida de noticias, eventos, productos o testimonios por cantidad.${preservedMessage}\n\n¿Quieres publicar igualmente estos cambios?`);
     if (!ok) throw new Error("Publicación cancelada para no pisar la versión más reciente de GitHub.");
     publishedContentSignature = contentSignature(remote);
   }
@@ -3277,6 +3279,24 @@ async function publishWithGithubApi(contentData) {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
     url: `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`
   };
+}
+
+function preserveRemoteTestimonials(remote, contentData) {
+  let preserved = 0;
+  ["es", "eu", "en"].forEach((lang) => {
+    const remoteItems = remote.languages?.[lang]?.testimonials?.items;
+    const localItems = contentData.languages?.[lang]?.testimonials?.items;
+    if (!Array.isArray(remoteItems) || !Array.isArray(localItems)) return;
+    if (remoteItems.length <= localItems.length) return;
+    setByPath(contentData, ["languages", lang, "testimonials", "items"], structuredClone(remoteItems));
+    preserved += remoteItems.length - localItems.length;
+  });
+  if (preserved) {
+    data = contentData;
+    render();
+    setStatus("Se han conservado testimonios publicados que no estaban cargados en este editor.", "warning");
+  }
+  return preserved;
 }
 
 async function confirmNoPublishedCriticalContentWillDisappear(remote, contentData) {
