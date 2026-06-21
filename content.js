@@ -844,9 +844,19 @@ window.SKBC_CONTENT = {
         "assets/optimized/1780604072168-grupo-ninos.webp",
         "assets/optimized/1780604082854-adultos.webp",
         "assets/optimized/1781132391840-img-0427.webp",
-        "assets/uploads/1781182090114-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp",
-        "assets/uploads/1781183794312-43ea90f9-b941-414c-9d3b-6fc876bd3140.webp",
-        "assets/uploads/1781183804405-img-20260606-wa0032.webp"
+        "assets/uploads/1782044483293-9b68932e-9225-4f7c-aa87-ceee6081d932.webp",
+        "assets/uploads/1782044499389-11ce5a1c-81a2-48f9-880d-23bbb3589992.webp",
+        "assets/uploads/1782044508996-43ea90f9-b941-414c-9d3b-6fc876bd3140.webp",
+        "assets/uploads/1782044516824-050391bb-f92f-4a20-be06-7d6ea3d45868.webp",
+        "assets/uploads/1782044546234-img-20260606-wa0032.webp",
+        "assets/uploads/1782044555765-img-9423-edit.webp",
+        "assets/uploads/1782044564528-img-8782.webp",
+        "assets/uploads/1782044572070-img-1493.webp",
+        "assets/uploads/1782044579642-img-0170.webp",
+        "assets/uploads/1782044586617-adf35788-e63d-40cb-9cef-d45a273352d1.webp",
+        "assets/uploads/1782044594165-67960e18-dcef-4af7-95b4-f5c148e7e58e.webp",
+        "assets/uploads/1782044611902-20240309-132159-original.webp",
+        "assets/uploads/1782044620013-a5730a7b-bbee-45b6-bc20-2b17b704f97c.webp"
       ],
       "profiles": [
         "assets/optimized/alvaro-calvo.webp",
