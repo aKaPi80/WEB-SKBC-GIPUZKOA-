@@ -27,7 +27,7 @@ window.SKBC_CONTENT = {
       "navLabels": {
         "es": "Niños | Adultos | Club | Equipo | Aprendizaje | Horarios | Calendario | Galería | Testimonios | FAQ | Noticias | Redes | Tienda | Contacto",
         "eu": "Haurrak | Helduak | Kluba | Taldea | Ikaskuntza | Ordutegiak | Egutegia | Galeria | Testigantzak | FAQ | Albisteak | Sareak | Denda | Kontaktua",
-        "en": "Kids | Adults | Club | Team | Learning | Schedule | Calendar | Gallery | Testimonials | FAQ | News | Social | Shop | Contact"
+        "en": "Kids | Adults | Club | Team | Learning | Schedule | Calendar | Gallery | Testimonials | FAQ | News | Social | Shop | Kenshi Area | Contact"
       },
       "decorativeBackground": {
         "enabled": true,
@@ -994,6 +994,13 @@ window.SKBC_CONTENT = {
       "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_leads"
+    },
+    "kenshiInbox": {
+      "enabled": true,
+      "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
+      "table": "skbc_kenshi_members",
+      "emailWebhookUrl": "https://script.google.com/macros/s/AKfycbzItZhZGJrHe5B4IMZTRLfsbqYplIIWJtO8h47UplZUvTAhnl3wnZRP7PvOZwDulmR8/exec"
     }
   },
   "languages": {
@@ -1383,6 +1390,30 @@ window.SKBC_CONTENT = {
         "customLabel": "Otra prenda JHK",
         "orderIntro": "Revisa tu reserva. No se cobra online; el pedido queda pendiente de confirmación.",
         "note": "Precio orientativo. Confirmaremos disponibilidad, talla, color, personalización y coste final antes de cerrar el pedido."
+      },
+      "kenshi": {
+        "eyebrow": "Area privada del club",
+        "title": "Area Kenshi SKBC",
+        "text": "Un espacio pensado para miembros y familias del club: avisos internos, recursos de practica, calendario ampliado y ventajas de pertenecer a SKBC GIPUZKOA. El acceso siempre se revisa y aprueba desde el club.",
+        "perks": [
+          ["Tablon interno", "Avisos, cambios y comunicaciones para miembros."],
+          ["Recursos de practica", "Material de repaso y contenidos para seguir aprendiendo."],
+          ["Calendario interno", "Detalles de cursos, actividades y confirmaciones."],
+          ["Vida de club", "Galerias, recuerdos y participacion de la comunidad."]
+        ],
+        "formTitle": "Solicitar acceso Kenshi",
+        "formIntro": "El acceso no es automatico. Envia la solicitud y el club la revisara antes de activarla.",
+        "name": "Nombre y apellidos",
+        "email": "Email",
+        "phone": "Telefono",
+        "relationship": "Relacion con el club",
+        "relationships": ["Alumno/a actual", "Padre/madre", "Antiguo alumno/a", "Quiero informarme"],
+        "grade": "Grado o nivel",
+        "message": "Mensaje",
+        "submit": "Enviar solicitud",
+        "sending": "Enviando solicitud...",
+        "thanks": "Solicitud enviada. El club la revisara antes de activar el acceso.",
+        "notConfigured": "El Area Kenshi todavia no esta conectada"
       },
       "contact": {
         "eyebrow": "Contacto",
@@ -1947,6 +1978,30 @@ window.SKBC_CONTENT = {
         "orderIntro": "Berrikusi erreserba. Ez da online kobratzen; eskaera baieztatzeke geratzen da.",
         "note": "Prezio orientagarria. Eskaera itxi aurretik erabilgarritasuna, neurria, kolorea, pertsonalizazioa eta azken kostua baieztatuko ditugu."
       },
+      "kenshi": {
+        "eyebrow": "Klubeko gune pribatua",
+        "title": "SKBC Kenshi Gunea",
+        "text": "Klubeko kide eta familientzako gunea: barne oharrak, praktikatzeko baliabideak, egutegi zabaldua eta SKBC GIPUZKOAko kide izatearen abantailak. Sarbidea beti klubak berrikusi eta onartu behar du.",
+        "perks": [
+          ["Barne taula", "Kideentzako oharrak, aldaketak eta komunikazioak."],
+          ["Praktika baliabideak", "Errepasatzeko materiala eta ikasten jarraitzeko edukiak."],
+          ["Barne egutegia", "Ikastaroen, jardueren eta baieztapenen xehetasunak."],
+          ["Klub bizitza", "Galeriak, oroitzapenak eta komunitatearen parte-hartzea."]
+        ],
+        "formTitle": "Kenshi sarbidea eskatu",
+        "formIntro": "Sarbidea ez da automatikoa. Bidali eskaera eta klubak berrikusiko du aktibatu aurretik.",
+        "name": "Izen-abizenak",
+        "email": "Emaila",
+        "phone": "Telefonoa",
+        "relationship": "Klubarekin harremana",
+        "relationships": ["Egungo ikaslea", "Aita/ama", "Ikasle ohia", "Informazioa nahi dut"],
+        "grade": "Gradua edo maila",
+        "message": "Mezua",
+        "submit": "Eskaera bidali",
+        "sending": "Eskaera bidaltzen...",
+        "thanks": "Eskaera bidalita. Klubak berrikusiko du sarbidea aktibatu aurretik.",
+        "notConfigured": "Kenshi Gunea oraindik ez dago konektatuta"
+      },
       "contact": {
         "eyebrow": "Kontaktua",
         "title": "Probatu Shorinji Kempo konpromisorik gabe",
@@ -2509,6 +2564,30 @@ window.SKBC_CONTENT = {
         "customLabel": "Another JHK garment",
         "orderIntro": "Review your reservation. No online payment is taken; the order remains pending confirmation.",
         "note": "Indicative price. We will confirm availability, size, colour, personalisation and final cost before closing the order."
+      },
+      "kenshi": {
+        "eyebrow": "Private club area",
+        "title": "SKBC Kenshi Area",
+        "text": "A space for club members and families: internal notices, practice resources, an extended calendar and the benefits of belonging to SKBC GIPUZKOA. Access is always reviewed and approved by the club.",
+        "perks": [
+          ["Internal board", "Member notices, changes and communications."],
+          ["Practice resources", "Review material and content to keep learning."],
+          ["Internal calendar", "Course, activity and attendance details."],
+          ["Club life", "Galleries, memories and community participation."]
+        ],
+        "formTitle": "Request Kenshi access",
+        "formIntro": "Access is not automatic. Send your request and the club will review it before activation.",
+        "name": "Full name",
+        "email": "Email",
+        "phone": "Phone",
+        "relationship": "Relationship with the club",
+        "relationships": ["Current student", "Parent", "Former student", "I want information"],
+        "grade": "Grade or level",
+        "message": "Message",
+        "submit": "Send request",
+        "sending": "Sending request...",
+        "thanks": "Request sent. The club will review it before activating access.",
+        "notConfigured": "The Kenshi Area is not connected yet"
       },
       "contact": {
         "eyebrow": "Contact",

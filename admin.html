@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
-    <link rel="stylesheet" href="admin.css?v=20260621-gallery-grid-fix" />
+    <link rel="stylesheet" href="admin.css?v=20260621-kenshi-area" />
     <style>
       .admin-login {
         display: grid;
@@ -112,6 +112,7 @@
           <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
           <button class="tab" data-panel="merch" type="button">Tienda</button>
           <button class="tab" data-panel="orders" type="button">Pedidos</button>
+          <button class="tab" data-panel="kenshi" type="button">Kenshi</button>
           <button class="tab" data-panel="custom" type="button">Áreas</button>
           <button class="tab" data-panel="advanced" type="button">Todo</button>
         </aside>
@@ -149,7 +150,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260621-gallery-grid-fix";
+          script.src = "admin.js?v=20260621-kenshi-area";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

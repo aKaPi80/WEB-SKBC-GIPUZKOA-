@@ -55,6 +55,8 @@ panelTitles.merch = "Tienda merchandising";
 labels.merch = "Tienda";
 panelTitles.orders = "Pedidos de tienda";
 labels.orders = "Pedidos";
+panelTitles.kenshi = "Area Kenshi";
+labels.kenshi = "Kenshi";
 
 const settingsGroups = [
   {
@@ -96,6 +98,17 @@ const settingsGroups = [
       ["Supabase URL", ["settings", "leadInbox", "supabaseUrl"], "input"],
       ["Supabase anon key", ["settings", "leadInbox", "anonKey"], "textarea"],
       ["Tabla contactos", ["settings", "leadInbox", "table"], "input"]
+    ]
+  },
+  {
+    title: "Area Kenshi con Supabase",
+    help: "Solicitudes de acceso al area privada. La web publica solo crea solicitudes pendientes; tu las apruebas, rechazas o revocas desde la pestaña Kenshi.",
+    fields: [
+      ["Area Kenshi activa", ["settings", "kenshiInbox", "enabled"], "booleanText"],
+      ["Supabase URL", ["settings", "kenshiInbox", "supabaseUrl"], "input"],
+      ["Supabase anon key", ["settings", "kenshiInbox", "anonKey"], "textarea"],
+      ["Tabla Kenshi", ["settings", "kenshiInbox", "table"], "input"],
+      ["Webhook email", ["settings", "kenshiInbox", "emailWebhookUrl"], "input"]
     ]
   },
   {
@@ -339,6 +352,14 @@ function languageGroups(lang) {
         ["Título datos comprador", [...root, "merch", "buyerTitle"], "input"],
         ["Texto otra prenda JHK", [...root, "merch", "customText"], "textarea"],
         ["Botón enviar pedido", [...root, "merch", "send"], "input"],
+        ["Título Area Kenshi", [...root, "kenshi", "title"], "input"],
+        ["Texto Area Kenshi", [...root, "kenshi", "text"], "textarea"],
+        ["Ventajas Area Kenshi", [...root, "kenshi", "perks"], "matrix"],
+        ["Título formulario Kenshi", [...root, "kenshi", "formTitle"], "input"],
+        ["Texto formulario Kenshi", [...root, "kenshi", "formIntro"], "textarea"],
+        ["Relaciones Kenshi", [...root, "kenshi", "relationships"], "array"],
+        ["Botón solicitud Kenshi", [...root, "kenshi", "submit"], "input"],
+        ["Mensaje gracias Kenshi", [...root, "kenshi", "thanks"], "input"],
         ["TÃ­tulo contacto", [...root, "contact", "title"], "input"],
         ["Texto contacto", [...root, "contact", "text"], "textarea"],
         ["Campo teléfono contacto", [...root, "contact", "phone"], "input"],
@@ -521,6 +542,7 @@ function render() {
   if (currentPanel === "testimonials") return renderTestimonialsInbox();
   if (currentPanel === "merch") return renderMerch();
   if (currentPanel === "orders") return renderOrders();
+  if (currentPanel === "kenshi") return renderKenshi();
   if (currentPanel === "advanced") return renderAdvanced();
   renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
 }
@@ -582,6 +604,7 @@ function renderDashboard() {
         <header><div><h3>Acciones recomendadas</h3><p>Lo más útil para captación y posicionamiento.</p></div></header>
         <div class="dashboard-actions">
           <button type="button" data-open-panel="leads">Gestionar contactos</button>
+          <button type="button" data-open-panel="kenshi">Solicitudes Kenshi</button>
           <button type="button" data-open-panel="news">Publicar noticia</button>
           <button type="button" data-open-panel="system">Revisar SEO</button>
           <button type="button" data-open-panel="events">Actualizar calendario</button>
@@ -674,6 +697,7 @@ function systemHealthItems() {
   return [
     { level: system.googleAnalyticsId ? "ok" : "warn", label: "Google Analytics", note: system.googleAnalyticsId ? system.googleAnalyticsId : "Falta pegar el ID G-..." },
     { level: settings.leadInbox?.enabled ? "ok" : "warn", label: "Contactos Supabase", note: settings.leadInbox?.table || "No activo" },
+    { level: settings.kenshiInbox?.enabled ? "ok" : "warn", label: "Area Kenshi Supabase", note: settings.kenshiInbox?.table || "No activo" },
     { level: settings.orderInbox?.enabled ? "ok" : "warn", label: "Pedidos Supabase", note: settings.orderInbox?.table || "No activo" },
     { level: settings.testimonialInbox?.enabled ? "ok" : "warn", label: "Testimonios Supabase", note: settings.testimonialInbox?.table || "No activo" },
     { level: futureEvents ? "ok" : "warn", label: "Eventos futuros", note: futureEvents ? "Hay eventos próximos" : "Revisar calendario" },
@@ -710,13 +734,15 @@ async function refreshDashboardPrivateData() {
   const results = await Promise.allSettled([
     supabaseCount(leadInboxConfig(), "status=in.(new,contacted,trial_scheduled)"),
     supabaseCount(testimonialInboxConfig(), "status=eq.pending"),
-    supabaseCount(orderInboxConfig(), "status=in.(pending,seen,contacted,payment_pending)")
+    supabaseCount(orderInboxConfig(), "status=in.(pending,seen,contacted,payment_pending)"),
+    supabaseCount(kenshiInboxConfig(), "status=eq.pending")
   ]);
-  const [leads, testimonials, orders] = results.map((result) => result.status === "fulfilled" ? result.value : null);
+  const [leads, testimonials, orders, kenshi] = results.map((result) => result.status === "fulfilled" ? result.value : null);
   target.innerHTML = `
     ${dashboardPrivateRow("Contactos abiertos", leads)}
     ${dashboardPrivateRow("Testimonios pendientes", testimonials)}
     ${dashboardPrivateRow("Pedidos abiertos", orders)}
+    ${dashboardPrivateRow("Solicitudes Kenshi", kenshi)}
   `;
 }
 
@@ -2170,6 +2196,18 @@ function leadInboxConfig() {
   };
 }
 
+function kenshiInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = data.settings.kenshiInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_kenshi_members",
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
+  };
+}
+
 function supabaseSession() {
   try {
     return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -2589,6 +2627,214 @@ async function deleteClosedLeads() {
   }
   setStatus("Contactos cerrados eliminados.", "ok");
   loadLeads();
+}
+
+function renderKenshi() {
+  const editor = document.querySelector("#editor");
+  const config = kenshiInboxConfig();
+  const session = supabaseSession();
+  editor.innerHTML = `
+    ${renderIntro(`<div class="intro-actions">
+      <button id="load-kenshi" class="primary" type="button">Cargar solicitudes</button>
+      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
+    </div>`)}
+    ${groupTemplate({
+      title: "Conexion Area Kenshi",
+      help: "La web publica crea solicitudes pendientes. Desde aqui apruebas, rechazas, revocas o editas cada registro.",
+      fields: [
+        ["Area Kenshi activa", ["settings", "kenshiInbox", "enabled"], "booleanText"],
+        ["Supabase URL", ["settings", "kenshiInbox", "supabaseUrl"], "input"],
+        ["Supabase anon key", ["settings", "kenshiInbox", "anonKey"], "textarea"],
+        ["Tabla Kenshi", ["settings", "kenshiInbox", "table"], "input"],
+        ["Webhook email", ["settings", "kenshiInbox", "emailWebhookUrl"], "input"]
+      ]
+    })}
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Acceso privado</h3>
+          <p>Usa tu usuario de Supabase Auth. Solo el admin puede leer y modificar solicitudes.</p>
+        </div>
+      </header>
+      <div class="field-grid">
+        <label class="field"><span>Email Supabase</span><input id="kenshi-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
+        <label class="field"><span>Contraseña Supabase</span><input id="kenshi-supabase-password" type="password" /></label>
+        <button id="kenshi-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
+      </div>
+    </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Solicitudes y miembros Kenshi</h3>
+          <p id="kenshi-status">${config.enabled ? "Pulsa Cargar solicitudes." : "Activa y configura Supabase primero."}</p>
+        </div>
+      </header>
+      <div id="kenshi-list" class="lead-inbox-list kenshi-list"></div>
+    </article>
+  `;
+  bindFields(editor);
+  document.querySelector("#kenshi-login-supabase").addEventListener("click", loginKenshiSupabase);
+  document.querySelector("#load-kenshi").addEventListener("click", loadKenshiMembers);
+  document.querySelector("#logout-supabase").addEventListener("click", () => {
+    localStorage.removeItem(SUPABASE_SESSION_KEY);
+    setStatus("Sesión de Supabase cerrada.", "ok");
+    renderKenshi();
+  });
+}
+
+async function loginKenshiSupabase() {
+  const config = kenshiInboxConfig();
+  const email = document.querySelector("#kenshi-supabase-email")?.value.trim();
+  const password = document.querySelector("#kenshi-supabase-password")?.value;
+  if (!config.supabaseUrl || !config.anonKey || !email || !password) {
+    setStatus("Configura Supabase URL, anon key, email y contraseña.", "danger");
+    return;
+  }
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: { apikey: config.anonKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    setStatus(`No se pudo iniciar sesión: ${result.error_description || result.msg || "error"}`, "danger");
+    return;
+  }
+  localStorage.setItem(SUPABASE_SESSION_KEY, JSON.stringify(result));
+  setStatus("Sesión de Supabase iniciada.", "ok");
+  renderKenshi();
+}
+
+async function loadKenshiMembers() {
+  const config = kenshiInboxConfig();
+  const list = document.querySelector("#kenshi-list");
+  const status = document.querySelector("#kenshi-status");
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa Area Kenshi con Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para ver solicitudes Kenshi.", "danger");
+    return;
+  }
+  status.textContent = "Cargando solicitudes...";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?select=*&order=created_at.desc&limit=200`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const items = await response.json();
+  if (!response.ok) {
+    const message = friendlySupabaseError(items, "No se pudieron cargar solicitudes Kenshi.");
+    status.textContent = message;
+    setStatus(message, "danger");
+    return;
+  }
+  const pending = items.filter((item) => item.status === "pending").length;
+  status.textContent = items.length ? `${items.length} registro(s). ${pending} pendiente(s).` : "No hay solicitudes Kenshi.";
+  list.innerHTML = items.length ? items.map(kenshiMemberTemplate).join("") : `<p class="empty-note">No hay solicitudes Kenshi.</p>`;
+  list.querySelectorAll("[data-kenshi-save]").forEach((button) => {
+    button.addEventListener("click", () => saveKenshiMember(button.dataset.kenshiSave));
+  });
+  list.querySelectorAll("[data-kenshi-status]").forEach((button) => {
+    button.addEventListener("click", () => updateKenshiStatus(button.dataset.kenshiStatus, button.dataset.nextStatus));
+  });
+  list.querySelectorAll("[data-delete-kenshi]").forEach((button) => {
+    button.addEventListener("click", () => deleteKenshiMember(button.dataset.deleteKenshi, button.dataset.kenshiLabel || ""));
+  });
+}
+
+function kenshiMemberTemplate(member) {
+  const id = escapeHtml(member.id);
+  const status = member.status || "pending";
+  const created = member.created_at ? String(member.created_at).slice(0, 10) : "Sin fecha";
+  return `<article class="lead-card kenshi-card" data-status="${escapeHtml(status)}" data-kenshi-card="${id}">
+    <header>
+      <div>
+        <span>${escapeHtml(created)} · ${escapeHtml(member.page_lang || "es")}</span>
+        <h3>${escapeHtml(member.full_name || "Sin nombre")}</h3>
+      </div>
+      <strong class="status-pill">${escapeHtml(status)}</strong>
+    </header>
+    <div class="field-grid">
+      <label class="field"><span>Nombre</span><input data-kenshi-field="full_name" value="${escapeHtml(member.full_name || "")}" /></label>
+      <label class="field"><span>Email</span><input data-kenshi-field="email" value="${escapeHtml(member.email || "")}" /></label>
+      <label class="field"><span>Telefono</span><input data-kenshi-field="phone" value="${escapeHtml(member.phone || "")}" /></label>
+      <label class="field"><span>Relacion</span><input data-kenshi-field="relationship" value="${escapeHtml(member.relationship || "")}" /></label>
+      <label class="field"><span>Grado/nivel</span><input data-kenshi-field="grade" value="${escapeHtml(member.grade || "")}" /></label>
+      <label class="field field--wide"><span>Notas internas</span><textarea data-kenshi-field="admin_notes" rows="3">${escapeHtml(member.admin_notes || "")}</textarea></label>
+      <label class="field field--wide"><span>Mensaje solicitud</span><textarea data-kenshi-field="message" rows="3">${escapeHtml(member.message || "")}</textarea></label>
+    </div>
+    <div class="lead-actions">
+      <button class="primary" type="button" data-kenshi-save="${id}">Guardar cambios</button>
+      <button type="button" data-kenshi-status="${id}" data-next-status="approved">Aprobar</button>
+      <button type="button" data-kenshi-status="${id}" data-next-status="rejected">Rechazar</button>
+      <button type="button" data-kenshi-status="${id}" data-next-status="revoked">Revocar</button>
+      <button class="danger" type="button" data-delete-kenshi="${id}" data-kenshi-label="${escapeHtml(member.full_name || member.email || id)}">Eliminar</button>
+    </div>
+  </article>`;
+}
+
+function kenshiPayloadFromCard(id) {
+  const card = [...document.querySelectorAll("[data-kenshi-card]")].find((item) => item.dataset.kenshiCard === id);
+  if (!card) return {};
+  const payload = {};
+  card.querySelectorAll("[data-kenshi-field]").forEach((field) => {
+    payload[field.dataset.kenshiField] = field.value;
+  });
+  payload.updated_at = new Date().toISOString();
+  return payload;
+}
+
+async function saveKenshiMember(id) {
+  const payload = kenshiPayloadFromCard(id);
+  await patchKenshiMember(id, payload, "Registro Kenshi actualizado.");
+}
+
+async function updateKenshiStatus(id, status) {
+  const labels = {
+    approved: "aprobar",
+    rejected: "rechazar",
+    revoked: "revocar"
+  };
+  if (!confirm(`¿${labels[status] || "cambiar"} este acceso Kenshi?`)) return;
+  const payload = {
+    status,
+    updated_at: new Date().toISOString()
+  };
+  if (status === "approved") payload.approved_at = new Date().toISOString();
+  if (status === "revoked") payload.revoked_at = new Date().toISOString();
+  await patchKenshiMember(id, payload, "Estado Kenshi actualizado.");
+}
+
+async function patchKenshiMember(id, payload, okMessage) {
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(friendlySupabaseError(result, "No se pudo actualizar Area Kenshi."), "danger");
+    return;
+  }
+  setStatus(okMessage, "ok");
+  loadKenshiMembers();
+}
+
+async function deleteKenshiMember(id, label) {
+  if (!confirm(`¿Eliminar definitivamente el registro Kenshi de ${label || id}?`)) return;
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(friendlySupabaseError(result, "No se pudo eliminar el registro Kenshi."), "danger");
+    return;
+  }
+  setStatus("Registro Kenshi eliminado.", "ok");
+  loadKenshiMembers();
 }
 
 function renderOrders() {

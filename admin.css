@@ -996,6 +996,17 @@ button.danger {
   border-left-color: #98a2b3;
 }
 
+.lead-card[data-status="approved"] {
+  border-left-color: #137a3d;
+  background: #f3fbf6;
+}
+
+.lead-card[data-status="revoked"],
+.lead-card[data-status="rejected"] {
+  border-left-color: #c52727;
+  background: #fff6f6;
+}
+
 .lead-card header {
   display: flex;
   align-items: start;
@@ -1014,6 +1025,24 @@ button.danger {
   color: var(--muted);
   font-size: 12px;
   font-weight: 900;
+}
+
+.status-pill {
+  display: inline-flex;
+  min-width: 104px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--soft);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.kenshi-card .field-grid {
+  margin-top: 10px;
 }
 
 .lead-card select {

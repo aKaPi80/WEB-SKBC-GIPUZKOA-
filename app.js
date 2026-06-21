@@ -184,12 +184,12 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", contact: "Contacto", more: "M\u00e1s" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", contact: "Kontaktua", more: "Gehiago" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", contact: "Contact", more: "More" }
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", kenshi: "\u00c1rea Kenshi", contact: "Contacto", more: "M\u00e1s" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", kenshi: "Kenshi Gunea", contact: "Kontaktua", more: "Gehiago" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", kenshi: "Kenshi Area", contact: "Contact", more: "More" }
 };
 
-const NAV_KEYS = ["kids", "adults", "club", "team", "learn", "schedule", "calendar", "gallery", "testimonials", "faq", "news", "social", "merch", "contact"];
+const NAV_KEYS = ["kids", "adults", "club", "team", "learn", "schedule", "calendar", "gallery", "testimonials", "faq", "news", "social", "merch", "kenshi", "contact"];
 
 function systemSettings() {
   return state.content.settings.system || {};
@@ -221,6 +221,9 @@ function navLabels() {
   const configured = systemSettings().navLabels?.[state.lang];
   if (!configured) return fallback;
   const parts = String(configured).split("|").map((part) => part.trim());
+  if (parts.length === NAV_KEYS.length - 1 && !parts.some((part) => /kenshi/i.test(part))) {
+    parts.splice(NAV_KEYS.indexOf("kenshi"), 0, fallback.kenshi);
+  }
   return NAV_KEYS.reduce((labels, key, index) => {
     labels[key] = parts[index] || fallback[key];
     return labels;
@@ -656,6 +659,38 @@ function testimonialsSection(copy) {
   </section>`;
 }
 
+function kenshiSection(copy) {
+  const kenshi = copy.kenshi || {};
+  const perks = Array.isArray(kenshi.perks) ? kenshi.perks : [];
+  const relationships = Array.isArray(kenshi.relationships) && kenshi.relationships.length
+    ? kenshi.relationships
+    : ["Alumno/a actual", "Padre/madre", "Antiguo alumno/a", "Quiero informarme"];
+  return `<section class="section kenshi-section" id="kenshi">
+    <div class="kenshi-layout">
+      <div class="kenshi-copy">
+        <p class="eyebrow">${kenshi.eyebrow || "Area privada"}</p>
+        <h2>${kenshi.title || "Area Kenshi SKBC"}</h2>
+        <p>${kenshi.text || "Solicita acceso al area privada del club. Revisaremos tu solicitud antes de activar el acceso."}</p>
+        <div class="kenshi-perks">
+          ${perks.map((item) => `<article><strong>${escapeHtml(item[0] || "")}</strong><span>${escapeHtml(item[1] || "")}</span></article>`).join("")}
+        </div>
+      </div>
+      <form class="kenshi-form">
+        <h3>${kenshi.formTitle || "Solicitar acceso"}</h3>
+        <p>${kenshi.formIntro || "El acceso no es automatico. El club revisa cada solicitud."}</p>
+        <label>${kenshi.name || "Nombre y apellidos"}<input name="full_name" required /></label>
+        <label>${kenshi.email || "Email"}<input name="email" type="email" required /></label>
+        <label>${kenshi.phone || "Telefono"}<input name="phone" inputmode="tel" /></label>
+        <label>${kenshi.relationship || "Relacion con el club"}<select name="relationship">${relationships.map((option) => `<option>${escapeHtml(option)}</option>`).join("")}</select></label>
+        <label>${kenshi.grade || "Grado o nivel"}<input name="grade" /></label>
+        <label>${kenshi.message || "Mensaje"}<textarea name="message" rows="4"></textarea></label>
+        <button class="button" type="submit">${kenshi.submit || "Enviar solicitud"}</button>
+        <p class="kenshi-form-status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>`;
+}
+
 function galleryCarousel(images = [], copy = t()) {
   const photos = Array.isArray(images) ? [...new Set(images.filter(Boolean))] : [];
   if (!photos.length) return "";
@@ -737,11 +772,25 @@ function leadInboxConfig() {
   };
 }
 
+function kenshiInboxConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const config = state.content.settings.kenshiInbox || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
+    table: config.table || "skbc_kenshi_members",
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
+  };
+}
+
 function privateNotificationWebhookUrl() {
   const orderConfig = state.content.settings.orderInbox || {};
   const leadConfig = state.content.settings.leadInbox || {};
   const testimonialConfig = state.content.settings.testimonialInbox || {};
+  const kenshiConfig = state.content.settings.kenshiInbox || {};
   return String(
+    kenshiConfig.emailWebhookUrl ||
     orderConfig.emailWebhookUrl ||
     leadConfig.emailWebhookUrl ||
     testimonialConfig.emailWebhookUrl ||
@@ -800,6 +849,38 @@ async function submitLeadToSupabase(lead) {
     "",
     "Revísalo en el admin de SKBC GIPUZKOA."
   ], lead);
+  return true;
+}
+
+async function submitKenshiRequestToSupabase(request) {
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${config.anonKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify(request)
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.message || "No se pudo guardar la solicitud Kenshi");
+  }
+  postPrivateNotification("kenshi", "Nueva solicitud de Área Kenshi", [
+    "Nueva solicitud de acceso al Área Kenshi.",
+    "",
+    `Nombre: ${request.full_name || "No indicado"}`,
+    `Email: ${request.email || "No indicado"}`,
+    `Teléfono: ${request.phone || "No indicado"}`,
+    `Relación: ${request.relationship || "No indicado"}`,
+    "",
+    `Mensaje: ${request.message || "Sin mensaje"}`,
+    "",
+    "Revísalo en el admin de SKBC GIPUZKOA."
+  ], request);
   return true;
 }
 
@@ -1326,10 +1407,11 @@ function renderNav(copy) {
     { label: labels.news, href: "#noticias" },
     { label: labels.social, href: "#redes" },
     { label: labels.merch, href: "#merchandising" },
+    { label: labels.kenshi, href: "#kenshi" },
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
-  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#contacto"]);
+  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#kenshi", "#contacto"]);
   const primaryNav = baseNav.filter((item) => primaryHrefs.has(item.href));
   const secondaryNav = baseNav.filter((item) => !primaryHrefs.has(item.href));
   document.querySelector(".main-nav").innerHTML = [
@@ -1657,6 +1739,8 @@ function render() {
 
     ${merchSection(settings, copy)}
 
+    ${kenshiSection(copy)}
+
     ${customSections(settings)}
 
     <section class="section soft" id="contacto">
@@ -1717,6 +1801,7 @@ function render() {
   bindProfiles();
   bindCalendar();
   bindMerch(copy);
+  bindKenshi(copy);
 }
 
 function bindTestimonials(copy) {
@@ -1757,6 +1842,40 @@ function bindTestimonials(copy) {
     window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
     formElement.reset();
     alert(copy.testimonials.thanks || "Gracias. Revisaremos el testimonio antes de publicarlo.");
+  });
+}
+
+function bindKenshi(copy) {
+  document.querySelector(".kenshi-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const status = formElement.querySelector(".kenshi-form-status");
+    const form = new FormData(formElement);
+    const request = {
+      full_name: String(form.get("full_name") || "").trim(),
+      email: String(form.get("email") || "").trim(),
+      phone: String(form.get("phone") || "").trim(),
+      relationship: String(form.get("relationship") || "").trim(),
+      grade: String(form.get("grade") || "").trim(),
+      message: String(form.get("message") || "").trim(),
+      status: "pending",
+      page_lang: state.lang,
+      source: "website_kenshi"
+    };
+    if (!request.full_name || !request.email) return;
+    const kenshi = copy.kenshi || {};
+    if (status) status.textContent = kenshi.sending || "Enviando solicitud...";
+    try {
+      const saved = await submitKenshiRequestToSupabase(request);
+      if (!saved) throw new Error(kenshi.notConfigured || "El Area Kenshi todavia no esta conectada");
+      formElement.reset();
+      if (status) status.textContent = kenshi.thanks || "Solicitud enviada. El club la revisara antes de activar el acceso.";
+      alert(kenshi.thanks || "Solicitud enviada. El club la revisara antes de activar el acceso.");
+    } catch (error) {
+      const message = `${error.message || "No se pudo enviar la solicitud"}.`;
+      if (status) status.textContent = message;
+      alert(message);
+    }
   });
 }
 
