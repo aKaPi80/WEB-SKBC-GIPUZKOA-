@@ -33,11 +33,15 @@ to anon
 with check (status = 'pending');
 
 drop policy if exists "Authenticated admin can read Kenshi requests" on public.skbc_kenshi_members;
-create policy "Authenticated admin can read Kenshi requests"
+drop policy if exists "Authenticated users can read Kenshi own or admin" on public.skbc_kenshi_members;
+create policy "Authenticated users can read Kenshi own or admin"
 on public.skbc_kenshi_members
 for select
 to authenticated
-using ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
+using (
+  (auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com'
+  or lower(email) = lower(auth.jwt() ->> 'email')
+);
 
 drop policy if exists "Authenticated admin can update Kenshi requests" on public.skbc_kenshi_members;
 create policy "Authenticated admin can update Kenshi requests"

@@ -2796,16 +2796,21 @@ async function updateKenshiStatus(id, status) {
     revoked: "revocar"
   };
   if (!confirm(`¿${labels[status] || "cambiar"} este acceso Kenshi?`)) return;
+  const member = kenshiPayloadFromCard(id);
   const payload = {
     status,
     updated_at: new Date().toISOString()
   };
   if (status === "approved") payload.approved_at = new Date().toISOString();
   if (status === "revoked") payload.revoked_at = new Date().toISOString();
-  await patchKenshiMember(id, payload, "Estado Kenshi actualizado.");
+  const updated = await patchKenshiMember(id, payload, "Estado Kenshi actualizado.", false);
+  if (updated && status === "approved") {
+    notifyKenshiMemberApproved({ ...member, id });
+  }
+  loadKenshiMembers();
 }
 
-async function patchKenshiMember(id, payload, okMessage) {
+async function patchKenshiMember(id, payload, okMessage, reload = true) {
   const config = kenshiInboxConfig();
   const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
     method: "PATCH",
@@ -2815,10 +2820,41 @@ async function patchKenshiMember(id, payload, okMessage) {
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
     setStatus(friendlySupabaseError(result, "No se pudo actualizar Area Kenshi."), "danger");
-    return;
+    return false;
   }
   setStatus(okMessage, "ok");
-  loadKenshiMembers();
+  if (reload) loadKenshiMembers();
+  return true;
+}
+
+function notifyKenshiMemberApproved(member) {
+  const config = kenshiInboxConfig();
+  const url = String(config.emailWebhookUrl || orderInboxConfig().emailWebhookUrl || "").trim();
+  const email = String(member.email || "").trim();
+  if (!url || !email) return;
+  const name = String(member.full_name || "Kenshi").trim();
+  const payload = {
+    notification_type: "kenshi_approved",
+    type: "kenshi_approved",
+    subject: "Acceso Área Kenshi aprobado",
+    email_to: email,
+    name,
+    email,
+    message: [
+      `Hola ${name},`,
+      "",
+      "Tu acceso al Área Kenshi de SKBC GIPUZKOA ha sido aprobado.",
+      "Ya puedes entrar en la web con el email y la contraseña que usaste al registrarte.",
+      "",
+      "https://www.skbcgipuzkoa.com/"
+    ].join("\n")
+  };
+  fetch(url, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
 }
 
 async function deleteKenshiMember(id, label) {

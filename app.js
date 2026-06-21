@@ -884,6 +884,75 @@ async function submitKenshiRequestToSupabase(request) {
   return true;
 }
 
+async function signUpKenshiUser(request) {
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) throw new Error("El Area Kenshi todavia no esta conectada");
+  const authResponse = await fetch(`${config.supabaseUrl}/auth/v1/signup`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: request.email,
+      password: request.password,
+      data: {
+        full_name: request.full_name,
+        phone: request.phone,
+        relationship: request.relationship,
+        grade: request.grade
+      }
+    })
+  });
+  const authResult = await authResponse.json();
+  if (!authResponse.ok) {
+    throw new Error(authResult.error_description || authResult.msg || "No se pudo crear la cuenta");
+  }
+  const { password, ...safeRequest } = request;
+  await submitKenshiRequestToSupabase({
+    ...safeRequest,
+    status: "pending",
+    source: "kenshi_signup"
+  });
+  return authResult;
+}
+
+async function loginKenshiUser(email, password) {
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) throw new Error("El Area Kenshi todavia no esta conectada");
+  const response = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error_description || result.msg || "No se pudo iniciar sesion");
+  }
+  return result;
+}
+
+async function loadKenshiAccessForSession(session) {
+  const config = kenshiInboxConfig();
+  const email = session?.user?.email;
+  if (!email) return null;
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?email=eq.${encodeURIComponent(email)}&select=*&order=created_at.desc&limit=1`, {
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const rows = await response.json();
+  if (!response.ok) {
+    throw new Error(rows.message || "No se pudo comprobar el acceso Kenshi");
+  }
+  return rows[0] || null;
+}
+
 async function uploadTestimonialPhoto(file) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
@@ -1407,11 +1476,10 @@ function renderNav(copy) {
     { label: labels.news, href: "#noticias" },
     { label: labels.social, href: "#redes" },
     { label: labels.merch, href: "#merchandising" },
-    { label: labels.kenshi, href: "#kenshi" },
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
-  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#kenshi", "#contacto"]);
+  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#contacto"]);
   const primaryNav = baseNav.filter((item) => primaryHrefs.has(item.href));
   const secondaryNav = baseNav.filter((item) => !primaryHrefs.has(item.href));
   document.querySelector(".main-nav").innerHTML = [
@@ -1420,6 +1488,8 @@ function renderNav(copy) {
   ].join("");
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
+  const kenshiAccess = document.querySelector(".kenshi-access");
+  if (kenshiAccess) kenshiAccess.textContent = labels.kenshi || "Area Kenshi";
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.classList.toggle("active", button.dataset.lang === state.lang);
   });
@@ -1739,8 +1809,6 @@ function render() {
 
     ${merchSection(settings, copy)}
 
-    ${kenshiSection(copy)}
-
     ${customSections(settings)}
 
     <section class="section soft" id="contacto">
@@ -1801,7 +1869,7 @@ function render() {
   bindProfiles();
   bindCalendar();
   bindMerch(copy);
-  bindKenshi(copy);
+  bindKenshiPortal(copy);
 }
 
 function bindTestimonials(copy) {
@@ -1877,6 +1945,103 @@ function bindKenshi(copy) {
       alert(message);
     }
   });
+}
+
+function bindKenshiPortal(copy) {
+  const modal = document.querySelector("#kenshiModal");
+  if (!modal) return;
+  const kenshi = copy.kenshi || {};
+  modal.querySelector("#kenshiModalEyebrow").textContent = kenshi.eyebrow || "Area privada";
+  modal.querySelector("#kenshiModalTitle").textContent = kenshi.title || "Area Kenshi SKBC";
+  modal.querySelector("#kenshiModalText").textContent = kenshi.text || "Acceso privado para miembros aprobados del club.";
+  const status = modal.querySelector(".kenshi-auth-status");
+  const privatePanel = modal.querySelector(".kenshi-private-panel");
+  document.querySelectorAll("[data-open-kenshi]").forEach((button) => {
+    button.addEventListener("click", () => openKenshiModal());
+  });
+  modal.querySelector(".kenshi-modal__close")?.addEventListener("click", closeKenshiModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target.id === "kenshiModal") closeKenshiModal();
+  });
+  modal.querySelectorAll("[data-kenshi-tab]").forEach((button) => {
+    button.addEventListener("click", () => activateKenshiTab(button.dataset.kenshiTab));
+  });
+  modal.querySelector('[data-kenshi-form="register"]')?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const request = {
+      full_name: String(form.get("full_name") || "").trim(),
+      email: String(form.get("email") || "").trim(),
+      password: String(form.get("password") || ""),
+      phone: String(form.get("phone") || "").trim(),
+      relationship: String(form.get("relationship") || "").trim(),
+      grade: String(form.get("grade") || "").trim(),
+      message: String(form.get("message") || "").trim(),
+      page_lang: state.lang
+    };
+    if (status) status.textContent = kenshi.sending || "Creando cuenta y enviando solicitud...";
+    try {
+      await signUpKenshiUser(request);
+      event.currentTarget.reset();
+      if (status) status.textContent = kenshi.registerThanks || "Cuenta creada y solicitud enviada. Cuando el club apruebe el acceso, podras entrar con este email y contraseña.";
+    } catch (error) {
+      if (status) status.textContent = error.message || "No se pudo crear la cuenta.";
+    }
+  });
+  modal.querySelector('[data-kenshi-form="login"]')?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    if (status) status.textContent = kenshi.checking || "Comprobando acceso...";
+    privatePanel.hidden = true;
+    try {
+      const session = await loginKenshiUser(String(form.get("email") || "").trim(), String(form.get("password") || ""));
+      const access = await loadKenshiAccessForSession(session);
+      if (!access) {
+        if (status) status.textContent = kenshi.noRequest || "Cuenta creada, pero no encontramos una solicitud Kenshi asociada. Solicita acceso desde la pestaña Registrarme.";
+        return;
+      }
+      if (access.status === "approved") {
+        if (status) status.textContent = kenshi.approved || "Acceso aprobado.";
+        privatePanel.hidden = false;
+        return;
+      }
+      if (access.status === "revoked") {
+        if (status) status.textContent = kenshi.revoked || "Tu acceso Kenshi ha sido revocado por el club.";
+        return;
+      }
+      if (access.status === "rejected") {
+        if (status) status.textContent = kenshi.rejected || "Tu solicitud no ha sido aprobada.";
+        return;
+      }
+      if (status) status.textContent = kenshi.pending || "Tu solicitud esta pendiente de aprobacion por el club.";
+    } catch (error) {
+      if (status) status.textContent = error.message || "No se pudo iniciar sesion.";
+    }
+  });
+}
+
+function openKenshiModal() {
+  document.querySelector("#kenshiModal")?.classList.add("is-open");
+  document.querySelector("#kenshiModal")?.setAttribute("aria-hidden", "false");
+}
+
+function closeKenshiModal() {
+  document.querySelector("#kenshiModal")?.classList.remove("is-open");
+  document.querySelector("#kenshiModal")?.setAttribute("aria-hidden", "true");
+}
+
+function activateKenshiTab(tab) {
+  const modal = document.querySelector("#kenshiModal");
+  modal?.querySelectorAll("[data-kenshi-tab]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.kenshiTab === tab);
+  });
+  modal?.querySelectorAll("[data-kenshi-form]").forEach((form) => {
+    form.classList.toggle("active", form.dataset.kenshiForm === tab);
+  });
+  const status = modal?.querySelector(".kenshi-auth-status");
+  const privatePanel = modal?.querySelector(".kenshi-private-panel");
+  if (status) status.textContent = "";
+  if (privatePanel) privatePanel.hidden = true;
 }
 
 function bindProfiles() {

@@ -1413,7 +1413,14 @@ window.SKBC_CONTENT = {
         "submit": "Enviar solicitud",
         "sending": "Enviando solicitud...",
         "thanks": "Solicitud enviada. El club la revisara antes de activar el acceso.",
-        "notConfigured": "El Area Kenshi todavia no esta conectada"
+        "notConfigured": "El Area Kenshi todavia no esta conectada",
+        "registerThanks": "Cuenta creada y solicitud enviada. Cuando el club apruebe el acceso, podras entrar con este email y contrasena.",
+        "checking": "Comprobando acceso...",
+        "approved": "Acceso aprobado. Bienvenido al Area Kenshi.",
+        "pending": "Tu solicitud esta pendiente de aprobacion por el club.",
+        "rejected": "Tu solicitud no ha sido aprobada.",
+        "revoked": "Tu acceso Kenshi ha sido revocado por el club.",
+        "noRequest": "Cuenta creada, pero no encontramos una solicitud Kenshi asociada. Solicita acceso desde la pestana Registrarme."
       },
       "contact": {
         "eyebrow": "Contacto",
@@ -2000,7 +2007,14 @@ window.SKBC_CONTENT = {
         "submit": "Eskaera bidali",
         "sending": "Eskaera bidaltzen...",
         "thanks": "Eskaera bidalita. Klubak berrikusiko du sarbidea aktibatu aurretik.",
-        "notConfigured": "Kenshi Gunea oraindik ez dago konektatuta"
+        "notConfigured": "Kenshi Gunea oraindik ez dago konektatuta",
+        "registerThanks": "Kontua sortu da eta eskaera bidali da. Klubak sarbidea onartzen duenean, email eta pasahitz honekin sartu ahal izango zara.",
+        "checking": "Sarbidea egiaztatzen...",
+        "approved": "Sarbidea onartuta. Ongi etorri Kenshi Gunera.",
+        "pending": "Zure eskaera klubaren onespenaren zain dago.",
+        "rejected": "Zure eskaera ez da onartu.",
+        "revoked": "Klubak Kenshi sarbidea kendu dizu.",
+        "noRequest": "Kontua sortuta dago, baina ez dugu email horri lotutako Kenshi eskaerarik aurkitu. Eskatu sarbidea Erregistratu fitxatik."
       },
       "contact": {
         "eyebrow": "Kontaktua",
@@ -2587,7 +2601,14 @@ window.SKBC_CONTENT = {
         "submit": "Send request",
         "sending": "Sending request...",
         "thanks": "Request sent. The club will review it before activating access.",
-        "notConfigured": "The Kenshi Area is not connected yet"
+        "notConfigured": "The Kenshi Area is not connected yet",
+        "registerThanks": "Account created and request sent. Once the club approves access, you can log in with this email and password.",
+        "checking": "Checking access...",
+        "approved": "Access approved. Welcome to the Kenshi Area.",
+        "pending": "Your request is waiting for club approval.",
+        "rejected": "Your request has not been approved.",
+        "revoked": "Your Kenshi access has been revoked by the club.",
+        "noRequest": "Account created, but no Kenshi request was found for this email. Request access from the Register tab."
       },
       "contact": {
         "eyebrow": "Contact",

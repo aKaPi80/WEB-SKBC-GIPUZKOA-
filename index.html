@@ -25,7 +25,7 @@
     <link rel="icon" href="assets/logo-skbc.png" />
     <link rel="apple-touch-icon" href="assets/logo-skbc.png" />
     <link rel="preload" as="image" href="assets/optimized/1780955986965-chatgpt-image-8-jun-2026-23-59-12.webp" />
-    <link rel="stylesheet" href="styles.css?v=20260621-kenshi-area" />
+    <link rel="stylesheet" href="styles.css?v=20260621-kenshi-portal" />
     <script type="application/ld+json" id="structured-data">
       {
         "@context": "https://schema.org",
@@ -74,6 +74,7 @@
         <button type="button" data-lang="eu">EU</button>
         <button type="button" data-lang="en">EN</button>
       </div>
+      <button class="kenshi-access" type="button" data-open-kenshi>Área Kenshi</button>
       <a class="nav-cta" data-whatsapp="general" target="_blank" rel="noreferrer"></a>
     </header>
 
@@ -110,8 +111,45 @@
       </div>
     </div>
 
+    <div class="profile-modal kenshi-modal" id="kenshiModal" aria-hidden="true">
+      <div class="profile-modal__panel kenshi-modal__panel" role="dialog" aria-modal="true" aria-labelledby="kenshiModalTitle">
+        <button class="kenshi-modal__close profile-modal__close" type="button" aria-label="Cerrar Área Kenshi">×</button>
+        <div class="kenshi-modal__content">
+          <div class="kenshi-modal__intro">
+            <p class="eyebrow" id="kenshiModalEyebrow">Área privada</p>
+            <h2 id="kenshiModalTitle">Área Kenshi SKBC</h2>
+            <p id="kenshiModalText">Acceso privado para miembros aprobados del club.</p>
+          </div>
+          <div class="kenshi-auth-tabs" role="tablist" aria-label="Área Kenshi">
+            <button class="active" type="button" data-kenshi-tab="login">Entrar</button>
+            <button type="button" data-kenshi-tab="register">Registrarme</button>
+          </div>
+          <form class="kenshi-auth-form active" data-kenshi-form="login">
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Contraseña<input name="password" type="password" autocomplete="current-password" required /></label>
+            <button class="button" type="submit">Entrar</button>
+          </form>
+          <form class="kenshi-auth-form" data-kenshi-form="register">
+            <label>Nombre y apellidos<input name="full_name" autocomplete="name" required /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Contraseña<input name="password" type="password" autocomplete="new-password" minlength="6" required /></label>
+            <label>Teléfono<input name="phone" inputmode="tel" autocomplete="tel" /></label>
+            <label>Relación con el club<input name="relationship" placeholder="Alumno/a, familia, antiguo alumno..." /></label>
+            <label>Grado o nivel<input name="grade" /></label>
+            <label>Mensaje<textarea name="message" rows="3"></textarea></label>
+            <button class="button" type="submit">Solicitar acceso</button>
+          </form>
+          <div class="kenshi-private-panel" hidden>
+            <strong>Acceso Kenshi activo</strong>
+            <p>Tu cuenta está aprobada. Aquí iremos añadiendo recursos, avisos internos, calendario ampliado y contenidos privados del club.</p>
+          </div>
+          <p class="kenshi-auth-status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+
     <a class="whatsapp-float" data-whatsapp="general" target="_blank" rel="noreferrer"></a>
 
-    <script src="app.js?v=20260621-kenshi-area"></script>
+    <script src="app.js?v=20260621-kenshi-portal"></script>
   </body>
 </html>
