@@ -919,7 +919,12 @@ window.SKBC_CONTENT = {
           null,
           null,
           null,
-          "29% 35%"
+          "29% 35%",
+          null,
+          null,
+          null,
+          null,
+          "47% 13%"
         ]
       }
     },
