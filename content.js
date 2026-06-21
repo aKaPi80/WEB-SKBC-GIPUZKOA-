@@ -890,11 +890,11 @@ window.SKBC_CONTENT = {
         "hero": "center center",
         "kids": "center center",
         "adults": "center center",
-        "learn": "center center",
-        "technicalTeam": "center center",
-        "alvaro": "center 18%",
+        "learn": "86% 0%",
+        "technicalTeam": "24% 57%",
+        "alvaro": "50% 28%",
         "inaki": "center 18%",
-        "andoni": "center 18%",
+        "andoni": "50% 18%",
         "oskar": "center 18%",
         "asier": "center 18%",
         "igone": "center 18%",
@@ -902,7 +902,7 @@ window.SKBC_CONTENT = {
         "bharat": "center 18%",
         "pablo": "center 18%",
         "uxue": "center 18%",
-        "jorge": "center 18%"
+        "jorge": "53% 0%"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",
