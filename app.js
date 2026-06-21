@@ -581,14 +581,15 @@ function upcomingNewsSection(settings, copy) {
       ? `<a class="news-card" href="${item.url}" target="_blank" rel="noreferrer">${inner}</a>`
       : `<article class="news-card">${inner}</article>`;
   });
-  const carouselCards = cards.length > 1 ? [...cards, ...cards] : cards;
+  const animateNews = cards.length > 3;
+  const carouselCards = animateNews ? [...cards, ...cards] : cards;
   return `<section class="section soft" id="noticias">
     <div class="section-heading">
       <p class="eyebrow">${copy.news.eyebrow}</p>
       <h2>${copy.news.title}</h2>
       <p>${copy.news.text}</p>
     </div>
-    <div class="news-carousel ${cards.length > 1 ? "is-animated" : ""}">
+    <div class="news-carousel ${animateNews ? "is-animated" : ""}">
       ${cards.length ? `<div class="news-track">${carouselCards.join("")}</div>` : `<p>${copy.news.empty}</p>`}
     </div>
   </section>`;
