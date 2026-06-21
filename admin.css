@@ -245,15 +245,35 @@ aside {
 }
 
 .gallery-admin-thumb {
+  position: relative;
+  display: block;
   min-height: 130px;
   width: 100%;
+  overflow: hidden;
   border-radius: 6px;
   border: 1px solid var(--line);
   padding: 0;
   background-color: var(--soft);
-  background-position: center;
-  background-size: cover;
   cursor: zoom-in;
+}
+
+.gallery-admin-thumb img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-admin-thumb.image-field-preview--broken::before {
+  content: "No se ve la imagen";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #9f1d1d;
+  background: #fff5f5;
+  font-weight: 950;
+  text-align: center;
 }
 
 .gallery-admin-item input {

@@ -1176,7 +1176,7 @@ function imageFieldTemplate(id, encodedPath, encodedPositionPath, value, type, u
     : "center center";
   const preview = value
     ? `<button class="image-field-preview" data-frame-image-path="${encodedPath}" data-frame-position-path="${encodedPositionPath}" type="button" title="Doble clic para encuadrar">
-        <img src="${escapeHtml(value)}" alt="Previsualización" style="object-position:${escapeHtml(position)}" loading="lazy" onerror="this.hidden=true;this.closest('.image-field-preview').classList.add('image-field-preview--broken')" />
+        <img src="${escapeHtml(value)}" alt="Previsualización" style="object-position:${escapeHtml(position)}" loading="lazy" onerror="retryAdminImage(this)" />
         <span>Editar encuadre</span>
       </button>`
     : `<div class="image-field-preview image-field-preview--empty"><span>Sin imagen</span></div>`;
@@ -1190,6 +1190,21 @@ function imageFieldTemplate(id, encodedPath, encodedPositionPath, value, type, u
       </div>
     </div>
   `;
+}
+
+function publicImageUrl(path = "") {
+  if (/^https?:\/\//.test(path)) return path;
+  return `https://www.skbcgipuzkoa.com/${String(path).replace(/^\/+/, "")}`;
+}
+
+function retryAdminImage(img) {
+  const current = img.getAttribute("src") || "";
+  if (current && !/^https?:\/\//.test(current)) {
+    img.src = publicImageUrl(current);
+    return;
+  }
+  img.hidden = true;
+  img.closest(".image-field-preview, .gallery-admin-thumb")?.classList.add("image-field-preview--broken");
 }
 
 function controlTemplate(id, encodedPath, value, type) {
@@ -1527,7 +1542,9 @@ function galleryImageItemTemplate(image, index, position = "center center") {
   const encodedPositionPath = encodeURIComponent(JSON.stringify(["settings", "images", "positions", "gallery", index]));
   return `
     <article class="gallery-admin-item" data-gallery-index="${index}">
-      <button class="gallery-admin-thumb" type="button" data-frame-image-path="${encodedImagePath}" data-frame-position-path="${encodedPositionPath}" style="background-image:url('${escapeAttr(image)}');background-position:${escapeAttr(position)}" title="Doble clic para encuadrar"></button>
+      <div class="gallery-admin-thumb" role="button" tabindex="0" data-frame-image-path="${encodedImagePath}" data-frame-position-path="${encodedPositionPath}" title="Doble clic para encuadrar">
+        <img src="${escapeHtml(image)}" alt="Miniatura ${index + 1}" style="object-position:${escapeHtml(position)}" loading="lazy" onerror="retryAdminImage(this)" />
+      </div>
       <input value="${escapeHtml(image)}" aria-label="Ruta de imagen ${index + 1}" />
       <div class="gallery-admin-buttons">
         <button type="button" data-gallery-action="frame">Encuadrar</button>
@@ -3094,6 +3111,11 @@ function openImageFrameEditor(encodedImagePath, encodedPositionPath) {
     empty.hidden = true;
   };
   img.onerror = () => {
+    const current = img.getAttribute("src") || "";
+    if (current && !/^https?:\/\//.test(current)) {
+      img.src = publicImageUrl(current);
+      return;
+    }
     img.hidden = true;
     empty.hidden = false;
   };
@@ -3137,9 +3159,6 @@ function refreshImageFieldPreviews(imagePath, position) {
   document.querySelectorAll(`[data-frame-image-path="${encodedImagePath}"] img`).forEach((img) => {
     img.style.objectPosition = position;
   });
-  document.querySelectorAll(`[data-frame-image-path="${encodedImagePath}"].gallery-admin-thumb`).forEach((thumb) => {
-    thumb.style.backgroundPosition = position;
-  });
 }
 
 function bindGalleryImages(root) {
@@ -3171,7 +3190,11 @@ function bindGalleryImages(root) {
     grid.addEventListener("input", (event) => {
       const input = event.target.closest(".gallery-admin-item input");
       if (!input) return;
-      input.closest(".gallery-admin-item").querySelector(".gallery-admin-thumb").style.backgroundImage = `url('${input.value.trim()}')`;
+      const image = input.closest(".gallery-admin-item").querySelector(".gallery-admin-thumb img");
+      if (image) {
+        image.hidden = false;
+        image.src = input.value.trim();
+      }
       sync();
     });
     grid.addEventListener("click", async (event) => {
@@ -3226,6 +3249,13 @@ function bindGalleryImages(root) {
         renderItems(items, positions);
         sync();
       }
+    });
+    grid.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const frameTarget = event.target.closest(".gallery-admin-thumb[data-frame-image-path]");
+      if (!frameTarget) return;
+      event.preventDefault();
+      openImageFrameEditor(frameTarget.dataset.frameImagePath, frameTarget.dataset.framePositionPath);
     });
     gallery.querySelector(".add-gallery-image")?.addEventListener("click", async () => {
       const uploaded = await chooseAndUploadGalleryImage(gallery.querySelector(".add-gallery-image"));
