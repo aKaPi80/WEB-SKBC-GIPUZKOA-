@@ -659,11 +659,12 @@ function testimonialsSection(copy) {
 function galleryCarousel(images = [], copy = t()) {
   const photos = Array.isArray(images) ? [...new Set(images.filter(Boolean))] : [];
   if (!photos.length) return "";
+  const positions = state.content.settings.images?.positions?.gallery || [];
   const loopPhotos = photos.length > 1 ? [...photos, ...photos] : photos;
   return `<div class="gallery-carousel ${photos.length > 1 ? "is-animated" : ""}" aria-label="${copy.media?.title || "Galería"}">
     <div class="gallery-track">
       ${loopPhotos.map((image, index) => `<button class="gallery-photo" type="button" data-gallery-image="${escapeHtml(image)}" data-gallery-index="${index % photos.length}">
-        <img src="${image}" alt="${copy.media?.title || "SKBC GIPUZKOA"} ${index % photos.length + 1}" loading="lazy" />
+        <img src="${image}" alt="${copy.media?.title || "SKBC GIPUZKOA"} ${index % photos.length + 1}" loading="lazy" style="object-position:${escapeHtml(positions[index % photos.length] || "center center")}" />
       </button>`).join("")}
     </div>
   </div>`;

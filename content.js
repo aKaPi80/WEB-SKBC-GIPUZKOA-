@@ -902,7 +902,15 @@ window.SKBC_CONTENT = {
         "bharat": "center 18%",
         "pablo": "center 18%",
         "uxue": "center 18%",
-        "jorge": "53% 0%"
+        "jorge": "53% 0%",
+        "gallery": [
+          "center center",
+          "center center",
+          "center center",
+          "center center",
+          "center center",
+          "center center"
+        ]
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",

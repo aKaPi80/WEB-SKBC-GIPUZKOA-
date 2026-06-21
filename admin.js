@@ -1507,12 +1507,13 @@ function generatedRepeatDates(event) {
 
 function galleryImagesTemplate(id, encodedPath, items = []) {
   const images = Array.isArray(items) ? items.filter(Boolean) : [];
+  const positions = getByPath(data, ["settings", "images", "positions", "gallery"]) || [];
   return `
     <div class="gallery-admin" data-gallery-path="${encodedPath}">
       <input id="${id}" data-type="array" data-path="${encodedPath}" value="${escapeHtml(images.join("\n"))}" hidden />
       <small>Estas son las miniaturas visibles en “Actividades, seminarios y vida del club”. Puedes añadir tantas como quieras. Al subir una imagen, el editor la reduce y la convierte a WebP automáticamente cuando compensa.</small>
       <div class="gallery-admin-grid">
-        ${images.map((image, index) => galleryImageItemTemplate(image, index)).join("")}
+        ${images.map((image, index) => galleryImageItemTemplate(image, index, positions[index] || "center center")).join("")}
       </div>
       <div class="gallery-admin-actions">
         <button class="primary add-gallery-image" type="button">Añadir imagen</button>
@@ -1521,12 +1522,15 @@ function galleryImagesTemplate(id, encodedPath, items = []) {
   `;
 }
 
-function galleryImageItemTemplate(image, index) {
+function galleryImageItemTemplate(image, index, position = "center center") {
+  const encodedImagePath = encodeURIComponent(JSON.stringify(["settings", "images", "gallery", index]));
+  const encodedPositionPath = encodeURIComponent(JSON.stringify(["settings", "images", "positions", "gallery", index]));
   return `
     <article class="gallery-admin-item" data-gallery-index="${index}">
-      <div class="gallery-admin-thumb" style="background-image:url('${escapeAttr(image)}')"></div>
+      <button class="gallery-admin-thumb" type="button" data-frame-image-path="${encodedImagePath}" data-frame-position-path="${encodedPositionPath}" style="background-image:url('${escapeAttr(image)}');background-position:${escapeAttr(position)}" title="Doble clic para encuadrar"></button>
       <input value="${escapeHtml(image)}" aria-label="Ruta de imagen ${index + 1}" />
       <div class="gallery-admin-buttons">
+        <button type="button" data-gallery-action="frame">Encuadrar</button>
         <button type="button" data-gallery-action="upload">Cambiar</button>
         <button type="button" data-gallery-action="up">Subir</button>
         <button type="button" data-gallery-action="down">Bajar</button>
@@ -3133,6 +3137,9 @@ function refreshImageFieldPreviews(imagePath, position) {
   document.querySelectorAll(`[data-frame-image-path="${encodedImagePath}"] img`).forEach((img) => {
     img.style.objectPosition = position;
   });
+  document.querySelectorAll(`[data-frame-image-path="${encodedImagePath}"].gallery-admin-thumb`).forEach((thumb) => {
+    thumb.style.backgroundPosition = position;
+  });
 }
 
 function bindGalleryImages(root) {
@@ -3140,16 +3147,25 @@ function bindGalleryImages(root) {
     const hidden = gallery.querySelector("[data-path]");
     const grid = gallery.querySelector(".gallery-admin-grid");
     const path = JSON.parse(decodeURIComponent(gallery.dataset.galleryPath));
+    const positionPath = ["settings", "images", "positions", "gallery"];
     const getItems = () => Array.from(grid.querySelectorAll(".gallery-admin-item input"))
       .map((input) => input.value.trim())
       .filter(Boolean);
-    const renderItems = (items) => {
-      grid.innerHTML = items.map((image, index) => galleryImageItemTemplate(image, index)).join("");
+    const getPositions = () => {
+      const positions = getByPath(data, positionPath);
+      return Array.isArray(positions) ? [...positions] : [];
+    };
+    const setPositions = (positions) => {
+      setByPath(data, positionPath, positions);
+    };
+    const renderItems = (items, positions = getPositions()) => {
+      grid.innerHTML = items.map((image, index) => galleryImageItemTemplate(image, index, positions[index] || "center center")).join("");
     };
     const sync = () => {
       const items = getItems();
       hidden.value = items.join("\n");
       setByPath(data, path, items);
+      setPositions(getPositions().slice(0, items.length));
       markDirty();
     };
     grid.addEventListener("input", (event) => {
@@ -3159,26 +3175,45 @@ function bindGalleryImages(root) {
       sync();
     });
     grid.addEventListener("click", async (event) => {
+      const frameTarget = event.target.closest(".gallery-admin-thumb[data-frame-image-path]");
+      if (frameTarget) {
+        openImageFrameEditor(frameTarget.dataset.frameImagePath, frameTarget.dataset.framePositionPath);
+        return;
+      }
       const button = event.target.closest("[data-gallery-action]");
       if (!button) return;
       const item = button.closest(".gallery-admin-item");
       const index = Number(item.dataset.galleryIndex);
       const items = getItems();
+      const positions = getPositions();
+      if (button.dataset.galleryAction === "frame") {
+        openImageFrameEditor(
+          encodeURIComponent(JSON.stringify(["settings", "images", "gallery", index])),
+          encodeURIComponent(JSON.stringify(["settings", "images", "positions", "gallery", index]))
+        );
+        return;
+      }
       if (button.dataset.galleryAction === "remove") {
         items.splice(index, 1);
-        renderItems(items);
+        positions.splice(index, 1);
+        setPositions(positions);
+        renderItems(items, positions);
         sync();
         return;
       }
       if (button.dataset.galleryAction === "up" && index > 0) {
         [items[index - 1], items[index]] = [items[index], items[index - 1]];
-        renderItems(items);
+        [positions[index - 1], positions[index]] = [positions[index] || "center center", positions[index - 1] || "center center"];
+        setPositions(positions);
+        renderItems(items, positions);
         sync();
         return;
       }
       if (button.dataset.galleryAction === "down" && index < items.length - 1) {
         [items[index + 1], items[index]] = [items[index], items[index + 1]];
-        renderItems(items);
+        [positions[index + 1], positions[index]] = [positions[index] || "center center", positions[index + 1] || "center center"];
+        setPositions(positions);
+        renderItems(items, positions);
         sync();
         return;
       }
@@ -3186,7 +3221,9 @@ function bindGalleryImages(root) {
         const uploaded = await chooseAndUploadGalleryImage(button);
         if (!uploaded) return;
         items[index] = uploaded;
-        renderItems(items);
+        positions[index] = positions[index] || "center center";
+        setPositions(positions);
+        renderItems(items, positions);
         sync();
       }
     });
@@ -3194,8 +3231,11 @@ function bindGalleryImages(root) {
       const uploaded = await chooseAndUploadGalleryImage(gallery.querySelector(".add-gallery-image"));
       if (!uploaded) return;
       const items = getItems();
+      const positions = getPositions();
       items.push(uploaded);
-      renderItems(items);
+      positions.push("center center");
+      setPositions(positions);
+      renderItems(items, positions);
       sync();
     });
   });

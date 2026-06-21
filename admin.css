@@ -246,10 +246,14 @@ aside {
 
 .gallery-admin-thumb {
   min-height: 130px;
+  width: 100%;
   border-radius: 6px;
+  border: 1px solid var(--line);
+  padding: 0;
   background-color: var(--soft);
   background-position: center;
   background-size: cover;
+  cursor: zoom-in;
 }
 
 .gallery-admin-item input {
