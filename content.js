@@ -904,7 +904,7 @@ window.SKBC_CONTENT = {
       {
         "enabled": true,
         "date": "2026-06-27",
-        "expiresAt": "",
+        "expiresAt": "2026-06-30T00:00",
         "color": "#1fa89f",
         "image": "assets/uploads/1780955554543-dingle-ika.png",
         "url": "",
