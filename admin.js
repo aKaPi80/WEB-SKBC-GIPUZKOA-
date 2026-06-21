@@ -1150,7 +1150,8 @@ function fieldTemplate([label, path, type]) {
   const control = imageField
     ? imageFieldTemplate(id, encodedPath, encodedPositionPath, value, type, upload, frameButton)
     : `${controlTemplate(id, encodedPath, value, type)}${upload}`;
-  return `<label class="field" for="${id}"><span>${label}</span>${control}</label>`;
+  const wideClass = ["textarea", "array", "matrix", "linkList", "colorList", "galleryImages", "specialVisualSchedule"].includes(type) ? " field--wide" : "";
+  return `<label class="field${wideClass}" for="${id}"><span>${label}</span>${control}</label>`;
 }
 
 function isImageField(label, path) {
