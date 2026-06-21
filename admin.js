@@ -17,6 +17,7 @@ let currentPanel = "dashboard";
 let currentEventIndex = null;
 let currentNewsIndex = null;
 let dirty = false;
+let imageFrameEditor = null;
 
 const panelTitles = {
   dashboard: "Panel de control",
@@ -140,15 +141,10 @@ const settingsGroups = [
     help: "Estas son las fotos de fondo principales de la web. Pega una URL o una ruta local dentro de esta carpeta.",
     fields: [
       ["Foto hero/inicio", ["settings", "images", "hero"], "input"],
-      ["Encuadre hero/inicio", ["settings", "images", "positions", "hero"], "imagePosition"],
       ["Foto niÃ±os", ["settings", "images", "kids"], "input"],
-      ["Encuadre niÃ±os", ["settings", "images", "positions", "kids"], "imagePosition"],
       ["Foto adultos", ["settings", "images", "adults"], "input"],
-      ["Encuadre adultos", ["settings", "images", "positions", "adults"], "imagePosition"],
       ["Foto tÃ©cnica/aprendizaje", ["settings", "images", "learn"], "input"],
-      ["Encuadre tÃ©cnica/aprendizaje", ["settings", "images", "positions", "learn"], "imagePosition"],
       ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"],
-      ["Encuadre equipo tÃ©cnico", ["settings", "images", "positions", "technicalTeam"], "imagePosition"],
       ["Imágenes de galería", ["settings", "images", "gallery"], "galleryImages"]
     ]
   },
@@ -157,27 +153,16 @@ const settingsGroups = [
     help: "Estas miniaturas se usan en equipo tÃ©cnico y directiva. Si no hay foto correcta, deja el campo vacÃ­o.",
     fields: [
       ["Ãlvaro Calvo", ["settings", "images", "people", "alvaro"], "input"],
-      ["Encuadre Ãlvaro Calvo", ["settings", "images", "positions", "alvaro"], "imagePosition"],
       ["IÃ±aki Ventureira", ["settings", "images", "people", "inaki"], "input"],
-      ["Encuadre IÃ±aki Ventureira", ["settings", "images", "positions", "inaki"], "imagePosition"],
       ["Andoni DomÃ­nguez", ["settings", "images", "people", "andoni"], "input"],
-      ["Encuadre Andoni DomÃ­nguez", ["settings", "images", "positions", "andoni"], "imagePosition"],
       ["Oskar Mateos", ["settings", "images", "people", "oskar"], "input"],
-      ["Encuadre Oskar Mateos", ["settings", "images", "positions", "oskar"], "imagePosition"],
       ["Asier Azurmendi", ["settings", "images", "people", "asier"], "input"],
-      ["Encuadre Asier Azurmendi", ["settings", "images", "positions", "asier"], "imagePosition"],
       ["Igone Lasa", ["settings", "images", "people", "igone"], "input"],
-      ["Encuadre Igone Lasa", ["settings", "images", "positions", "igone"], "imagePosition"],
       ["IÃ±aki Iturrioz", ["settings", "images", "people", "iturrioz"], "input"],
-      ["Encuadre IÃ±aki Iturrioz", ["settings", "images", "positions", "iturrioz"], "imagePosition"],
       ["Bharat Martin", ["settings", "images", "people", "bharat"], "input"],
-      ["Encuadre Bharat Martin", ["settings", "images", "positions", "bharat"], "imagePosition"],
       ["Pablo SÃ¡nchez", ["settings", "images", "people", "pablo"], "input"],
-      ["Encuadre Pablo SÃ¡nchez", ["settings", "images", "positions", "pablo"], "imagePosition"],
       ["Uxue Garikano", ["settings", "images", "people", "uxue"], "input"],
-      ["Encuadre Uxue Garikano", ["settings", "images", "positions", "uxue"], "imagePosition"],
-      ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"],
-      ["Encuadre Jorge Redondo", ["settings", "images", "positions", "jorge"], "imagePosition"]
+      ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"]
     ]
   }
 ];
@@ -1157,14 +1142,54 @@ function fieldTemplate([label, path, type]) {
   const value = formatFieldValue(getByPath(data, path), type);
   const id = `field-${path.join("-")}`;
   const encodedPath = encodeURIComponent(JSON.stringify(path));
-  const upload = isImageField(label, path) ? `<button class="upload-image" data-upload-path="${encodedPath}" type="button">Subir imagen</button>` : "";
-  const control = `${controlTemplate(id, encodedPath, value, type)}${upload}`;
+  const imageField = isImageField(label, path);
+  const positionPath = imageField ? positionPathForImagePath(path) : null;
+  const encodedPositionPath = positionPath ? encodeURIComponent(JSON.stringify(positionPath)) : "";
+  const upload = imageField ? `<button class="upload-image" data-upload-path="${encodedPath}" type="button">Subir imagen</button>` : "";
+  const frameButton = positionPath ? `<button class="frame-image" data-frame-image-path="${encodedPath}" data-frame-position-path="${encodedPositionPath}" type="button">Encuadrar</button>` : "";
+  const control = imageField
+    ? imageFieldTemplate(id, encodedPath, encodedPositionPath, value, type, upload, frameButton)
+    : `${controlTemplate(id, encodedPath, value, type)}${upload}`;
   return `<label class="field" for="${id}"><span>${label}</span>${control}</label>`;
 }
 
 function isImageField(label, path) {
   const text = `${label} ${path.join(" ")}`.toLowerCase();
   return text.includes("foto") || text.includes("imagen") || text.includes("image") || text.includes("logo");
+}
+
+function positionPathForImagePath(path) {
+  const joined = path.join(".");
+  if (joined === "settings.images.hero") return ["settings", "images", "positions", "hero"];
+  if (joined === "settings.images.kids") return ["settings", "images", "positions", "kids"];
+  if (joined === "settings.images.adults") return ["settings", "images", "positions", "adults"];
+  if (joined === "settings.images.learn") return ["settings", "images", "positions", "learn"];
+  if (path[0] === "settings" && path[1] === "images" && path[2] === "people" && path[3]) {
+    return ["settings", "images", "positions", path[3]];
+  }
+  return null;
+}
+
+function imageFieldTemplate(id, encodedPath, encodedPositionPath, value, type, upload, frameButton) {
+  const position = encodedPositionPath
+    ? getByPath(data, JSON.parse(decodeURIComponent(encodedPositionPath))) || "center center"
+    : "center center";
+  const preview = value
+    ? `<button class="image-field-preview" data-frame-image-path="${encodedPath}" data-frame-position-path="${encodedPositionPath}" type="button" title="Doble clic para encuadrar">
+        <img src="${escapeHtml(value)}" alt="Previsualización" style="object-position:${escapeHtml(position)}" loading="lazy" onerror="this.hidden=true;this.closest('.image-field-preview').classList.add('image-field-preview--broken')" />
+        <span>Editar encuadre</span>
+      </button>`
+    : `<div class="image-field-preview image-field-preview--empty"><span>Sin imagen</span></div>`;
+  return `
+    <div class="image-field-row">
+      ${preview}
+      <div class="image-field-controls">
+        ${controlTemplate(id, encodedPath, value, type)}
+        <div class="image-field-actions">${upload}${frameButton}</div>
+        <small>La previsualización puede abrirse con doble clic. Si la foto no carga, revisa la ruta o vuelve a subirla.</small>
+      </div>
+    </div>
+  `;
 }
 
 function controlTemplate(id, encodedPath, value, type) {
@@ -2915,10 +2940,199 @@ function bindFields(root) {
   root.querySelectorAll("[data-upload-path]").forEach((button) => {
     button.addEventListener("click", () => uploadImageForPath(button));
   });
+  bindImageFrameControls(root);
   bindGalleryImages(root);
   bindSpecialVisualSchedules(root);
   bindAlertBannerControls(root);
   bindAlertBannerTranslation(root);
+}
+
+function bindImageFrameControls(root) {
+  root.querySelectorAll("[data-frame-image-path][data-frame-position-path]").forEach((button) => {
+    if (!button.dataset.framePositionPath) return;
+    const open = (event) => {
+      event.preventDefault();
+      openImageFrameEditor(button.dataset.frameImagePath, button.dataset.framePositionPath);
+    };
+    button.addEventListener("click", open);
+    button.addEventListener("dblclick", open);
+  });
+}
+
+function parseImagePosition(value = "center center") {
+  const parts = String(value || "center center").trim().split(/\s+/);
+  const toPercent = (part, axis) => {
+    if (!part || part === "center") return 50;
+    if (part === "left" || part === "top") return 0;
+    if (part === "right" || part === "bottom") return 100;
+    if (part.endsWith("%")) return Math.max(0, Math.min(100, Number(part.replace("%", "")) || 0));
+    return axis === "x" ? 50 : 50;
+  };
+  return {
+    x: toPercent(parts[0], "x"),
+    y: toPercent(parts[1] || "center", "y")
+  };
+}
+
+function formatImagePosition(x, y) {
+  const roundedX = Math.round(Math.max(0, Math.min(100, x)));
+  const roundedY = Math.round(Math.max(0, Math.min(100, y)));
+  return `${roundedX}% ${roundedY}%`;
+}
+
+function ensureImageFrameModal() {
+  let modal = document.querySelector("#image-frame-modal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "image-frame-modal";
+  modal.className = "image-frame-modal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="image-frame-modal__panel" role="dialog" aria-modal="true" aria-label="Editor de encuadre">
+      <header>
+        <div>
+          <h3>Encuadrar imagen</h3>
+          <p>Arrastra la foto para decidir qué parte se ve en la web. No se modifica el archivo original.</p>
+        </div>
+        <button class="image-frame-close" type="button" aria-label="Cerrar">×</button>
+      </header>
+      <div class="image-frame-stage">
+        <img alt="Imagen para encuadrar" draggable="false" />
+        <span class="image-frame-empty">No se ha podido cargar la imagen</span>
+      </div>
+      <div class="image-frame-presets">
+        <button type="button" data-frame-preset="50 50">Centro</button>
+        <button type="button" data-frame-preset="50 0">Arriba</button>
+        <button type="button" data-frame-preset="50 18">Rostro arriba</button>
+        <button type="button" data-frame-preset="50 100">Abajo</button>
+        <button type="button" data-frame-preset="0 50">Izquierda</button>
+        <button type="button" data-frame-preset="100 50">Derecha</button>
+      </div>
+      <footer>
+        <span class="image-frame-value"></span>
+        <button class="secondary image-frame-cancel" type="button">Cancelar</button>
+        <button class="primary image-frame-save" type="button">Guardar encuadre</button>
+      </footer>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector(".image-frame-close").addEventListener("click", closeImageFrameEditor);
+  modal.querySelector(".image-frame-cancel").addEventListener("click", closeImageFrameEditor);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeImageFrameEditor();
+  });
+  modal.querySelector(".image-frame-save").addEventListener("click", saveImageFrameEditor);
+  modal.querySelectorAll("[data-frame-preset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const [x, y] = button.dataset.framePreset.split(" ").map(Number);
+      setImageFramePosition(x, y);
+    });
+  });
+  bindImageFrameDrag(modal);
+  return modal;
+}
+
+function bindImageFrameDrag(modal) {
+  const stage = modal.querySelector(".image-frame-stage");
+  const startDrag = (event) => {
+    if (!imageFrameEditor) return;
+    event.preventDefault();
+    const pointer = event.touches?.[0] || event;
+    imageFrameEditor.dragging = {
+      startX: pointer.clientX,
+      startY: pointer.clientY,
+      originX: imageFrameEditor.x,
+      originY: imageFrameEditor.y
+    };
+    stage.classList.add("is-dragging");
+  };
+  const moveDrag = (event) => {
+    if (!imageFrameEditor?.dragging) return;
+    const pointer = event.touches?.[0] || event;
+    const rect = stage.getBoundingClientRect();
+    const dx = ((pointer.clientX - imageFrameEditor.dragging.startX) / Math.max(1, rect.width)) * -100;
+    const dy = ((pointer.clientY - imageFrameEditor.dragging.startY) / Math.max(1, rect.height)) * -100;
+    setImageFramePosition(imageFrameEditor.dragging.originX + dx, imageFrameEditor.dragging.originY + dy);
+  };
+  const endDrag = () => {
+    if (!imageFrameEditor) return;
+    imageFrameEditor.dragging = null;
+    stage.classList.remove("is-dragging");
+  };
+  stage.addEventListener("mousedown", startDrag);
+  stage.addEventListener("touchstart", startDrag, { passive: false });
+  window.addEventListener("mousemove", moveDrag);
+  window.addEventListener("touchmove", moveDrag, { passive: false });
+  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("touchend", endDrag);
+}
+
+function openImageFrameEditor(encodedImagePath, encodedPositionPath) {
+  const imagePath = JSON.parse(decodeURIComponent(encodedImagePath));
+  const positionPath = JSON.parse(decodeURIComponent(encodedPositionPath));
+  const image = getByPath(data, imagePath);
+  if (!image) {
+    setStatus("Primero sube o pega una imagen para poder encuadrarla.", "warning");
+    return;
+  }
+  const modal = ensureImageFrameModal();
+  const current = parseImagePosition(getByPath(data, positionPath) || "center center");
+  imageFrameEditor = { imagePath, positionPath, x: current.x, y: current.y, dragging: null };
+  const stage = modal.querySelector(".image-frame-stage");
+  const key = positionPath.at(-1);
+  stage.dataset.frameKind = ["alvaro", "inaki", "andoni", "oskar", "asier", "igone", "iturrioz", "bharat", "pablo", "uxue", "jorge"].includes(key)
+    ? "portrait"
+    : "wide";
+  const img = modal.querySelector(".image-frame-stage img");
+  const empty = modal.querySelector(".image-frame-empty");
+  img.onload = () => {
+    img.hidden = false;
+    empty.hidden = true;
+  };
+  img.onerror = () => {
+    img.hidden = true;
+    empty.hidden = false;
+  };
+  img.src = image;
+  setImageFramePosition(current.x, current.y);
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function setImageFramePosition(x, y) {
+  if (!imageFrameEditor) return;
+  imageFrameEditor.x = Math.max(0, Math.min(100, x));
+  imageFrameEditor.y = Math.max(0, Math.min(100, y));
+  const modal = document.querySelector("#image-frame-modal");
+  const value = formatImagePosition(imageFrameEditor.x, imageFrameEditor.y);
+  modal.querySelector(".image-frame-stage img").style.objectPosition = value;
+  modal.querySelector(".image-frame-value").textContent = `Encuadre: ${value}`;
+}
+
+function closeImageFrameEditor() {
+  const modal = document.querySelector("#image-frame-modal");
+  if (!modal) return;
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
+  imageFrameEditor = null;
+}
+
+function saveImageFrameEditor() {
+  if (!imageFrameEditor) return;
+  const value = formatImagePosition(imageFrameEditor.x, imageFrameEditor.y);
+  setByPath(data, imageFrameEditor.positionPath, value);
+  updateFieldValue(imageFrameEditor.positionPath, value);
+  refreshImageFieldPreviews(imageFrameEditor.imagePath, value);
+  markDirty();
+  setStatus("Encuadre guardado en el editor. Falta guardar/publicar cambios.", "warning");
+  closeImageFrameEditor();
+}
+
+function refreshImageFieldPreviews(imagePath, position) {
+  const encodedImagePath = encodeURIComponent(JSON.stringify(imagePath));
+  document.querySelectorAll(`[data-frame-image-path="${encodedImagePath}"] img`).forEach((img) => {
+    img.style.objectPosition = position;
+  });
 }
 
 function bindGalleryImages(root) {
@@ -3141,6 +3355,7 @@ async function uploadImageForPath(button) {
       if (field) field.value = assetPath;
       markDirty();
       setStatus("Imagen subida. Falta guardar/publicar cambios.", "warning");
+      render();
     } catch (error) {
       setStatus(`Error al subir imagen: ${error.message}`, "danger");
     } finally {
