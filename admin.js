@@ -11,7 +11,8 @@ const MEDIA_REPLACEMENTS = {
 };
 
 let data = load();
-let publishedContentSignature = contentSignature(cloneDefault());
+let publishedContentSnapshot = structuredClone(data);
+let publishedContentSignature = contentSignature(publishedContentSnapshot);
 let currentPanel = "dashboard";
 let currentEventIndex = null;
 let currentNewsIndex = null;
@@ -373,6 +374,34 @@ function deepMerge(base, override) {
     merged[key] = deepMerge(base[key], override[key]);
     return merged;
   }, {});
+}
+
+function deepEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function rebaseEditedContent(base, remote, edited) {
+  if (deepEqual(base, edited)) return structuredClone(remote);
+  if (Array.isArray(base) && Array.isArray(remote) && Array.isArray(edited)) {
+    if (edited.length < base.length) return structuredClone(edited);
+    const merged = base.map((item, index) => rebaseEditedContent(item, remote[index], edited[index]));
+    if (remote.length > base.length) merged.push(...structuredClone(remote.slice(base.length)));
+    if (edited.length > base.length) merged.push(...structuredClone(edited.slice(base.length)));
+    return merged;
+  }
+  if (Array.isArray(base) || Array.isArray(remote) || Array.isArray(edited)) {
+    return structuredClone(edited);
+  }
+  if (!base || typeof base !== "object" || !edited || typeof edited !== "object") {
+    return structuredClone(edited);
+  }
+  if (!remote || typeof remote !== "object") {
+    return structuredClone(edited);
+  }
+  return Object.keys({ ...base, ...edited }).reduce((merged, key) => {
+    merged[key] = rebaseEditedContent(base[key], remote[key], edited[key]);
+    return merged;
+  }, structuredClone(remote));
 }
 
 function replaceLegacyCanvaMedia(value, fallback) {
@@ -3244,15 +3273,20 @@ async function publishWithGithubApi(contentData) {
   const current = await githubRequest(`${apiUrl}?ref=${GITHUB_BRANCH}&ts=${Date.now()}`, token);
   const remote = parseSkbcContentJs(utf8FromBase64(current.content || ""));
   const remoteChangedSinceOpen = contentSignature(remote) !== publishedContentSignature;
-  const preserved = preserveRemoteTestimonials(remote, contentData);
-  await confirmNoPublishedCriticalContentWillDisappear(remote, contentData);
+  const rebasedContent = remoteChangedSinceOpen
+    ? rebaseEditedContent(publishedContentSnapshot, remote, contentData)
+    : contentData;
   if (remoteChangedSinceOpen) {
-    const preservedMessage = preserved ? `\n\nAdemás, se han conservado automáticamente ${preserved} testimonio(s) que estaban en GitHub y no estaban cargados en este editor.` : "";
-    const ok = confirm(`GitHub tiene una versión más reciente que la que cargó este editor. Esto suele pasar justo después de publicar, porque la web tarda unos minutos en refrescar.\n\nNo se ha detectado una pérdida de noticias, eventos, productos o testimonios por cantidad.${preservedMessage}\n\n¿Quieres publicar igualmente estos cambios?`);
+    data = rebasedContent;
+    setStatus("GitHub tenía cambios nuevos: se ha conservado la web publicada y se han aplicado solo tus cambios de esta sesión.", "warning");
+  }
+  await confirmNoPublishedCriticalContentWillDisappear(remote, rebasedContent);
+  if (remoteChangedSinceOpen) {
+    const ok = confirm("GitHub tiene una versión más reciente que la que cargó este editor.\n\nEl admin ha conservado automáticamente la web publicada actual y ha aplicado encima solo los cambios que has hecho en esta sesión.\n\n¿Quieres publicar esa versión combinada?");
     if (!ok) throw new Error("Publicación cancelada para no pisar la versión más reciente de GitHub.");
     publishedContentSignature = contentSignature(remote);
   }
-  const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(contentData, null, 2)};\n`);
+  const content = base64Utf8(`window.SKBC_CONTENT = ${JSON.stringify(rebasedContent, null, 2)};\n`);
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
@@ -3273,30 +3307,14 @@ async function publishWithGithubApi(contentData) {
       throw error;
     }
   }
-  publishedContentSignature = contentSignature(contentData);
+  publishedContentSnapshot = structuredClone(rebasedContent);
+  publishedContentSignature = contentSignature(rebasedContent);
+  data = rebasedContent;
 
   return {
     message: "Cambios publicados en GitHub Pages. Puede tardar unos minutos en verse.",
     url: `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}/`
   };
-}
-
-function preserveRemoteTestimonials(remote, contentData) {
-  let preserved = 0;
-  ["es", "eu", "en"].forEach((lang) => {
-    const remoteItems = remote.languages?.[lang]?.testimonials?.items;
-    const localItems = contentData.languages?.[lang]?.testimonials?.items;
-    if (!Array.isArray(remoteItems) || !Array.isArray(localItems)) return;
-    if (remoteItems.length <= localItems.length) return;
-    setByPath(contentData, ["languages", lang, "testimonials", "items"], structuredClone(remoteItems));
-    preserved += remoteItems.length - localItems.length;
-  });
-  if (preserved) {
-    data = contentData;
-    render();
-    setStatus("Se han conservado testimonios publicados que no estaban cargados en este editor.", "warning");
-  }
-  return preserved;
 }
 
 async function confirmNoPublishedCriticalContentWillDisappear(remote, contentData) {
@@ -3421,6 +3439,8 @@ document.querySelector("#import").addEventListener("change", async (event) => {
 document.querySelector("#reset").addEventListener("click", () => {
   if (!confirm("¿Descartar los cambios no publicados y recargar el contenido publicado?")) return;
   data = cloneDefault();
+  publishedContentSnapshot = structuredClone(data);
+  publishedContentSignature = contentSignature(data);
   localStorage.removeItem(STORAGE_KEY);
   dirty = false;
   render();
