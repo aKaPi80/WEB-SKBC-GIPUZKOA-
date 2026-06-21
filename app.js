@@ -688,7 +688,7 @@ function learnSection(settings, copy) {
         <a class="button" href="${escapeHtml(url)}"${externalAttrs}>${copy.learn.button || "Ver recursos"}</a>
       </div>
       <div class="learn-panel">
-        <div class="learn-photo" style="background-image:url('${settings.images.learn}')"></div>
+        <div class="learn-photo" style="${backgroundImageStyle(settings.images.learn, "learn")}"></div>
         <div class="learn-cards">
           ${items.map((item, index) => `<article>
             <span>${String(index + 1).padStart(2, "0")}</span>
@@ -1111,9 +1111,36 @@ function normalizeName(name) {
   return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
+function imagePosition(key, fallback = "center center") {
+  return state.content.settings.images?.positions?.[key] || fallback;
+}
+
+function backgroundImageStyle(image, positionKey, fallback = "center center") {
+  return `background-image:url('${image}');background-position:${imagePosition(positionKey, fallback)}`;
+}
+
+function personImageKey(profile) {
+  const name = String(profile.name || "").split(/\s*·\s*|\s*Â·\s*|\s*Ã‚Â·\s*/)[0];
+  const normalized = normalizeName(name);
+  if (normalized === "alvaro calvo") return "alvaro";
+  if (normalized === "inaki ventureira") return "inaki";
+  if (normalized === "andoni dominguez") return "andoni";
+  if (normalized === "oskar mateos") return "oskar";
+  if (normalized === "asier azurmendi") return "asier";
+  if (normalized === "igone lasa") return "igone";
+  if (normalized === "inaki iturrioz") return "iturrioz";
+  if (normalized === "bharat martin") return "bharat";
+  if (normalized === "pablo sanchez") return "pablo";
+  if (normalized === "uxue garikano") return "uxue";
+  if (normalized === "jorge redondo") return "jorge";
+  return "";
+}
+
 function personImage(profile, index) {
   if (profile.image) return profile.image;
   const people = state.content.settings.images.people || {};
+  const key = personImageKey(profile);
+  if (key) return people[key];
   const name = String(profile.name || "").split(/\s*·\s*|\s*Â·\s*/)[0];
   const normalized = normalizeName(name);
   if (normalized === "alvaro calvo") return people.alvaro;
@@ -1133,14 +1160,16 @@ function personImage(profile, index) {
 function personButton(person, group, index, extraClass = "") {
   const profile = parsePerson(person);
   const image = personImage(profile, index);
+  const position = imagePosition(personImageKey(profile), "center 18%");
   const data = JSON.stringify({
     name: profile.name,
     role: profile.role,
     text: profileText(profile, group),
-    image
+    image,
+    position
   });
   return `<button class="person-card ${extraClass}" type="button" data-profile='${escapeHtml(data)}'>
-    ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" /></span>` : ""}
+    ${image ? `<span class="person-card__photo"><img src="${image}" alt="${profile.name}" style="object-position:${escapeHtml(position)}" /></span>` : ""}
     <span>${profile.role}</span>
     <strong>${profile.name}</strong>
   </button>`;
@@ -1471,7 +1500,7 @@ function render() {
 
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
-      <div class="hero-bg" style="background-image:url('${settings.images.hero}')"></div>
+      <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
       <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" /></div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
@@ -1501,7 +1530,7 @@ function render() {
 
     <section class="section" id="ninos">
       <div class="split">
-        <div class="split-media" style="background-image:url('${settings.images.kids}')"></div>
+        <div class="split-media" style="${backgroundImageStyle(settings.images.kids, "kids")}"></div>
         <div class="split-copy">
           <p class="eyebrow">${copy.kids.eyebrow}</p>
           <h2>${copy.kids.title}</h2>
@@ -1520,7 +1549,7 @@ function render() {
           <p>${copy.adults.text}</p>
           <div class="grid-3">${copy.adults.items.map((item) => `<article class="card"><span>${item[0]}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
         </div>
-        <div class="split-media" style="background-image:url('${settings.images.adults}')"></div>
+        <div class="split-media" style="${backgroundImageStyle(settings.images.adults, "adults")}"></div>
       </div>
     </section>
 
@@ -1557,7 +1586,7 @@ function render() {
 
     <section class="section">
       <div class="instructor-layout">
-        <div class="instructor-photo" style="background-image:url('${peopleImages.alvaro || settings.images.learn}')"></div>
+        <div class="instructor-photo" style="${backgroundImageStyle(peopleImages.alvaro || settings.images.learn, "alvaro", "center 18%")}"></div>
         <div class="instructor-copy">
           <p class="eyebrow">${copy.instructor.eyebrow}</p>
           <h2>${copy.instructor.title}</h2>
@@ -1570,7 +1599,7 @@ function render() {
     <section class="section soft" id="equipo">
       <div class="section-heading"><p class="eyebrow">${copy.technicalTeam.eyebrow}</p><h2>${copy.technicalTeam.title}</h2><p>${copy.technicalTeam.text}</p></div>
       <div class="team-feature">
-        <div class="team-feature__image" style="background-image:url('${peopleImages.technicalTeam || settings.images.adults}')"></div>
+        <div class="team-feature__image" style="${backgroundImageStyle(peopleImages.technicalTeam || settings.images.adults, "technicalTeam")}"></div>
         <div>
           <h3>${copy.technicalTeam.groupTitle || copy.technicalTeam.title}</h3>
           <p>${copy.technicalTeam.groupText || copy.technicalTeam.text}</p>
@@ -1850,10 +1879,12 @@ function openProfile(profile) {
   if (profile.image) {
     imageElement.src = profile.image;
     imageElement.alt = profile.name;
+    imageElement.style.objectPosition = profile.position || "center 18%";
     imageElement.hidden = false;
   } else {
     imageElement.hidden = true;
     imageElement.removeAttribute("src");
+    imageElement.style.objectPosition = "";
   }
   modal.querySelector("#profileRole").textContent = profile.role;
   modal.querySelector("#profileTitle").textContent = profile.name;

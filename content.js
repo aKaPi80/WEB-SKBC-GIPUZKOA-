@@ -885,6 +885,24 @@ window.SKBC_CONTENT = {
         "uxue": "assets/optimized/1780960891857-uxue.webp",
         "jorge": "assets/optimized/jorge-redondo.webp",
         "technicalTeam": "assets/optimized/1780527476492-b9065214-9cd6-4696-b76a-066831c209fc.webp"
+      },
+      "positions": {
+        "hero": "center center",
+        "kids": "center center",
+        "adults": "center center",
+        "learn": "center center",
+        "technicalTeam": "center center",
+        "alvaro": "center 18%",
+        "inaki": "center 18%",
+        "andoni": "center 18%",
+        "oskar": "center 18%",
+        "asier": "center 18%",
+        "igone": "center 18%",
+        "iturrioz": "center 18%",
+        "bharat": "center 18%",
+        "pablo": "center 18%",
+        "uxue": "center 18%",
+        "jorge": "center 18%"
       }
     },
     "ikaUrl": "https://www.internationalkempo.org/",

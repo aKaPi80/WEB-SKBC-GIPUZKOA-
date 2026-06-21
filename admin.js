@@ -140,10 +140,15 @@ const settingsGroups = [
     help: "Estas son las fotos de fondo principales de la web. Pega una URL o una ruta local dentro de esta carpeta.",
     fields: [
       ["Foto hero/inicio", ["settings", "images", "hero"], "input"],
+      ["Encuadre hero/inicio", ["settings", "images", "positions", "hero"], "imagePosition"],
       ["Foto niÃ±os", ["settings", "images", "kids"], "input"],
+      ["Encuadre niÃ±os", ["settings", "images", "positions", "kids"], "imagePosition"],
       ["Foto adultos", ["settings", "images", "adults"], "input"],
+      ["Encuadre adultos", ["settings", "images", "positions", "adults"], "imagePosition"],
       ["Foto tÃ©cnica/aprendizaje", ["settings", "images", "learn"], "input"],
+      ["Encuadre tÃ©cnica/aprendizaje", ["settings", "images", "positions", "learn"], "imagePosition"],
       ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"],
+      ["Encuadre equipo tÃ©cnico", ["settings", "images", "positions", "technicalTeam"], "imagePosition"],
       ["Imágenes de galería", ["settings", "images", "gallery"], "galleryImages"]
     ]
   },
@@ -152,16 +157,27 @@ const settingsGroups = [
     help: "Estas miniaturas se usan en equipo tÃ©cnico y directiva. Si no hay foto correcta, deja el campo vacÃ­o.",
     fields: [
       ["Ãlvaro Calvo", ["settings", "images", "people", "alvaro"], "input"],
+      ["Encuadre Ãlvaro Calvo", ["settings", "images", "positions", "alvaro"], "imagePosition"],
       ["IÃ±aki Ventureira", ["settings", "images", "people", "inaki"], "input"],
+      ["Encuadre IÃ±aki Ventureira", ["settings", "images", "positions", "inaki"], "imagePosition"],
       ["Andoni DomÃ­nguez", ["settings", "images", "people", "andoni"], "input"],
+      ["Encuadre Andoni DomÃ­nguez", ["settings", "images", "positions", "andoni"], "imagePosition"],
       ["Oskar Mateos", ["settings", "images", "people", "oskar"], "input"],
+      ["Encuadre Oskar Mateos", ["settings", "images", "positions", "oskar"], "imagePosition"],
       ["Asier Azurmendi", ["settings", "images", "people", "asier"], "input"],
+      ["Encuadre Asier Azurmendi", ["settings", "images", "positions", "asier"], "imagePosition"],
       ["Igone Lasa", ["settings", "images", "people", "igone"], "input"],
+      ["Encuadre Igone Lasa", ["settings", "images", "positions", "igone"], "imagePosition"],
       ["IÃ±aki Iturrioz", ["settings", "images", "people", "iturrioz"], "input"],
+      ["Encuadre IÃ±aki Iturrioz", ["settings", "images", "positions", "iturrioz"], "imagePosition"],
       ["Bharat Martin", ["settings", "images", "people", "bharat"], "input"],
+      ["Encuadre Bharat Martin", ["settings", "images", "positions", "bharat"], "imagePosition"],
       ["Pablo SÃ¡nchez", ["settings", "images", "people", "pablo"], "input"],
+      ["Encuadre Pablo SÃ¡nchez", ["settings", "images", "positions", "pablo"], "imagePosition"],
       ["Uxue Garikano", ["settings", "images", "people", "uxue"], "input"],
-      ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"]
+      ["Encuadre Uxue Garikano", ["settings", "images", "positions", "uxue"], "imagePosition"],
+      ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"],
+      ["Encuadre Jorge Redondo", ["settings", "images", "positions", "jorge"], "imagePosition"]
     ]
   }
 ];
@@ -1230,6 +1246,19 @@ function controlTemplate(id, encodedPath, value, type) {
   }
   if (type === "decorativeScope") {
     return selectTemplate(id, encodedPath, value || "light", [["light", "Solo secciones claras"], ["all", "Toda la web"], ["soft", "Solo fondos suaves"]], type);
+  }
+  if (type === "imagePosition") {
+    return selectTemplate(id, encodedPath, value || "center center", [
+      ["center center", "Centro"],
+      ["center top", "Arriba"],
+      ["center 18%", "Rostro arriba"],
+      ["center 30%", "Rostro medio-alto"],
+      ["center bottom", "Abajo"],
+      ["left center", "Izquierda"],
+      ["right center", "Derecha"],
+      ["left top", "Arriba izquierda"],
+      ["right top", "Arriba derecha"]
+    ], type);
   }
   return `<input id="${id}" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;
 }
