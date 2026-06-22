@@ -1392,25 +1392,25 @@ window.SKBC_CONTENT = {
         "note": "Precio orientativo. Confirmaremos disponibilidad, talla, color, personalización y coste final antes de cerrar el pedido."
       },
       "kenshi": {
-        "eyebrow": "Area privada del club",
+        "eyebrow": "Panel de alumno",
         "title": "Area Kenshi SKBC",
-        "text": "Un espacio pensado para miembros y familias del club: avisos internos, recursos de practica, calendario ampliado y ventajas de pertenecer a SKBC GIPUZKOA. El acceso siempre se revisa y aprueba desde el club.",
+        "text": "Un espacio privado y practico para alumnos y familias de SKBC GIPUZKOA: ficha, avisos del club, consultas, calendario, reservas y recursos de practica. El acceso lo habilita siempre el club.",
         "perks": [
           [
-            "Tablon interno",
-            "Avisos, cambios y comunicaciones para miembros."
+            "Ficha y avisos",
+            "Datos del alumno y comunicaciones importantes del club."
           ],
           [
             "Recursos de practica",
             "Material de repaso y contenidos para seguir aprendiendo."
           ],
           [
-            "Calendario interno",
-            "Detalles de cursos, actividades y confirmaciones."
+            "Calendario",
+            "Cursos, actividades, vacaciones y entrenamientos especiales."
           ],
           [
-            "Vida de club",
-            "Galerias, recuerdos y participacion de la comunidad."
+            "Consultas y reservas",
+            "Acceso rapido para contactar con el club y reservar material."
           ]
         ],
         "formTitle": "Solicitar acceso Kenshi",
@@ -2003,25 +2003,25 @@ window.SKBC_CONTENT = {
         "note": "Prezio orientagarria. Eskaera itxi aurretik erabilgarritasuna, neurria, kolorea, pertsonalizazioa eta azken kostua baieztatuko ditugu."
       },
       "kenshi": {
-        "eyebrow": "Klubeko gune pribatua",
+        "eyebrow": "Ikaslearen panela",
         "title": "SKBC Kenshi Gunea",
-        "text": "Klubeko kide eta familientzako gunea: barne oharrak, praktikatzeko baliabideak, egutegi zabaldua eta SKBC GIPUZKOAko kide izatearen abantailak. Sarbidea beti klubak berrikusi eta onartu behar du.",
+        "text": "SKBC GIPUZKOAko ikasle eta familientzako gune pribatu eta praktikoa: fitxa, klubeko oharrak, kontsultak, egutegia, erreserbak eta praktikatzeko baliabideak. Sarbidea beti klubak gaitzen du.",
         "perks": [
           [
-            "Barne taula",
-            "Kideentzako oharrak, aldaketak eta komunikazioak."
+            "Fitxa eta oharrak",
+            "Ikaslearen datuak eta klubeko komunikazio garrantzitsuak."
           ],
           [
             "Praktika baliabideak",
             "Errepasatzeko materiala eta ikasten jarraitzeko edukiak."
           ],
           [
-            "Barne egutegia",
-            "Ikastaroen, jardueren eta baieztapenen xehetasunak."
+            "Egutegia",
+            "Ikastaroak, jarduerak, oporrak eta entrenamendu bereziak."
           ],
           [
-            "Klub bizitza",
-            "Galeriak, oroitzapenak eta komunitatearen parte-hartzea."
+            "Kontsultak eta erreserbak",
+            "Klubarekin harremanetan jartzeko eta materiala erreserbatzeko sarbide azkarra."
           ]
         ],
         "formTitle": "Kenshi sarbidea eskatu",
@@ -2614,25 +2614,25 @@ window.SKBC_CONTENT = {
         "note": "Indicative price. We will confirm availability, size, colour, personalisation and final cost before closing the order."
       },
       "kenshi": {
-        "eyebrow": "Private club area",
+        "eyebrow": "Student panel",
         "title": "SKBC Kenshi Area",
-        "text": "A space for club members and families: internal notices, practice resources, an extended calendar and the benefits of belonging to SKBC GIPUZKOA. Access is always reviewed and approved by the club.",
+        "text": "A practical private space for SKBC GIPUZKOA students and families: profile, club notices, questions, calendar, bookings and practice resources. Access is always enabled by the club.",
         "perks": [
           [
-            "Internal board",
-            "Member notices, changes and communications."
+            "Profile and notices",
+            "Student details and important club communications."
           ],
           [
             "Practice resources",
             "Review material and content to keep learning."
           ],
           [
-            "Internal calendar",
-            "Course, activity and attendance details."
+            "Calendar",
+            "Courses, activities, holidays and special training sessions."
           ],
           [
-            "Club life",
-            "Galleries, memories and community participation."
+            "Questions and bookings",
+            "Quick access to contact the club and reserve material."
           ]
         ],
         "formTitle": "Request Kenshi access",

@@ -2088,20 +2088,20 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
     </div>
   `).join("");
   const modules = [
-    { title: "Mi ficha", text: "Datos personales y nivel ya visibles en este panel.", badge: "Activo", action: "profile", label: "Ver mi ficha" },
-    { title: "Comunicacion profesor-alumno", text: "Envia dudas, avisos o consultas privadas al equipo tecnico.", badge: "Activo", action: "message", label: "Enviar consulta" },
-    { title: "Merch Kenshi", text: "Reserva prendas con precio reducido de miembro: 5 euros menos por prenda.", badge: "-5 EUR", action: "go", label: "Ir a tienda", target: "#merchandising" },
-    { title: "Noticias internas", text: "Avisos privados, recordatorios y comunicaciones solo para miembros.", badge: "Activo", action: "go", label: "Ver noticias", target: "#noticias" },
-    { title: "Recursos de practica", text: "Material de repaso, conceptos y contenidos para seguir aprendiendo.", badge: "Activo", action: "go", label: "Ver recursos", target: "#aprendizaje" },
-    { title: "Calendario Kenshi", text: "Eventos, cursos y actividad interna del club en un solo lugar.", badge: "Activo", action: "go", label: "Ver calendario", target: "#calendario" }
+    { title: "Mi ficha", text: "Consulta tus datos de alumno y la informacion registrada por el club.", badge: "Disponible", action: "profile", label: "Abrir ficha" },
+    { title: "Consultas", text: "Envía una duda o aviso al equipo tecnico desde tu panel de alumno.", badge: "Disponible", action: "message", label: "Enviar consulta" },
+    { title: "Reservas del club", text: "Accede a la tienda de reservas y deja preparado tu pedido sin pago online.", badge: "Disponible", action: "go", label: "Ir a reservas", target: "#merchandising" },
+    { title: "Avisos del club", text: "Consulta noticias, recordatorios y cambios publicados por SKBC GIPUZKOA.", badge: "Disponible", action: "go", label: "Ver avisos", target: "#noticias" },
+    { title: "Recursos de practica", text: "Ten a mano contenidos de aprendizaje, conceptos y material de repaso.", badge: "Disponible", action: "go", label: "Ver recursos", target: "#aprendizaje" },
+    { title: "Calendario", text: "Revisa cursos, entrenamientos especiales, vacaciones y eventos del club.", badge: "Disponible", action: "go", label: "Ver calendario", target: "#calendario" }
   ];
   return `
     <div class="kenshi-dashboard">
       <div class="kenshi-dashboard__hero">
         <div>
-          <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel privado"}</p>
-          <h3>${kenshi.dashboardTitle || "Bienvenido al Area Kenshi"}</h3>
-          <p>${kenshi.dashboardText || "Un espacio privado para miembros con acceso habilitado de SKBC GIPUZKOA."}</p>
+          <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel de alumno"}</p>
+          <h3>${kenshi.dashboardTitle || "Area Kenshi"}</h3>
+          <p>${kenshi.dashboardText || "Tu espacio personal para tener a mano la ficha, avisos, calendario, consultas y reservas del club."}</p>
         </div>
         <button class="kenshi-dashboard__logout" type="button" data-kenshi-logout>Salir</button>
       </div>
@@ -2126,11 +2126,12 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
         <div>
           <span class="eyebrow">Mi ficha</span>
           <h4>Datos del alumno</h4>
-          <p>Informacion registrada en el Area Kenshi. Si algo no esta bien, lo podremos habilitar para solicitar cambios desde aqui.</p>
+          <p>Informacion registrada por SKBC GIPUZKOA. Si algun dato no esta actualizado, puedes avisarnos desde el apartado de consultas.</p>
         </div>
         <div class="kenshi-dashboard__profile-grid">
           ${profileRows}
         </div>
+        <button class="kenshi-dashboard__module-action" type="button" data-kenshi-action="message">Solicitar correccion de datos</button>
         <details class="kenshi-dashboard__request">
           <summary>Mensaje de solicitud inicial</summary>
           <p>${escapeHtml(requestMessage)}</p>
