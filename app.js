@@ -2061,9 +2061,12 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
   const copy = t();
   const name = access.full_name || session?.user?.user_metadata?.full_name || session?.user?.email || "Kenshi";
   const email = access.email || session?.user?.email || "";
+  const phone = access.phone || "No indicado";
   const grade = access.grade || "Pendiente de completar";
   const relationship = access.relationship || "Miembro SKBC";
   const approved = access.approved_at ? new Date(access.approved_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "Activo";
+  const created = access.created_at ? new Date(access.created_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "No indicado";
+  const requestMessage = access.message || "Sin mensaje registrado";
   const events = kenshiUpcomingEvents(copy);
   const eventCards = events.length ? events.map((event) => `
     <li style="--event-color:${escapeHtml(event.color)}">
@@ -2071,8 +2074,21 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
       <strong>${escapeHtml(event.title)}</strong>
     </li>
   `).join("") : `<li><span>SKBC</span><strong>${copy.calendar?.empty || "Sin eventos próximos"}</strong></li>`;
+  const profileRows = [
+    ["Nombre", name],
+    ["Email", email],
+    ["Telefono", phone],
+    ["Relacion con el club", relationship],
+    ["Grado / nivel", grade],
+    ["Acceso desde", created]
+  ].map(([label, value]) => `
+    <div>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value || "No indicado")}</strong>
+    </div>
+  `).join("");
   const modules = [
-    ["Mi ficha", "Datos personales, grado y seguimiento del alumno.", "Preparado"],
+    ["Mi ficha", "Datos personales y nivel ya visibles en este panel.", "Activo"],
     ["Comunicacion profesor-alumno", "Envia dudas, avisos o consultas privadas al equipo tecnico.", "Proximo"],
     ["Merch Kenshi", "Reserva prendas con precio reducido de miembro: 5 euros menos por prenda.", "-5 EUR"],
     ["Noticias internas", "Avisos privados, recordatorios y comunicaciones solo para miembros.", "Proximo"],
@@ -2106,6 +2122,20 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
           <small>${escapeHtml(approved)}</small>
         </article>
       </div>
+      <section class="kenshi-dashboard__profile">
+        <div>
+          <span class="eyebrow">Mi ficha</span>
+          <h4>Datos del alumno</h4>
+          <p>Informacion registrada en el Area Kenshi. Si algo no esta bien, lo podremos habilitar para solicitar cambios desde aqui.</p>
+        </div>
+        <div class="kenshi-dashboard__profile-grid">
+          ${profileRows}
+        </div>
+        <details class="kenshi-dashboard__request">
+          <summary>Mensaje de solicitud inicial</summary>
+          <p>${escapeHtml(requestMessage)}</p>
+        </details>
+      </section>
       <div class="kenshi-dashboard__main">
         <section class="kenshi-dashboard__events">
           <div>
