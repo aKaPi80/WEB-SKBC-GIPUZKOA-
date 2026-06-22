@@ -1974,7 +1974,7 @@ function bindKenshiPortal(copy) {
   const kenshi = copy.kenshi || {};
   modal.querySelector("#kenshiModalEyebrow").textContent = kenshi.eyebrow || "Area privada";
   modal.querySelector("#kenshiModalTitle").textContent = kenshi.title || "Area Kenshi SKBC";
-  modal.querySelector("#kenshiModalText").textContent = kenshi.text || "Acceso privado para miembros aprobados del club.";
+  modal.querySelector("#kenshiModalText").textContent = kenshi.text || "Acceso privado para miembros con acceso habilitado por el club.";
   const status = modal.querySelector(".kenshi-auth-status");
   const privatePanel = modal.querySelector(".kenshi-private-panel");
   document.querySelectorAll("[data-open-kenshi]").forEach((button) => {
@@ -2022,7 +2022,7 @@ function bindKenshiPortal(copy) {
         return;
       }
       if (access.status === "approved") {
-        if (status) status.textContent = kenshi.approved || "Acceso aprobado.";
+        if (status) status.textContent = kenshi.approved || "Acceso habilitado.";
         modal.classList.add("is-authenticated");
         privatePanel.innerHTML = renderKenshiDashboard(access, session, kenshi);
         privatePanel.hidden = false;
@@ -2085,7 +2085,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
         <div>
           <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel privado"}</p>
           <h3>${kenshi.dashboardTitle || "Bienvenido al Area Kenshi"}</h3>
-          <p>${kenshi.dashboardText || "Un espacio privado para miembros aprobados de SKBC GIPUZKOA."}</p>
+          <p>${kenshi.dashboardText || "Un espacio privado para miembros con acceso habilitado de SKBC GIPUZKOA."}</p>
         </div>
         <button class="kenshi-dashboard__logout" type="button" data-kenshi-logout>Salir</button>
       </div>
@@ -2102,7 +2102,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
         </article>
         <article>
           <span>Acceso</span>
-          <strong>Aprobado</strong>
+          <strong>Habilitado</strong>
           <small>${escapeHtml(approved)}</small>
         </article>
       </div>
