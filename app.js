@@ -2088,12 +2088,12 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
     </div>
   `).join("");
   const modules = [
-    ["Mi ficha", "Datos personales y nivel ya visibles en este panel.", "Activo"],
-    ["Comunicacion profesor-alumno", "Envia dudas, avisos o consultas privadas al equipo tecnico.", "Proximo"],
-    ["Merch Kenshi", "Reserva prendas con precio reducido de miembro: 5 euros menos por prenda.", "-5 EUR"],
-    ["Noticias internas", "Avisos privados, recordatorios y comunicaciones solo para miembros.", "Proximo"],
-    ["Recursos de practica", "Material de repaso, conceptos y contenidos para seguir aprendiendo.", "Proximo"],
-    ["Calendario Kenshi", "Eventos, cursos y actividad interna del club en un solo lugar.", "Activo"]
+    { title: "Mi ficha", text: "Datos personales y nivel ya visibles en este panel.", badge: "Activo", action: "profile", label: "Ver mi ficha" },
+    { title: "Comunicacion profesor-alumno", text: "Envia dudas, avisos o consultas privadas al equipo tecnico.", badge: "Activo", action: "message", label: "Enviar consulta" },
+    { title: "Merch Kenshi", text: "Reserva prendas con precio reducido de miembro: 5 euros menos por prenda.", badge: "-5 EUR", action: "go", label: "Ir a tienda", target: "#merchandising" },
+    { title: "Noticias internas", text: "Avisos privados, recordatorios y comunicaciones solo para miembros.", badge: "Activo", action: "go", label: "Ver noticias", target: "#noticias" },
+    { title: "Recursos de practica", text: "Material de repaso, conceptos y contenidos para seguir aprendiendo.", badge: "Activo", action: "go", label: "Ver recursos", target: "#aprendizaje" },
+    { title: "Calendario Kenshi", text: "Eventos, cursos y actividad interna del club en un solo lugar.", badge: "Activo", action: "go", label: "Ver calendario", target: "#calendario" }
   ];
   return `
     <div class="kenshi-dashboard">
@@ -2145,11 +2145,12 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
           <ul>${eventCards}</ul>
         </section>
         <section class="kenshi-dashboard__modules">
-          ${modules.map(([title, text, badge]) => `
+          ${modules.map((item) => `
             <article>
-              <span>${escapeHtml(badge)}</span>
-              <h4>${escapeHtml(title)}</h4>
-              <p>${escapeHtml(text)}</p>
+              <span>${escapeHtml(item.badge)}</span>
+              <h4>${escapeHtml(item.title)}</h4>
+              <p>${escapeHtml(item.text)}</p>
+              <button class="kenshi-dashboard__module-action" type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</button>
             </article>
           `).join("")}
         </section>
@@ -2164,6 +2165,25 @@ function bindKenshiDashboardActions(modal) {
     const privatePanel = modal.querySelector(".kenshi-private-panel");
     if (privatePanel) privatePanel.hidden = true;
     activateKenshiTab("login");
+  });
+  modal.querySelectorAll("[data-kenshi-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.kenshiAction;
+      if (action === "profile") {
+        modal.querySelector(".kenshi-dashboard__profile")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (action === "message") {
+        const name = modal.querySelector(".kenshi-dashboard__identity strong")?.textContent?.trim() || "Kenshi";
+        window.open(whatsappLink(`Consulta privada Area Kenshi - ${name}`), "_blank", "noopener,noreferrer");
+        return;
+      }
+      const target = button.dataset.target;
+      if (target) {
+        closeKenshiModal();
+        setTimeout(() => document.querySelector(target)?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+      }
+    });
   });
 }
 
