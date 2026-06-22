@@ -2023,7 +2023,10 @@ function bindKenshiPortal(copy) {
       }
       if (access.status === "approved") {
         if (status) status.textContent = kenshi.approved || "Acceso aprobado.";
+        modal.classList.add("is-authenticated");
+        privatePanel.innerHTML = renderKenshiDashboard(access, session, kenshi);
         privatePanel.hidden = false;
+        bindKenshiDashboardActions(modal);
         return;
       }
       if (access.status === "revoked") {
@@ -2038,6 +2041,99 @@ function bindKenshiPortal(copy) {
     } catch (error) {
       if (status) status.textContent = error.message || "No se pudo iniciar sesion.";
     }
+  });
+}
+
+function kenshiUpcomingEvents(copy) {
+  const settings = state.content.settings || {};
+  const events = publicCalendarEvents((settings.events || []).filter((event) => event.enabled !== false));
+  return upcomingEvents(events).slice(0, 3).map((event) => {
+    const text = event.languages?.[state.lang] || event.languages?.es || {};
+    return {
+      title: text.title || copy.calendar?.empty || "Evento",
+      date: eventDateLabel(event),
+      color: event.color || "#1f6fa9"
+    };
+  });
+}
+
+function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
+  const copy = t();
+  const name = access.full_name || session?.user?.user_metadata?.full_name || session?.user?.email || "Kenshi";
+  const email = access.email || session?.user?.email || "";
+  const grade = access.grade || "Pendiente de completar";
+  const relationship = access.relationship || "Miembro SKBC";
+  const approved = access.approved_at ? new Date(access.approved_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "Activo";
+  const events = kenshiUpcomingEvents(copy);
+  const eventCards = events.length ? events.map((event) => `
+    <li style="--event-color:${escapeHtml(event.color)}">
+      <span>${escapeHtml(event.date)}</span>
+      <strong>${escapeHtml(event.title)}</strong>
+    </li>
+  `).join("") : `<li><span>SKBC</span><strong>${copy.calendar?.empty || "Sin eventos próximos"}</strong></li>`;
+  const modules = [
+    ["Mi ficha", "Datos personales, grado y seguimiento del alumno.", "Preparado"],
+    ["Comunicacion profesor-alumno", "Envia dudas, avisos o consultas privadas al equipo tecnico.", "Proximo"],
+    ["Merch Kenshi", "Reserva prendas con precio reducido de miembro: 5 euros menos por prenda.", "-5 EUR"],
+    ["Noticias internas", "Avisos privados, recordatorios y comunicaciones solo para miembros.", "Proximo"],
+    ["Recursos de practica", "Material de repaso, conceptos y contenidos para seguir aprendiendo.", "Proximo"],
+    ["Calendario Kenshi", "Eventos, cursos y actividad interna del club en un solo lugar.", "Activo"]
+  ];
+  return `
+    <div class="kenshi-dashboard">
+      <div class="kenshi-dashboard__hero">
+        <div>
+          <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel privado"}</p>
+          <h3>${kenshi.dashboardTitle || "Bienvenido al Area Kenshi"}</h3>
+          <p>${kenshi.dashboardText || "Un espacio privado para miembros aprobados de SKBC GIPUZKOA."}</p>
+        </div>
+        <button class="kenshi-dashboard__logout" type="button" data-kenshi-logout>Salir</button>
+      </div>
+      <div class="kenshi-dashboard__identity">
+        <article>
+          <span>Alumno</span>
+          <strong>${escapeHtml(name)}</strong>
+          <small>${escapeHtml(email)}</small>
+        </article>
+        <article>
+          <span>Grado / nivel</span>
+          <strong>${escapeHtml(grade)}</strong>
+          <small>${escapeHtml(relationship)}</small>
+        </article>
+        <article>
+          <span>Acceso</span>
+          <strong>Aprobado</strong>
+          <small>${escapeHtml(approved)}</small>
+        </article>
+      </div>
+      <div class="kenshi-dashboard__main">
+        <section class="kenshi-dashboard__events">
+          <div>
+            <span class="eyebrow">Agenda</span>
+            <h4>Proximos eventos</h4>
+          </div>
+          <ul>${eventCards}</ul>
+        </section>
+        <section class="kenshi-dashboard__modules">
+          ${modules.map(([title, text, badge]) => `
+            <article>
+              <span>${escapeHtml(badge)}</span>
+              <h4>${escapeHtml(title)}</h4>
+              <p>${escapeHtml(text)}</p>
+            </article>
+          `).join("")}
+        </section>
+      </div>
+    </div>
+  `;
+}
+
+function bindKenshiDashboardActions(modal) {
+  modal.querySelector("[data-kenshi-logout]")?.addEventListener("click", () => {
+    modal.classList.remove("is-authenticated");
+    const privatePanel = modal.querySelector(".kenshi-private-panel");
+    if (privatePanel) privatePanel.hidden = true;
+    activateKenshiTab("login");
   });
 }
 
@@ -2061,6 +2157,7 @@ function activateKenshiTab(tab) {
   });
   const status = modal?.querySelector(".kenshi-auth-status");
   const privatePanel = modal?.querySelector(".kenshi-private-panel");
+  modal?.classList.remove("is-authenticated");
   if (status) status.textContent = "";
   if (privatePanel) privatePanel.hidden = true;
 }
