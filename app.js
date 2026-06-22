@@ -954,6 +954,56 @@ async function loadKenshiAccessForSession(session) {
   return rows[0] || null;
 }
 
+function kenshiMessagesTable() {
+  return "skbc_kenshi_messages";
+}
+
+async function loadKenshiMessagesForSession(session) {
+  const config = kenshiInboxConfig();
+  const email = session?.user?.email;
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey || !email) return [];
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiMessagesTable()}?member_email=eq.${encodeURIComponent(email)}&select=*&order=created_at.desc&limit=6`, {
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const rows = await response.json().catch(() => []);
+  if (!response.ok) return [];
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function submitKenshiMessage(session, access, payload) {
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey || !session?.access_token) {
+    throw new Error("La comunicacion Kenshi todavia no esta activada");
+  }
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiMessagesTable()}`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      Authorization: `Bearer ${session.access_token}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify({
+      member_id: access?.id || null,
+      member_email: access?.email || session.user?.email || "",
+      member_name: access?.full_name || session.user?.user_metadata?.full_name || session.user?.email || "Kenshi",
+      subject: payload.subject,
+      message: payload.message,
+      status: "open",
+      page_lang: state.lang
+    })
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.message || "No se pudo guardar el mensaje Kenshi");
+  }
+  return true;
+}
+
 async function uploadTestimonialPhoto(file) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
@@ -2023,10 +2073,11 @@ function bindKenshiPortal(copy) {
       }
       if (access.status === "approved") {
         if (status) status.textContent = kenshi.approved || "Acceso habilitado.";
+        const messages = await loadKenshiMessagesForSession(session);
         modal.classList.add("is-authenticated");
-        privatePanel.innerHTML = renderKenshiDashboard(access, session, kenshi);
+        privatePanel.innerHTML = renderKenshiDashboard(access, session, kenshi, messages);
         privatePanel.hidden = false;
-        bindKenshiDashboardActions(modal);
+        bindKenshiDashboardActions(modal, session, access);
         return;
       }
       if (access.status === "revoked") {
@@ -2057,7 +2108,7 @@ function kenshiUpcomingEvents(copy) {
   });
 }
 
-function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
+function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages = []) {
   const copy = t();
   const name = access.full_name || session?.user?.user_metadata?.full_name || session?.user?.email || "Kenshi";
   const email = access.email || session?.user?.email || "";
@@ -2074,6 +2125,13 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
       <strong>${escapeHtml(event.title)}</strong>
     </li>
   `).join("") : `<li><span>SKBC</span><strong>${copy.calendar?.empty || "Sin eventos próximos"}</strong></li>`;
+  const messageCards = messages.length ? messages.map((item) => `
+    <li>
+      <span>${escapeHtml(item.created_at ? String(item.created_at).slice(0, 10) : "Sin fecha")} · ${escapeHtml(item.status || "open")}</span>
+      <strong>${escapeHtml(item.subject || "Consulta")}</strong>
+      <p>${escapeHtml(item.admin_reply || item.message || "")}</p>
+    </li>
+  `).join("") : `<li><span>SKBC</span><strong>No hay mensajes todavia</strong><p>Cuando envies una consulta desde este panel, aparecera aqui.</p></li>`;
   const profileRows = [
     ["Nombre", name],
     ["Email", email],
@@ -2089,7 +2147,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
   `).join("");
   const modules = [
     { title: "Mi ficha", text: "Consulta tus datos de alumno y la informacion registrada por el club.", badge: "Disponible", action: "profile", label: "Abrir ficha" },
-    { title: "Consultas", text: "Envía una duda o aviso al equipo tecnico desde tu panel de alumno.", badge: "Disponible", action: "message", label: "Enviar consulta" },
+    { title: "Consultas", text: "Envia una duda o aviso al equipo tecnico desde tu panel de alumno.", badge: "Disponible", action: "message", label: "Abrir comunicacion" },
     { title: "Reservas del club", text: "Accede a la tienda de reservas y deja preparado tu pedido sin pago online.", badge: "Disponible", action: "go", label: "Ir a reservas", target: "#merchandising" },
     { title: "Avisos del club", text: "Consulta noticias, recordatorios y cambios publicados por SKBC GIPUZKOA.", badge: "Disponible", action: "go", label: "Ver avisos", target: "#noticias" },
     { title: "Recursos de practica", text: "Ten a mano contenidos de aprendizaje, conceptos y material de repaso.", badge: "Disponible", action: "go", label: "Ver recursos", target: "#aprendizaje" },
@@ -2137,6 +2195,23 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
           <p>${escapeHtml(requestMessage)}</p>
         </details>
       </section>
+      <section class="kenshi-dashboard__communication" id="kenshiCommunication">
+        <div>
+          <span class="eyebrow">Comunicacion directa</span>
+          <h4>Consulta con el club</h4>
+          <p>Este mensaje queda registrado en la intranet Kenshi para que el equipo pueda revisarlo desde el admin.</p>
+        </div>
+        <form class="kenshi-message-form">
+          <label>Asunto<input name="subject" required placeholder="Ej. Duda sobre horario, curso o material" /></label>
+          <label>Mensaje<textarea name="message" rows="4" required placeholder="Escribe aqui tu consulta"></textarea></label>
+          <button class="kenshi-dashboard__module-action" type="submit">Enviar mensaje</button>
+          <p class="kenshi-message-status" aria-live="polite"></p>
+        </form>
+        <div class="kenshi-message-list">
+          <h5>Ultimos mensajes</h5>
+          <ul>${messageCards}</ul>
+        </div>
+      </section>
       <div class="kenshi-dashboard__main">
         <section class="kenshi-dashboard__events">
           <div>
@@ -2160,7 +2235,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}) {
   `;
 }
 
-function bindKenshiDashboardActions(modal) {
+function bindKenshiDashboardActions(modal, session = null, access = null) {
   modal.querySelector("[data-kenshi-logout]")?.addEventListener("click", () => {
     modal.classList.remove("is-authenticated");
     const privatePanel = modal.querySelector(".kenshi-private-panel");
@@ -2175,8 +2250,7 @@ function bindKenshiDashboardActions(modal) {
         return;
       }
       if (action === "message") {
-        const name = modal.querySelector(".kenshi-dashboard__identity strong")?.textContent?.trim() || "Kenshi";
-        window.open(whatsappLink(`Consulta privada Area Kenshi - ${name}`), "_blank", "noopener,noreferrer");
+        modal.querySelector("#kenshiCommunication")?.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
       const target = button.dataset.target;
@@ -2185,6 +2259,25 @@ function bindKenshiDashboardActions(modal) {
         setTimeout(() => document.querySelector(target)?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
       }
     });
+  });
+  modal.querySelector(".kenshi-message-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const status = form.querySelector(".kenshi-message-status");
+    const data = new FormData(form);
+    const payload = {
+      subject: String(data.get("subject") || "").trim(),
+      message: String(data.get("message") || "").trim()
+    };
+    if (!payload.subject || !payload.message) return;
+    if (status) status.textContent = "Enviando mensaje...";
+    try {
+      await submitKenshiMessage(session, access, payload);
+      form.reset();
+      if (status) status.textContent = "Mensaje enviado. Lo revisaremos desde el admin.";
+    } catch (error) {
+      if (status) status.textContent = `${error.message}. De momento puedes usar WhatsApp como alternativa.`;
+    }
   });
 }
 

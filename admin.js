@@ -2636,6 +2636,7 @@ function renderKenshi() {
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
       <button id="load-kenshi" class="primary" type="button">Cargar solicitudes</button>
+      <button id="load-kenshi-messages" class="primary" type="button">Cargar mensajes</button>
       <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
     ${groupTemplate({
@@ -2671,10 +2672,20 @@ function renderKenshi() {
       </header>
       <div id="kenshi-list" class="lead-inbox-list kenshi-list"></div>
     </article>
+    <article class="editor-group">
+      <header>
+        <div>
+          <h3>Comunicación alumno-club</h3>
+          <p id="kenshi-message-status">Pulsa Cargar mensajes para ver consultas enviadas desde el panel Kenshi.</p>
+        </div>
+      </header>
+      <div id="kenshi-message-list" class="lead-inbox-list kenshi-message-admin-list"></div>
+    </article>
   `;
   bindFields(editor);
   document.querySelector("#kenshi-login-supabase").addEventListener("click", loginKenshiSupabase);
   document.querySelector("#load-kenshi").addEventListener("click", loadKenshiMembers);
+  document.querySelector("#load-kenshi-messages").addEventListener("click", loadKenshiMessages);
   document.querySelector("#logout-supabase").addEventListener("click", () => {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
     setStatus("Sesión de Supabase cerrada.", "ok");
@@ -2871,6 +2882,130 @@ async function deleteKenshiMember(id, label) {
   }
   setStatus("Registro Kenshi eliminado.", "ok");
   loadKenshiMembers();
+}
+
+function kenshiMessagesTable() {
+  return "skbc_kenshi_messages";
+}
+
+async function loadKenshiMessages() {
+  const config = kenshiInboxConfig();
+  const list = document.querySelector("#kenshi-message-list");
+  const status = document.querySelector("#kenshi-message-status");
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa Area Kenshi con Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para ver mensajes Kenshi.", "danger");
+    return;
+  }
+  status.textContent = "Cargando mensajes...";
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiMessagesTable()}?select=*&order=created_at.desc&limit=200`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const items = await response.json();
+  if (!response.ok) {
+    const message = friendlySupabaseError(items, "No se pudieron cargar mensajes Kenshi. Revisa que hayas ejecutado el SQL de comunicaciones.");
+    status.textContent = message;
+    setStatus(message, "danger");
+    return;
+  }
+  const open = items.filter((item) => item.status === "open").length;
+  status.textContent = items.length ? `${items.length} mensaje(s). ${open} abierto(s).` : "No hay mensajes Kenshi.";
+  list.innerHTML = items.length ? items.map(kenshiMessageTemplate).join("") : `<p class="empty-note">No hay mensajes Kenshi.</p>`;
+  list.querySelectorAll("[data-kenshi-message-save]").forEach((button) => {
+    button.addEventListener("click", () => saveKenshiMessage(button.dataset.kenshiMessageSave));
+  });
+  list.querySelectorAll("[data-kenshi-message-status]").forEach((button) => {
+    button.addEventListener("click", () => updateKenshiMessageStatus(button.dataset.kenshiMessageStatus, button.dataset.nextStatus));
+  });
+  list.querySelectorAll("[data-delete-kenshi-message]").forEach((button) => {
+    button.addEventListener("click", () => deleteKenshiMessage(button.dataset.deleteKenshiMessage));
+  });
+}
+
+function kenshiMessageTemplate(item) {
+  const id = escapeHtml(item.id);
+  const status = item.status || "open";
+  const created = item.created_at ? String(item.created_at).slice(0, 10) : "Sin fecha";
+  return `<article class="lead-card kenshi-card" data-status="${escapeHtml(status)}" data-kenshi-message-card="${id}">
+    <header>
+      <div>
+        <span>${escapeHtml(created)} · ${escapeHtml(item.member_email || "")}</span>
+        <h3>${escapeHtml(item.subject || "Consulta Kenshi")}</h3>
+      </div>
+      <strong class="status-pill">${escapeHtml(status)}</strong>
+    </header>
+    <p><strong>${escapeHtml(item.member_name || "Kenshi")}</strong></p>
+    <p>${escapeHtml(item.message || "")}</p>
+    <div class="field-grid">
+      <label class="field field--wide"><span>Respuesta interna para el alumno</span><textarea data-kenshi-message-field="admin_reply" rows="4">${escapeHtml(item.admin_reply || "")}</textarea></label>
+    </div>
+    <div class="lead-actions">
+      <button class="primary" type="button" data-kenshi-message-save="${id}">Guardar respuesta</button>
+      <button type="button" data-kenshi-message-status="${id}" data-next-status="answered">Marcar respondido</button>
+      <button type="button" data-kenshi-message-status="${id}" data-next-status="closed">Cerrar</button>
+      <button class="danger" type="button" data-delete-kenshi-message="${id}">Eliminar</button>
+    </div>
+  </article>`;
+}
+
+function kenshiMessagePayloadFromCard(id) {
+  const card = [...document.querySelectorAll("[data-kenshi-message-card]")].find((item) => item.dataset.kenshiMessageCard === id);
+  if (!card) return {};
+  const payload = {};
+  card.querySelectorAll("[data-kenshi-message-field]").forEach((field) => {
+    payload[field.dataset.kenshiMessageField] = field.value;
+  });
+  payload.updated_at = new Date().toISOString();
+  return payload;
+}
+
+async function saveKenshiMessage(id) {
+  const payload = kenshiMessagePayloadFromCard(id);
+  if (payload.admin_reply) {
+    payload.status = "answered";
+    payload.replied_at = new Date().toISOString();
+  }
+  await patchKenshiMessage(id, payload, "Mensaje Kenshi actualizado.");
+}
+
+async function updateKenshiMessageStatus(id, status) {
+  await patchKenshiMessage(id, { status, updated_at: new Date().toISOString() }, "Estado del mensaje actualizado.");
+}
+
+async function patchKenshiMessage(id, payload, okMessage) {
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiMessagesTable()}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(friendlySupabaseError(result, "No se pudo actualizar el mensaje Kenshi."), "danger");
+    return false;
+  }
+  setStatus(okMessage, "ok");
+  loadKenshiMessages();
+  return true;
+}
+
+async function deleteKenshiMessage(id) {
+  if (!confirm("¿Eliminar definitivamente este mensaje Kenshi?")) return;
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiMessagesTable()}?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" }
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    setStatus(friendlySupabaseError(result, "No se pudo eliminar el mensaje Kenshi."), "danger");
+    return;
+  }
+  setStatus("Mensaje Kenshi eliminado.", "ok");
+  loadKenshiMessages();
 }
 
 function renderOrders() {
