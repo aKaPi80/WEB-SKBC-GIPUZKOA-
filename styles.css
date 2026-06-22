@@ -1861,6 +1861,10 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 
 .kenshi-modal__panel {
   width: min(760px, 100%);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .kenshi-modal.is-authenticated .kenshi-modal__panel {
@@ -2470,6 +2474,10 @@ textarea { resize: vertical; }
   .photo-grid, .link-list { grid-template-columns: 1fr; }
   .profile-modal { padding: 12px; }
   .profile-modal__panel { max-height: calc(100vh - 24px); overflow: auto; }
+  .kenshi-modal { align-items: flex-start; }
+  .kenshi-modal__panel { max-height: calc(100vh - 24px); }
+  .kenshi-modal__panel { max-height: calc(100dvh - 24px); }
+  .kenshi-modal__content { padding: 22px; }
   .kenshi-dashboard__hero {
     grid-template-columns: 1fr;
   }
