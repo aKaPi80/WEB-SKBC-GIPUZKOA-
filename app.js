@@ -2119,6 +2119,14 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const created = access.created_at ? new Date(access.created_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "No indicado";
   const requestMessage = access.message || "Sin mensaje registrado";
   const events = kenshiUpcomingEvents(copy);
+  const profileFields = [name, email, access.phone, access.relationship, access.grade].filter(Boolean).length;
+  const profilePercent = Math.round((profileFields / 5) * 100);
+  const openMessages = messages.filter((item) => item.status === "open").length;
+  const answeredMessages = messages.filter((item) => item.status === "answered" || item.admin_reply).length;
+  const nextEvent = events[0];
+  const eventIntensity = Math.min(100, Math.max(22, events.length * 18));
+  const contactScore = Math.min(100, 35 + messages.length * 12 + answeredMessages * 10);
+  const gradeScore = access.grade ? 82 : 38;
   const eventCards = events.length ? events.map((event) => `
     <li style="--event-color:${escapeHtml(event.color)}">
       <span>${escapeHtml(event.date)}</span>
@@ -2145,13 +2153,17 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
       <strong>${escapeHtml(value || "No indicado")}</strong>
     </div>
   `).join("");
-  const modules = [
-    { title: "Mi ficha", text: "Consulta tus datos de alumno y la informacion registrada por el club.", badge: "Disponible", action: "profile", label: "Abrir ficha" },
-    { title: "Consultas", text: "Envia una duda o aviso al equipo tecnico desde tu panel de alumno.", badge: "Disponible", action: "message", label: "Abrir comunicacion" },
-    { title: "Reservas del club", text: "Accede a la tienda de reservas y deja preparado tu pedido sin pago online.", badge: "Disponible", action: "go", label: "Ir a reservas", target: "#merchandising" },
-    { title: "Avisos del club", text: "Consulta noticias, recordatorios y cambios publicados por SKBC GIPUZKOA.", badge: "Disponible", action: "go", label: "Ver avisos", target: "#noticias" },
-    { title: "Recursos de practica", text: "Ten a mano contenidos de aprendizaje, conceptos y material de repaso.", badge: "Disponible", action: "go", label: "Ver recursos", target: "#aprendizaje" },
-    { title: "Calendario", text: "Revisa cursos, entrenamientos especiales, vacaciones y eventos del club.", badge: "Disponible", action: "go", label: "Ver calendario", target: "#calendario" }
+  const insightCards = [
+    { label: "Ficha", value: `${profilePercent}%`, text: "Datos completados", tone: "blue", progress: profilePercent },
+    { label: "Agenda", value: String(events.length), text: "Eventos proximos visibles", tone: "green", progress: eventIntensity },
+    { label: "Mensajes", value: String(openMessages), text: "Consultas abiertas", tone: "red", progress: Math.min(100, 20 + openMessages * 24) },
+    { label: "Nivel", value: access.grade ? "Activo" : "Pendiente", text: access.grade || "Grado por completar", tone: "gold", progress: gradeScore }
+  ];
+  const accessLinks = [
+    { label: "Ficha", action: "profile" },
+    { label: "Comunicacion", action: "message" },
+    { label: "Calendario", action: "go", target: "#calendario" },
+    { label: "Reservas", action: "go", target: "#merchandising" }
   ];
   return `
     <div class="kenshi-dashboard">
@@ -2180,6 +2192,38 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
           <small>${escapeHtml(approved)}</small>
         </article>
       </div>
+      <section class="kenshi-dashboard__overview">
+        <div class="kenshi-dashboard__score">
+          <span class="eyebrow">Resumen personal</span>
+          <div class="kenshi-dashboard__ring" style="--score:${profilePercent}">
+            <strong>${profilePercent}%</strong>
+            <small>Ficha</small>
+          </div>
+          <h4>${escapeHtml(name)}</h4>
+          <p>Estado actual de tu panel Kenshi: ficha, agenda, consultas y actividad registrada.</p>
+        </div>
+        <div class="kenshi-dashboard__insights">
+          ${insightCards.map((item) => `
+            <article class="is-${escapeHtml(item.tone)}">
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+              <p>${escapeHtml(item.text)}</p>
+              <i style="--bar:${item.progress}%"></i>
+            </article>
+          `).join("")}
+        </div>
+        <div class="kenshi-dashboard__pulse">
+          <span class="eyebrow">Proximo hito</span>
+          <strong>${nextEvent ? escapeHtml(nextEvent.title) : "Sin eventos proximos"}</strong>
+          <p>${nextEvent ? escapeHtml(nextEvent.date) : "Cuando haya nuevos cursos o actividades, apareceran aqui."}</p>
+          <div class="kenshi-dashboard__bars" aria-hidden="true">
+            <span style="--h:${profilePercent}%"></span>
+            <span style="--h:${eventIntensity}%"></span>
+            <span style="--h:${contactScore}%"></span>
+            <span style="--h:${gradeScore}%"></span>
+          </div>
+        </div>
+      </section>
       <section class="kenshi-dashboard__profile">
         <div>
           <span class="eyebrow">Mi ficha</span>
@@ -2220,15 +2264,17 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
           </div>
           <ul>${eventCards}</ul>
         </section>
-        <section class="kenshi-dashboard__modules">
-          ${modules.map((item) => `
-            <article>
-              <span>${escapeHtml(item.badge)}</span>
-              <h4>${escapeHtml(item.title)}</h4>
-              <p>${escapeHtml(item.text)}</p>
-              <button class="kenshi-dashboard__module-action" type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</button>
-            </article>
+        <section class="kenshi-dashboard__quicklinks">
+          <div>
+            <span class="eyebrow">Accesos rapidos</span>
+            <h4>Herramientas utiles</h4>
+            <p>Accede solo a lo que aporta valor real desde el panel: datos, comunicacion, agenda y reservas del club.</p>
+          </div>
+          <div class="kenshi-dashboard__quickgrid">
+          ${accessLinks.map((item) => `
+            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</button>
           `).join("")}
+          </div>
         </section>
       </div>
     </div>
