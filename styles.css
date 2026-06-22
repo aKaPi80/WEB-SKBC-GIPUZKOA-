@@ -2299,6 +2299,18 @@ textarea { resize: vertical; }
   background: #fff;
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.34);
 }
+
+.profile-modal__panel.kenshi-modal__panel {
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.kenshi-modal.is-authenticated .profile-modal__panel.kenshi-modal__panel {
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+}
 .profile-modal__content { padding: clamp(28px, 5vw, 56px); align-self: center; }
 .profile-modal__content #profileImage {
   width: min(220px, 55vw);

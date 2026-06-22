@@ -1045,6 +1045,32 @@ button.danger {
   margin-top: 10px;
 }
 
+.kenshi-card .lead-actions button {
+  color: var(--red);
+  border-color: rgba(197, 39, 39, .42);
+  background: #fff;
+}
+
+.kenshi-card .lead-actions button.primary,
+.kenshi-card .lead-actions button[data-next-status="approved"],
+.kenshi-card .lead-actions button.danger {
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+
+.kenshi-card .lead-actions button[data-next-status="revoked"],
+.kenshi-card .lead-actions button[data-next-status="rejected"] {
+  color: var(--red);
+  border-color: var(--red);
+  background: #fff7f7;
+}
+
+.kenshi-card .lead-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(197, 39, 39, .16);
+}
+
 .lead-card select {
   min-height: 40px;
   border: 1px solid var(--line);
