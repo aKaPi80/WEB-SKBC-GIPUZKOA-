@@ -1976,6 +1976,57 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   gap: 20px;
 }
 
+.kenshi-dashboard__hero--profile {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 260px;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(203, 164, 81, 0.42), transparent 24%),
+    radial-gradient(circle at 88% 20%, rgba(31, 111, 169, 0.48), transparent 26%),
+    linear-gradient(135deg, #101113 0%, #171b20 56%, #243745 100%);
+}
+
+.kenshi-dashboard__portrait {
+  width: clamp(140px, 18vw, 220px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--blue));
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+}
+
+.kenshi-dashboard__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kenshi-dashboard__portrait span {
+  color: #fff;
+  font-size: clamp(48px, 7vw, 84px);
+  font-weight: 950;
+}
+
+.kenshi-dashboard__hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.kenshi-dashboard__hero-tags span {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  font-weight: 950;
+}
+
 .kenshi-dashboard__hero {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -2000,6 +2051,11 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   max-width: 720px;
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.kenshi-dashboard__hero.kenshi-dashboard__hero--profile {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
 }
 
 .kenshi-dashboard__logout {
@@ -2372,6 +2428,240 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 
 .kenshi-dashboard__request summary {
   cursor: pointer;
+}
+
+.kenshi-dashboard__command,
+.kenshi-dashboard__story {
+  display: grid;
+  gap: 18px;
+}
+
+.kenshi-dashboard__command {
+  grid-template-columns: minmax(260px, 0.9fr) minmax(360px, 1.3fr) minmax(260px, 0.9fr);
+}
+
+.kenshi-dashboard__story {
+  grid-template-columns: minmax(250px, 0.76fr) minmax(360px, 1.24fr) minmax(280px, 1fr);
+}
+
+.kenshi-dashboard__profile-card,
+.kenshi-dashboard__radial,
+.kenshi-dashboard__next,
+.kenshi-dashboard__score-panel,
+.kenshi-dashboard__bars-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(16, 17, 19, 0.08);
+}
+
+.kenshi-dashboard__profile-card,
+.kenshi-dashboard__next,
+.kenshi-dashboard__score-panel,
+.kenshi-dashboard__bars-card {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.kenshi-dashboard__profile-card h4,
+.kenshi-dashboard__next strong,
+.kenshi-dashboard__line h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.05;
+}
+
+.kenshi-dashboard__profile-card p,
+.kenshi-dashboard__next p,
+.kenshi-dashboard__score-panel p,
+.kenshi-dashboard__data-row small {
+  margin: 0;
+  color: var(--muted);
+}
+
+.kenshi-dashboard__profile-mini {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.kenshi-dashboard__profile-mini span {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.kenshi-dashboard__profile-mini b {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.kenshi-dashboard__radial {
+  padding: clamp(20px, 3vw, 28px);
+  background:
+    radial-gradient(circle at 12% 12%, rgba(31, 111, 169, 0.12), transparent 28%),
+    radial-gradient(circle at 90% 88%, rgba(203, 164, 81, 0.14), transparent 30%),
+    #fff;
+}
+
+.kenshi-dashboard__radial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.kenshi-dashboard__mini-ring {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at center, #fff 0 43%, transparent 44%),
+    conic-gradient(var(--red) calc(var(--score) * 1%), rgba(16, 17, 19, 0.08) 0);
+  text-align: center;
+}
+
+.kenshi-dashboard__mini-ring strong {
+  color: var(--ink);
+  font-size: clamp(26px, 3vw, 40px);
+}
+
+.kenshi-dashboard__mini-ring span {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.kenshi-dashboard__mini-ring small {
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.kenshi-dashboard__next {
+  background:
+    linear-gradient(135deg, rgba(16, 17, 19, 0.95), rgba(31, 111, 169, 0.9)),
+    radial-gradient(circle at 80% 18%, rgba(203, 164, 81, 0.36), transparent 26%);
+}
+
+.kenshi-dashboard__next .eyebrow,
+.kenshi-dashboard__next strong,
+.kenshi-dashboard__next p {
+  color: #fff;
+}
+
+.kenshi-dashboard__ghost-action {
+  justify-self: start;
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 999px;
+  padding: 0 16px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.kenshi-dashboard__score-panel {
+  color: #fff;
+  background:
+    radial-gradient(circle at 20% 16%, rgba(203, 164, 81, 0.4), transparent 24%),
+    linear-gradient(135deg, #171b20, #101113);
+}
+
+.kenshi-dashboard__score-panel .eyebrow,
+.kenshi-dashboard__score-panel p {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.kenshi-dashboard__big-donut {
+  width: min(210px, 100%);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #171b20 0 55%, transparent 56%),
+    conic-gradient(var(--gold) calc(var(--score) * 1%), rgba(255, 255, 255, 0.12) 0);
+  box-shadow: 0 26px 62px rgba(0, 0, 0, 0.28);
+}
+
+.kenshi-dashboard__big-donut strong {
+  color: #fff;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.kenshi-dashboard__big-donut small {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.kenshi-dashboard__bars-card {
+  gap: 12px;
+}
+
+.kenshi-dashboard__data-row {
+  display: grid;
+  grid-template-columns: minmax(74px, 0.6fr) auto;
+  gap: 6px 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.kenshi-dashboard__data-row.is-blue { --metric: var(--blue); }
+.kenshi-dashboard__data-row.is-green { --metric: #23a455; }
+.kenshi-dashboard__data-row.is-red { --metric: var(--red); }
+.kenshi-dashboard__data-row.is-gold { --metric: var(--gold); }
+
+.kenshi-dashboard__data-row span {
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.kenshi-dashboard__data-row b {
+  color: var(--metric);
+  font-size: 22px;
+}
+
+.kenshi-dashboard__data-row i {
+  grid-column: 1 / -1;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(16, 17, 19, 0.08);
+}
+
+.kenshi-dashboard__data-row i::before {
+  content: "";
+  display: block;
+  width: var(--bar);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--metric);
+}
+
+.kenshi-dashboard__data-row small {
+  grid-column: 1 / -1;
 }
 
 .kenshi-dashboard__request p {
@@ -2843,8 +3133,10 @@ textarea { resize: vertical; }
   }
   .hero-proof, .grid-2, .grid-3, .grid-4, .split, .contact-layout, .profile-list, .ika-layout, .instructor-layout, .team-feature, .club-intro, .embed-layout, .calendar-grid--year, .calendar-grid--quarter, .calendar-list, .news-grid, .testimonial-grid, .merch-hero, .merch-layout, .merch-product, .learn-layout, .learn-cards, .trial-layout, .kenshi-layout, .kenshi-perks { grid-template-columns: 1fr; }
   .kenshi-dashboard__identity,
+  .kenshi-dashboard__command,
   .kenshi-dashboard__overview,
   .kenshi-dashboard__analytics,
+  .kenshi-dashboard__story,
   .kenshi-dashboard__insights,
   .kenshi-dashboard__line div,
   .kenshi-dashboard__profile-grid,
@@ -2852,6 +3144,18 @@ textarea { resize: vertical; }
   .kenshi-dashboard__main,
   .kenshi-dashboard__quickgrid {
     grid-template-columns: 1fr;
+  }
+  .kenshi-dashboard__hero.kenshi-dashboard__hero--profile {
+    grid-template-columns: 1fr;
+  }
+  .kenshi-dashboard__portrait {
+    width: 150px;
+  }
+  .kenshi-dashboard__radial-grid {
+    grid-template-columns: 1fr;
+  }
+  .kenshi-dashboard__mini-ring {
+    min-height: 180px;
   }
   .merch-order { position: static; }
   .merch-subheading {

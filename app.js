@@ -2115,6 +2115,8 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const phone = access.phone || "No indicado";
   const grade = access.grade || "Pendiente de completar";
   const relationship = access.relationship || "Miembro SKBC";
+  const photoUrl = access.photo_url || session?.user?.user_metadata?.avatar_url || "";
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "K";
   const approved = access.approved_at ? new Date(access.approved_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "Activo";
   const created = access.created_at ? new Date(access.created_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "No indicado";
   const requestMessage = access.message || "Sin mensaje registrado";
@@ -2178,78 +2180,71 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
     { label: "Calendario", action: "go", target: "#calendario" },
     { label: "Reservas", action: "go", target: "#merchandising" }
   ];
+  const radialStats = [
+    { label: "Ficha", value: profilePercent, text: `${profileFields}/5 datos` },
+    { label: "Agenda", value: eventIntensity, text: `${events.length} eventos` },
+    { label: "Contacto", value: contactScore, text: `${messages.length} mensajes` }
+  ];
   return `
     <div class="kenshi-dashboard">
-      <div class="kenshi-dashboard__hero">
+      <div class="kenshi-dashboard__hero kenshi-dashboard__hero--profile">
+        <div class="kenshi-dashboard__portrait">
+          ${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(name)}" />` : `<span>${escapeHtml(initials)}</span>`}
+        </div>
         <div>
           <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel de alumno"}</p>
-          <h3>${kenshi.dashboardTitle || "Area Kenshi"}</h3>
-          <p>${kenshi.dashboardText || "Tu espacio personal para tener a mano la ficha, avisos, calendario, consultas y reservas del club."}</p>
+          <h3>${escapeHtml(name)}</h3>
+          <p>${kenshi.dashboardText || "Tu espacio personal dentro de SKBC GIPUZKOA: ficha, agenda, estado del panel y comunicacion directa con el club."}</p>
+          <div class="kenshi-dashboard__hero-tags">
+            <span>${escapeHtml(grade)}</span>
+            <span>${escapeHtml(relationship)}</span>
+            <span>Acceso habilitado</span>
+          </div>
         </div>
         <button class="kenshi-dashboard__logout" type="button" data-kenshi-logout>Salir</button>
       </div>
-      <div class="kenshi-dashboard__identity">
-        <article>
-          <span>Alumno</span>
-          <strong>${escapeHtml(name)}</strong>
-          <small>${escapeHtml(email)}</small>
-        </article>
-        <article>
-          <span>Grado / nivel</span>
-          <strong>${escapeHtml(grade)}</strong>
-          <small>${escapeHtml(relationship)}</small>
-        </article>
-        <article>
-          <span>Acceso</span>
-          <strong>Habilitado</strong>
-          <small>${escapeHtml(approved)}</small>
-        </article>
-      </div>
-      <section class="kenshi-dashboard__overview">
-        <div class="kenshi-dashboard__score">
-          <span class="eyebrow">Resumen personal</span>
-          <div class="kenshi-dashboard__ring" style="--score:${profilePercent}">
-            <strong>${profilePercent}%</strong>
-            <small>Ficha</small>
+      <section class="kenshi-dashboard__command">
+        <article class="kenshi-dashboard__profile-card">
+          <span class="eyebrow">Ficha Kenshi</span>
+          <h4>${escapeHtml(grade)}</h4>
+          <p>${escapeHtml(email)}</p>
+          <div class="kenshi-dashboard__profile-mini">
+            <span><b>${escapeHtml(created)}</b>Alta en el panel</span>
+            <span><b>${escapeHtml(approved)}</b>Acceso habilitado</span>
           </div>
-          <h4>${escapeHtml(name)}</h4>
-          <p>Este porcentaje solo mide si tu ficha esta completa. No es una evaluacion tecnica ni un examen.</p>
-        </div>
-        <div class="kenshi-dashboard__insights">
-          ${insightCards.map((item) => `
-            <article class="is-${escapeHtml(item.tone)}">
-              <span>${escapeHtml(item.label)}</span>
-              <strong>${escapeHtml(item.value)}</strong>
-              <p>${escapeHtml(item.text)}</p>
-              <small>${escapeHtml(item.help)}</small>
-              <i style="--bar:${item.progress}%"></i>
-            </article>
-          `).join("")}
-        </div>
-        <div class="kenshi-dashboard__pulse">
+          <button class="kenshi-dashboard__module-action" type="button" data-kenshi-action="profile">Ver ficha completa</button>
+        </article>
+        <article class="kenshi-dashboard__radial">
+          <span class="eyebrow">Estado del panel</span>
+          <div class="kenshi-dashboard__radial-grid">
+            ${radialStats.map((item) => `
+              <div class="kenshi-dashboard__mini-ring" style="--score:${item.value}">
+                <strong>${item.value}%</strong>
+                <span>${escapeHtml(item.label)}</span>
+                <small>${escapeHtml(item.text)}</small>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+        <article class="kenshi-dashboard__next">
           <span class="eyebrow">Proximo hito</span>
           <strong>${nextEvent ? escapeHtml(nextEvent.title) : "Sin eventos proximos"}</strong>
           <p>${nextEvent ? escapeHtml(nextEvent.date) : "Cuando haya nuevos cursos o actividades, apareceran aqui."}</p>
-          <div class="kenshi-dashboard__bars" aria-hidden="true">
-            <span style="--h:${profilePercent}%"></span>
-            <span style="--h:${eventIntensity}%"></span>
-            <span style="--h:${contactScore}%"></span>
-            <span style="--h:${gradeScore}%"></span>
-          </div>
-        </div>
+          <button class="kenshi-dashboard__ghost-action" type="button" data-kenshi-action="go" data-target="#calendario">Abrir calendario</button>
+        </article>
       </section>
-      <section class="kenshi-dashboard__analytics">
-        <article class="kenshi-dashboard__donut" style="--score:${activityScore}">
-          <span class="eyebrow">Indice del panel</span>
-          <div>
+      <section class="kenshi-dashboard__story">
+        <article class="kenshi-dashboard__score-panel">
+          <span class="eyebrow">Lectura rapida</span>
+          <div class="kenshi-dashboard__big-donut" style="--score:${activityScore}">
             <strong>${activityScore}</strong>
-            <small>/100</small>
+            <small>Indice del panel</small>
           </div>
-          <p>Combina ficha, agenda, comunicacion y nivel registrado para darte una vision rapida del panel.</p>
+          <p>Un resumen visual de ficha, agenda, comunicacion y nivel registrado. No mide rendimiento tecnico.</p>
         </article>
         <article class="kenshi-dashboard__line">
-          <span class="eyebrow">Lectura visual</span>
-          <h4>Estado general</h4>
+          <span class="eyebrow">Evolucion visual</span>
+          <h4>Mapa del panel</h4>
           <svg viewBox="0 0 100 100" role="img" aria-label="Grafico lineal del estado del panel">
             <polyline points="${lineSvgPoints}" />
             ${linePoints.map((point, index) => {
@@ -2262,14 +2257,16 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
             ${linePoints.map((point) => `<span><b>${escapeHtml(point.label)}</b>${point.value}%</span>`).join("")}
           </div>
         </article>
-        <article class="kenshi-dashboard__explain">
-          <span class="eyebrow">Como leerlo</span>
-          <ul>
-            <li><strong>Ficha:</strong> datos basicos guardados en el club.</li>
-            <li><strong>Agenda:</strong> cantidad de eventos visibles proximamente.</li>
-            <li><strong>Mensajes:</strong> consultas abiertas o respondidas dentro de la intranet.</li>
-            <li><strong>Nivel:</strong> grado o situacion registrada en tu ficha.</li>
-          </ul>
+        <article class="kenshi-dashboard__bars-card">
+          <span class="eyebrow">Distribucion</span>
+          ${insightCards.map((item) => `
+            <div class="kenshi-dashboard__data-row is-${escapeHtml(item.tone)}">
+              <span>${escapeHtml(item.label)}</span>
+              <b>${escapeHtml(item.value)}</b>
+              <i style="--bar:${item.progress}%"></i>
+              <small>${escapeHtml(item.help)}</small>
+            </div>
+          `).join("")}
         </article>
       </section>
       <section class="kenshi-dashboard__profile">

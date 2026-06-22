@@ -2751,6 +2751,9 @@ async function loadKenshiMembers() {
   list.querySelectorAll("[data-delete-kenshi]").forEach((button) => {
     button.addEventListener("click", () => deleteKenshiMember(button.dataset.deleteKenshi, button.dataset.kenshiLabel || ""));
   });
+  list.querySelectorAll("[data-kenshi-photo-upload]").forEach((button) => {
+    button.addEventListener("click", () => uploadKenshiPhoto(button.dataset.kenshiPhotoUpload));
+  });
 }
 
 function kenshiMemberTemplate(member) {
@@ -2769,6 +2772,7 @@ function kenshiMemberTemplate(member) {
       <label class="field"><span>Nombre</span><input data-kenshi-field="full_name" value="${escapeHtml(member.full_name || "")}" /></label>
       <label class="field"><span>Email</span><input data-kenshi-field="email" value="${escapeHtml(member.email || "")}" /></label>
       <label class="field"><span>Telefono</span><input data-kenshi-field="phone" value="${escapeHtml(member.phone || "")}" /></label>
+      <label class="field field--wide"><span>Foto Kenshi</span><span class="image-field-row"><input data-kenshi-field="photo_url" value="${escapeHtml(member.photo_url || "")}" placeholder="assets/uploads/foto.jpg" /><button type="button" data-kenshi-photo-upload="${id}">Subir foto</button></span></label>
       <label class="field"><span>Relacion</span><input data-kenshi-field="relationship" value="${escapeHtml(member.relationship || "")}" /></label>
       <label class="field"><span>Grado/nivel</span><input data-kenshi-field="grade" value="${escapeHtml(member.grade || "")}" /></label>
       <label class="field field--wide"><span>Notas internas</span><textarea data-kenshi-field="admin_notes" rows="3">${escapeHtml(member.admin_notes || "")}</textarea></label>
@@ -2798,6 +2802,28 @@ function kenshiPayloadFromCard(id) {
 async function saveKenshiMember(id) {
   const payload = kenshiPayloadFromCard(id);
   await patchKenshiMember(id, payload, "Registro Kenshi actualizado.");
+}
+
+async function uploadKenshiPhoto(id) {
+  const card = [...document.querySelectorAll("[data-kenshi-card]")].find((item) => item.dataset.kenshiCard === id);
+  if (!card) return;
+  const inputField = card.querySelector('[data-kenshi-field="photo_url"]');
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/png,image/jpeg,image/webp";
+  input.addEventListener("change", async () => {
+    const [file] = input.files;
+    if (!file) return;
+    try {
+      setStatus("Subiendo foto Kenshi...", "warning");
+      const assetPath = await uploadImageFile(file);
+      if (inputField) inputField.value = assetPath;
+      await patchKenshiMember(id, { photo_url: assetPath, updated_at: new Date().toISOString() }, "Foto Kenshi actualizada.", false);
+    } catch (error) {
+      setStatus(`Error al subir foto Kenshi: ${error.message}`, "danger");
+    }
+  });
+  input.click();
 }
 
 async function updateKenshiStatus(id, status) {

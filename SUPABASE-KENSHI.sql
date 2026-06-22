@@ -7,6 +7,7 @@ create table if not exists public.skbc_kenshi_members (
   full_name text not null,
   email text not null,
   phone text,
+  photo_url text,
   relationship text,
   grade text,
   message text,
@@ -22,6 +23,9 @@ create index if not exists skbc_kenshi_members_status_idx
 
 create index if not exists skbc_kenshi_members_email_idx
   on public.skbc_kenshi_members (lower(email));
+
+alter table public.skbc_kenshi_members
+  add column if not exists photo_url text;
 
 alter table public.skbc_kenshi_members enable row level security;
 
