@@ -2115,33 +2115,18 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const phone = access.phone || "No indicado";
   const grade = access.grade || "Pendiente de completar";
   const relationship = access.relationship || "Miembro SKBC";
-  const photoUrl = access.photo_url || session?.user?.user_metadata?.avatar_url || "";
+  const webPhoto = personImage({ name }, 0);
+  const photoUrl = access.photo_url || webPhoto || session?.user?.user_metadata?.avatar_url || "";
+  const fichaUrl = access.ficha_url || "";
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "K";
   const approved = access.approved_at ? new Date(access.approved_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "Activo";
   const created = access.created_at ? new Date(access.created_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "No indicado";
   const requestMessage = access.message || "Sin mensaje registrado";
   const events = kenshiUpcomingEvents(copy);
-  const profileFields = [name, email, access.phone, access.relationship, access.grade].filter(Boolean).length;
-  const profilePercent = Math.round((profileFields / 5) * 100);
   const openMessages = messages.filter((item) => item.status === "open").length;
   const answeredMessages = messages.filter((item) => item.status === "answered" || item.admin_reply).length;
   const closedMessages = messages.filter((item) => item.status === "closed").length;
   const nextEvent = events[0];
-  const eventIntensity = Math.min(100, Math.max(22, events.length * 18));
-  const contactScore = Math.min(100, 35 + messages.length * 12 + answeredMessages * 10);
-  const gradeScore = access.grade ? 82 : 38;
-  const activityScore = Math.round((profilePercent * 0.35) + (eventIntensity * 0.25) + (contactScore * 0.2) + (gradeScore * 0.2));
-  const linePoints = [
-    { label: "Ficha", value: profilePercent },
-    { label: "Agenda", value: eventIntensity },
-    { label: "Contacto", value: contactScore },
-    { label: "Nivel", value: gradeScore }
-  ];
-  const lineSvgPoints = linePoints.map((point, index) => {
-    const x = 14 + index * 28;
-    const y = 92 - (point.value * 0.72);
-    return `${x},${y}`;
-  }).join(" ");
   const eventCards = events.length ? events.map((event) => `
     <li style="--event-color:${escapeHtml(event.color)}">
       <span>${escapeHtml(event.date)}</span>
@@ -2168,106 +2153,37 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
       <strong>${escapeHtml(value || "No indicado")}</strong>
     </div>
   `).join("");
-  const insightCards = [
-    { label: "Ficha", value: `${profilePercent}%`, text: `${profileFields}/5 datos principales completados`, help: "Nombre, email, telefono, relacion y grado.", tone: "blue", progress: profilePercent },
-    { label: "Agenda", value: String(events.length), text: "Eventos proximos en los siguientes meses", help: "Sale del calendario publico del club.", tone: "green", progress: eventIntensity },
-    { label: "Mensajes", value: String(openMessages), text: "Consultas internas pendientes", help: `${answeredMessages} respondida(s), ${closedMessages} cerrada(s).`, tone: "red", progress: Math.min(100, 20 + openMessages * 24) },
-    { label: "Nivel", value: access.grade ? "Activo" : "Pendiente", text: access.grade || "Grado por completar", help: "Dato registrado en tu ficha Kenshi.", tone: "gold", progress: gradeScore }
-  ];
   const accessLinks = [
-    { label: "Ficha", action: "profile" },
+    fichaUrl ? { label: "Ficha real", action: "ficha", url: fichaUrl } : { label: "Ficha visible", action: "profile" },
     { label: "Comunicacion", action: "message" },
     { label: "Calendario", action: "go", target: "#calendario" },
     { label: "Reservas", action: "go", target: "#merchandising" }
   ];
-  const radialStats = [
-    { label: "Ficha", value: profilePercent, text: `${profileFields}/5 datos` },
-    { label: "Agenda", value: eventIntensity, text: `${events.length} eventos` },
-    { label: "Contacto", value: contactScore, text: `${messages.length} mensajes` }
-  ];
   return `
     <div class="kenshi-dashboard">
-      <div class="kenshi-dashboard__hero kenshi-dashboard__hero--profile">
-        <div class="kenshi-dashboard__portrait">
-          ${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(name)}" />` : `<span>${escapeHtml(initials)}</span>`}
-        </div>
-        <div>
-          <p class="eyebrow">${kenshi.dashboardEyebrow || "Panel de alumno"}</p>
-          <h3>${escapeHtml(name)}</h3>
-          <p>${kenshi.dashboardText || "Tu espacio personal dentro de SKBC GIPUZKOA: ficha, agenda, estado del panel y comunicacion directa con el club."}</p>
-          <div class="kenshi-dashboard__hero-tags">
-            <span>${escapeHtml(grade)}</span>
-            <span>${escapeHtml(relationship)}</span>
-            <span>Acceso habilitado</span>
+      <section class="kenshi-simple">
+        <div class="kenshi-simple__profile">
+          <div class="kenshi-simple__photo">
+            ${photoUrl ? `<img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(name)}" />` : `<span>${escapeHtml(initials)}</span>`}
           </div>
-        </div>
-        <button class="kenshi-dashboard__logout" type="button" data-kenshi-logout>Salir</button>
-      </div>
-      <section class="kenshi-dashboard__command">
-        <article class="kenshi-dashboard__profile-card">
-          <span class="eyebrow">Ficha Kenshi</span>
-          <h4>${escapeHtml(grade)}</h4>
-          <p>${escapeHtml(email)}</p>
-          <div class="kenshi-dashboard__profile-mini">
-            <span><b>${escapeHtml(created)}</b>Alta en el panel</span>
-            <span><b>${escapeHtml(approved)}</b>Acceso habilitado</span>
-          </div>
-          <button class="kenshi-dashboard__module-action" type="button" data-kenshi-action="profile">Ver ficha completa</button>
-        </article>
-        <article class="kenshi-dashboard__radial">
-          <span class="eyebrow">Estado del panel</span>
-          <div class="kenshi-dashboard__radial-grid">
-            ${radialStats.map((item) => `
-              <div class="kenshi-dashboard__mini-ring" style="--score:${item.value}">
-                <strong>${item.value}%</strong>
-                <span>${escapeHtml(item.label)}</span>
-                <small>${escapeHtml(item.text)}</small>
-              </div>
-            `).join("")}
-          </div>
-        </article>
-        <article class="kenshi-dashboard__next">
-          <span class="eyebrow">Proximo hito</span>
-          <strong>${nextEvent ? escapeHtml(nextEvent.title) : "Sin eventos proximos"}</strong>
-          <p>${nextEvent ? escapeHtml(nextEvent.date) : "Cuando haya nuevos cursos o actividades, apareceran aqui."}</p>
-          <button class="kenshi-dashboard__ghost-action" type="button" data-kenshi-action="go" data-target="#calendario">Abrir calendario</button>
-        </article>
-      </section>
-      <section class="kenshi-dashboard__story">
-        <article class="kenshi-dashboard__score-panel">
-          <span class="eyebrow">Lectura rapida</span>
-          <div class="kenshi-dashboard__big-donut" style="--score:${activityScore}">
-            <strong>${activityScore}</strong>
-            <small>Indice del panel</small>
-          </div>
-          <p>Un resumen visual de ficha, agenda, comunicacion y nivel registrado. No mide rendimiento tecnico.</p>
-        </article>
-        <article class="kenshi-dashboard__line">
-          <span class="eyebrow">Evolucion visual</span>
-          <h4>Mapa del panel</h4>
-          <svg viewBox="0 0 100 100" role="img" aria-label="Grafico lineal del estado del panel">
-            <polyline points="${lineSvgPoints}" />
-            ${linePoints.map((point, index) => {
-              const x = 14 + index * 28;
-              const y = 92 - (point.value * 0.72);
-              return `<circle cx="${x}" cy="${y}" r="3.2"><title>${escapeHtml(point.label)} ${point.value}%</title></circle>`;
-            }).join("")}
-          </svg>
           <div>
-            ${linePoints.map((point) => `<span><b>${escapeHtml(point.label)}</b>${point.value}%</span>`).join("")}
+            <p class="eyebrow">Panel de alumno</p>
+            <h3>${escapeHtml(name)}</h3>
+            <p>${escapeHtml(grade)} · ${escapeHtml(relationship)}</p>
           </div>
-        </article>
-        <article class="kenshi-dashboard__bars-card">
-          <span class="eyebrow">Distribucion</span>
-          ${insightCards.map((item) => `
-            <div class="kenshi-dashboard__data-row is-${escapeHtml(item.tone)}">
-              <span>${escapeHtml(item.label)}</span>
-              <b>${escapeHtml(item.value)}</b>
-              <i style="--bar:${item.progress}%"></i>
-              <small>${escapeHtml(item.help)}</small>
-            </div>
+        </div>
+        <div class="kenshi-simple__summary">
+          <article><span>Acceso</span><strong>Habilitado</strong><small>${escapeHtml(approved)}</small></article>
+          <article><span>Próximo evento</span><strong>${nextEvent ? escapeHtml(nextEvent.title) : "Sin eventos"}</strong><small>${nextEvent ? escapeHtml(nextEvent.date) : "No hay eventos próximos"}</small></article>
+          <article><span>Consultas</span><strong>${openMessages} abierta(s)</strong><small>${answeredMessages} respondida(s), ${closedMessages} cerrada(s)</small></article>
+          <article><span>Ficha real</span><strong>${fichaUrl ? "Disponible" : "Pendiente"}</strong><small>${fichaUrl ? "Enlace conectado" : "Falta enlazar desde admin"}</small></article>
+        </div>
+        <div class="kenshi-simple__actions">
+          ${accessLinks.map((item) => `
+            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}${item.url ? ` data-url="${escapeHtml(item.url)}"` : ""}>${escapeHtml(item.label)}</button>
           `).join("")}
-        </article>
+          <button class="kenshi-simple__logout" type="button" data-kenshi-logout>Salir</button>
+        </div>
       </section>
       <section class="kenshi-dashboard__profile">
         <div>
@@ -2342,6 +2258,11 @@ function bindKenshiDashboardActions(modal, session = null, access = null) {
       }
       if (action === "message") {
         modal.querySelector("#kenshiCommunication")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (action === "ficha") {
+        const url = button.dataset.url;
+        if (url) window.open(url, "_blank", "noopener,noreferrer");
         return;
       }
       const target = button.dataset.target;

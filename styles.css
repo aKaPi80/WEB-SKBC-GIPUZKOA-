@@ -1976,6 +1976,123 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   gap: 20px;
 }
 
+.kenshi-simple {
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 4vw, 34px);
+  border-radius: var(--radius);
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(16, 17, 19, 0.98), rgba(31, 111, 169, 0.86)),
+    radial-gradient(circle at 82% 18%, rgba(203, 164, 81, 0.34), transparent 28%);
+  box-shadow: 0 24px 70px rgba(16, 17, 19, 0.24);
+}
+
+.kenshi-simple__profile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
+}
+
+.kenshi-simple__photo {
+  width: clamp(118px, 16vw, 176px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--blue));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+}
+
+.kenshi-simple__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kenshi-simple__photo span {
+  color: #fff;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 950;
+}
+
+.kenshi-simple h3 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(34px, 5vw, 68px);
+  line-height: 1;
+}
+
+.kenshi-simple p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.kenshi-simple__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kenshi-simple__summary article {
+  display: grid;
+  gap: 6px;
+  min-height: 118px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.kenshi-simple__summary span {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.kenshi-simple__summary strong {
+  color: #fff;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.15;
+}
+
+.kenshi-simple__summary small {
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 850;
+}
+
+.kenshi-simple__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.kenshi-simple__actions button {
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 0 18px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.kenshi-simple__actions button:first-child {
+  border-color: transparent;
+  background: var(--red);
+  box-shadow: 0 14px 30px rgba(197, 39, 39, 0.28);
+}
+
+.kenshi-simple__logout {
+  margin-left: auto;
+}
+
 .kenshi-dashboard__hero--profile {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -3133,6 +3250,8 @@ textarea { resize: vertical; }
   }
   .hero-proof, .grid-2, .grid-3, .grid-4, .split, .contact-layout, .profile-list, .ika-layout, .instructor-layout, .team-feature, .club-intro, .embed-layout, .calendar-grid--year, .calendar-grid--quarter, .calendar-list, .news-grid, .testimonial-grid, .merch-hero, .merch-layout, .merch-product, .learn-layout, .learn-cards, .trial-layout, .kenshi-layout, .kenshi-perks { grid-template-columns: 1fr; }
   .kenshi-dashboard__identity,
+  .kenshi-simple__profile,
+  .kenshi-simple__summary,
   .kenshi-dashboard__command,
   .kenshi-dashboard__overview,
   .kenshi-dashboard__analytics,

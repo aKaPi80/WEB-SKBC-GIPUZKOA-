@@ -2773,6 +2773,7 @@ function kenshiMemberTemplate(member) {
       <label class="field"><span>Email</span><input data-kenshi-field="email" value="${escapeHtml(member.email || "")}" /></label>
       <label class="field"><span>Telefono</span><input data-kenshi-field="phone" value="${escapeHtml(member.phone || "")}" /></label>
       <label class="field field--wide"><span>Foto Kenshi</span><span class="image-field-row"><input data-kenshi-field="photo_url" value="${escapeHtml(member.photo_url || "")}" placeholder="assets/uploads/foto.jpg" /><button type="button" data-kenshi-photo-upload="${id}">Subir foto</button></span></label>
+      <label class="field field--wide"><span>Enlace ficha real</span><input data-kenshi-field="ficha_url" value="${escapeHtml(member.ficha_url || "")}" placeholder="https://..." /></label>
       <label class="field"><span>Relacion</span><input data-kenshi-field="relationship" value="${escapeHtml(member.relationship || "")}" /></label>
       <label class="field"><span>Grado/nivel</span><input data-kenshi-field="grade" value="${escapeHtml(member.grade || "")}" /></label>
       <label class="field field--wide"><span>Notas internas</span><textarea data-kenshi-field="admin_notes" rows="3">${escapeHtml(member.admin_notes || "")}</textarea></label>
