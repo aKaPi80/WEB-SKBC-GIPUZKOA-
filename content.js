@@ -1396,10 +1396,22 @@ window.SKBC_CONTENT = {
         "title": "Area Kenshi SKBC",
         "text": "Un espacio pensado para miembros y familias del club: avisos internos, recursos de practica, calendario ampliado y ventajas de pertenecer a SKBC GIPUZKOA. El acceso siempre se revisa y aprueba desde el club.",
         "perks": [
-          ["Tablon interno", "Avisos, cambios y comunicaciones para miembros."],
-          ["Recursos de practica", "Material de repaso y contenidos para seguir aprendiendo."],
-          ["Calendario interno", "Detalles de cursos, actividades y confirmaciones."],
-          ["Vida de club", "Galerias, recuerdos y participacion de la comunidad."]
+          [
+            "Tablon interno",
+            "Avisos, cambios y comunicaciones para miembros."
+          ],
+          [
+            "Recursos de practica",
+            "Material de repaso y contenidos para seguir aprendiendo."
+          ],
+          [
+            "Calendario interno",
+            "Detalles de cursos, actividades y confirmaciones."
+          ],
+          [
+            "Vida de club",
+            "Galerias, recuerdos y participacion de la comunidad."
+          ]
         ],
         "formTitle": "Solicitar acceso Kenshi",
         "formIntro": "El acceso no es automatico. Envia la solicitud y el club la revisara antes de activarla.",
@@ -1407,7 +1419,12 @@ window.SKBC_CONTENT = {
         "email": "Email",
         "phone": "Telefono",
         "relationship": "Relacion con el club",
-        "relationships": ["Alumno/a actual", "Padre/madre", "Antiguo alumno/a", "Quiero informarme"],
+        "relationships": [
+          "Alumno/a actual",
+          "Padre/madre",
+          "Antiguo alumno/a",
+          "Quiero informarme"
+        ],
         "grade": "Grado o nivel",
         "message": "Mensaje",
         "submit": "Enviar solicitud",
@@ -1990,10 +2007,22 @@ window.SKBC_CONTENT = {
         "title": "SKBC Kenshi Gunea",
         "text": "Klubeko kide eta familientzako gunea: barne oharrak, praktikatzeko baliabideak, egutegi zabaldua eta SKBC GIPUZKOAko kide izatearen abantailak. Sarbidea beti klubak berrikusi eta onartu behar du.",
         "perks": [
-          ["Barne taula", "Kideentzako oharrak, aldaketak eta komunikazioak."],
-          ["Praktika baliabideak", "Errepasatzeko materiala eta ikasten jarraitzeko edukiak."],
-          ["Barne egutegia", "Ikastaroen, jardueren eta baieztapenen xehetasunak."],
-          ["Klub bizitza", "Galeriak, oroitzapenak eta komunitatearen parte-hartzea."]
+          [
+            "Barne taula",
+            "Kideentzako oharrak, aldaketak eta komunikazioak."
+          ],
+          [
+            "Praktika baliabideak",
+            "Errepasatzeko materiala eta ikasten jarraitzeko edukiak."
+          ],
+          [
+            "Barne egutegia",
+            "Ikastaroen, jardueren eta baieztapenen xehetasunak."
+          ],
+          [
+            "Klub bizitza",
+            "Galeriak, oroitzapenak eta komunitatearen parte-hartzea."
+          ]
         ],
         "formTitle": "Kenshi sarbidea eskatu",
         "formIntro": "Sarbidea ez da automatikoa. Bidali eskaera eta klubak berrikusiko du aktibatu aurretik.",
@@ -2001,7 +2030,12 @@ window.SKBC_CONTENT = {
         "email": "Emaila",
         "phone": "Telefonoa",
         "relationship": "Klubarekin harremana",
-        "relationships": ["Egungo ikaslea", "Aita/ama", "Ikasle ohia", "Informazioa nahi dut"],
+        "relationships": [
+          "Egungo ikaslea",
+          "Aita/ama",
+          "Ikasle ohia",
+          "Informazioa nahi dut"
+        ],
         "grade": "Gradua edo maila",
         "message": "Mezua",
         "submit": "Eskaera bidali",
@@ -2584,10 +2618,22 @@ window.SKBC_CONTENT = {
         "title": "SKBC Kenshi Area",
         "text": "A space for club members and families: internal notices, practice resources, an extended calendar and the benefits of belonging to SKBC GIPUZKOA. Access is always reviewed and approved by the club.",
         "perks": [
-          ["Internal board", "Member notices, changes and communications."],
-          ["Practice resources", "Review material and content to keep learning."],
-          ["Internal calendar", "Course, activity and attendance details."],
-          ["Club life", "Galleries, memories and community participation."]
+          [
+            "Internal board",
+            "Member notices, changes and communications."
+          ],
+          [
+            "Practice resources",
+            "Review material and content to keep learning."
+          ],
+          [
+            "Internal calendar",
+            "Course, activity and attendance details."
+          ],
+          [
+            "Club life",
+            "Galleries, memories and community participation."
+          ]
         ],
         "formTitle": "Request Kenshi access",
         "formIntro": "Access is not automatic. Send your request and the club will review it before activation.",
@@ -2595,7 +2641,12 @@ window.SKBC_CONTENT = {
         "email": "Email",
         "phone": "Phone",
         "relationship": "Relationship with the club",
-        "relationships": ["Current student", "Parent", "Former student", "I want information"],
+        "relationships": [
+          "Current student",
+          "Parent",
+          "Former student",
+          "I want information"
+        ],
         "grade": "Grade or level",
         "message": "Message",
         "submit": "Send request",
