@@ -2022,6 +2022,7 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 
 .kenshi-dashboard__identity article,
 .kenshi-dashboard__overview,
+.kenshi-dashboard__analytics article,
 .kenshi-dashboard__profile,
 .kenshi-dashboard__communication,
 .kenshi-dashboard__events,
@@ -2056,7 +2057,9 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .kenshi-dashboard__quicklinks p,
 .kenshi-dashboard__insights p,
 .kenshi-dashboard__score p,
-.kenshi-dashboard__pulse p {
+.kenshi-dashboard__pulse p,
+.kenshi-dashboard__analytics p,
+.kenshi-dashboard__explain li {
   color: var(--muted);
 }
 
@@ -2150,6 +2153,13 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   min-height: 42px;
 }
 
+.kenshi-dashboard__insights small {
+  min-height: 34px;
+  color: #667085;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
 .kenshi-dashboard__insights i {
   display: block;
   height: 8px;
@@ -2185,6 +2195,128 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   height: var(--h);
   border-radius: 999px 999px 4px 4px;
   background: linear-gradient(180deg, var(--red), var(--blue));
+}
+
+.kenshi-dashboard__analytics {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(320px, 1.18fr) minmax(260px, 0.9fr);
+  gap: 18px;
+}
+
+.kenshi-dashboard__analytics article {
+  padding: 22px;
+}
+
+.kenshi-dashboard__donut {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.kenshi-dashboard__donut > div {
+  width: 156px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #fff 0 58%, transparent 59%),
+    conic-gradient(var(--blue) calc(var(--score) * 1%), rgba(16, 17, 19, 0.08) 0);
+  box-shadow: inset 0 0 0 1px var(--line), 0 18px 38px rgba(16, 17, 19, 0.12);
+}
+
+.kenshi-dashboard__donut strong {
+  color: var(--ink);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.kenshi-dashboard__donut small {
+  color: var(--muted);
+  font-weight: 950;
+}
+
+.kenshi-dashboard__donut p,
+.kenshi-dashboard__line p {
+  margin: 0;
+}
+
+.kenshi-dashboard__line {
+  display: grid;
+  gap: 12px;
+}
+
+.kenshi-dashboard__line h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.kenshi-dashboard__line svg {
+  width: 100%;
+  min-height: 170px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(to top, rgba(16, 17, 19, 0.06) 1px, transparent 1px) 0 0 / 100% 25%,
+    linear-gradient(to right, rgba(16, 17, 19, 0.05) 1px, transparent 1px) 0 0 / 25% 100%,
+    var(--soft);
+}
+
+.kenshi-dashboard__line polyline {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.kenshi-dashboard__line circle {
+  fill: #fff;
+  stroke: var(--blue);
+  stroke-width: 3;
+}
+
+.kenshi-dashboard__line div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.kenshi-dashboard__line div span {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.kenshi-dashboard__line div b {
+  color: var(--ink);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.kenshi-dashboard__explain ul {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kenshi-dashboard__explain li {
+  padding: 11px 12px;
+  border-left: 5px solid var(--gold);
+  border-radius: 6px;
+  background: var(--soft);
+}
+
+.kenshi-dashboard__explain strong {
+  color: var(--ink);
 }
 
 .kenshi-dashboard__profile {
@@ -2712,7 +2844,9 @@ textarea { resize: vertical; }
   .hero-proof, .grid-2, .grid-3, .grid-4, .split, .contact-layout, .profile-list, .ika-layout, .instructor-layout, .team-feature, .club-intro, .embed-layout, .calendar-grid--year, .calendar-grid--quarter, .calendar-list, .news-grid, .testimonial-grid, .merch-hero, .merch-layout, .merch-product, .learn-layout, .learn-cards, .trial-layout, .kenshi-layout, .kenshi-perks { grid-template-columns: 1fr; }
   .kenshi-dashboard__identity,
   .kenshi-dashboard__overview,
+  .kenshi-dashboard__analytics,
   .kenshi-dashboard__insights,
+  .kenshi-dashboard__line div,
   .kenshi-dashboard__profile-grid,
   .kenshi-dashboard__communication,
   .kenshi-dashboard__main,

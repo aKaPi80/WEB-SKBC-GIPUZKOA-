@@ -2123,10 +2123,23 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const profilePercent = Math.round((profileFields / 5) * 100);
   const openMessages = messages.filter((item) => item.status === "open").length;
   const answeredMessages = messages.filter((item) => item.status === "answered" || item.admin_reply).length;
+  const closedMessages = messages.filter((item) => item.status === "closed").length;
   const nextEvent = events[0];
   const eventIntensity = Math.min(100, Math.max(22, events.length * 18));
   const contactScore = Math.min(100, 35 + messages.length * 12 + answeredMessages * 10);
   const gradeScore = access.grade ? 82 : 38;
+  const activityScore = Math.round((profilePercent * 0.35) + (eventIntensity * 0.25) + (contactScore * 0.2) + (gradeScore * 0.2));
+  const linePoints = [
+    { label: "Ficha", value: profilePercent },
+    { label: "Agenda", value: eventIntensity },
+    { label: "Contacto", value: contactScore },
+    { label: "Nivel", value: gradeScore }
+  ];
+  const lineSvgPoints = linePoints.map((point, index) => {
+    const x = 14 + index * 28;
+    const y = 92 - (point.value * 0.72);
+    return `${x},${y}`;
+  }).join(" ");
   const eventCards = events.length ? events.map((event) => `
     <li style="--event-color:${escapeHtml(event.color)}">
       <span>${escapeHtml(event.date)}</span>
@@ -2154,10 +2167,10 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
     </div>
   `).join("");
   const insightCards = [
-    { label: "Ficha", value: `${profilePercent}%`, text: "Datos completados", tone: "blue", progress: profilePercent },
-    { label: "Agenda", value: String(events.length), text: "Eventos proximos visibles", tone: "green", progress: eventIntensity },
-    { label: "Mensajes", value: String(openMessages), text: "Consultas abiertas", tone: "red", progress: Math.min(100, 20 + openMessages * 24) },
-    { label: "Nivel", value: access.grade ? "Activo" : "Pendiente", text: access.grade || "Grado por completar", tone: "gold", progress: gradeScore }
+    { label: "Ficha", value: `${profilePercent}%`, text: `${profileFields}/5 datos principales completados`, help: "Nombre, email, telefono, relacion y grado.", tone: "blue", progress: profilePercent },
+    { label: "Agenda", value: String(events.length), text: "Eventos proximos en los siguientes meses", help: "Sale del calendario publico del club.", tone: "green", progress: eventIntensity },
+    { label: "Mensajes", value: String(openMessages), text: "Consultas internas pendientes", help: `${answeredMessages} respondida(s), ${closedMessages} cerrada(s).`, tone: "red", progress: Math.min(100, 20 + openMessages * 24) },
+    { label: "Nivel", value: access.grade ? "Activo" : "Pendiente", text: access.grade || "Grado por completar", help: "Dato registrado en tu ficha Kenshi.", tone: "gold", progress: gradeScore }
   ];
   const accessLinks = [
     { label: "Ficha", action: "profile" },
@@ -2200,7 +2213,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
             <small>Ficha</small>
           </div>
           <h4>${escapeHtml(name)}</h4>
-          <p>Estado actual de tu panel Kenshi: ficha, agenda, consultas y actividad registrada.</p>
+          <p>Este porcentaje solo mide si tu ficha esta completa. No es una evaluacion tecnica ni un examen.</p>
         </div>
         <div class="kenshi-dashboard__insights">
           ${insightCards.map((item) => `
@@ -2208,6 +2221,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
               <span>${escapeHtml(item.label)}</span>
               <strong>${escapeHtml(item.value)}</strong>
               <p>${escapeHtml(item.text)}</p>
+              <small>${escapeHtml(item.help)}</small>
               <i style="--bar:${item.progress}%"></i>
             </article>
           `).join("")}
@@ -2223,6 +2237,40 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
             <span style="--h:${gradeScore}%"></span>
           </div>
         </div>
+      </section>
+      <section class="kenshi-dashboard__analytics">
+        <article class="kenshi-dashboard__donut" style="--score:${activityScore}">
+          <span class="eyebrow">Indice del panel</span>
+          <div>
+            <strong>${activityScore}</strong>
+            <small>/100</small>
+          </div>
+          <p>Combina ficha, agenda, comunicacion y nivel registrado para darte una vision rapida del panel.</p>
+        </article>
+        <article class="kenshi-dashboard__line">
+          <span class="eyebrow">Lectura visual</span>
+          <h4>Estado general</h4>
+          <svg viewBox="0 0 100 100" role="img" aria-label="Grafico lineal del estado del panel">
+            <polyline points="${lineSvgPoints}" />
+            ${linePoints.map((point, index) => {
+              const x = 14 + index * 28;
+              const y = 92 - (point.value * 0.72);
+              return `<circle cx="${x}" cy="${y}" r="3.2"><title>${escapeHtml(point.label)} ${point.value}%</title></circle>`;
+            }).join("")}
+          </svg>
+          <div>
+            ${linePoints.map((point) => `<span><b>${escapeHtml(point.label)}</b>${point.value}%</span>`).join("")}
+          </div>
+        </article>
+        <article class="kenshi-dashboard__explain">
+          <span class="eyebrow">Como leerlo</span>
+          <ul>
+            <li><strong>Ficha:</strong> datos basicos guardados en el club.</li>
+            <li><strong>Agenda:</strong> cantidad de eventos visibles proximamente.</li>
+            <li><strong>Mensajes:</strong> consultas abiertas o respondidas dentro de la intranet.</li>
+            <li><strong>Nivel:</strong> grado o situacion registrada en tu ficha.</li>
+          </ul>
+        </article>
       </section>
       <section class="kenshi-dashboard__profile">
         <div>
