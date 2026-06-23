@@ -2983,6 +2983,45 @@ async function upsertKenshiDirectoryRows(rows) {
   }
 }
 
+async function loadAllKenshiMemberRows() {
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?select=*&order=created_at.desc&limit=1000`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const rows = await response.json();
+  if (!response.ok) throw new Error(friendlySupabaseError(rows, "No se pudieron cargar los miembros Kenshi."));
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function patchKenshiMemberSilently(id, payload) {
+  const config = kenshiInboxConfig();
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { ...supabaseHeaders(undefined, config), Prefer: "return=minimal" },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(friendlySupabaseError(result, "No se pudo actualizar un miembro Kenshi."));
+  }
+}
+
+async function syncExistingKenshiMembersFromDirectory(directoryRows) {
+  const members = await loadAllKenshiMemberRows();
+  let updated = 0;
+  let unmatched = 0;
+  for (const member of members) {
+    const match = findKenshiDirectoryMatch(member, directoryRows);
+    if (!match) {
+      unmatched += 1;
+      continue;
+    }
+    await patchKenshiMemberSilently(member.id, directoryRowToKenshiPayload(match));
+    updated += 1;
+  }
+  return { updated, unmatched, total: members.length };
+}
+
 async function syncKenshiDirectoryFromSheet() {
   const config = kenshiInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
@@ -3007,8 +3046,10 @@ async function syncKenshiDirectoryFromSheet() {
     setStatus(`Sincronizando ${rows.length} alumno(s) en Supabase...`, "warning");
     await upsertKenshiDirectoryRows(rows);
     kenshiDirectoryCache = null;
-    setStatus(`Base de alumnos sincronizada: ${rows.length} registro(s).`, "ok");
-    loadKenshiDirectoryStatus();
+    setStatus("Autorrellenando registros Kenshi existentes...", "warning");
+    const result = await syncExistingKenshiMembersFromDirectory(rows);
+    setStatus(`Base sincronizada: ${rows.length} alumno(s). Registros Kenshi actualizados: ${result.updated}/${result.total}. Sin coincidencia: ${result.unmatched}.`, "ok");
+    loadKenshiMembers();
   } catch (error) {
     setStatus(`Error al sincronizar base de alumnos: ${error.message}`, "danger");
   }
