@@ -2279,6 +2279,14 @@ function parseNumberOrNull(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function normalizeDriveImageUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  const idMatch = raw.match(/[?&]id=([^&]+)/) || raw.match(/\/file\/d\/([^/]+)/);
+  if (!idMatch) return raw;
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(decodeURIComponent(idMatch[1]))}&sz=w900`;
+}
+
 function supabaseSession() {
   try {
     return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -2844,6 +2852,7 @@ function kenshiMemberTemplate(member) {
       <div>
         <span>${escapeHtml(created)} · ${escapeHtml(member.page_lang || "es")}</span>
         <h3>${escapeHtml(member.full_name || "Sin nombre")}</h3>
+        <p>${member.directory_synced_at ? `Base alumnos sincronizada: ${escapeHtml(String(member.directory_synced_at).slice(0, 10))}` : "Pendiente de autocompletar desde base de alumnos"}</p>
       </div>
       <strong class="status-pill">${escapeHtml(status)}</strong>
     </header>
@@ -2940,7 +2949,7 @@ function sheetRowsToKenshiDirectory(csvText) {
       class_group: get(row, "Clase") || null,
       status: get(row, "Estado") || null,
       grade: get(row, "Grado ") || null,
-      photo_url: get(row, "AlumnoFotoURL") || null,
+      photo_url: normalizeDriveImageUrl(get(row, "AlumnoFotoURL")) || null,
       ficha_url: fichaUrl || null,
       parent_ficha_url: get(row, "FICHA_PADRES") || null,
       site_url: get(row, "URL_Site") || null,
@@ -3032,7 +3041,7 @@ function directoryRowToKenshiPayload(row) {
   return {
     full_name: row.full_name || "",
     phone: row.phone || "",
-    photo_url: row.photo_url || "",
+    photo_url: normalizeDriveImageUrl(row.photo_url || ""),
     ficha_url: row.ficha_url || row.parent_ficha_url || "",
     source_student_id: row.student_id || "",
     class_group: row.class_group || "",

@@ -2243,7 +2243,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
           </div>
           <div class="kenshi-dashboard__quickgrid">
           ${accessLinks.map((item) => `
-            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</button>
+            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}${item.url ? ` data-url="${escapeHtml(item.url)}"` : ""}>${escapeHtml(item.label)}</button>
           `).join("")}
           </div>
         </section>
