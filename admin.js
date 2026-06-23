@@ -2208,6 +2208,22 @@ function kenshiInboxConfig() {
   };
 }
 
+function kenshiDirectoryTable() {
+  return "skbc_kenshi_directory";
+}
+
+let kenshiDirectoryCache = null;
+
+function normalizeKenshiName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
+
 function supabaseSession() {
   try {
     return JSON.parse(localStorage.getItem(SUPABASE_SESSION_KEY) || "null");
@@ -2637,6 +2653,7 @@ function renderKenshi() {
     ${renderIntro(`<div class="intro-actions">
       <button id="load-kenshi" class="primary" type="button">Cargar solicitudes</button>
       <button id="load-kenshi-messages" class="primary" type="button">Cargar mensajes</button>
+      <button id="load-kenshi-directory" type="button">Comprobar base alumnos</button>
       <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
     ${groupTemplate({
@@ -2686,6 +2703,7 @@ function renderKenshi() {
   document.querySelector("#kenshi-login-supabase").addEventListener("click", loginKenshiSupabase);
   document.querySelector("#load-kenshi").addEventListener("click", loadKenshiMembers);
   document.querySelector("#load-kenshi-messages").addEventListener("click", loadKenshiMessages);
+  document.querySelector("#load-kenshi-directory").addEventListener("click", loadKenshiDirectoryStatus);
   document.querySelector("#logout-supabase").addEventListener("click", () => {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
     setStatus("Sesión de Supabase cerrada.", "ok");
@@ -2754,6 +2772,9 @@ async function loadKenshiMembers() {
   list.querySelectorAll("[data-kenshi-photo-upload]").forEach((button) => {
     button.addEventListener("click", () => uploadKenshiPhoto(button.dataset.kenshiPhotoUpload));
   });
+  list.querySelectorAll("[data-kenshi-autofill]").forEach((button) => {
+    button.addEventListener("click", () => autofillKenshiMember(button.dataset.kenshiAutofill));
+  });
 }
 
 function kenshiMemberTemplate(member) {
@@ -2776,11 +2797,20 @@ function kenshiMemberTemplate(member) {
       <label class="field field--wide"><span>Enlace ficha real</span><input data-kenshi-field="ficha_url" value="${escapeHtml(member.ficha_url || "")}" placeholder="https://..." /></label>
       <label class="field"><span>Relacion</span><input data-kenshi-field="relationship" value="${escapeHtml(member.relationship || "")}" /></label>
       <label class="field"><span>Grado/nivel</span><input data-kenshi-field="grade" value="${escapeHtml(member.grade || "")}" /></label>
+      <label class="field"><span>ID alumno base</span><input data-kenshi-field="source_student_id" value="${escapeHtml(member.source_student_id || "")}" /></label>
+      <label class="field"><span>Grupo</span><input data-kenshi-field="class_group" value="${escapeHtml(member.class_group || "")}" /></label>
+      <label class="field"><span>Asistencias totales</span><input data-kenshi-field="attendance_total" value="${escapeHtml(member.attendance_total ?? "")}" /></label>
+      <label class="field"><span>% asistencia ciclo</span><input data-kenshi-field="attendance_percent" value="${escapeHtml(member.attendance_percent ?? "")}" /></label>
+      <label class="field"><span>Proximo examen</span><input data-kenshi-field="next_exam" value="${escapeHtml(member.next_exam || "")}" /></label>
+      <label class="field field--wide"><span>Aviso tecnico</span><textarea data-kenshi-field="exam_notice" rows="3">${escapeHtml(member.exam_notice || "")}</textarea></label>
+      <label class="field field--wide"><span>Web tecnica / recursos</span><input data-kenshi-field="site_url" value="${escapeHtml(member.site_url || "")}" placeholder="https://..." /></label>
+      <label class="field field--wide"><span>Carpeta alumno</span><input data-kenshi-field="folder_url" value="${escapeHtml(member.folder_url || "")}" placeholder="https://..." /></label>
       <label class="field field--wide"><span>Notas internas</span><textarea data-kenshi-field="admin_notes" rows="3">${escapeHtml(member.admin_notes || "")}</textarea></label>
       <label class="field field--wide"><span>Mensaje solicitud</span><textarea data-kenshi-field="message" rows="3">${escapeHtml(member.message || "")}</textarea></label>
     </div>
     <div class="lead-actions">
       <button class="primary" type="button" data-kenshi-save="${id}">Guardar cambios</button>
+      <button type="button" data-kenshi-autofill="${id}">Autorrellenar desde base</button>
       <button type="button" data-kenshi-status="${id}" data-next-status="approved">Aprobar</button>
       <button type="button" data-kenshi-status="${id}" data-next-status="rejected">Rechazar</button>
       <button type="button" data-kenshi-status="${id}" data-next-status="revoked">Revocar</button>
@@ -2796,8 +2826,104 @@ function kenshiPayloadFromCard(id) {
   card.querySelectorAll("[data-kenshi-field]").forEach((field) => {
     payload[field.dataset.kenshiField] = field.value;
   });
+  ["attendance_total"].forEach((field) => {
+    if (payload[field] === "") payload[field] = null;
+    else if (payload[field] !== undefined) payload[field] = Number.parseInt(payload[field], 10);
+  });
+  ["attendance_percent"].forEach((field) => {
+    if (payload[field] === "") payload[field] = null;
+    else if (payload[field] !== undefined) payload[field] = Number(String(payload[field]).replace(",", "."));
+  });
   payload.updated_at = new Date().toISOString();
   return payload;
+}
+
+async function loadKenshiDirectoryRows(force = false) {
+  if (!force && Array.isArray(kenshiDirectoryCache)) return kenshiDirectoryCache;
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey || !supabaseSession()?.access_token) {
+    throw new Error("Inicia sesión en Supabase para consultar la base de alumnos.");
+  }
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiDirectoryTable()}?select=*&order=full_name.asc&limit=1000`, {
+    headers: supabaseHeaders(undefined, config)
+  });
+  const rows = await response.json();
+  if (!response.ok) throw new Error(friendlySupabaseError(rows, "No se pudo cargar la base de alumnos."));
+  kenshiDirectoryCache = Array.isArray(rows) ? rows : [];
+  return kenshiDirectoryCache;
+}
+
+async function loadKenshiDirectoryStatus() {
+  try {
+    const rows = await loadKenshiDirectoryRows(true);
+    setStatus(`Base de alumnos conectada: ${rows.length} registro(s) encontrados en Supabase.`, "ok");
+  } catch (error) {
+    setStatus(`${error.message} Ejecuta primero el SQL de directorio/importación en Supabase.`, "danger");
+  }
+}
+
+function findKenshiDirectoryMatch(member, rows) {
+  const email = String(member.email || "").trim().toLowerCase();
+  const name = normalizeKenshiName(member.full_name || "");
+  if (!rows.length) return null;
+  if (name) {
+    const exactName = rows.find((row) => normalizeKenshiName(row.full_name) === name || normalizeKenshiName(row.normalized_name) === name);
+    if (exactName) return exactName;
+  }
+  if (email) {
+    const exactEmail = rows.find((row) => String(row.email_family || "").trim().toLowerCase() === email);
+    if (exactEmail) return exactEmail;
+  }
+  if (name) {
+    return rows.find((row) => {
+      const rowName = normalizeKenshiName(row.full_name || row.normalized_name || "");
+      return rowName && (rowName.includes(name) || name.includes(rowName));
+    }) || null;
+  }
+  return null;
+}
+
+function directoryRowToKenshiPayload(row) {
+  const attendanceTotal = row.attendance_total === null || row.attendance_total === undefined || row.attendance_total === "" ? null : Number.parseInt(row.attendance_total, 10);
+  const attendancePercent = row.attendance_percent === null || row.attendance_percent === undefined || row.attendance_percent === "" ? null : Number(String(row.attendance_percent).replace(",", "."));
+  return {
+    full_name: row.full_name || "",
+    phone: row.phone || "",
+    photo_url: row.photo_url || "",
+    ficha_url: row.ficha_url || row.parent_ficha_url || "",
+    source_student_id: row.student_id || "",
+    class_group: row.class_group || "",
+    grade: row.grade || "",
+    attendance_total: Number.isFinite(attendanceTotal) ? attendanceTotal : null,
+    attendance_percent: Number.isFinite(attendancePercent) ? attendancePercent : null,
+    next_exam: row.next_exam || "",
+    exam_notice: row.exam_notice || "",
+    site_url: row.site_url || "",
+    folder_url: row.folder_url || "",
+    directory_synced_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function buildKenshiAutofillPayload(id) {
+  const member = kenshiPayloadFromCard(id);
+  const rows = await loadKenshiDirectoryRows();
+  const match = findKenshiDirectoryMatch(member, rows);
+  if (!match) return null;
+  return directoryRowToKenshiPayload(match);
+}
+
+async function autofillKenshiMember(id) {
+  try {
+    const payload = await buildKenshiAutofillPayload(id);
+    if (!payload) {
+      setStatus("No he encontrado coincidencia en la base de alumnos. Revisa nombre/email o importa el directorio en Supabase.", "warning");
+      return;
+    }
+    await patchKenshiMember(id, payload, `Datos rellenados desde base de alumnos: ${payload.full_name}.`);
+  } catch (error) {
+    setStatus(error.message, "danger");
+  }
 }
 
 async function saveKenshiMember(id) {
@@ -2841,6 +2967,14 @@ async function updateKenshiStatus(id, status) {
   };
   if (status === "approved") payload.approved_at = new Date().toISOString();
   if (status === "revoked") payload.revoked_at = new Date().toISOString();
+  if (status === "approved") {
+    try {
+      const autofill = await buildKenshiAutofillPayload(id);
+      if (autofill) Object.assign(payload, autofill, { status, approved_at: payload.approved_at });
+    } catch (error) {
+      setStatus(`No se pudo autocompletar desde base de alumnos: ${error.message}. Se aprobará solo con los datos actuales.`, "warning");
+    }
+  }
   const updated = await patchKenshiMember(id, payload, "Estado Kenshi actualizado.", false);
   if (updated && status === "approved") {
     notifyKenshiMemberApproved({ ...member, id });

@@ -9,6 +9,15 @@ create table if not exists public.skbc_kenshi_members (
   phone text,
   photo_url text,
   ficha_url text,
+  source_student_id text,
+  class_group text,
+  attendance_total integer,
+  attendance_percent numeric,
+  next_exam text,
+  exam_notice text,
+  site_url text,
+  folder_url text,
+  directory_synced_at timestamptz,
   relationship text,
   grade text,
   message text,
@@ -30,6 +39,33 @@ alter table public.skbc_kenshi_members
 
 alter table public.skbc_kenshi_members
   add column if not exists ficha_url text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists source_student_id text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists class_group text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists attendance_total integer;
+
+alter table public.skbc_kenshi_members
+  add column if not exists attendance_percent numeric;
+
+alter table public.skbc_kenshi_members
+  add column if not exists next_exam text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists exam_notice text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists site_url text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists folder_url text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists directory_synced_at timestamptz;
 
 alter table public.skbc_kenshi_members enable row level security;
 
@@ -62,6 +98,66 @@ with check ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
 drop policy if exists "Authenticated admin can delete Kenshi requests" on public.skbc_kenshi_members;
 create policy "Authenticated admin can delete Kenshi requests"
 on public.skbc_kenshi_members
+for delete
+to authenticated
+using ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
+
+create table if not exists public.skbc_kenshi_directory (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  student_id text unique,
+  full_name text not null,
+  normalized_name text not null,
+  email_family text,
+  phone text,
+  class_group text,
+  status text,
+  grade text,
+  photo_url text,
+  ficha_url text,
+  parent_ficha_url text,
+  site_url text,
+  folder_url text,
+  attendance_total integer,
+  attendance_percent numeric,
+  next_exam text,
+  exam_notice text
+);
+
+create index if not exists skbc_kenshi_directory_name_idx
+  on public.skbc_kenshi_directory (normalized_name);
+
+create index if not exists skbc_kenshi_directory_email_idx
+  on public.skbc_kenshi_directory (lower(email_family));
+
+alter table public.skbc_kenshi_directory enable row level security;
+
+drop policy if exists "Authenticated admin can read Kenshi directory" on public.skbc_kenshi_directory;
+create policy "Authenticated admin can read Kenshi directory"
+on public.skbc_kenshi_directory
+for select
+to authenticated
+using ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
+
+drop policy if exists "Authenticated admin can insert Kenshi directory" on public.skbc_kenshi_directory;
+create policy "Authenticated admin can insert Kenshi directory"
+on public.skbc_kenshi_directory
+for insert
+to authenticated
+with check ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
+
+drop policy if exists "Authenticated admin can update Kenshi directory" on public.skbc_kenshi_directory;
+create policy "Authenticated admin can update Kenshi directory"
+on public.skbc_kenshi_directory
+for update
+to authenticated
+using ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com')
+with check ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');
+
+drop policy if exists "Authenticated admin can delete Kenshi directory" on public.skbc_kenshi_directory;
+create policy "Authenticated admin can delete Kenshi directory"
+on public.skbc_kenshi_directory
 for delete
 to authenticated
 using ((auth.jwt() ->> 'email') = 'alvarocalvo8@gmail.com');

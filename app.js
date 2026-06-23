@@ -2115,6 +2115,11 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const phone = access.phone || "No indicado";
   const grade = access.grade || "Pendiente de completar";
   const relationship = access.relationship || "Miembro SKBC";
+  const classGroup = access.class_group || "No indicado";
+  const attendanceTotal = Number(access.attendance_total);
+  const attendancePercent = Number(access.attendance_percent);
+  const nextExam = access.next_exam || "No indicado";
+  const examNotice = access.exam_notice || "";
   const webPhoto = personImage({ name }, 0);
   const photoUrl = access.photo_url || webPhoto || session?.user?.user_metadata?.avatar_url || "";
   const fichaUrl = access.ficha_url || "";
@@ -2146,6 +2151,10 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
     ["Telefono", phone],
     ["Relacion con el club", relationship],
     ["Grado / nivel", grade],
+    ["Grupo", classGroup],
+    ["Asistencias registradas", Number.isFinite(attendanceTotal) ? String(attendanceTotal) : "No indicado"],
+    ["Asistencia del ciclo", Number.isFinite(attendancePercent) ? `${attendancePercent}%` : "No indicado"],
+    ["Proximo examen orientativo", nextExam],
     ["Acceso desde", created]
   ].map(([label, value]) => `
     <div>
@@ -2175,8 +2184,8 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
         <div class="kenshi-simple__summary">
           <article><span>Acceso</span><strong>Habilitado</strong><small>${escapeHtml(approved)}</small></article>
           <article><span>Próximo evento</span><strong>${nextEvent ? escapeHtml(nextEvent.title) : "Sin eventos"}</strong><small>${nextEvent ? escapeHtml(nextEvent.date) : "No hay eventos próximos"}</small></article>
-          <article><span>Consultas</span><strong>${openMessages} abierta(s)</strong><small>${answeredMessages} respondida(s), ${closedMessages} cerrada(s)</small></article>
-          <article><span>Ficha real</span><strong>${fichaUrl ? "Disponible" : "Pendiente"}</strong><small>${fichaUrl ? "Enlace conectado" : "Falta enlazar desde admin"}</small></article>
+          <article><span>Grado</span><strong>${escapeHtml(grade)}</strong><small>${escapeHtml(classGroup)}</small></article>
+          <article><span>Asistencia</span><strong>${Number.isFinite(attendancePercent) ? `${attendancePercent}%` : "Pendiente"}</strong><small>${Number.isFinite(attendanceTotal) ? `${attendanceTotal} asistencia(s)` : "Sin dato conectado"}</small></article>
         </div>
         <div class="kenshi-simple__actions">
           ${accessLinks.map((item) => `
@@ -2199,6 +2208,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
           <summary>Mensaje de solicitud inicial</summary>
           <p>${escapeHtml(requestMessage)}</p>
         </details>
+        ${examNotice ? `<details class="kenshi-dashboard__request"><summary>Aviso tecnico registrado</summary><p>${escapeHtml(examNotice)}</p></details>` : ""}
       </section>
       <section class="kenshi-dashboard__communication" id="kenshiCommunication">
         <div>
