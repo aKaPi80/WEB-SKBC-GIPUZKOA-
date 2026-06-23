@@ -2199,12 +2199,14 @@ function leadInboxConfig() {
 function kenshiInboxConfig() {
   const testimonialConfig = testimonialInboxConfig();
   const config = data.settings.kenshiInbox || {};
+  const defaultDirectoryCsvUrl = "https://docs.google.com/spreadsheets/d/1GGVrz7UVNhlDu-NaE9qGs4U2bxXkh7pzXfdixTjYDrc/export?format=csv&gid=608472568";
   return {
     enabled: config.enabled === true || config.enabled === "true",
     supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
     anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
     table: config.table || "skbc_kenshi_members",
-    emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
+    emailWebhookUrl: String(config.emailWebhookUrl || "").trim(),
+    directoryCsvUrl: String(config.directoryCsvUrl || defaultDirectoryCsvUrl).trim()
   };
 }
 
@@ -2222,6 +2224,59 @@ function normalizeKenshiName(value) {
     .trim()
     .replace(/\s+/g, " ")
     .toUpperCase();
+}
+
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+    if (quoted) {
+      if (char === '"' && next === '"') {
+        value += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        value += char;
+      }
+      continue;
+    }
+    if (char === '"') quoted = true;
+    else if (char === ",") {
+      row.push(value);
+      value = "";
+    } else if (char === "\n") {
+      row.push(value);
+      rows.push(row);
+      row = [];
+      value = "";
+    } else if (char !== "\r") {
+      value += char;
+    }
+  }
+  if (value || row.length) {
+    row.push(value);
+    rows.push(row);
+  }
+  return rows.filter((item) => item.some((cell) => String(cell || "").trim()));
+}
+
+function firstFilled(...values) {
+  return values.find((value) => String(value || "").trim()) || "";
+}
+
+function parseIntegerOrNull(value) {
+  const number = Number.parseInt(String(value || "").trim(), 10);
+  return Number.isFinite(number) ? number : null;
+}
+
+function parseNumberOrNull(value) {
+  const number = Number(String(value || "").trim().replace(",", "."));
+  return Number.isFinite(number) ? number : null;
 }
 
 function supabaseSession() {
@@ -2653,6 +2708,7 @@ function renderKenshi() {
     ${renderIntro(`<div class="intro-actions">
       <button id="load-kenshi" class="primary" type="button">Cargar solicitudes</button>
       <button id="load-kenshi-messages" class="primary" type="button">Cargar mensajes</button>
+      <button id="sync-kenshi-directory" class="primary" type="button">Sincronizar Google Sheet</button>
       <button id="load-kenshi-directory" type="button">Comprobar base alumnos</button>
       <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
@@ -2664,6 +2720,7 @@ function renderKenshi() {
         ["Supabase URL", ["settings", "kenshiInbox", "supabaseUrl"], "input"],
         ["Supabase anon key", ["settings", "kenshiInbox", "anonKey"], "textarea"],
         ["Tabla Kenshi", ["settings", "kenshiInbox", "table"], "input"],
+        ["CSV base alumnos", ["settings", "kenshiInbox", "directoryCsvUrl"], "input"],
         ["Webhook email", ["settings", "kenshiInbox", "emailWebhookUrl"], "input"]
       ]
     })}
@@ -2704,6 +2761,7 @@ function renderKenshi() {
   document.querySelector("#load-kenshi").addEventListener("click", loadKenshiMembers);
   document.querySelector("#load-kenshi-messages").addEventListener("click", loadKenshiMessages);
   document.querySelector("#load-kenshi-directory").addEventListener("click", loadKenshiDirectoryStatus);
+  document.querySelector("#sync-kenshi-directory").addEventListener("click", syncKenshiDirectoryFromSheet);
   document.querySelector("#logout-supabase").addEventListener("click", () => {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
     setStatus("Sesión de Supabase cerrada.", "ok");
@@ -2859,6 +2917,91 @@ async function loadKenshiDirectoryStatus() {
     setStatus(`Base de alumnos conectada: ${rows.length} registro(s) encontrados en Supabase.`, "ok");
   } catch (error) {
     setStatus(`${error.message} Ejecuta primero el SQL de directorio/importación en Supabase.`, "danger");
+  }
+}
+
+function sheetRowsToKenshiDirectory(csvText) {
+  const rows = parseCsvRows(csvText);
+  const headers = rows.shift() || [];
+  const index = Object.fromEntries(headers.map((header, column) => [String(header || "").trim(), column]));
+  const get = (row, header) => row[index[header]] || "";
+  return rows.map((row) => {
+    const studentId = get(row, "ID");
+    const fullName = [get(row, "Nombre"), get(row, "Apellidos")].filter(Boolean).join(" ").trim();
+    if (!studentId || !fullName) return null;
+    const fichaUrl = firstFilled(get(row, "FICHA_PERSONAL"), get(row, "URL_FICHA_WEB"), get(row, "FICHA_PADRES"), get(row, "URL_FICHA"));
+    const phone = firstFilled(get(row, "Teléfono Alumno"), get(row, "Teléfono Tutor"));
+    return {
+      student_id: studentId,
+      full_name: fullName,
+      normalized_name: normalizeKenshiName(fullName),
+      email_family: get(row, "EmailFamilia") || null,
+      phone: phone || null,
+      class_group: get(row, "Clase") || null,
+      status: get(row, "Estado") || null,
+      grade: get(row, "Grado ") || null,
+      photo_url: get(row, "AlumnoFotoURL") || null,
+      ficha_url: fichaUrl || null,
+      parent_ficha_url: get(row, "FICHA_PADRES") || null,
+      site_url: get(row, "URL_Site") || null,
+      folder_url: get(row, "URL_CARPETA_ALUMNO") || null,
+      attendance_total: parseIntegerOrNull(get(row, "AsistenciasTotales")),
+      attendance_percent: parseNumberOrNull(get(row, "PorcentajeAsistencia")),
+      next_exam: get(row, "ProximoExamen") || null,
+      exam_notice: get(row, "Aviso") || null,
+      updated_at: new Date().toISOString()
+    };
+  }).filter(Boolean);
+}
+
+async function upsertKenshiDirectoryRows(rows) {
+  const config = kenshiInboxConfig();
+  const chunkSize = 80;
+  for (let index = 0; index < rows.length; index += chunkSize) {
+    const chunk = rows.slice(index, index + chunkSize);
+    const response = await fetch(`${config.supabaseUrl}/rest/v1/${kenshiDirectoryTable()}?on_conflict=student_id`, {
+      method: "POST",
+      headers: {
+        ...supabaseHeaders(undefined, config),
+        Prefer: "resolution=merge-duplicates,return=minimal"
+      },
+      body: JSON.stringify(chunk)
+    });
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      throw new Error(friendlySupabaseError(result, "No se pudo sincronizar la base de alumnos."));
+    }
+  }
+}
+
+async function syncKenshiDirectoryFromSheet() {
+  const config = kenshiInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Configura y activa Area Kenshi con Supabase primero.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Inicia sesión en Supabase para sincronizar la base de alumnos.", "danger");
+    return;
+  }
+  if (!config.directoryCsvUrl) {
+    setStatus("Falta la URL CSV de la base de alumnos.", "danger");
+    return;
+  }
+  if (!confirm("¿Sincronizar ahora la base de alumnos desde Google Sheet hacia Supabase?")) return;
+  try {
+    setStatus("Leyendo Google Sheet...", "warning");
+    const response = await fetch(config.directoryCsvUrl);
+    if (!response.ok) throw new Error(`No se pudo leer Google Sheet (${response.status}). Revisa que el enlace CSV sea accesible.`);
+    const rows = sheetRowsToKenshiDirectory(await response.text());
+    if (!rows.length) throw new Error("No he encontrado alumnos válidos en la hoja.");
+    setStatus(`Sincronizando ${rows.length} alumno(s) en Supabase...`, "warning");
+    await upsertKenshiDirectoryRows(rows);
+    kenshiDirectoryCache = null;
+    setStatus(`Base de alumnos sincronizada: ${rows.length} registro(s).`, "ok");
+    loadKenshiDirectoryStatus();
+  } catch (error) {
+    setStatus(`Error al sincronizar base de alumnos: ${error.message}`, "danger");
   }
 }
 
