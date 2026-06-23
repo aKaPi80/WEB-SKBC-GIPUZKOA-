@@ -2071,7 +2071,8 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   gap: 10px;
 }
 
-.kenshi-simple__actions button {
+.kenshi-simple__actions button,
+.kenshi-simple__actions a {
   min-height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 999px;
@@ -2081,9 +2082,14 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   font: inherit;
   font-weight: 950;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
-.kenshi-simple__actions button:first-child {
+.kenshi-simple__actions button:first-child,
+.kenshi-simple__actions a:first-child {
   border-color: transparent;
   background: var(--red);
   box-shadow: 0 14px 30px rgba(197, 39, 39, 0.28);
@@ -2906,7 +2912,8 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   gap: 10px;
 }
 
-.kenshi-dashboard__quickgrid button {
+.kenshi-dashboard__quickgrid button,
+.kenshi-dashboard__quickgrid a {
   min-height: 58px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -2917,9 +2924,13 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   font-weight: 950;
   cursor: pointer;
   text-align: left;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
-.kenshi-dashboard__quickgrid button:hover {
+.kenshi-dashboard__quickgrid button:hover,
+.kenshi-dashboard__quickgrid a:hover {
   border-color: rgba(197, 39, 39, 0.4);
   color: var(--red);
   background: #fff;

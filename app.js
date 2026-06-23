@@ -2168,6 +2168,9 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
     { label: "Calendario", action: "go", target: "#calendario" },
     { label: "Reservas", action: "go", target: "#merchandising" }
   ];
+  const accessLinkMarkup = (item) => item.url
+    ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" data-kenshi-action="${escapeHtml(item.action)}" data-url="${escapeHtml(item.url)}">${escapeHtml(item.label)}</a>`
+    : `<button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}>${escapeHtml(item.label)}</button>`;
   return `
     <div class="kenshi-dashboard">
       <section class="kenshi-simple">
@@ -2188,9 +2191,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
           <article><span>Asistencia</span><strong>${Number.isFinite(attendancePercent) ? `${attendancePercent}%` : "Pendiente"}</strong><small>${Number.isFinite(attendanceTotal) ? `${attendanceTotal} asistencia(s)` : "Sin dato conectado"}</small></article>
         </div>
         <div class="kenshi-simple__actions">
-          ${accessLinks.map((item) => `
-            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}${item.url ? ` data-url="${escapeHtml(item.url)}"` : ""}>${escapeHtml(item.label)}</button>
-          `).join("")}
+          ${accessLinks.map(accessLinkMarkup).join("")}
           <button class="kenshi-simple__logout" type="button" data-kenshi-logout>Salir</button>
         </div>
       </section>
@@ -2242,9 +2243,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
             <p>Accede solo a lo que aporta valor real desde el panel: datos, comunicacion, agenda y reservas del club.</p>
           </div>
           <div class="kenshi-dashboard__quickgrid">
-          ${accessLinks.map((item) => `
-            <button type="button" data-kenshi-action="${escapeHtml(item.action)}"${item.target ? ` data-target="${escapeHtml(item.target)}"` : ""}${item.url ? ` data-url="${escapeHtml(item.url)}"` : ""}>${escapeHtml(item.label)}</button>
-          `).join("")}
+          ${accessLinks.map(accessLinkMarkup).join("")}
           </div>
         </section>
       </div>
@@ -2260,7 +2259,7 @@ function bindKenshiDashboardActions(modal, session = null, access = null) {
     activateKenshiTab("login");
   });
   modal.querySelectorAll("[data-kenshi-action]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
       const action = button.dataset.kenshiAction;
       if (action === "profile") {
         modal.querySelector(".kenshi-dashboard__profile")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2271,7 +2270,8 @@ function bindKenshiDashboardActions(modal, session = null, access = null) {
         return;
       }
       if (action === "ficha") {
-        const url = button.dataset.url;
+        event.preventDefault();
+        const url = button.dataset.url || access?.ficha_url || button.getAttribute("href");
         if (url) window.open(url, "_blank", "noopener,noreferrer");
         return;
       }
