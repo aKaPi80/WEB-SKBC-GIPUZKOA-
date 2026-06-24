@@ -29,6 +29,7 @@ function installSkbcSyncMenu() {
     .addItem("Configurar Supabase", "setupSkbcSupabaseProperties")
     .addItem("Comprobar configuracion", "checkSkbcSupabaseProperties")
     .addSeparator()
+    .addItem("Diagnosticar fila seleccionada", "diagnoseSelectedKenshiDirectoryRow")
     .addItem("Sincronizar todo", "syncAllKenshiDirectory")
     .addToUi();
 }
@@ -90,7 +91,14 @@ function syncAllKenshiDirectory() {
     .filter(Boolean);
   upsertDirectoryRows_(rows);
   syncMembersFromDirectory_(rows);
-  console.log(`Sincronizados ${rows.length} alumno(s).`);
+  const rowsWithEntryDate = rows.filter((row) => row.entry_date).length;
+  const message = `Sincronizados ${rows.length} alumno(s). Con Fecha Ingreso detectada: ${rowsWithEntryDate}.`;
+  console.log(message);
+  try {
+    SpreadsheetApp.getUi().alert("SKBC Sync", message, SpreadsheetApp.getUi().ButtonSet.OK);
+  } catch (error) {
+    console.log(message);
+  }
 }
 
 function syncKenshiDirectoryRow_(sheet, rowNumber) {
@@ -102,6 +110,45 @@ function syncKenshiDirectoryRow_(sheet, rowNumber) {
   upsertDirectoryRows_([directoryRow]);
   syncMembersFromDirectory_([directoryRow]);
   console.log(`Sincronizado alumno ${directoryRow.full_name}`);
+}
+
+function diagnoseSelectedKenshiDirectoryRow() {
+  const ui = SpreadsheetApp.getUi();
+  const sheet = SpreadsheetApp.getActive().getActiveSheet();
+  if (!sheet || sheet.getName() !== SKBC_SHEET_NAME) {
+    ui.alert("SKBC Sync", `Selecciona una fila dentro de la hoja ${SKBC_SHEET_NAME}.`, ui.ButtonSet.OK);
+    return;
+  }
+  const rowNumber = sheet.getActiveRange().getRow();
+  if (rowNumber <= 1) {
+    ui.alert("SKBC Sync", "Selecciona una fila de alumno, no la cabecera.", ui.ButtonSet.OK);
+    return;
+  }
+  const lastColumn = sheet.getLastColumn();
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0];
+  const row = sheet.getRange(rowNumber, 1, 1, lastColumn).getDisplayValues()[0];
+  const directoryRow = sheetRowToDirectory_(headers, row);
+  const detectedHeaders = headers
+    .filter((header) => normalizeHeader_(header).includes("FECHA") || normalizeHeader_(header).includes("INGRESO"))
+    .join(", ") || "Ninguna";
+  if (!directoryRow) {
+    ui.alert("SKBC Sync", `No se ha podido leer la fila ${rowNumber}. Revisa ID, Nombre y Apellidos.`, ui.ButtonSet.OK);
+    return;
+  }
+  ui.alert(
+    "Diagnostico SKBC Sync",
+    [
+      `Fila: ${rowNumber}`,
+      `Alumno: ${directoryRow.full_name}`,
+      `ID: ${directoryRow.student_id}`,
+      `Cabeceras relacionadas detectadas: ${detectedHeaders}`,
+      `entry_date enviado a Supabase: ${directoryRow.entry_date || "VACIO / NO DETECTADO"}`,
+      `Grado: ${directoryRow.grade || "No detectado"}`,
+      `Foto: ${directoryRow.photo_url ? "Detectada" : "No detectada"}`,
+      `Ficha: ${directoryRow.ficha_url ? "Detectada" : "No detectada"}`
+    ].join("\n"),
+    ui.ButtonSet.OK
+  );
 }
 
 function sheetRowToDirectory_(headers, row) {
@@ -136,7 +183,7 @@ function sheetRowToDirectory_(headers, row) {
     email_family: get("EmailFamilia") || null,
     phone: phone || null,
     class_group: get("Clase") || null,
-    entry_date: get("Fecha Ingreso", "Fecha de Ingreso") || null,
+    entry_date: get("Fecha Ingreso", "Fecha de Ingreso", "FechaIngreso", "Fecha Alta", "Fecha de Alta", "Ingreso") || null,
     status: get("Estado") || null,
     grade: get("Grado") || null,
     photo_url: normalizeDriveImageUrl_(get("AlumnoFotoURL")) || null,

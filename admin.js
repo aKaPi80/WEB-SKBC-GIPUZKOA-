@@ -2226,6 +2226,15 @@ function normalizeKenshiName(value) {
     .toUpperCase();
 }
 
+function normalizeCsvHeader(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
 function parseCsvRows(text) {
   const rows = [];
   let row = [];
@@ -2933,8 +2942,14 @@ async function loadKenshiDirectoryStatus() {
 function sheetRowsToKenshiDirectory(csvText) {
   const rows = parseCsvRows(csvText);
   const headers = rows.shift() || [];
-  const index = Object.fromEntries(headers.map((header, column) => [String(header || "").trim(), column]));
-  const get = (row, header) => row[index[header]] || "";
+  const index = Object.fromEntries(headers.map((header, column) => [normalizeCsvHeader(header), column]));
+  const get = (row, ...headerNames) => {
+    for (const header of headerNames) {
+      const column = index[normalizeCsvHeader(header)];
+      if (column !== undefined) return row[column] || "";
+    }
+    return "";
+  };
   return rows.map((row) => {
     const studentId = get(row, "ID");
     const fullName = [get(row, "Nombre"), get(row, "Apellidos")].filter(Boolean).join(" ").trim();
@@ -2948,7 +2963,7 @@ function sheetRowsToKenshiDirectory(csvText) {
       email_family: get(row, "EmailFamilia") || null,
       phone: phone || null,
       class_group: get(row, "Clase") || null,
-      entry_date: get(row, "Fecha Ingreso") || null,
+      entry_date: get(row, "Fecha Ingreso", "Fecha de Ingreso", "FechaIngreso", "Fecha Alta", "Fecha de Alta", "Ingreso") || null,
       status: get(row, "Estado") || null,
       grade: get(row, "Grado ") || null,
       photo_url: normalizeDriveImageUrl(get(row, "AlumnoFotoURL")) || null,
