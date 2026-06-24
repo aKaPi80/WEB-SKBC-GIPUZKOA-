@@ -5,9 +5,15 @@
  * 1. Abre el Google Sheet base.
  * 2. Extensiones > Apps Script.
  * 3. Pega este archivo.
- * 4. Recarga la hoja y usa el menu SKBC Sync > Configurar Supabase.
- * 5. Ejecuta SKBC Sync > Sincronizar todo una vez y acepta permisos.
- * 6. Crea un activador instalable:
+ * 4. Si ya tienes una funcion onOpen en tu proyecto, anade dentro esta linea:
+ *    installSkbcSyncMenu();
+ *    Si no tienes onOpen, puedes crear una:
+ *    function onOpen() {
+ *      installSkbcSyncMenu();
+ *    }
+ * 5. Recarga la hoja y usa el menu SKBC Sync > Configurar Supabase.
+ * 6. Ejecuta SKBC Sync > Sincronizar todo una vez y acepta permisos.
+ * 7. Crea un activador instalable:
  *    Funcion: onKenshiSheetEdit
  *    Evento: Al editar
  */
@@ -17,7 +23,7 @@ const SKBC_DIRECTORY_TABLE = "skbc_kenshi_directory";
 const SKBC_MEMBERS_TABLE = "skbc_kenshi_members";
 const SKBC_SUPABASE_URL = "https://wucxazuhrgokvtajqmsr.supabase.co";
 
-function onOpen() {
+function installSkbcSyncMenu() {
   SpreadsheetApp.getUi()
     .createMenu("SKBC Sync")
     .addItem("Configurar Supabase", "setupSkbcSupabaseProperties")
