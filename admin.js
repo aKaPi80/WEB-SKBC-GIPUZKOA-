@@ -2866,6 +2866,7 @@ function kenshiMemberTemplate(member) {
       <label class="field"><span>Grado/nivel</span><input data-kenshi-field="grade" value="${escapeHtml(member.grade || "")}" /></label>
       <label class="field"><span>ID alumno base</span><input data-kenshi-field="source_student_id" value="${escapeHtml(member.source_student_id || "")}" /></label>
       <label class="field"><span>Grupo</span><input data-kenshi-field="class_group" value="${escapeHtml(member.class_group || "")}" /></label>
+      <label class="field"><span>Fecha ingreso club</span><input data-kenshi-field="entry_date" value="${escapeHtml(member.entry_date || "")}" placeholder="dd/mm/aaaa" /></label>
       <label class="field"><span>Asistencias totales</span><input data-kenshi-field="attendance_total" value="${escapeHtml(member.attendance_total ?? "")}" /></label>
       <label class="field"><span>% asistencia ciclo</span><input data-kenshi-field="attendance_percent" value="${escapeHtml(member.attendance_percent ?? "")}" /></label>
       <label class="field"><span>Proximo examen</span><input data-kenshi-field="next_exam" value="${escapeHtml(member.next_exam || "")}" /></label>
@@ -2947,6 +2948,7 @@ function sheetRowsToKenshiDirectory(csvText) {
       email_family: get(row, "EmailFamilia") || null,
       phone: phone || null,
       class_group: get(row, "Clase") || null,
+      entry_date: get(row, "Fecha Ingreso") || null,
       status: get(row, "Estado") || null,
       grade: get(row, "Grado ") || null,
       photo_url: normalizeDriveImageUrl(get(row, "AlumnoFotoURL")) || null,
@@ -3086,6 +3088,7 @@ function directoryRowToKenshiPayload(row) {
     ficha_url: row.ficha_url || row.parent_ficha_url || "",
     source_student_id: row.student_id || "",
     class_group: row.class_group || "",
+    entry_date: row.entry_date || "",
     grade: row.grade || "",
     attendance_total: Number.isFinite(attendanceTotal) ? attendanceTotal : null,
     attendance_percent: Number.isFinite(attendancePercent) ? attendancePercent : null,

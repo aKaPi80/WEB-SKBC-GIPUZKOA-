@@ -2125,7 +2125,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
   const fichaUrl = access.ficha_url || "";
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "K";
   const approved = access.approved_at ? new Date(access.approved_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "Activo";
-  const created = access.created_at ? new Date(access.created_at).toLocaleDateString(state.lang === "en" ? "en-GB" : "es-ES") : "No indicado";
+  const seniority = formatKenshiSeniority(access.entry_date);
   const requestMessage = access.message || "Sin mensaje registrado";
   const events = kenshiUpcomingEvents(copy);
   const openMessages = messages.filter((item) => item.status === "open").length;
@@ -2155,7 +2155,7 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
     ["Asistencias registradas", Number.isFinite(attendanceTotal) ? String(attendanceTotal) : "No indicado"],
     ["Asistencia del ciclo", Number.isFinite(attendancePercent) ? `${attendancePercent}%` : "No indicado"],
     ["Proximo examen orientativo", nextExam],
-    ["Acceso desde", created]
+    ["Antig\u00fcedad", seniority]
   ].map(([label, value]) => `
     <div>
       <span>${escapeHtml(label)}</span>
@@ -2249,6 +2249,42 @@ function renderKenshiDashboard(access = {}, session = {}, kenshi = {}, messages 
       </div>
     </div>
   `;
+}
+
+function parseKenshiDate(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const iso = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) {
+    const date = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const european = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/);
+  if (european) {
+    const year = Number(european[3].length === 2 ? `20${european[3]}` : european[3]);
+    const date = new Date(year, Number(european[2]) - 1, Number(european[1]));
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const fallback = new Date(raw);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
+function formatKenshiSeniority(entryDate) {
+  const start = parseKenshiDate(entryDate);
+  if (!start) return "No indicado";
+  const today = new Date();
+  let years = today.getFullYear() - start.getFullYear();
+  let months = today.getMonth() - start.getMonth();
+  if (today.getDate() < start.getDate()) months -= 1;
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+  if (years <= 0 && months <= 0) return "Menos de 1 mes";
+  const parts = [];
+  if (years > 0) parts.push(`${years} ${years === 1 ? "a\u00f1o" : "a\u00f1os"}`);
+  if (months > 0 && years < 3) parts.push(`${months} ${months === 1 ? "mes" : "meses"}`);
+  return parts.join(" y ");
 }
 
 function bindKenshiDashboardActions(modal, session = null, access = null) {

@@ -11,6 +11,7 @@ create table if not exists public.skbc_kenshi_members (
   ficha_url text,
   source_student_id text,
   class_group text,
+  entry_date text,
   attendance_total integer,
   attendance_percent numeric,
   next_exam text,
@@ -45,6 +46,9 @@ alter table public.skbc_kenshi_members
 
 alter table public.skbc_kenshi_members
   add column if not exists class_group text;
+
+alter table public.skbc_kenshi_members
+  add column if not exists entry_date text;
 
 alter table public.skbc_kenshi_members
   add column if not exists attendance_total integer;
@@ -112,6 +116,7 @@ create table if not exists public.skbc_kenshi_directory (
   email_family text,
   phone text,
   class_group text,
+  entry_date text,
   status text,
   grade text,
   photo_url text,
@@ -130,6 +135,9 @@ create index if not exists skbc_kenshi_directory_name_idx
 
 create index if not exists skbc_kenshi_directory_email_idx
   on public.skbc_kenshi_directory (lower(email_family));
+
+alter table public.skbc_kenshi_directory
+  add column if not exists entry_date text;
 
 alter table public.skbc_kenshi_directory enable row level security;
 
