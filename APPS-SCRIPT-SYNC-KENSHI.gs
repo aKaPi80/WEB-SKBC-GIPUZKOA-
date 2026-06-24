@@ -5,10 +5,8 @@
  * 1. Abre el Google Sheet base.
  * 2. Extensiones > Apps Script.
  * 3. Pega este archivo.
- * 4. En Configuracion del proyecto > Propiedades de secuencia de comandos, crea:
- *    SUPABASE_URL = https://wucxazuhrgokvtajqmsr.supabase.co
- *    SUPABASE_SERVICE_ROLE_KEY = tu service_role key de Supabase
- * 5. Ejecuta syncAllKenshiDirectory una vez y acepta permisos.
+ * 4. Recarga la hoja y usa el menu SKBC Sync > Configurar Supabase.
+ * 5. Ejecuta SKBC Sync > Sincronizar todo una vez y acepta permisos.
  * 6. Crea un activador instalable:
  *    Funcion: onKenshiSheetEdit
  *    Evento: Al editar
@@ -17,6 +15,52 @@
 const SKBC_SHEET_NAME = "Sheet1";
 const SKBC_DIRECTORY_TABLE = "skbc_kenshi_directory";
 const SKBC_MEMBERS_TABLE = "skbc_kenshi_members";
+const SKBC_SUPABASE_URL = "https://wucxazuhrgokvtajqmsr.supabase.co";
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("SKBC Sync")
+    .addItem("Configurar Supabase", "setupSkbcSupabaseProperties")
+    .addItem("Comprobar configuracion", "checkSkbcSupabaseProperties")
+    .addSeparator()
+    .addItem("Sincronizar todo", "syncAllKenshiDirectory")
+    .addToUi();
+}
+
+function setupSkbcSupabaseProperties() {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt(
+    "Configurar Supabase",
+    "Pega aqui la service_role key de Supabase. No se guardara en la hoja, solo en las propiedades privadas del script.",
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (response.getSelectedButton() !== ui.Button.OK) return;
+  const serviceRoleKey = response.getResponseText().trim();
+  if (!serviceRoleKey) {
+    ui.alert("No se ha guardado nada porque la clave estaba vacia.");
+    return;
+  }
+  PropertiesService.getScriptProperties().setProperties({
+    SUPABASE_URL: SKBC_SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey
+  }, false);
+  ui.alert("Supabase configurado. Ahora puedes ejecutar SKBC Sync > Sincronizar todo.");
+}
+
+function checkSkbcSupabaseProperties() {
+  const ui = SpreadsheetApp.getUi();
+  const props = PropertiesService.getScriptProperties();
+  const supabaseUrl = props.getProperty("SUPABASE_URL");
+  const serviceRoleKey = props.getProperty("SUPABASE_SERVICE_ROLE_KEY");
+  const maskedKey = serviceRoleKey
+    ? `${serviceRoleKey.slice(0, 8)}...${serviceRoleKey.slice(-6)}`
+    : "NO CONFIGURADA";
+  ui.alert(
+    "Configuracion SKBC Sync",
+    `SUPABASE_URL: ${supabaseUrl || "NO CONFIGURADA"}\nSUPABASE_SERVICE_ROLE_KEY: ${maskedKey}`,
+    ui.ButtonSet.OK
+  );
+}
 
 function onKenshiSheetEdit(event) {
   try {
