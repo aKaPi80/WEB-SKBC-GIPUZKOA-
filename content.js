@@ -856,7 +856,8 @@ window.SKBC_CONTENT = {
         "assets/uploads/1782044586617-adf35788-e63d-40cb-9cef-d45a273352d1.webp",
         "assets/uploads/1782044594165-67960e18-dcef-4af7-95b4-f5c148e7e58e.webp",
         "assets/uploads/1782044611902-20240309-132159-original.webp",
-        "assets/uploads/1782044620013-a5730a7b-bbee-45b6-bc20-2b17b704f97c.webp"
+        "assets/uploads/1782044620013-a5730a7b-bbee-45b6-bc20-2b17b704f97c.webp",
+        "assets/uploads/1782825125430-b3891497-fa01-4f5d-8261-d47b899053a2.webp"
       ],
       "profiles": [
         "assets/optimized/alvaro-calvo.webp",
@@ -920,11 +921,7 @@ window.SKBC_CONTENT = {
           null,
           null,
           "29% 35%",
-          null,
-          null,
-          null,
-          null,
-          "47% 13%"
+          null
         ]
       }
     },
