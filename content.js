@@ -44,16 +44,16 @@ window.SKBC_CONTENT = {
       "heroOverlay": "strong"
     },
     "alertBanner": {
-      "enabled": false,
-      "style": "construction",
+      "enabled": true,
+      "style": "vacation",
       "text": {
-        "es": "Aviso importante de SKBC GIPUZKOA",
-        "eu": "SKBC GIPUZKOAren ohar garrantzitsua",
-        "en": "Important SKBC GIPUZKOA notice"
+        "es": "VACACIONES NOS VEMOS EN EL DOJO EN SEPTIEMBRE!!",
+        "eu": "OPORRAK! IRAILEAN DOJOAN IKUSIKO GARA!!",
+        "en": "HOLIDAYS SEE YOU AT THE DOJO IN SEPTEMBER!!"
       },
       "url": "",
       "durationHours": "48",
-      "expiresAt": ""
+      "expiresAt": "2026-08-31T00:00"
     },
     "specialVisual": {
       "mode": "none",
