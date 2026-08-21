@@ -53,7 +53,7 @@ window.SKBC_CONTENT = {
       },
       "url": "",
       "durationHours": "48",
-      "speedSeconds": "55",
+      "speedSeconds": "85",
       "expiresAt": "2026-08-31T00:00"
     },
     "specialVisual": {
