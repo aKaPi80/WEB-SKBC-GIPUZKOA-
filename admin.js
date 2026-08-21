@@ -532,6 +532,8 @@ function render() {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.panel === currentPanel);
   });
+  const mobilePanelSelect = document.querySelector("#mobile-panel-select");
+  if (mobilePanelSelect) mobilePanelSelect.value = currentPanel;
 
   if (currentPanel === "custom") return renderCustom();
   if (currentPanel === "dashboard") return renderDashboard();
@@ -633,8 +635,7 @@ function renderDashboard() {
   editor.querySelector("#refresh-dashboard")?.addEventListener("click", refreshDashboardPrivateData);
   editor.querySelectorAll("[data-open-panel]").forEach((button) => {
     button.addEventListener("click", () => {
-      currentPanel = button.dataset.openPanel;
-      render();
+      openPanel(button.dataset.openPanel);
     });
   });
 }
@@ -4346,11 +4347,21 @@ function escapeAttr(value) {
   return escapeHtml(value).replaceAll("'", "&#39;");
 }
 
+function openPanel(panel) {
+  if (!panel || panel === currentPanel) return;
+  currentPanel = panel;
+  render();
+  document.querySelector("#editor")?.scrollIntoView({ block: "start" });
+}
+
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
-    currentPanel = tab.dataset.panel;
-    render();
+    openPanel(tab.dataset.panel);
   });
+});
+
+document.querySelector("#mobile-panel-select")?.addEventListener("change", (event) => {
+  openPanel(event.target.value);
 });
 
 document.querySelector("#save").addEventListener("click", () => {
