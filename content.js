@@ -52,9 +52,9 @@ window.SKBC_CONTENT = {
         "en": "HOLIDAYS!!!! SEE YOU BACK IN SEPTEMBER!! IF YOU WANT TO JOIN ASK FOR INFORMATION TO START WITH US IN SEPTEMBER!!"
       },
       "url": "",
-      "durationHours": "48",
+      "durationHours": "",
       "speedSeconds": "120",
-      "expiresAt": "2026-08-31T00:00"
+      "expiresAt": "2026-08-23T09:21"
     },
     "specialVisual": {
       "mode": "none",
