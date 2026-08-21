@@ -108,6 +108,20 @@ button.primary {
   background: var(--red);
 }
 
+main button:not(.primary):not(.danger):not(.quiet):not(.tab):not(.image-field-preview),
+main button.secondary {
+  color: var(--blue);
+  border-color: #cfe0ef;
+  background: #f7fbff;
+}
+
+main button:not(.primary):not(.danger):not(.quiet):not(.tab):not(.image-field-preview):hover,
+main button.secondary:hover {
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
 button.quiet {
   color: #e6e8ed;
   background: transparent;
