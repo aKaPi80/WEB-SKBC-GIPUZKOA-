@@ -145,6 +145,7 @@ const settingsGroups = [
       ["Texto EN", ["settings", "alertBanner", "text", "en"], "input"],
       ["Traducir texto", ["settings", "alertBanner", "text"], "alertBannerTranslate"],
       ["Enlace opcional", ["settings", "alertBanner", "url"], "input"],
+      ["Velocidad de la cinta (segundos)", ["settings", "alertBanner", "speedSeconds"], "alertBannerSpeed"],
       ["Caduca el (manda sobre todo)", ["settings", "alertBanner", "expiresAt"], "datetime"],
       ["Activar durante X horas", ["settings", "alertBanner", "durationHours"], "alertBannerDuration"]
     ]
@@ -1282,6 +1283,17 @@ function controlTemplate(id, encodedPath, value, type) {
       ["info", "Aviso azul"],
       ["urgent", "Urgente rojo-negro"]
     ], type);
+  }
+  if (type === "alertBannerSpeed") {
+    return `
+      <div class="alert-duration-control">
+        <input id="${id}" type="number" min="15" max="180" step="5" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "55")}" />
+        <button class="secondary set-alert-speed" type="button" data-speed="35">Rápida</button>
+        <button class="secondary set-alert-speed" type="button" data-speed="55">Normal</button>
+        <button class="secondary set-alert-speed" type="button" data-speed="85">Lenta</button>
+      </div>
+      <small>Más segundos = más lenta. Para vacaciones recomiendo 75-90 segundos si el texto es largo.</small>
+    `;
   }
   if (type === "alertBannerDuration") {
     return `
@@ -4132,6 +4144,15 @@ function updateFieldValue(path, value) {
 function bindAlertBannerControls(root) {
   root.querySelectorAll(".alert-duration-control").forEach((control) => {
     const input = control.querySelector("input");
+    control.querySelectorAll(".set-alert-speed").forEach((button) => {
+      button.addEventListener("click", () => {
+        const seconds = Math.max(15, Math.min(180, Number(button.dataset.speed || 55)));
+        input.value = String(seconds);
+        setByPath(data, ["settings", "alertBanner", "speedSeconds"], String(seconds));
+        markDirty();
+        setStatus(`Velocidad de cinta ajustada a ${seconds} segundos. Falta guardar/publicar cambios.`, "warning");
+      });
+    });
     control.querySelector(".activate-alert-banner")?.addEventListener("click", () => {
       const hours = Math.max(1, Number(input.value || 48));
       const expiresAt = toDatetimeLocalValue(new Date(Date.now() + hours * 60 * 60 * 1000));

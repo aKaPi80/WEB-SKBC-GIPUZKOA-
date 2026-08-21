@@ -1672,10 +1672,12 @@ function alertBannerSettings(settings) {
   const allowedStyles = new Set(["construction", "vacation", "dojo", "info", "urgent"]);
   const textSource = banner.text && typeof banner.text === "object" ? banner.text : { es: banner.text || "" };
   const text = String(textSource[state.lang] || textSource.es || "").trim();
+  const speedSeconds = Math.max(15, Math.min(180, Number(banner.speedSeconds || 55)));
   return {
     enabled: enabled && !isExpired && Boolean(text),
     style: allowedStyles.has(banner.style) ? banner.style : "vacation",
     text,
+    speedSeconds: Number.isFinite(speedSeconds) ? speedSeconds : 55,
     url: String(banner.url || "").trim()
   };
 }
@@ -1689,7 +1691,7 @@ function alertBannerLayer(settings) {
   const tag = banner.url ? "a" : "div";
   const attrs = banner.url ? ` href="${banner.url}" target="_blank" rel="noreferrer"` : "";
   return `
-    <aside class="alert-ribbon alert-ribbon--${banner.style}" aria-label="${text}">
+    <aside class="alert-ribbon alert-ribbon--${banner.style}" aria-label="${text}" style="--alert-ribbon-speed:${banner.speedSeconds}s">
       <${tag} class="alert-ribbon__track"${attrs}>
         ${content}
       </${tag}>

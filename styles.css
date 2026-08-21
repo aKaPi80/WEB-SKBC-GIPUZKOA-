@@ -3410,7 +3410,7 @@ textarea { resize: vertical; }
   letter-spacing: 0;
   text-transform: uppercase;
   white-space: nowrap;
-  animation: alert-ribbon-scroll 31s linear infinite;
+  animation: alert-ribbon-scroll var(--alert-ribbon-speed, 55s) linear infinite;
 }
 
 .alert-ribbon:hover .alert-ribbon__track span {
