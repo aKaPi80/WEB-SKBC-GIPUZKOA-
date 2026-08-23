@@ -574,12 +574,18 @@ function enhanceMobileCollapsers() {
   const editor = document.querySelector("#editor");
   if (!editor) return;
 
+  editor.querySelectorAll("[data-open-panel]").forEach((button) => {
+    if (button.dataset.openPanelReady === "true") return;
+    button.dataset.openPanelReady = "true";
+    button.addEventListener("click", () => openPanel(button.dataset.openPanel));
+  });
+
   editor.querySelectorAll(".editor-group").forEach((group, index) => {
     if (group.dataset.mobileAccordionReady === "true") return;
     const header = group.querySelector(":scope > header");
     if (!header) return;
     group.dataset.mobileAccordionReady = "true";
-    group.dataset.mobileCollapsed = index === 0 && currentPanel === "dashboard" ? "false" : "true";
+    group.dataset.mobileCollapsed = group.dataset.mobileKeepOpen === "true" || (index === 0 && currentPanel === "dashboard") ? "false" : "true";
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "mobile-collapse-toggle";
@@ -704,13 +710,13 @@ function dashboardSupabaseLoginTemplate() {
   return `
     <div class="dashboard-supabase">
       <div>
-        <strong>${session?.access_token ? "Supabase conectado" : "Reconexión rápida Supabase"}</strong>
-        <span>${session?.access_token ? `Sesión activa: ${escapeHtml(session?.user?.email || "usuario conectado")}` : "Inicia sesión aquí para consultar contactos, testimonios y pedidos."}</span>
+        <strong>${session?.access_token ? "Supabase conectado para todo el admin" : "Conexión única Supabase"}</strong>
+        <span>${session?.access_token ? `Sesión activa: ${escapeHtml(session?.user?.email || "usuario conectado")}. Sirve para contactos, testimonios, pedidos y Kenshi.` : "Inicia sesión una vez aquí para consultar todas las bandejas privadas."}</span>
       </div>
       <div class="dashboard-supabase-fields">
         <input id="dashboard-supabase-email" type="email" placeholder="Email Supabase" value="${escapeHtml(session?.user?.email || "")}" />
         <input id="dashboard-supabase-password" type="password" placeholder="Contraseña Supabase" />
-        <button id="dashboard-login-supabase" class="primary" type="button">${session?.access_token ? "Renovar" : "Conectar"}</button>
+        <button id="dashboard-login-supabase" class="primary" type="button">${session?.access_token ? "Renovar sesión" : "Conectar"}</button>
         <button id="dashboard-logout-supabase" type="button">Cerrar</button>
       </div>
     </div>
@@ -2385,43 +2391,41 @@ function friendlySupabaseError(result, fallback = "No se pudo completar la opera
   const raw = String(result?.message || result?.msg || result?.error_description || result?.error || fallback);
   if (/jwt expired|invalid jwt|jwt/i.test(raw)) {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
-    return "La sesión privada de Supabase ha caducado. Vuelve a iniciar sesión y pulsa cargar de nuevo.";
+    return "La sesión privada de Supabase ha caducado. Vuelve al Panel, conecta Supabase una vez y pulsa cargar de nuevo.";
   }
   return raw;
+}
+
+function privateSessionNoticeTemplate(title = "Bandeja privada") {
+  const session = supabaseSession();
+  const connected = Boolean(session?.access_token);
+  return `
+    <article class="editor-group private-session-card" data-mobile-keep-open="true" data-private-connected="${connected ? "true" : "false"}">
+      <header>
+        <div>
+          <h3>${connected ? "Supabase conectado" : "Conecta Supabase una vez"}</h3>
+          <p>${connected ? "Esta misma sesión sirve para contactos, testimonios, pedidos y Área Kenshi." : "La contraseña se introduce solo en el Panel. Después puedes cargar cualquier bandeja privada."}</p>
+        </div>
+      </header>
+      <div class="private-session-body">
+        <div>
+          <strong>${escapeHtml(title)}</strong>
+          <span>${connected ? `Sesión activa: ${escapeHtml(session?.user?.email || "usuario conectado")}` : "Sin sesión privada activa"}</span>
+        </div>
+        <button type="button" data-open-panel="dashboard">${connected ? "Gestionar conexión en Panel" : "Ir al Panel para conectar"}</button>
+      </div>
+    </article>
+  `;
 }
 
 function renderTestimonialsInbox() {
   const editor = document.querySelector("#editor");
   const config = testimonialInboxConfig();
-  const session = supabaseSession();
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
       <button id="load-testimonials" class="primary" type="button">Cargar pendientes</button>
-      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
-    ${groupTemplate({
-      title: "Conexión Supabase",
-      help: "Para recibir testimonios sin WhatsApp, crea la tabla indicada en Supabase y pega aquí URL y anon key.",
-      fields: [
-        ["Buzón activo", ["settings", "testimonialInbox", "enabled"], "booleanText"],
-        ["Supabase URL", ["settings", "testimonialInbox", "supabaseUrl"], "input"],
-        ["Supabase anon key", ["settings", "testimonialInbox", "anonKey"], "textarea"],
-        ["Tabla", ["settings", "testimonialInbox", "table"], "input"]
-      ]
-    })}
-    <article class="editor-group">
-      <header>
-        <div>
-          <h3>Acceso privado a pendientes</h3>
-          <p>Usa un usuario creado en Supabase Auth. La web pública solo inserta; el admin lee y modera tras iniciar sesión.</p>
-        </div>
-      </header>
-      <div class="field-grid">
-        <label class="field"><span>Email Supabase</span><input id="supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
-        <label class="field"><span>Contraseña Supabase</span><input id="supabase-password" type="password" /></label>
-        <button id="login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
-      </div>
-    </article>
+    ${privateSessionNoticeTemplate("Testimonios pendientes")}
     <article class="editor-group">
       <header>
         <div>
@@ -2444,16 +2448,11 @@ function renderTestimonialsInbox() {
     </article>
   `;
   bindFields(editor);
-  document.querySelector("#login-supabase").addEventListener("click", loginSupabase);
   document.querySelector("#load-testimonials").addEventListener("click", loadPendingTestimonials);
   document.querySelectorAll("[data-remove-approved-testimonial]").forEach((button) => {
     button.addEventListener("click", () => removeApprovedTestimonial(Number(button.dataset.removeApprovedTestimonial)));
   });
-  document.querySelector("#logout-supabase").addEventListener("click", () => {
-    localStorage.removeItem(SUPABASE_SESSION_KEY);
-    setStatus("Sesión de Supabase cerrada.", "ok");
-    renderTestimonialsInbox();
-  });
+  enhanceMobileCollapsers();
 }
 
 function approvedTestimonialsTemplate() {
@@ -2602,36 +2601,12 @@ async function updatePendingTestimonialStatus(id, status) {
 function renderLeads() {
   const editor = document.querySelector("#editor");
   const config = leadInboxConfig();
-  const session = supabaseSession();
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
       <button id="load-leads" class="primary" type="button">Cargar contactos</button>
       <button id="delete-closed-leads" type="button">Limpiar cerrados</button>
-      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
-    ${groupTemplate({
-      title: "Conexión contactos",
-      help: "La web guardará aquí los formularios de contacto/prueba gratis antes de abrir WhatsApp.",
-      fields: [
-        ["Contactos activos", ["settings", "leadInbox", "enabled"], "booleanText"],
-        ["Supabase URL", ["settings", "leadInbox", "supabaseUrl"], "input"],
-        ["Supabase anon key", ["settings", "leadInbox", "anonKey"], "textarea"],
-        ["Tabla contactos", ["settings", "leadInbox", "table"], "input"]
-      ]
-    })}
-    <article class="editor-group">
-      <header>
-        <div>
-          <h3>Acceso privado</h3>
-          <p>Usa tu usuario de Supabase Auth. El admin lee y gestiona; la web pública solo inserta contactos.</p>
-        </div>
-      </header>
-      <div class="field-grid">
-        <label class="field"><span>Email Supabase</span><input id="leads-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
-        <label class="field"><span>Contraseña Supabase</span><input id="leads-supabase-password" type="password" /></label>
-        <button id="leads-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
-      </div>
-    </article>
+    ${privateSessionNoticeTemplate("Contactos abiertos")}
     <article class="editor-group">
       <header>
         <div>
@@ -2643,14 +2618,9 @@ function renderLeads() {
     </article>
   `;
   bindFields(editor);
-  document.querySelector("#leads-login-supabase").addEventListener("click", loginLeadsSupabase);
   document.querySelector("#load-leads").addEventListener("click", loadLeads);
   document.querySelector("#delete-closed-leads").addEventListener("click", deleteClosedLeads);
-  document.querySelector("#logout-supabase").addEventListener("click", () => {
-    localStorage.removeItem(SUPABASE_SESSION_KEY);
-    setStatus("Sesión de Supabase cerrada.", "ok");
-    renderLeads();
-  });
+  enhanceMobileCollapsers();
 }
 
 async function loginLeadsSupabase() {
@@ -2788,40 +2758,14 @@ async function deleteClosedLeads() {
 function renderKenshi() {
   const editor = document.querySelector("#editor");
   const config = kenshiInboxConfig();
-  const session = supabaseSession();
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
       <button id="load-kenshi" class="primary" type="button">Cargar solicitudes</button>
       <button id="load-kenshi-messages" class="primary" type="button">Cargar mensajes</button>
       <button id="sync-kenshi-directory" class="primary" type="button">Sincronizar Google Sheet</button>
       <button id="load-kenshi-directory" type="button">Comprobar base alumnos</button>
-      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
-    ${groupTemplate({
-      title: "Conexion Area Kenshi",
-      help: "La web publica crea solicitudes pendientes. Desde aqui apruebas, rechazas, revocas o editas cada registro.",
-      fields: [
-        ["Area Kenshi activa", ["settings", "kenshiInbox", "enabled"], "booleanText"],
-        ["Supabase URL", ["settings", "kenshiInbox", "supabaseUrl"], "input"],
-        ["Supabase anon key", ["settings", "kenshiInbox", "anonKey"], "textarea"],
-        ["Tabla Kenshi", ["settings", "kenshiInbox", "table"], "input"],
-        ["CSV base alumnos", ["settings", "kenshiInbox", "directoryCsvUrl"], "input"],
-        ["Webhook email", ["settings", "kenshiInbox", "emailWebhookUrl"], "input"]
-      ]
-    })}
-    <article class="editor-group">
-      <header>
-        <div>
-          <h3>Acceso privado</h3>
-          <p>Usa tu usuario de Supabase Auth. Solo el admin puede leer y modificar solicitudes.</p>
-        </div>
-      </header>
-      <div class="field-grid">
-        <label class="field"><span>Email Supabase</span><input id="kenshi-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
-        <label class="field"><span>Contraseña Supabase</span><input id="kenshi-supabase-password" type="password" /></label>
-        <button id="kenshi-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
-      </div>
-    </article>
+    ${privateSessionNoticeTemplate("Área Kenshi")}
     <article class="editor-group">
       <header>
         <div>
@@ -2842,16 +2786,11 @@ function renderKenshi() {
     </article>
   `;
   bindFields(editor);
-  document.querySelector("#kenshi-login-supabase").addEventListener("click", loginKenshiSupabase);
   document.querySelector("#load-kenshi").addEventListener("click", loadKenshiMembers);
   document.querySelector("#load-kenshi-messages").addEventListener("click", loadKenshiMessages);
   document.querySelector("#load-kenshi-directory").addEventListener("click", loadKenshiDirectoryStatus);
   document.querySelector("#sync-kenshi-directory").addEventListener("click", syncKenshiDirectoryFromSheet);
-  document.querySelector("#logout-supabase").addEventListener("click", () => {
-    localStorage.removeItem(SUPABASE_SESSION_KEY);
-    setStatus("Sesión de Supabase cerrada.", "ok");
-    renderKenshi();
-  });
+  enhanceMobileCollapsers();
 }
 
 async function loginKenshiSupabase() {
@@ -3451,36 +3390,11 @@ async function deleteKenshiMessage(id) {
 function renderOrders() {
   const editor = document.querySelector("#editor");
   const config = orderInboxConfig();
-  const session = supabaseSession();
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
       <button id="load-orders" class="primary" type="button">Cargar pedidos</button>
-      <button id="logout-supabase" type="button">Cerrar sesión Supabase</button>
     </div>`)}
-    ${groupTemplate({
-      title: "Conexión pedidos",
-      help: "Usa la misma sesión privada de Supabase. Si quieres email automático, pega aquí una URL de webhook o Edge Function.",
-      fields: [
-        ["Pedidos activos", ["settings", "orderInbox", "enabled"], "booleanText"],
-        ["Supabase URL", ["settings", "orderInbox", "supabaseUrl"], "input"],
-        ["Supabase anon key", ["settings", "orderInbox", "anonKey"], "textarea"],
-        ["Tabla pedidos", ["settings", "orderInbox", "table"], "input"],
-        ["Webhook email", ["settings", "orderInbox", "emailWebhookUrl"], "input"]
-      ]
-    })}
-    <article class="editor-group">
-      <header>
-        <div>
-          <h3>Acceso privado a pedidos</h3>
-          <p>Inicia sesión con tu usuario de Supabase para leer y actualizar pedidos.</p>
-        </div>
-      </header>
-      <div class="field-grid">
-        <label class="field"><span>Email Supabase</span><input id="orders-supabase-email" value="${escapeHtml(session?.user?.email || "")}" /></label>
-        <label class="field"><span>Contraseña Supabase</span><input id="orders-supabase-password" type="password" /></label>
-        <button id="orders-login-supabase" class="primary" type="button">${session ? "Sesión activa: renovar" : "Iniciar sesión"}</button>
-      </div>
-    </article>
+    ${privateSessionNoticeTemplate("Pedidos recibidos")}
     <article class="editor-group">
       <header>
         <div>
@@ -3495,14 +3409,9 @@ function renderOrders() {
     </article>
   `;
   bindFields(editor);
-  document.querySelector("#orders-login-supabase").addEventListener("click", loginOrdersSupabase);
   document.querySelector("#load-orders").addEventListener("click", loadOrders);
   document.querySelector("#delete-closed-orders").addEventListener("click", deleteClosedOrders);
-  document.querySelector("#logout-supabase").addEventListener("click", () => {
-    localStorage.removeItem(SUPABASE_SESSION_KEY);
-    setStatus("Sesión de Supabase cerrada.", "ok");
-    renderOrders();
-  });
+  enhanceMobileCollapsers();
 }
 
 async function loginOrdersSupabase() {

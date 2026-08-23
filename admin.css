@@ -876,6 +876,47 @@ button.danger {
   font: inherit;
 }
 
+.private-session-card {
+  border-color: #bfd7ee;
+  background: #f8fbff;
+}
+
+.private-session-card[data-private-connected="true"] {
+  border-color: #b8dec7;
+  background: #f6fff8;
+}
+
+.private-session-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px 18px;
+}
+
+.private-session-body div {
+  display: grid;
+  gap: 4px;
+}
+
+.private-session-body strong {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.private-session-body span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.private-session-body button {
+  flex: 0 0 auto;
+  color: var(--blue);
+  border-color: #cfe0ef;
+  background: #fff;
+}
+
 .dashboard-list div,
 .dashboard-private div {
   display: flex;
@@ -2116,6 +2157,16 @@ button.danger {
 
   .alert-duration-control input {
     max-width: none;
+    width: 100%;
+  }
+
+  .private-session-body {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .private-session-body button {
     width: 100%;
   }
 
