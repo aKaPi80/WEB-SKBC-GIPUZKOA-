@@ -535,19 +535,21 @@ function render() {
   const mobilePanelSelect = document.querySelector("#mobile-panel-select");
   if (mobilePanelSelect) mobilePanelSelect.value = currentPanel;
 
-  if (currentPanel === "custom") return renderCustom();
-  if (currentPanel === "dashboard") return renderDashboard();
-  if (currentPanel === "system") return renderSystem();
-  if (currentPanel === "people") return renderPeople();
-  if (currentPanel === "events") return renderEvents();
-  if (currentPanel === "news") return renderNews();
-  if (currentPanel === "leads") return renderLeads();
-  if (currentPanel === "testimonials") return renderTestimonialsInbox();
-  if (currentPanel === "merch") return renderMerch();
-  if (currentPanel === "orders") return renderOrders();
-  if (currentPanel === "kenshi") return renderKenshi();
-  if (currentPanel === "advanced") return renderAdvanced();
-  renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
+  if (currentPanel === "custom") renderCustom();
+  else if (currentPanel === "dashboard") renderDashboard();
+  else if (currentPanel === "system") renderSystem();
+  else if (currentPanel === "people") renderPeople();
+  else if (currentPanel === "events") renderEvents();
+  else if (currentPanel === "news") renderNews();
+  else if (currentPanel === "leads") renderLeads();
+  else if (currentPanel === "testimonials") renderTestimonialsInbox();
+  else if (currentPanel === "merch") renderMerch();
+  else if (currentPanel === "orders") renderOrders();
+  else if (currentPanel === "kenshi") renderKenshi();
+  else if (currentPanel === "advanced") renderAdvanced();
+  else renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
+
+  enhanceMobileCollapsers();
 }
 
 function renderIntro(extra = "") {
@@ -566,6 +568,59 @@ function renderGroups(groups) {
   editor.innerHTML = `${renderIntro()}${groups.map(groupTemplate).join("")}`;
   bindFields(editor);
   bindSectionTranslations(editor);
+}
+
+function enhanceMobileCollapsers() {
+  const editor = document.querySelector("#editor");
+  if (!editor) return;
+
+  editor.querySelectorAll(".editor-group").forEach((group, index) => {
+    if (group.dataset.mobileAccordionReady === "true") return;
+    const header = group.querySelector(":scope > header");
+    if (!header) return;
+    group.dataset.mobileAccordionReady = "true";
+    group.dataset.mobileCollapsed = index === 0 && currentPanel === "dashboard" ? "false" : "true";
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "mobile-collapse-toggle";
+    toggle.textContent = group.dataset.mobileCollapsed === "true" ? "Abrir" : "Cerrar";
+    toggle.addEventListener("click", () => {
+      const collapsed = group.dataset.mobileCollapsed !== "false";
+      group.dataset.mobileCollapsed = collapsed ? "false" : "true";
+      toggle.textContent = collapsed ? "Cerrar" : "Abrir";
+    });
+    header.appendChild(toggle);
+  });
+
+  editor.querySelectorAll(".person-editor-row").forEach((row) => {
+    if (row.dataset.mobileAccordionReady === "true") return;
+    row.dataset.mobileAccordionReady = "true";
+    row.dataset.mobileCollapsed = "true";
+    const titleInput = row.querySelector('[data-person-field="name"], [data-instructor-field="title"]');
+    const roleInput = row.querySelector('[data-person-field="esRole"], [data-instructor-field="eyebrow"][data-lang="es"]');
+    const summary = document.createElement("div");
+    summary.className = "person-mobile-summary";
+    const title = document.createElement("strong");
+    const subtitle = document.createElement("span");
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.textContent = "Abrir ficha";
+
+    const updateSummary = () => {
+      title.textContent = titleInput?.value?.trim() || "Persona";
+      subtitle.textContent = roleInput?.value?.trim() || "Ficha editable";
+    };
+    updateSummary();
+    titleInput?.addEventListener("input", updateSummary);
+    roleInput?.addEventListener("input", updateSummary);
+    toggle.addEventListener("click", () => {
+      const collapsed = row.dataset.mobileCollapsed !== "false";
+      row.dataset.mobileCollapsed = collapsed ? "false" : "true";
+      toggle.textContent = collapsed ? "Cerrar ficha" : "Abrir ficha";
+    });
+    summary.append(title, subtitle, toggle);
+    row.prepend(summary);
+  });
 }
 
 function renderDashboard() {
@@ -4352,6 +4407,19 @@ function openPanel(panel) {
   currentPanel = panel;
   render();
   document.querySelector("#editor")?.scrollIntoView({ block: "start" });
+}
+
+let mobileEnhanceQueued = false;
+const editorNode = document.querySelector("#editor");
+if (editorNode && "MutationObserver" in window) {
+  new MutationObserver(() => {
+    if (mobileEnhanceQueued) return;
+    mobileEnhanceQueued = true;
+    requestAnimationFrame(() => {
+      mobileEnhanceQueued = false;
+      enhanceMobileCollapsers();
+    });
+  }).observe(editorNode, { childList: true });
 }
 
 document.querySelectorAll(".tab").forEach((tab) => {

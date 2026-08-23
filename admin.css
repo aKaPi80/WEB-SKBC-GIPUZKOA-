@@ -151,6 +151,11 @@ aside {
   display: none;
 }
 
+.mobile-collapse-toggle,
+.person-mobile-summary {
+  display: none;
+}
+
 .tab {
   display: flex;
   width: 100%;
@@ -2034,6 +2039,24 @@ button.danger {
     padding: 14px;
   }
 
+  .editor-group header .mobile-collapse-toggle {
+    display: inline-flex;
+    width: 100%;
+    color: var(--blue);
+    border-color: #cfe0ef;
+    background: #f7fbff;
+  }
+
+  .editor-group[data-mobile-collapsed="true"] > :not(header) {
+    display: none !important;
+  }
+
+  .editor-group[data-mobile-collapsed="false"] > header .mobile-collapse-toggle {
+    color: #fff;
+    border-color: var(--blue);
+    background: var(--blue);
+  }
+
   .editor-group h3 {
     font-size: 19px;
   }
@@ -2112,6 +2135,45 @@ button.danger {
 
   .person-editor-row {
     padding: 12px;
+  }
+
+  .person-mobile-summary {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #fff;
+  }
+
+  .person-mobile-summary strong {
+    color: var(--ink);
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  .person-mobile-summary span {
+    color: var(--muted);
+    font-weight: 850;
+  }
+
+  .person-mobile-summary button {
+    width: 100%;
+    margin-top: 6px;
+    color: var(--blue);
+    border-color: #cfe0ef;
+    background: #f7fbff;
+  }
+
+  .person-editor-row[data-mobile-collapsed="true"] > :not(.person-mobile-summary) {
+    display: none !important;
+  }
+
+  .person-editor-row[data-mobile-collapsed="false"] .person-mobile-summary button {
+    color: #fff;
+    border-color: var(--blue);
+    background: var(--blue);
   }
 
   .events-sidebar,
