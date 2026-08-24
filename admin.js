@@ -123,6 +123,19 @@ const settingsGroups = [
     ]
   },
   {
+    title: "Calendario conectado al sistema de gestión",
+    help: "Permite importar cierres, vacaciones, festivos y cursos desde el sistema de gestión SKBC. La web mantiene una copia publicada como respaldo.",
+    fields: [
+      ["Conexión activa", ["settings", "managementCalendar", "enabled"], "booleanText"],
+      ["Supabase URL", ["settings", "managementCalendar", "supabaseUrl"], "input"],
+      ["Supabase anon key", ["settings", "managementCalendar", "anonKey"], "textarea"],
+      ["Tabla cierres/vacaciones", ["settings", "managementCalendar", "closuresTable"], "input"],
+      ["Tabla cursos", ["settings", "managementCalendar", "coursesTable"], "input"],
+      ["Importar cierres", ["settings", "managementCalendar", "includeClosures"], "booleanText"],
+      ["Importar cursos", ["settings", "managementCalendar", "includeCourses"], "booleanText"]
+    ]
+  },
+  {
     title: "Estilo visual",
     help: "Elige una paleta sugerida, el contraste de la foto principal y efectos especiales temporales como Navidad, otoÃ±o, carnaval, DÃ­a de la Mujer o luto.",
     fields: [
@@ -1463,11 +1476,14 @@ function renderCustom() {
 function renderEvents() {
   const editor = document.querySelector("#editor");
   const events = data.settings.events || [];
+  const importedEvents = events.filter((event) => event.source === "management").length;
+  const calendarConfig = managementCalendarConfig();
   if (currentEventIndex !== null && currentEventIndex > events.length - 1) currentEventIndex = null;
   const selected = currentEventIndex === null ? null : events[currentEventIndex];
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions event-bulk-actions">
       <button id="add-event" class="primary" type="button">Añadir evento</button>
+      <button id="sync-management-calendar" class="primary" type="button">Importar desde gestión</button>
       <label>Duplicar todo a <input id="copy-events-year" type="number" min="2026" max="2100" value="${new Date().getFullYear() + 1}" /></label>
       <label>Método <select id="copy-events-mode">
         <option value="smart">Inteligente: conservar patrón semanal</option>
@@ -1476,6 +1492,20 @@ function renderEvents() {
       </select></label>
       <button id="copy-events" type="button">Duplicar calendario</button>
     </div>`)}
+    <article class="editor-group calendar-sync-card" data-mobile-keep-open="true">
+      <header>
+        <div>
+          <h3>Calendario conectado</h3>
+          <p>La fuente buena es el sistema de gestión. Este admin importa una copia publicable para la web y conserva los eventos manuales como respaldo.</p>
+        </div>
+      </header>
+      <div class="calendar-sync-status">
+        <div><strong>${calendarConfig.enabled ? "Conexión preparada" : "Conexión desactivada"}</strong><span>${calendarConfig.supabaseUrl ? escapeHtml(calendarConfig.supabaseUrl) : "Configura la conexión en Ajustes."}</span></div>
+        <div><strong>${importedEvents}</strong><span>eventos importados de gestión</span></div>
+        <div><strong>${escapeHtml(data.settings.managementCalendar?.lastSync || "Sin sincronizar")}</strong><span>última importación</span></div>
+      </div>
+      <p class="calendar-sync-note">Si cambias vacaciones/cierres/cursos en el sistema de gestión, pulsa “Importar desde gestión” y después “Publicar en GitHub” para actualizar la web pública.</p>
+    </article>
     ${events.length ? `
       <div class="events-workspace">
         <div class="events-editor">
@@ -1483,8 +1513,8 @@ function renderEvents() {
         </div>
         <aside class="events-sidebar">
           <header>
-            <h3>Eventos</h3>
-            <p>Resumen rápido con colores asignados.</p>
+            <h3>Calendario</h3>
+            <p>Resumen rápido con colores, origen y fechas.</p>
           </header>
           <div class="events-mini-list">
             ${events.map(eventMiniCard).join("")}
@@ -1496,6 +1526,7 @@ function renderEvents() {
   bindFields(editor);
   document.querySelector("#add-event").addEventListener("click", addEvent);
   document.querySelector("#copy-events").addEventListener("click", copyEventsToYear);
+  document.querySelector("#sync-management-calendar").addEventListener("click", importManagementCalendar);
   editor.querySelectorAll("[data-select-event]").forEach((button) => {
     button.addEventListener("click", () => {
       currentEventIndex = Number(button.dataset.selectEvent);
@@ -1541,8 +1572,10 @@ function eventTemplate(event, index) {
   const repeatDates = generatedRepeatDates(event);
   const excludedDates = Array.isArray(event.excludedDates) ? event.excludedDates.filter(Boolean).sort() : [];
   const groups = [{
-    title: `Evento ${index + 1}`,
-    help: "Puedes usar rango inicio/fin, días sueltos, o repetición cada X días. Para una clase quincenal usa repetición cada 15 días.",
+    title: `Calendario ${index + 1}${event.source === "management" ? " · importado de gestión" : ""}`,
+    help: event.source === "management"
+      ? "Este evento viene del sistema de gestión. Puedes ajustar cómo se muestra en la web, pero si vuelves a importar se actualizará desde gestión."
+      : "Puedes usar rango inicio/fin, días sueltos, o repetición cada X días. Para una clase quincenal usa repetición cada 15 días.",
     fields: [
       ["Activo", [...base, "enabled"], "booleanText"],
       ["Fecha inicio", [...base, "start"], "date"],
@@ -1686,7 +1719,8 @@ function eventSummary(event) {
     repeat,
     location: event.location || "",
     color: event.color || "#1f6fa9",
-    enabled: event.enabled !== false
+    enabled: event.enabled !== false,
+    source: event.source === "management" ? "Gestión" : "Manual"
   };
 }
 
@@ -1702,7 +1736,7 @@ function eventMiniCard(event, index) {
       </span>
     </button>
     <div class="event-mini__actions">
-      <span>${summary.enabled ? "Activo" : "Oculto"}</span>
+      <span>${summary.source} · ${summary.enabled ? "Activo" : "Oculto"}</span>
       <button type="button" data-remove-event="${index}">Eliminar</button>
     </div>
   </article>`;
@@ -2282,6 +2316,178 @@ function kenshiInboxConfig() {
     emailWebhookUrl: String(config.emailWebhookUrl || "").trim(),
     directoryCsvUrl: String(config.directoryCsvUrl || defaultDirectoryCsvUrl).trim()
   };
+}
+
+function managementCalendarConfig() {
+  const testimonialConfig = testimonialInboxConfig();
+  const kenshiConfig = kenshiInboxConfig();
+  const config = data.settings.managementCalendar || {};
+  return {
+    enabled: config.enabled === true || config.enabled === "true",
+    supabaseUrl: String(config.supabaseUrl || kenshiConfig.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
+    anonKey: String(config.anonKey || kenshiConfig.anonKey || testimonialConfig.anonKey || "").trim(),
+    closuresTable: config.closuresTable || "skbc_calendar_closures",
+    coursesTable: config.coursesTable || "courses",
+    includeClosures: config.includeClosures !== false && config.includeClosures !== "false",
+    includeCourses: config.includeCourses !== false && config.includeCourses !== "false"
+  };
+}
+
+async function importManagementCalendar() {
+  const config = managementCalendarConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
+    setStatus("Activa y configura Calendario conectado al sistema de gestión en Ajustes.", "danger");
+    return;
+  }
+  if (!supabaseSession()?.access_token) {
+    setStatus("Conecta Supabase una vez desde el Panel antes de importar el calendario de gestión.", "danger");
+    return;
+  }
+  try {
+    setStatus("Importando calendario desde el sistema de gestión...", "warning");
+    const [closures, courses] = await Promise.all([
+      config.includeClosures ? fetchManagementRows(config, config.closuresTable, "select=id,starts_on,ends_on,title,applies_to,notes,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : [],
+      config.includeCourses ? fetchManagementRows(config, config.coursesTable, "select=id,kind,course_date,location,title,sensei,notes,created_at&order=course_date.asc&limit=2000") : []
+    ]);
+    const imported = [
+      ...closures.map(managementClosureToEvent),
+      ...managementCoursesToEvents(courses)
+    ].filter(Boolean);
+    const previousImported = new Map((data.settings.events || [])
+      .filter((event) => event.source === "management" && event.sourceKey)
+      .map((event) => [event.sourceKey, event]));
+    const mergedImported = imported.map((event) => mergeImportedEvent(previousImported.get(event.sourceKey), event));
+    const manualEvents = (data.settings.events || []).filter((event) => event.source !== "management");
+    if (!data.settings.managementCalendar) data.settings.managementCalendar = {};
+    data.settings.managementCalendar.enabled = true;
+    data.settings.managementCalendar.supabaseUrl = config.supabaseUrl;
+    data.settings.managementCalendar.anonKey = config.anonKey;
+    data.settings.managementCalendar.closuresTable = config.closuresTable;
+    data.settings.managementCalendar.coursesTable = config.coursesTable;
+    data.settings.managementCalendar.includeClosures = config.includeClosures;
+    data.settings.managementCalendar.includeCourses = config.includeCourses;
+    data.settings.managementCalendar.lastSync = new Date().toISOString().slice(0, 19).replace("T", " ");
+    data.settings.events = [...manualEvents, ...mergedImported].sort(compareEventsForAdmin);
+    currentEventIndex = null;
+    markDirty();
+    setStatus(`Calendario importado: ${mergedImported.length} evento(s) desde gestión. Pulsa Publicar en GitHub para actualizar la web.`, "ok");
+    renderEvents();
+  } catch (error) {
+    setStatus(`No se pudo importar el calendario de gestión: ${error.message}`, "danger");
+  }
+}
+
+async function fetchManagementRows(config, table, query) {
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/${table}?${query}`, {
+    headers: supabaseHeaders(supabaseSession(), config)
+  });
+  const rows = await response.json().catch(() => ([]));
+  if (!response.ok) throw new Error(friendlySupabaseError(rows, `No se pudo leer ${table}.`));
+  return Array.isArray(rows) ? rows : [];
+}
+
+function managementClosureToEvent(row) {
+  const title = row.title || "Cierre del club";
+  const description = [row.notes, row.applies_to && row.applies_to !== "all" ? `Aplica a: ${row.applies_to}` : ""].filter(Boolean).join(" · ");
+  return {
+    enabled: row.active !== false,
+    source: "management",
+    sourceTable: "skbc_calendar_closures",
+    sourceId: row.id,
+    sourceKey: `closure:${row.id}`,
+    type: isVacationTitle(title) ? "vacation" : "closure",
+    visibility: "public",
+    start: row.starts_on,
+    end: row.ends_on || row.starts_on,
+    color: isVacationTitle(title) ? "#b31b78" : "#6b7280",
+    location: "SKBC GIPUZKOA",
+    dates: [],
+    repeat: { enabled: false, start: row.starts_on, until: row.ends_on || row.starts_on, everyDays: "15" },
+    languages: calendarLanguages(title, description)
+  };
+}
+
+function managementCoursesToEvents(rows) {
+  const grouped = new Map();
+  rows.forEach((row) => {
+    if (!row.course_date) return;
+    const title = row.title || courseKindTitle(row.kind);
+    const key = [
+      row.kind || "course",
+      row.course_date,
+      normalizeKenshiName(title),
+      normalizeKenshiName(row.location || ""),
+      normalizeKenshiName(row.sensei || "")
+    ].join("|");
+    if (!grouped.has(key)) grouped.set(key, { ...row, title, attendees: 0, ids: [] });
+    const group = grouped.get(key);
+    group.attendees += 1;
+    group.ids.push(row.id);
+  });
+  return Array.from(grouped.values()).map((row) => {
+    const detail = [
+      row.sensei ? `Sensei: ${row.sensei}` : "",
+      row.notes || "",
+      row.attendees > 1 ? `${row.attendees} participantes registrados` : ""
+    ].filter(Boolean).join(" · ");
+    return {
+      enabled: true,
+      source: "management",
+      sourceTable: "courses",
+      sourceId: row.ids?.[0] || row.id,
+      sourceKey: `course:${row.kind || "course"}:${row.course_date}:${normalizeKenshiName(row.title)}:${normalizeKenshiName(row.location || "")}:${normalizeKenshiName(row.sensei || "")}`,
+      type: row.kind || "course",
+      visibility: "public",
+      start: row.course_date,
+      end: row.course_date,
+      color: courseKindColor(row.kind),
+      location: row.location || "",
+      dates: [],
+      repeat: { enabled: false, start: row.course_date, until: row.course_date, everyDays: "15" },
+      languages: calendarLanguages(row.title, detail)
+    };
+  });
+}
+
+function mergeImportedEvent(previous, next) {
+  if (!previous) return next;
+  return {
+    ...next,
+    enabled: previous.enabled !== false,
+    color: previous.color || next.color,
+    visibility: previous.visibility || next.visibility
+  };
+}
+
+function compareEventsForAdmin(a, b) {
+  return String(a.start || "").localeCompare(String(b.start || ""))
+    || String(a.languages?.es?.title || "").localeCompare(String(b.languages?.es?.title || ""));
+}
+
+function calendarLanguages(title, description = "") {
+  return {
+    es: { title, description },
+    eu: { title, description },
+    en: { title, description }
+  };
+}
+
+function courseKindTitle(kind) {
+  if (kind === "international") return "Curso internacional";
+  if (kind === "taikai") return "Taikai";
+  if (kind === "national") return "Curso nacional";
+  return "Curso";
+}
+
+function courseKindColor(kind) {
+  if (kind === "international") return "#1f6fa9";
+  if (kind === "taikai") return "#c52727";
+  if (kind === "national") return "#1fa86a";
+  return "#c9a646";
+}
+
+function isVacationTitle(title) {
+  return /vacacion|verano|navidad|semana santa|opor|uda|gabon/i.test(normalizeKenshiName(title));
 }
 
 function kenshiDirectoryTable() {
@@ -4438,7 +4644,7 @@ async function confirmNoPublishedCriticalContentWillDisappear(remote, contentDat
       nextCount: contentData.settings?.news?.length || 0
     },
     {
-      label: "Eventos",
+      label: "Calendario",
       remoteCount: remote.settings?.events?.length || 0,
       nextCount: contentData.settings?.events?.length || 0
     },

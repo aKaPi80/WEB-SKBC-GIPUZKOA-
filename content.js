@@ -1003,6 +1003,16 @@ window.SKBC_CONTENT = {
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "table": "skbc_kenshi_members",
       "emailWebhookUrl": "https://script.google.com/macros/s/AKfycbzItZhZGJrHe5B4IMZTRLfsbqYplIIWJtO8h47UplZUvTAhnl3wnZRP7PvOZwDulmR8/exec"
+    },
+    "managementCalendar": {
+      "enabled": true,
+      "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
+      "closuresTable": "skbc_calendar_closures",
+      "coursesTable": "courses",
+      "includeClosures": true,
+      "includeCourses": true,
+      "lastSync": ""
     }
   },
   "languages": {

@@ -1212,6 +1212,46 @@ button.danger {
   font-weight: 750;
 }
 
+.calendar-sync-card {
+  border-color: #cfe0ef;
+  background: #f8fbff;
+}
+
+.calendar-sync-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px 18px 6px;
+}
+
+.calendar-sync-status div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.calendar-sync-status strong {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.calendar-sync-status span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.calendar-sync-note {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .news-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
@@ -1931,6 +1971,15 @@ button.danger {
 
   .events-workspace {
     grid-template-columns: 1fr;
+  }
+
+  .calendar-sync-status {
+    grid-template-columns: 1fr;
+    padding: 14px 14px 6px;
+  }
+
+  .calendar-sync-note {
+    padding: 0 14px 14px;
   }
 
   .news-workspace {

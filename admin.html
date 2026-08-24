@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
-    <link rel="stylesheet" href="admin.css?v=20260823-admin-clear-private" />
+    <link rel="stylesheet" href="admin.css?v=20260824-calendar-management" />
     <style>
       .admin-login {
         display: grid;
@@ -109,7 +109,7 @@
               <option value="eu">Euskera</option>
               <option value="en">Inglés</option>
               <option value="people">Personas</option>
-              <option value="events">Eventos</option>
+              <option value="events">Calendario</option>
               <option value="news">Noticias</option>
               <option value="leads">Contactos</option>
               <option value="testimonials">Testimonios</option>
@@ -127,7 +127,7 @@
           <button class="tab" data-panel="eu" type="button">Euskera</button>
           <button class="tab" data-panel="en" type="button">Inglés</button>
           <button class="tab" data-panel="people" type="button">Personas</button>
-          <button class="tab" data-panel="events" type="button">Eventos</button>
+          <button class="tab" data-panel="events" type="button">Calendario</button>
           <button class="tab" data-panel="news" type="button">Noticias</button>
           <button class="tab" data-panel="leads" type="button">Contactos</button>
           <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
@@ -171,7 +171,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260823-admin-clear-private";
+          script.src = "admin.js?v=20260824-calendar-management";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }
