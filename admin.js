@@ -124,15 +124,15 @@ const settingsGroups = [
   },
   {
     title: "Calendario conectado al sistema de gestión",
-    help: "Permite importar cierres, vacaciones, festivos y cursos desde el sistema de gestión SKBC. La web mantiene una copia publicada como respaldo.",
+    help: "Permite importar cierres, vacaciones, festivos y eventos públicos planificados desde el sistema de gestión SKBC. No usa la tabla histórica de cursos de alumnos.",
     fields: [
       ["Conexión activa", ["settings", "managementCalendar", "enabled"], "booleanText"],
       ["Supabase URL", ["settings", "managementCalendar", "supabaseUrl"], "input"],
       ["Supabase anon key", ["settings", "managementCalendar", "anonKey"], "textarea"],
       ["Tabla cierres/vacaciones", ["settings", "managementCalendar", "closuresTable"], "input"],
-      ["Tabla cursos", ["settings", "managementCalendar", "coursesTable"], "input"],
+      ["Tabla eventos públicos", ["settings", "managementCalendar", "publicEventsTable"], "input"],
       ["Importar cierres", ["settings", "managementCalendar", "includeClosures"], "booleanText"],
-      ["Importar cursos", ["settings", "managementCalendar", "includeCourses"], "booleanText"]
+      ["Importar eventos públicos", ["settings", "managementCalendar", "includePublicEvents"], "booleanText"]
     ]
   },
   {
@@ -1496,7 +1496,7 @@ function renderEvents() {
       <header>
         <div>
           <h3>Calendario conectado</h3>
-          <p>La fuente buena es el sistema de gestión. Este admin importa una copia publicable para la web y conserva los eventos manuales como respaldo.</p>
+          <p>La fuente buena para eventos públicos futuros es el sistema de gestión. Este admin importa una copia publicable para la web y conserva los eventos manuales como respaldo.</p>
         </div>
       </header>
       <div class="calendar-sync-status">
@@ -1504,7 +1504,7 @@ function renderEvents() {
         <div><strong>${importedEvents}</strong><span>eventos importados de gestión</span></div>
         <div><strong>${escapeHtml(data.settings.managementCalendar?.lastSync || "Sin sincronizar")}</strong><span>última importación</span></div>
       </div>
-      <p class="calendar-sync-note">Si cambias vacaciones/cierres/cursos en el sistema de gestión, pulsa “Importar desde gestión” y después “Publicar en GitHub” para actualizar la web pública.</p>
+      <p class="calendar-sync-note">Si cambias vacaciones, cierres o eventos públicos planificados en el sistema de gestión, pulsa “Importar desde gestión” y después “Publicar en GitHub” para actualizar la web pública.</p>
     </article>
     ${events.length ? `
       <div class="events-workspace">
@@ -2327,9 +2327,9 @@ function managementCalendarConfig() {
     supabaseUrl: String(config.supabaseUrl || kenshiConfig.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
     anonKey: String(config.anonKey || kenshiConfig.anonKey || testimonialConfig.anonKey || "").trim(),
     closuresTable: config.closuresTable || "skbc_calendar_closures",
-    coursesTable: config.coursesTable || "courses",
+    publicEventsTable: config.publicEventsTable || "skbc_public_calendar_events",
     includeClosures: config.includeClosures !== false && config.includeClosures !== "false",
-    includeCourses: config.includeCourses !== false && config.includeCourses !== "false"
+    includePublicEvents: config.includePublicEvents !== false && config.includePublicEvents !== "false"
   };
 }
 
@@ -2345,13 +2345,13 @@ async function importManagementCalendar() {
   }
   try {
     setStatus("Importando calendario desde el sistema de gestión...", "warning");
-    const [closures, courses] = await Promise.all([
+    const [closures, publicEvents] = await Promise.all([
       config.includeClosures ? fetchManagementRows(config, config.closuresTable, "select=id,starts_on,ends_on,title,applies_to,notes,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : [],
-      config.includeCourses ? fetchManagementRows(config, config.coursesTable, "select=id,kind,course_date,location,title,sensei,notes,created_at&order=course_date.asc&limit=2000") : []
+      config.includePublicEvents ? fetchManagementRows(config, config.publicEventsTable, "select=id,starts_on,ends_on,title,description,location,color,kind,visibility,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : []
     ]);
     const imported = [
       ...closures.map(managementClosureToEvent),
-      ...managementCoursesToEvents(courses)
+      ...publicEvents.map(managementPublicEventToEvent)
     ].filter(Boolean);
     const previousImported = new Map((data.settings.events || [])
       .filter((event) => event.source === "management" && event.sourceKey)
@@ -2363,9 +2363,9 @@ async function importManagementCalendar() {
     data.settings.managementCalendar.supabaseUrl = config.supabaseUrl;
     data.settings.managementCalendar.anonKey = config.anonKey;
     data.settings.managementCalendar.closuresTable = config.closuresTable;
-    data.settings.managementCalendar.coursesTable = config.coursesTable;
+    data.settings.managementCalendar.publicEventsTable = config.publicEventsTable;
     data.settings.managementCalendar.includeClosures = config.includeClosures;
-    data.settings.managementCalendar.includeCourses = config.includeCourses;
+    data.settings.managementCalendar.includePublicEvents = config.includePublicEvents;
     data.settings.managementCalendar.lastSync = new Date().toISOString().slice(0, 19).replace("T", " ");
     data.settings.events = [...manualEvents, ...mergedImported].sort(compareEventsForAdmin);
     currentEventIndex = null;
@@ -2407,46 +2407,26 @@ function managementClosureToEvent(row) {
   };
 }
 
-function managementCoursesToEvents(rows) {
-  const grouped = new Map();
-  rows.forEach((row) => {
-    if (!row.course_date) return;
-    const title = row.title || courseKindTitle(row.kind);
-    const key = [
-      row.kind || "course",
-      row.course_date,
-      normalizeKenshiName(title),
-      normalizeKenshiName(row.location || ""),
-      normalizeKenshiName(row.sensei || "")
-    ].join("|");
-    if (!grouped.has(key)) grouped.set(key, { ...row, title, attendees: 0, ids: [] });
-    const group = grouped.get(key);
-    group.attendees += 1;
-    group.ids.push(row.id);
-  });
-  return Array.from(grouped.values()).map((row) => {
-    const detail = [
-      row.sensei ? `Sensei: ${row.sensei}` : "",
-      row.notes || "",
-      row.attendees > 1 ? `${row.attendees} participantes registrados` : ""
-    ].filter(Boolean).join(" · ");
-    return {
-      enabled: true,
-      source: "management",
-      sourceTable: "courses",
-      sourceId: row.ids?.[0] || row.id,
-      sourceKey: `course:${row.kind || "course"}:${row.course_date}:${normalizeKenshiName(row.title)}:${normalizeKenshiName(row.location || "")}:${normalizeKenshiName(row.sensei || "")}`,
-      type: row.kind || "course",
-      visibility: "public",
-      start: row.course_date,
-      end: row.course_date,
-      color: courseKindColor(row.kind),
-      location: row.location || "",
-      dates: [],
-      repeat: { enabled: false, start: row.course_date, until: row.course_date, everyDays: "15" },
-      languages: calendarLanguages(row.title, detail)
-    };
-  });
+function managementPublicEventToEvent(row) {
+  if (!row.starts_on) return null;
+  const title = row.title || "Evento SKBC GIPUZKOA";
+  const kind = row.kind || "event";
+  return {
+    enabled: row.active !== false,
+    source: "management",
+    sourceTable: "skbc_public_calendar_events",
+    sourceId: row.id,
+    sourceKey: `public:${row.id}`,
+    type: kind,
+    visibility: row.visibility || "public",
+    start: row.starts_on,
+    end: row.ends_on || row.starts_on,
+    color: row.color || publicEventKindColor(kind),
+    location: row.location || "",
+    dates: [],
+    repeat: { enabled: false, start: row.starts_on, until: row.ends_on || row.starts_on, everyDays: "15" },
+    languages: calendarLanguages(title, row.description || "")
+  };
 }
 
 function mergeImportedEvent(previous, next) {
@@ -2472,17 +2452,12 @@ function calendarLanguages(title, description = "") {
   };
 }
 
-function courseKindTitle(kind) {
-  if (kind === "international") return "Curso internacional";
-  if (kind === "taikai") return "Taikai";
-  if (kind === "national") return "Curso nacional";
-  return "Curso";
-}
-
-function courseKindColor(kind) {
+function publicEventKindColor(kind) {
   if (kind === "international") return "#1f6fa9";
   if (kind === "taikai") return "#c52727";
   if (kind === "national") return "#1fa86a";
+  if (kind === "vacation") return "#b31b78";
+  if (kind === "closure") return "#6b7280";
   return "#c9a646";
 }
 

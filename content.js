@@ -1009,9 +1009,9 @@ window.SKBC_CONTENT = {
       "supabaseUrl": "https://wucxazuhrgokvtajqmsr.supabase.co",
       "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1Y3hhenVocmdva3Z0YWpxbXNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MjQzODQsImV4cCI6MjA5MzUwMDM4NH0.8Lg_0b7TSNEt69Uwv_1YQjJW5InFEZ3j3JXWQ1ZaYEU",
       "closuresTable": "skbc_calendar_closures",
-      "coursesTable": "courses",
+      "publicEventsTable": "skbc_public_calendar_events",
       "includeClosures": true,
-      "includeCourses": true,
+      "includePublicEvents": true,
       "lastSync": ""
     }
   },
