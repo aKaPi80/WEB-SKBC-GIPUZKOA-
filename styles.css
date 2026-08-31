@@ -12,6 +12,17 @@
   --radius: 8px;
 }
 
+.skbc-antispam {
+  position: absolute !important;
+  left: -10000px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 [data-theme="azul"] {
   --ink: #101923;
   --dark: #162332;

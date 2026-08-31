@@ -25,7 +25,7 @@
     <link rel="icon" href="assets/logo-skbc.png" />
     <link rel="apple-touch-icon" href="assets/logo-skbc.png" />
     <link rel="preload" as="image" href="assets/optimized/1780955986965-chatgpt-image-8-jun-2026-23-59-12.webp" />
-    <link rel="stylesheet" href="styles.css?v=20260623-kenshi-ficha-link-button" />
+    <link rel="stylesheet" href="styles.css?v=20260831-antispam-public-forms" />
     <script type="application/ld+json" id="structured-data">
       {
         "@context": "https://schema.org",
@@ -137,6 +137,8 @@
             <label>Relación con el club<input name="relationship" placeholder="Alumno/a, familia, antiguo alumno..." /></label>
             <label>Grado o nivel<input name="grade" /></label>
             <label>Mensaje<textarea name="message" rows="3"></textarea></label>
+            <label class="skbc-antispam" aria-hidden="true" tabindex="-1">Deja este campo vacio<input name="website_url" tabindex="-1" autocomplete="off" /></label>
+            <input type="hidden" name="form_started_at" value="0" />
             <button class="button" type="submit">Solicitar acceso</button>
           </form>
           <div class="kenshi-private-panel" hidden>
@@ -150,6 +152,6 @@
 
     <a class="whatsapp-float" data-whatsapp="general" target="_blank" rel="noreferrer"></a>
 
-    <script src="app.js?v=20260623-kenshi-ficha-link-button"></script>
+    <script src="app.js?v=20260831-antispam-public-forms"></script>
   </body>
 </html>

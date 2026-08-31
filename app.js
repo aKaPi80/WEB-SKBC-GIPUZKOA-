@@ -5,6 +5,8 @@ const state = {
   merchCart: []
 };
 
+const formStartedAt = Date.now();
+
 function loadContent() {
   return window.SKBC_CONTENT;
 }
@@ -654,6 +656,7 @@ function testimonialsSection(copy) {
       <label>${copy.testimonials.rating || "Valoración"}<select name="rating">${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${value} / 5</option>`).join("")}</select></label>
       <label>${copy.testimonials.message || "Testimonio"}<textarea name="message" rows="4" required></textarea></label>
       <label>${copy.testimonials.photo || "Foto opcional"}<input name="photo" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+      ${antiSpamFields("testimonial")}
       <p>${copy.testimonials.consent || ""}</p>
       <button class="button" type="submit">${copy.testimonials.submit || "Enviar testimonio"}</button>
     </form>
@@ -685,6 +688,7 @@ function kenshiSection(copy) {
         <label>${kenshi.relationship || "Relacion con el club"}<select name="relationship">${relationships.map((option) => `<option>${escapeHtml(option)}</option>`).join("")}</select></label>
         <label>${kenshi.grade || "Grado o nivel"}<input name="grade" /></label>
         <label>${kenshi.message || "Mensaje"}<textarea name="message" rows="4"></textarea></label>
+        ${antiSpamFields("kenshi-request")}
         <button class="button" type="submit">${kenshi.submit || "Enviar solicitud"}</button>
         <p class="kenshi-form-status" aria-live="polite"></p>
       </form>
@@ -821,6 +825,38 @@ function postPrivateNotification(type, subject, lines, payload = {}) {
       ...payload
     })
   }).catch(() => {});
+}
+
+function antiSpamFields(context = "form") {
+  return `
+    <label class="skbc-antispam" aria-hidden="true" tabindex="-1">
+      Deja este campo vacio
+      <input name="website_url" tabindex="-1" autocomplete="off" data-skbc-honeypot="${escapeHtml(context)}" />
+    </label>
+    <input type="hidden" name="form_started_at" value="${formStartedAt}" />
+  `;
+}
+
+function verifyPublicForm(formElement, kind, options = {}) {
+  const form = new FormData(formElement);
+  const honeypot = String(form.get("website_url") || "").trim();
+  const started = Number(form.get("form_started_at") || formStartedAt);
+  const elapsed = Date.now() - (Number.isFinite(started) ? started : formStartedAt);
+  const minMs = options.minMs || 2500;
+  const cooldownMs = options.cooldownMs || 45000;
+  const cooldownKey = `skbc_form_cooldown_${kind}`;
+  const lastSent = Number(localStorage.getItem(cooldownKey) || 0);
+  if (honeypot) {
+    throw new Error("Solicitud bloqueada por seguridad.");
+  }
+  if (elapsed < minMs) {
+    throw new Error("Espera unos segundos antes de enviar el formulario.");
+  }
+  if (lastSent && Date.now() - lastSent < cooldownMs) {
+    const seconds = Math.ceil((cooldownMs - (Date.now() - lastSent)) / 1000);
+    throw new Error(`Espera ${seconds} segundo(s) antes de volver a enviar.`);
+  }
+  localStorage.setItem(cooldownKey, String(Date.now()));
 }
 
 async function submitLeadToSupabase(lead) {
@@ -1264,6 +1300,7 @@ function merchSection(settings, copy) {
           <label>${copy.merch.customReference}<input name="customReference" /></label>
           <label>${copy.merch.customDetails}<textarea name="customDetails" rows="3"></textarea></label>
           <label>${copy.merch.comments}<textarea name="comments" rows="3"></textarea></label>
+          ${antiSpamFields("merch-order")}
           <p><strong>${copy.merch.noteTitle}:</strong> ${settings.merch?.note || ""}</p>
           <button class="button" type="submit">${copy.merch.send}</button>
           <p class="merch-form-status" aria-live="polite"></p>
@@ -1902,6 +1939,7 @@ function render() {
           <label>${copy.contact.email || "Email"}<input name="email" type="email" /></label>
           <label>${copy.contact.interest}<select name="interest">${copy.contact.options.map((option) => `<option>${option}</option>`).join("")}</select></label>
           <label>${copy.contact.message}<textarea name="message" rows="4" required></textarea></label>
+          ${antiSpamFields("contact")}
           <button class="button" type="submit">${copy.contact.submit}</button>
         </form>
       </div>
@@ -1912,6 +1950,12 @@ function render() {
 
   document.querySelector(".contact-form").addEventListener("submit", async (event) => {
     event.preventDefault();
+    try {
+      verifyPublicForm(event.currentTarget, "contact", { minMs: 3000, cooldownMs: 60000 });
+    } catch (error) {
+      alert(error.message || "No se pudo enviar el formulario.");
+      return;
+    }
     const data = new FormData(event.currentTarget);
     const lead = {
       name: String(data.get("name") || "").trim(),
@@ -1949,6 +1993,12 @@ function bindTestimonials(copy) {
   document.querySelector(".testimonial-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const formElement = event.currentTarget;
+    try {
+      verifyPublicForm(formElement, "testimonial", { minMs: 3500, cooldownMs: 120000 });
+    } catch (error) {
+      alert(error.message || "No se pudo enviar el testimonio.");
+      return;
+    }
     const form = new FormData(formElement);
     const photoFile = form.get("photo");
     const payload = {
@@ -1991,6 +2041,14 @@ function bindKenshi(copy) {
     event.preventDefault();
     const formElement = event.currentTarget;
     const status = formElement.querySelector(".kenshi-form-status");
+    try {
+      verifyPublicForm(formElement, "kenshi-request", { minMs: 4000, cooldownMs: 300000 });
+    } catch (error) {
+      const message = error.message || "No se pudo enviar la solicitud.";
+      if (status) status.textContent = message;
+      alert(message);
+      return;
+    }
     const form = new FormData(formElement);
     const request = {
       full_name: String(form.get("full_name") || "").trim(),
@@ -2041,6 +2099,12 @@ function bindKenshiPortal(copy) {
   });
   modal.querySelector('[data-kenshi-form="register"]')?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    try {
+      verifyPublicForm(event.currentTarget, "kenshi-register", { minMs: 4000, cooldownMs: 300000 });
+    } catch (error) {
+      if (status) status.textContent = error.message || "No se pudo enviar el registro.";
+      return;
+    }
     const form = new FormData(event.currentTarget);
     const request = {
       full_name: String(form.get("full_name") || "").trim(),
@@ -2342,8 +2406,12 @@ function bindKenshiDashboardActions(modal, session = null, access = null) {
 }
 
 function openKenshiModal() {
-  document.querySelector("#kenshiModal")?.classList.add("is-open");
-  document.querySelector("#kenshiModal")?.setAttribute("aria-hidden", "false");
+  const modal = document.querySelector("#kenshiModal");
+  modal?.querySelectorAll('input[name="form_started_at"]').forEach((input) => {
+    input.value = String(Date.now());
+  });
+  modal?.classList.add("is-open");
+  modal?.setAttribute("aria-hidden", "false");
 }
 
 function closeKenshiModal() {
@@ -2451,6 +2519,14 @@ function bindMerch(copy = t()) {
     event.preventDefault();
     const formElement = event.currentTarget;
     const statusElement = formElement.querySelector(".merch-form-status");
+    try {
+      verifyPublicForm(formElement, "merch-order", { minMs: 4000, cooldownMs: 180000 });
+    } catch (error) {
+      const message = error.message || "No se pudo enviar el pedido.";
+      if (statusElement) statusElement.textContent = message;
+      alert(message);
+      return;
+    }
     const form = new FormData(formElement);
     const order = merchOrderFromForm(form);
     if (!order.items.length && !order.custom_reference && !order.custom_details) {
