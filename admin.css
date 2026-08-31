@@ -1212,6 +1212,197 @@ button.danger {
   font-weight: 750;
 }
 
+.events-calendar-panel header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.event-year-picker {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.event-year-picker select {
+  min-width: 104px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 9px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.event-year-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  background: #f7fafc;
+}
+
+.event-year-stats div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border: 1px solid #e5e8e2;
+  border-radius: 7px;
+  padding: 9px;
+  background: #fff;
+}
+
+.event-year-stats strong {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.event-year-stats span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.event-mini-calendar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #fff, #fbfcfa);
+}
+
+.event-mini-month {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: #fff;
+}
+
+.event-mini-month header {
+  position: static;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 0 0 7px;
+  border: 0;
+  background: transparent;
+}
+
+.event-mini-month header strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 950;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-mini-month header span {
+  min-width: 22px;
+  border-radius: 999px;
+  padding: 3px 6px;
+  color: #fff;
+  background: var(--dark);
+  font-size: 10px;
+  font-weight: 950;
+  text-align: center;
+}
+
+.event-weekdays,
+.event-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.event-weekdays span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 950;
+  text-align: center;
+}
+
+.event-days {
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.event-day {
+  display: grid;
+  min-width: 0;
+  min-height: 25px;
+  place-items: center;
+  border: 1px solid #edf0ea;
+  border-radius: 5px;
+  padding: 0;
+  color: var(--ink);
+  background: #fafbf9;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.event-day.empty {
+  border-color: transparent;
+  background: transparent;
+}
+
+.event-day.has-event {
+  cursor: pointer;
+  border-color: rgba(31, 111, 169, .24);
+  background: #f4faff;
+}
+
+.event-day.has-event:hover,
+.event-day.has-event:focus-visible {
+  outline: 2px solid rgba(31, 111, 169, .22);
+  background: #eaf5ff;
+}
+
+.event-day i {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  min-height: 5px;
+  margin-top: -2px;
+  font-style: normal;
+}
+
+.event-day b {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--dot);
+}
+
+.events-mini-list--compact {
+  padding-top: 10px;
+}
+
+.events-mini-list--compact h4 {
+  margin: 0 0 2px;
+  padding: 0 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
 .calendar-sync-card {
   border-color: #cfe0ef;
   background: #f8fbff;
@@ -2280,6 +2471,18 @@ button.danger {
   .news-sidebar {
     display: grid;
     gap: 10px;
+  }
+
+  .events-calendar-panel header {
+    grid-template-columns: 1fr;
+  }
+
+  .event-year-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .event-mini-calendar {
+    grid-template-columns: 1fr;
   }
 
   .event-mini,

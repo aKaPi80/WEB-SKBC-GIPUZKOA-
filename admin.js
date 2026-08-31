@@ -15,6 +15,7 @@ let publishedContentSnapshot = structuredClone(data);
 let publishedContentSignature = contentSignature(publishedContentSnapshot);
 let currentPanel = "dashboard";
 let currentEventIndex = null;
+let currentEventYear = new Date().getFullYear();
 let currentNewsIndex = null;
 let dirty = false;
 let imageFrameEditor = null;
@@ -1511,15 +1512,7 @@ function renderEvents() {
         <div class="events-editor">
           ${selected ? eventTemplate(selected, currentEventIndex) : emptyEventEditor()}
         </div>
-        <aside class="events-sidebar">
-          <header>
-            <h3>Calendario</h3>
-            <p>Resumen rápido con colores, origen y fechas.</p>
-          </header>
-          <div class="events-mini-list">
-            ${events.map(eventMiniCard).join("")}
-          </div>
-        </aside>
+        ${eventCalendarPanel(events)}
       </div>
     ` : `<article class="editor-group"><header><h3>No hay eventos</h3><p>Pulsa Añadir evento para crear el calendario del club.</p></header></article>`}
   `;
@@ -1527,9 +1520,19 @@ function renderEvents() {
   document.querySelector("#add-event").addEventListener("click", addEvent);
   document.querySelector("#copy-events").addEventListener("click", copyEventsToYear);
   document.querySelector("#sync-management-calendar").addEventListener("click", importManagementCalendar);
+  editor.querySelector("#event-year-filter")?.addEventListener("change", (event) => {
+    currentEventYear = Number(event.target.value) || new Date().getFullYear();
+    renderEvents();
+  });
   editor.querySelectorAll("[data-select-event]").forEach((button) => {
     button.addEventListener("click", () => {
       currentEventIndex = Number(button.dataset.selectEvent);
+      renderEvents();
+    });
+  });
+  editor.querySelectorAll("[data-select-event-day]").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentEventIndex = Number(button.dataset.selectEventDay);
       renderEvents();
     });
   });
@@ -1724,14 +1727,104 @@ function eventSummary(event) {
   };
 }
 
-function eventMiniCard(event, index) {
+function eventDateItems(events = []) {
+  return events.flatMap((event, index) => {
+    return generatedEventDates(event).map((date) => ({
+      event,
+      index,
+      date,
+      title: event.languages?.es?.title || "Evento sin título",
+      color: event.color || "#1f6fa9",
+      enabled: event.enabled !== false,
+      source: event.source === "management" ? "Gestión" : "Manual"
+    }));
+  }).sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
+}
+
+function eventYears(events = []) {
+  const years = new Set([new Date().getFullYear()]);
+  eventDateItems(events).forEach((item) => {
+    const year = Number(item.date.slice(0, 4));
+    if (year) years.add(year);
+  });
+  return Array.from(years).sort((a, b) => a - b);
+}
+
+function eventCalendarPanel(events) {
+  const years = eventYears(events);
+  if (!years.includes(currentEventYear)) currentEventYear = years[0] || new Date().getFullYear();
+  const items = eventDateItems(events).filter((item) => Number(item.date.slice(0, 4)) === currentEventYear);
+  const months = Array.from({ length: 12 }, (_, monthIndex) => eventMiniMonth(currentEventYear, monthIndex, items));
+  const upcoming = items.filter((item) => item.date >= new Date().toISOString().slice(0, 10));
+  const visibleItems = (upcoming.length ? upcoming : items).slice(0, 18);
+  return `<aside class="events-sidebar events-calendar-panel">
+    <header>
+      <div>
+        <h3>Vista visual</h3>
+        <p>Elige año, revisa colores y pulsa un día o evento para editarlo.</p>
+      </div>
+      <label class="event-year-picker">
+        <span>Año</span>
+        <select id="event-year-filter">
+          ${years.map((year) => `<option value="${year}" ${year === currentEventYear ? "selected" : ""}>${year}</option>`).join("")}
+        </select>
+      </label>
+    </header>
+    <div class="event-year-stats">
+      <div><strong>${items.length}</strong><span>días con evento</span></div>
+      <div><strong>${events.filter((event) => generatedEventDates(event).some((date) => Number(date.slice(0, 4)) === currentEventYear)).length}</strong><span>eventos</span></div>
+      <div><strong>${items.filter((item) => item.source === "Gestión").length}</strong><span>desde gestión</span></div>
+    </div>
+    <div class="event-mini-calendar" aria-label="Calendario visual ${currentEventYear}">
+      ${months.join("")}
+    </div>
+    <div class="events-mini-list events-mini-list--compact">
+      <h4>${upcoming.length ? "Próximos del año" : "Eventos del año"}</h4>
+      ${visibleItems.length ? visibleItems.map((item) => eventMiniCard(item.event, item.index, item.date)).join("") : `<p class="empty-note">No hay eventos para ${currentEventYear}.</p>`}
+    </div>
+  </aside>`;
+}
+
+function eventMiniMonth(year, monthIndex, items) {
+  const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  const days = daysInMonth(year, monthIndex);
+  const first = new Date(year, monthIndex, 1);
+  const startOffset = (first.getDay() + 6) % 7;
+  const byDay = new Map();
+  items.forEach((item) => {
+    const date = parseDateInput(item.date);
+    if (date.getMonth() !== monthIndex) return;
+    const key = date.getDate();
+    if (!byDay.has(key)) byDay.set(key, []);
+    byDay.get(key).push(item);
+  });
+  const cells = [];
+  for (let i = 0; i < startOffset; i += 1) cells.push(`<span class="event-day empty"></span>`);
+  for (let day = 1; day <= days; day += 1) {
+    const dayItems = byDay.get(day) || [];
+    const firstItem = dayItems[0];
+    cells.push(firstItem
+      ? `<button class="event-day has-event" type="button" data-select-event-day="${firstItem.index}" title="${escapeHtml(dayItems.map((item) => item.title).join(" / "))}">
+          <span>${day}</span>
+          <i>${dayItems.slice(0, 4).map((item) => `<b style="--dot:${escapeHtml(item.color)}"></b>`).join("")}</i>
+        </button>`
+      : `<span class="event-day"><span>${day}</span></span>`);
+  }
+  return `<section class="event-mini-month">
+    <header><strong>${monthNames[monthIndex]}</strong><span>${byDay.size}</span></header>
+    <div class="event-weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+    <div class="event-days">${cells.join("")}</div>
+  </section>`;
+}
+
+function eventMiniCard(event, index, focusDate = "") {
   const summary = eventSummary(event);
   return `<article class="event-mini ${index === currentEventIndex ? "active" : ""}" style="--event-color:${summary.color}">
     <button type="button" data-select-event="${index}">
       <i></i>
       <span>
         <strong>${summary.title}</strong>
-        <small>${summary.date}${summary.repeat ? ` · ${summary.repeat}` : ""}</small>
+        <small>${focusDate || summary.date}${summary.repeat ? ` · ${summary.repeat}` : ""}</small>
         ${summary.location ? `<small>${summary.location}</small>` : ""}
       </span>
     </button>
