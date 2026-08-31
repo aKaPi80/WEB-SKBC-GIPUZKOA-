@@ -464,8 +464,8 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2026-09-10",
-        "end": "2026-09-10",
+        "start": "2026-10-15",
+        "end": "2026-10-15",
         "color": "#515176",
         "location": "Tolosa",
         "dates": [],
