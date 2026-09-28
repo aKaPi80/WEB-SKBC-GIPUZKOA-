@@ -970,11 +970,10 @@ begin
     raise exception 'explicit server-side send confirmation is required' using errcode = '22023';
   end if;
 
-  select communication, campaign.status
-    into v_communication, v_campaign_status
+  select communication.*
+    into v_communication
   from public.skbc_order_communications communication
   join public.skbc_merch_orders merch_order on merch_order.id = communication.order_id
-  join public.skbc_order_campaigns campaign on campaign.id = merch_order.campaign_id
   where communication.id = p_communication_id
     and merch_order.campaign_id = p_campaign_id
     and communication.channel = 'email'
@@ -984,6 +983,13 @@ begin
   if not found then
     raise exception 'communication does not belong to the exact campaign' using errcode = 'P0002';
   end if;
+
+  select campaign.status
+    into v_campaign_status
+  from public.skbc_order_campaigns campaign
+  join public.skbc_merch_orders merch_order on merch_order.campaign_id = campaign.id
+  where merch_order.id = v_communication.order_id
+    and campaign.id = p_campaign_id;
   if v_campaign_status <> 'closed' then
     raise exception 'campaign must be closed and reviewed before sending' using errcode = '55000';
   end if;
