@@ -1167,15 +1167,6 @@ const APPROVED_FALLBACK_CATALOG = [
   sort_order: index,
 }));
 
-function safeHttpsUrl(value) {
-  try {
-    const url = new URL(String(value || "").trim());
-    return url.protocol === "https:" ? url.href : "";
-  } catch {
-    return "";
-  }
-}
-
 function productCategory(product) {
   const category = String(product.category || "").toLowerCase();
   if (["gi", "dogi", "dogis"].includes(category)) return "gi";
@@ -1199,10 +1190,6 @@ function activeVariantPrice(variant) {
 
 function merchProductCard(product) {
   const attribution = product.image_attribution || product.metadata?.image_attribution || "Imagen orientativa generada para SKBC";
-  const sourceUrl = safeHttpsUrl(product.source_url);
-  const sourceLink = sourceUrl
-    ? `<a href="${escapeHtml(sourceUrl)}" target="_blank" rel="noreferrer">Ficha oficial Fujimae</a>`
-    : "";
   const orderable = state.merchCatalog.catalogSource !== "fallback" && productVariants(product.id).some((variant) => variant.is_orderable !== false);
   return `<article class="merch-product">
     <div class="merch-product__image">
@@ -1215,7 +1202,6 @@ function merchProductCard(product) {
       <p>${escapeHtml(product.description || "Material disponible por encargo a través del club.")}</p>
       <div class="merch-actions">
         <button class="button" type="button" data-order-product="${product.id}" ${orderable ? "" : "disabled"}>${orderable ? "Añadir al pedido" : "Pendiente de confirmación"}</button>
-        ${sourceLink}
       </div>
     </div>
   </article>`;

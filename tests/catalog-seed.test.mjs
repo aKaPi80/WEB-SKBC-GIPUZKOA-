@@ -23,7 +23,7 @@ const expectedReferences = [
   "10080",
   "10081",
 ];
-const illustrativeAttribution = "Imagen orientativa generada para SKBC; producto Fujimae consultable en la ficha oficial";
+const illustrativeAttribution = "Imagen orientativa generada para SKBC";
 
 test("approved catalog contains only the nine Fujimae gis and white belt", () => {
   const fujimae = products.filter((item) => item.brand === "Fujimae");
@@ -77,11 +77,12 @@ test("ProWear keeps its stable price and inactive temporary promotion", () => {
   }
 });
 
-test("Fujimae products use the generated illustration and preserve only official product-page sources", () => {
+test("Fujimae products use the generated illustration without exposing supplier links", () => {
   const imageBuffers = [];
 
   for (const product of products.filter((item) => item.brand === "Fujimae")) {
-    assert.match(product.source_url, /^https:\/\/fujimae\.com\/es\/vestimenta-karate\//);
+    assert.equal(product.source_url, null);
+    assert.match(product.description, /Dogi blanco/);
     assert.equal(product.image_attribution, illustrativeAttribution);
     assert.equal(product.metadata.image_attribution, illustrativeAttribution);
     assert.equal(product.metadata.image_source_type, "codex_generated");

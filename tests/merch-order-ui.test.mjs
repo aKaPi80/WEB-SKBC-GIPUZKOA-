@@ -27,10 +27,11 @@ test('catalog failure renders an approved browse-only fallback with pending conf
   assert.match(app, /variant\.is_orderable/);
 });
 
-test('product cards disclose source and generated-image attribution without prices', () => {
+test('product cards show SKBC descriptions and attribution without supplier links or prices', () => {
   const cardSource = app.slice(app.indexOf('function merchProductCard'), app.indexOf('function merchCartHtml'));
   assert.match(cardSource, /image_attribution/);
-  assert.match(cardSource, /source_url/);
+  assert.match(cardSource, /product\.description/);
+  assert.doesNotMatch(cardSource, /source_url|Ficha oficial Fujimae|href=/);
   assert.doesNotMatch(cardSource, /price_cents|unit_price_cents|money\(/);
 });
 
@@ -61,10 +62,9 @@ test('submission uses only the normalized RPC and retains the idempotency key on
   assert.match(binder, /removeSubmittedCartLines/);
 });
 
-test('official source links are sanitized through the HTTPS allowlist helper', () => {
+test('product cards never navigate customers to the supplier site', () => {
   const cardSource = app.slice(app.indexOf('function merchProductCard'), app.indexOf('function merchCartHtml'));
-  assert.match(cardSource, /safeHttpsUrl/);
-  assert.doesNotMatch(cardSource, /href="\$\{escapeHtml\(product\.source_url\)\}/);
+  assert.doesNotMatch(cardSource, /safeHttpsUrl|source_url|fujimae\.com|target="_blank"/);
 });
 
 test('ordering UI includes stable drawer states and the supplied size guide', () => {
@@ -74,5 +74,5 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.match(styles, /\.merch-status--error/);
   assert.match(styles, /\.merch-status--success/);
   assert.match(content, /Gu[ií]a de tallas/);
-  assert.match(html, /app\.js\?v=20260928-material-orders-ui/);
+  assert.match(html, /app\.js\?v=20260928-private-catalog/);
 });
