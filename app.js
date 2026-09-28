@@ -1138,7 +1138,7 @@ function money(value) {
 
 const MERCH_CATEGORIES = [
   { key: "gi", label: "Dogis" },
-  { key: "belt", label: "Cinturones" },
+  { key: "belt", label: "Obis" },
   { key: "club", label: "Ropa del club" },
   { key: "other", label: "Otros" }
 ];

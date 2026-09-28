@@ -15,7 +15,7 @@ test('public catalog is loaded only from the restricted safe catalog view', () =
   assert.doesNotMatch(loader, /select=\*/);
   assert.doesNotMatch(loader, /skbc_merch_products|skbc_merch_variants/);
   assert.match(app, /Dogis/);
-  assert.match(app, /Cinturones/);
+  assert.match(app, /Obis/);
   assert.match(app, /Ropa del club/);
   assert.match(app, /Otros/);
 });
