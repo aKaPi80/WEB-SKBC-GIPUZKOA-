@@ -1,3 +1,5 @@
+-- DEPLOYMENT BLOCKER: DO NOT DEPLOY until Task 4 atomically switches the storefront from direct inserts to this RPC.
+
 create table if not exists public.skbc_merch_orders (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -52,12 +54,19 @@ create table if not exists public.skbc_order_campaigns (
   check (extract(day from period_start) = 16)
 );
 
+create table if not exists public.skbc_merch_admins (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  created_by uuid references auth.users(id) on delete set null
+);
+
 alter table public.skbc_merch_orders
   add column if not exists order_number text,
   add column if not exists idempotency_key uuid,
   add column if not exists campaign_id uuid references public.skbc_order_campaigns(id),
   add column if not exists member_reference text,
-  add column if not exists total_cents integer;
+  add column if not exists total_cents integer,
+  add column if not exists request_hash text;
 
 create unique index if not exists skbc_merch_orders_order_number_uidx
   on public.skbc_merch_orders (order_number) where order_number is not null;
@@ -99,12 +108,47 @@ create index if not exists skbc_order_communications_order_created_idx
 
 create or replace function public.set_skbc_merch_updated_at()
 returns trigger language plpgsql
-set search_path = public, pg_temp
+set search_path = pg_catalog, public, pg_temp
 as $$
 begin
   new.updated_at := now();
   return new;
 end;
+$$;
+
+create or replace function public.is_skbc_merch_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = pg_catalog, public, pg_temp
+as $$
+  select exists (
+    select 1
+    from public.skbc_merch_admins admin_member
+    where admin_member.user_id = (select auth.uid())
+  );
+$$;
+
+create or replace function public.skbc_merch_campaign_period(p_at timestamptz)
+returns table (period_start date, period_end date)
+language sql
+stable
+set search_path = pg_catalog, public, pg_temp
+as $$
+  with madrid_day as (
+    select (p_at at time zone 'Europe/Madrid')::date as day
+  ), starts as (
+    select case
+      when extract(day from day) >= 16
+        then make_date(extract(year from day)::integer, extract(month from day)::integer, 16)
+      else (date_trunc('month', day) - interval '1 month' + interval '15 days')::date
+    end as period_start
+    from madrid_day
+  )
+  select starts.period_start,
+         (starts.period_start + interval '1 month - 1 day')::date as period_end
+  from starts;
 $$;
 
 drop trigger if exists set_skbc_merch_orders_updated_at on public.skbc_merch_orders;
@@ -126,38 +170,68 @@ alter table public.skbc_merch_variants enable row level security;
 alter table public.skbc_order_campaigns enable row level security;
 alter table public.skbc_merch_order_items enable row level security;
 alter table public.skbc_order_communications enable row level security;
+alter table public.skbc_merch_admins enable row level security;
 
 drop policy if exists "Public can submit merch orders" on public.skbc_merch_orders;
+drop policy if exists "Authenticated can read merch orders" on public.skbc_merch_orders;
+drop policy if exists "Authenticated can update merch orders" on public.skbc_merch_orders;
+drop policy if exists "Authenticated can delete merch orders" on public.skbc_merch_orders;
+drop policy if exists "Authenticated can manage merch orders" on public.skbc_merch_orders;
+drop policy if exists "Authenticated can manage merch products" on public.skbc_merch_products;
+drop policy if exists "Authenticated can manage merch variants" on public.skbc_merch_variants;
+drop policy if exists "Authenticated can manage order campaigns" on public.skbc_order_campaigns;
+drop policy if exists "Authenticated can manage merch order items" on public.skbc_merch_order_items;
+drop policy if exists "Authenticated can manage order communications" on public.skbc_order_communications;
+drop policy if exists "Admins can read merch orders" on public.skbc_merch_orders;
+drop policy if exists "Admins can update merch orders" on public.skbc_merch_orders;
+drop policy if exists "Admins can delete merch orders" on public.skbc_merch_orders;
+drop policy if exists "Admins can manage merch products" on public.skbc_merch_products;
+drop policy if exists "Admins can manage merch variants" on public.skbc_merch_variants;
+drop policy if exists "Admins can manage order campaigns" on public.skbc_order_campaigns;
+drop policy if exists "Admins can read merch order items" on public.skbc_merch_order_items;
+drop policy if exists "Admins can update merch order items" on public.skbc_merch_order_items;
+drop policy if exists "Admins can delete merch order items" on public.skbc_merch_order_items;
+drop policy if exists "Admins can manage order communications" on public.skbc_order_communications;
+
 drop policy if exists "Public can read active merch products" on public.skbc_merch_products;
 create policy "Public can read active merch products" on public.skbc_merch_products
-for select to anon using (is_active);
+for select to anon, authenticated using (is_active);
 drop policy if exists "Public can read active merch variants" on public.skbc_merch_variants;
 create policy "Public can read active merch variants" on public.skbc_merch_variants
-for select to anon using (
+for select to anon, authenticated using (
   is_active and exists (
     select 1 from public.skbc_merch_products product
     where product.id = product_id and product.is_active
   )
 );
 
-drop policy if exists "Authenticated can manage merch orders" on public.skbc_merch_orders;
-create policy "Authenticated can manage merch orders" on public.skbc_merch_orders
-for all to authenticated using (true) with check (true);
-drop policy if exists "Authenticated can manage merch products" on public.skbc_merch_products;
-create policy "Authenticated can manage merch products" on public.skbc_merch_products
-for all to authenticated using (true) with check (true);
-drop policy if exists "Authenticated can manage merch variants" on public.skbc_merch_variants;
-create policy "Authenticated can manage merch variants" on public.skbc_merch_variants
-for all to authenticated using (true) with check (true);
-drop policy if exists "Authenticated can manage order campaigns" on public.skbc_order_campaigns;
-create policy "Authenticated can manage order campaigns" on public.skbc_order_campaigns
-for all to authenticated using (true) with check (true);
-drop policy if exists "Authenticated can manage merch order items" on public.skbc_merch_order_items;
-create policy "Authenticated can manage merch order items" on public.skbc_merch_order_items
-for all to authenticated using (true) with check (true);
-drop policy if exists "Authenticated can manage order communications" on public.skbc_order_communications;
-create policy "Authenticated can manage order communications" on public.skbc_order_communications
-for all to authenticated using (true) with check (true);
+create policy "Admins can read merch orders" on public.skbc_merch_orders
+for select to authenticated using (public.is_skbc_merch_admin());
+create policy "Admins can update merch orders" on public.skbc_merch_orders
+for update to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
+create policy "Admins can delete merch orders" on public.skbc_merch_orders
+for delete to authenticated using (public.is_skbc_merch_admin());
+
+create policy "Admins can manage merch products" on public.skbc_merch_products
+for all to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
+create policy "Admins can manage merch variants" on public.skbc_merch_variants
+for all to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
+create policy "Admins can manage order campaigns" on public.skbc_order_campaigns
+for all to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
+create policy "Admins can read merch order items" on public.skbc_merch_order_items
+for select to authenticated using (public.is_skbc_merch_admin());
+create policy "Admins can update merch order items" on public.skbc_merch_order_items
+for update to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
+create policy "Admins can delete merch order items" on public.skbc_merch_order_items
+for delete to authenticated using (public.is_skbc_merch_admin());
+create policy "Admins can manage order communications" on public.skbc_order_communications
+for all to authenticated using (public.is_skbc_merch_admin())
+with check (public.is_skbc_merch_admin());
 
 create or replace function public.submit_skbc_merch_order(
   p_idempotency_key uuid,
@@ -172,10 +246,9 @@ create or replace function public.submit_skbc_merch_order(
 returns table (order_id uuid, order_number text, total_cents integer)
 language plpgsql
 security definer
-set search_path = public, pg_temp
+set search_path = pg_catalog, public, pg_temp
 as $$
 declare
-  v_today date := current_date;
   v_period_start date;
   v_period_end date;
   v_campaign_id uuid;
@@ -187,10 +260,55 @@ declare
   v_variant_id uuid;
   v_variant record;
   v_priced_items jsonb := '[]'::jsonb;
+  v_request_payload jsonb;
+  v_request_hash text;
+  v_existing_request_hash text;
 begin
   if p_idempotency_key is null then
     raise exception 'idempotency key is required' using errcode = '22023';
   end if;
+
+  v_request_payload := jsonb_build_object(
+    'customer_name', btrim(coalesce(p_customer_name, '')),
+    'customer_email', lower(btrim(coalesce(p_customer_email, ''))),
+    'customer_phone', btrim(coalesce(p_customer_phone, '')),
+    'member_reference', nullif(btrim(p_member_reference), ''),
+    'comments', nullif(btrim(p_comments), ''),
+    'page_lang', lower(coalesce(nullif(btrim(p_page_lang), ''), 'es')),
+    'items', case
+      when jsonb_typeof(p_items) = 'array' then coalesce((
+        select jsonb_agg(canonical_item order by canonical_item::text)
+        from (
+          select jsonb_build_object(
+            'variant_id', lower(btrim(coalesce(item ->> 'variant_id', ''))),
+            'quantity', case
+              when coalesce(item ->> 'quantity', '') ~ '^[0-9]+$'
+                then ((item ->> 'quantity')::numeric)::text
+              else item ->> 'quantity'
+            end
+          ) as canonical_item
+          from jsonb_array_elements(p_items) item
+        ) normalized_items
+      ), '[]'::jsonb)
+      else p_items
+    end
+  );
+  v_request_hash := encode(sha256(convert_to(v_request_payload::text, 'UTF8')), 'hex');
+
+  perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key::text, 0));
+  select existing.id, existing.order_number, existing.total_cents, existing.request_hash
+    into v_order_id, v_order_number, v_total_cents, v_existing_request_hash
+  from public.skbc_merch_orders existing
+  where existing.idempotency_key = p_idempotency_key;
+  if found then
+    if v_existing_request_hash is distinct from v_request_hash then
+      raise exception 'idempotency key was already used with a different request'
+        using errcode = '23505';
+    end if;
+    return query select v_order_id, v_order_number, v_total_cents;
+    return;
+  end if;
+
   if nullif(btrim(p_customer_name), '') is null
      or nullif(btrim(p_customer_phone), '') is null then
     raise exception 'customer name and phone are required' using errcode = '22023';
@@ -204,22 +322,9 @@ begin
     raise exception 'items must contain between 1 and 30 lines' using errcode = '22023';
   end if;
 
-  perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key::text, 0));
-  select existing.id, existing.order_number, existing.total_cents
-    into v_order_id, v_order_number, v_total_cents
-  from public.skbc_merch_orders existing
-  where existing.idempotency_key = p_idempotency_key;
-  if found then
-    return query select v_order_id, v_order_number, v_total_cents;
-    return;
-  end if;
-
-  if extract(day from v_today) >= 16 then
-    v_period_start := make_date(extract(year from v_today)::integer, extract(month from v_today)::integer, 16);
-  else
-    v_period_start := (date_trunc('month', v_today) - interval '1 month' + interval '15 days')::date;
-  end if;
-  v_period_end := (v_period_start + interval '1 month - 1 day')::date;
+  select period.period_start, period.period_end
+    into v_period_start, v_period_end
+  from public.skbc_merch_campaign_period(statement_timestamp()) period;
 
   insert into public.skbc_order_campaigns (period_start, period_end, status)
   values (v_period_start, v_period_end, 'open')
@@ -274,11 +379,11 @@ begin
   v_order_number := 'SKBC-' || to_char(v_period_start, 'YYYYMM') || '-'
     || upper(substr(replace(v_order_id::text, '-', ''), 1, 8));
   insert into public.skbc_merch_orders (
-    id, order_number, idempotency_key, campaign_id, customer_name,
+    id, order_number, idempotency_key, request_hash, campaign_id, customer_name,
     customer_email, customer_phone, member_reference, custom_reference,
     comments, items, total_cents, total_estimated, page_lang, source
   ) values (
-    v_order_id, v_order_number, p_idempotency_key, v_campaign_id, btrim(p_customer_name),
+    v_order_id, v_order_number, p_idempotency_key, v_request_hash, v_campaign_id, btrim(p_customer_name),
     nullif(btrim(p_customer_email), ''), btrim(p_customer_phone),
     nullif(btrim(p_member_reference), ''), nullif(btrim(p_member_reference), ''),
     nullif(btrim(p_comments), ''), v_priced_items, v_total_cents,
@@ -298,6 +403,8 @@ end;
 $$;
 
 revoke all on function public.set_skbc_merch_updated_at() from public;
+revoke all on function public.is_skbc_merch_admin() from public;
+revoke all on function public.skbc_merch_campaign_period(timestamptz) from public;
 revoke all on function public.submit_skbc_merch_order(uuid, text, text, text, text, text, text, jsonb) from public;
 revoke all privileges on table public.skbc_merch_orders from public;
 revoke all privileges on table public.skbc_merch_products from public;
@@ -305,20 +412,36 @@ revoke all privileges on table public.skbc_merch_variants from public;
 revoke all privileges on table public.skbc_order_campaigns from public;
 revoke all privileges on table public.skbc_merch_order_items from public;
 revoke all privileges on table public.skbc_order_communications from public;
+revoke all privileges on table public.skbc_merch_admins from public;
 revoke all privileges on table public.skbc_merch_orders from anon;
 revoke all privileges on table public.skbc_merch_products from anon;
 revoke all privileges on table public.skbc_merch_variants from anon;
 revoke all privileges on table public.skbc_order_campaigns from anon;
 revoke all privileges on table public.skbc_merch_order_items from anon;
 revoke all privileges on table public.skbc_order_communications from anon;
+revoke all privileges on table public.skbc_merch_admins from anon;
+revoke all privileges on table public.skbc_merch_orders from authenticated;
+revoke all privileges on table public.skbc_merch_products from authenticated;
+revoke all privileges on table public.skbc_merch_variants from authenticated;
+revoke all privileges on table public.skbc_order_campaigns from authenticated;
+revoke all privileges on table public.skbc_merch_order_items from authenticated;
+revoke all privileges on table public.skbc_order_communications from authenticated;
+revoke all privileges on table public.skbc_merch_admins from authenticated;
 grant select on table public.skbc_merch_products, public.skbc_merch_variants to anon;
 grant execute on function public.submit_skbc_merch_order(uuid, text, text, text, text, text, text, jsonb) to anon;
 
-grant select, insert, update, delete on table
+grant execute on function public.is_skbc_merch_admin() to authenticated;
+grant select on table public.skbc_merch_products, public.skbc_merch_variants to authenticated;
+grant insert, update, delete on table public.skbc_merch_products, public.skbc_merch_variants to authenticated;
+grant select, update, delete on table public.skbc_merch_orders, public.skbc_merch_order_items to authenticated;
+grant select, insert, update, delete on table public.skbc_order_campaigns, public.skbc_order_communications to authenticated;
+
+grant all privileges on table
+  public.skbc_merch_admins,
   public.skbc_merch_orders,
   public.skbc_merch_products,
   public.skbc_merch_variants,
   public.skbc_order_campaigns,
   public.skbc_merch_order_items,
   public.skbc_order_communications
-to authenticated;
+to service_role;
