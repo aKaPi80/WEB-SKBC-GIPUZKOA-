@@ -80,7 +80,7 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
   assert.match(html, /styles\.css\?v=20260928-compact-catalog/);
-  assert.match(html, /app\.js\?v=20260928-compact-catalog/);
+  assert.match(html, /app\.js\?v=20260928-reference-only/);
 });
 
 test('catalog cards keep details collapsed until the customer opens them', () => {
@@ -88,6 +88,8 @@ test('catalog cards keep details collapsed until the customer opens them', () =>
   assert.match(cardSource, /<details class="merch-product__details">/);
   assert.match(cardSource, /<summary class="merch-product__summary">/);
   assert.match(cardSource, /Ver detalles/);
+  assert.match(cardSource, /<span>Ref\. \$\{escapeHtml\(product\.supplier_reference\)\}<\/span>/);
+  assert.doesNotMatch(cardSource, /product\.brand/);
   assert.match(styles, /\.merch-product__details\[open\]/);
 });
 

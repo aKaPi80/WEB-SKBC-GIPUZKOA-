@@ -1202,7 +1202,7 @@ function merchProductCard(product) {
           <small>${escapeHtml(attribution)}</small>
         </div>
         <div class="merch-product__heading">
-          <span>${escapeHtml(product.brand || "SKBC")} · Ref. ${escapeHtml(product.supplier_reference)}</span>
+          <span>Ref. ${escapeHtml(product.supplier_reference)}</span>
           <h3>${escapeHtml(product.name)}</h3>
           <strong class="merch-product__toggle"><span>Ver detalles</span><i aria-hidden="true"></i></strong>
         </div>
