@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
@@ -127,6 +127,37 @@ test('admin payment and campaign close RPCs are atomic and locked down', () => {
   assert.doesNotMatch(sql, /grant (?:insert|update|delete)[^;]+skbc_merch_products[^;]+to authenticated/i, 'catalog writes must go through guarded RPCs');
 });
 
+test('email delivery uses campaign-bound atomic claims and an append-only attempt ledger', () => {
+  has(/create table if not exists public\.skbc_order_communication_attempts\b/i, 'missing immutable delivery-attempt ledger');
+  has(/attempt_token uuid not null unique/i, 'attempt tokens must be globally unique');
+  has(/function public\.claim_skbc_order_communication\s*\(\s*p_campaign_id uuid\s*,\s*p_communication_id uuid\s*,\s*p_attempt_token uuid\s*,\s*p_force_resend boolean\s*,\s*p_confirmed boolean\s*\)/i, 'claim RPC must bind campaign, communication, token, force mode, and confirmation');
+  has(/claim_skbc_order_communication[\s\S]+join public\.skbc_merch_orders[\s\S]+campaign_id\s*=\s*p_campaign_id[\s\S]+for update/i, 'claim RPC must lock the exact communication through its order and campaign');
+  has(/v_campaign_status\s*<>\s*'closed'/i, 'claims must require a closed and reviewed campaign');
+  has(/p_confirmed\s+is distinct from\s+true/i, 'server must enforce explicit send confirmation');
+  has(/status\s*=\s*'sending'[\s\S]+attempt_token\s*=\s*p_attempt_token/i, 'claim must atomically transition and bind the attempt token');
+  has(/function public\.complete_skbc_order_communication_attempt/i, 'missing token-bound completion RPC');
+  has(/function public\.reconcile_skbc_order_communication/i, 'ambiguous deliveries need explicit manual reconciliation');
+  has(/status in \('prepared', 'sending', 'sent', 'failed', 'delivered_unconfirmed'\)/i, 'communication states must distinguish in-flight and ambiguous delivery');
+  has(/revoke all on function public\.claim_skbc_order_communication[^;]+from public/i, 'claim RPC must revoke PUBLIC execution');
+  assert.doesNotMatch(sql, /grant insert\s*,\s*update on table public\.skbc_order_communications to authenticated/i, 'authenticated callers must not bypass delivery RPCs');
+});
+
+test('campaign close groups communications by normalized payer email and excludes cancelled orders', () => {
+  has(/count\s*\(\s*distinct\s+lower\s*\(\s*btrim\s*\(\s*merch_order\.customer_email\s*\)\s*\)\s*\)\s*filter/i, 'expected communication count must use normalized distinct email');
+  has(/merch_order\.status\s*<>\s*'cancelled'/i, 'cancelled orders must be excluded');
+  has(/group by\s+lower\s*\(\s*btrim\s*\(\s*eligible_order\.customer_email\s*\)\s*\)/i, 'prepared communications must group by normalized email');
+  has(/jsonb_agg\s*\([^;]+order_number/i, 'family snapshot must retain every order reference');
+  has(/jsonb_agg\s*\([^;]+item\.created_at[^;]+item\.id/i, 'family snapshot must retain item rows in stable order');
+  has(/sum\s*\(\s*coalesce\s*\(\s*eligible_order\.total_cents\s*,\s*0\s*\)\s*\)/i, 'family snapshot must contain the combined total');
+});
+
+test('storefront catalog access is restricted to the safe view', () => {
+  assert.doesNotMatch(sql, /create policy "Public can read active merch (?:products|variants)"/i, 'base catalog tables must not have public/authenticated storefront policies');
+  has(/grant select on table public\.skbc_merch_products\s*,\s*public\.skbc_merch_variants to authenticated/i, 'explicit admins need table privilege behind admin-only RLS');
+  has(/grant select on table public\.skbc_merch_catalog_public to anon\s*,\s*authenticated/i, 'safe storefront view must serve both roles');
+  has(/create policy "Admins can manage merch products"[\s\S]+public\.is_skbc_merch_admin/i, 'explicit admins must retain base product access');
+});
+
 test('catalog seed RPC atomically upserts owned rows and deactivates stale rows', () => {
   has(/function public\.seed_skbc_merch_catalog\s*\(\s*p_products jsonb\s*,\s*p_variants jsonb\s*,\s*p_catalog_owner text/i, 'seed RPC must accept Task 3 arrays and owner');
   has(/on conflict\s*\(\s*supplier_reference\s*\)\s*do update/i, 'seed RPC must upsert products by supplier reference');
@@ -237,7 +268,7 @@ const integrationEnabled = process.env.RUN_POSTGRES_INTEGRATION === '1';
 test('PostgreSQL integration: migration, authorization, idempotency, rollback, and Madrid boundaries', {
   skip: integrationEnabled ? false : 'set RUN_POSTGRES_INTEGRATION=1 to run with Docker',
   timeout: 120_000,
-}, (t) => {
+}, async (t) => {
   const image = process.env.POSTGRES_TEST_IMAGE || 'postgres:16-alpine';
   const container = `skbc-orders-test-${process.pid}`;
   const dockerInfo = run('docker', ['info', '--format', '{{.ServerVersion}}']);
@@ -270,6 +301,21 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
     return result.stdout;
   };
+  const psqlAsync = (database, input) => new Promise((resolve) => {
+    const child = spawn('docker', [
+      'exec', '--interactive', container, 'psql',
+      '--username', 'postgres', '--dbname', database,
+      '--set', 'ON_ERROR_STOP=1', '--no-psqlrc',
+    ]);
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    child.on('close', (status) => resolve({ status, stdout, stderr }));
+    child.stdin.end(input);
+  });
 
   const clusterBootstrap = `
     create role anon nologin;
@@ -341,25 +387,125 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     insert into public.skbc_order_campaigns (id, period_start, period_end)
     values ('40000000-0000-4000-8000-000000000001', date '2020-01-16', date '2020-02-15');
     insert into public.skbc_merch_orders (
-      id, campaign_id, customer_name, customer_phone, customer_email, total_cents
+      id, order_number, campaign_id, customer_name, customer_phone, customer_email, payment_method, total_cents, status
     ) values (
-      '50000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001',
-      'Historical Member', '600000001', 'historical@example.com', 2500
+      '50000000-0000-4000-8000-000000000001', 'SKBC-HIST-1', '40000000-0000-4000-8000-000000000001',
+      'Historical Member', '600000001', ' Family@Example.com ', 'cash', 2500, 'pending'
+    ), (
+      '50000000-0000-4000-8000-000000000002', 'SKBC-HIST-2', '40000000-0000-4000-8000-000000000001',
+      'Historical Member', '600000002', 'family@example.COM', 'bank', 1500, 'paid'
+    ), (
+      '50000000-0000-4000-8000-000000000003', 'SKBC-CANCELLED', '40000000-0000-4000-8000-000000000001',
+      'Cancelled Member', '600000003', 'cancelled@example.com', null, 900, 'cancelled'
     );
+    insert into public.skbc_merch_order_items (
+      order_id, variant_id, product_name, variant_name, sku, supplier_reference,
+      size, recipient, quantity, cost_cents, unit_price_cents
+    ) values
+      ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', 'Gi', 'A', 'GI-A', 'GI', 'A', 'Child One', 1, 2000, 2500),
+      ('50000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000002', 'Gi', 'B', 'GI-B', 'GI', 'B', 'Child Two', 1, 1000, 1500),
+      ('50000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000002', 'Gi', 'B', 'GI-B', 'GI', 'B', 'Cancelled Child', 1, 1000, 1500);
 
     set role authenticated;
     select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', false);
     do $$ begin
-      if (select count(*) from public.skbc_merch_orders) <> 2 then raise exception 'admin cannot read orders'; end if;
+      if (select count(*) from public.skbc_merch_orders) <> 4 then raise exception 'admin cannot read orders'; end if;
       perform public.assign_skbc_order_payment_method('50000000-0000-4000-8000-000000000001', 'Transfer');
       begin
-        perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 2, 1);
+        perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 4, 1);
         raise exception 'stale close confirmation succeeded';
       exception when serialization_failure then null;
       end;
-      perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 1, 1);
+      perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 3, 1);
       if (select count(*) from public.skbc_order_communications where order_id = '50000000-0000-4000-8000-000000000001' and status = 'prepared') <> 1 then
-        raise exception 'close did not prepare exactly one communication';
+        raise exception 'close did not prepare exactly one grouped communication';
+      end if;
+      if exists (select 1 from public.skbc_order_communications where recipient_email = 'cancelled@example.com') then
+        raise exception 'cancelled order produced a communication';
+      end if;
+      if (select jsonb_array_length(snapshot -> 'orders') from public.skbc_order_communications limit 1) <> 2
+         or (select jsonb_array_length(snapshot -> 'items') from public.skbc_order_communications limit 1) <> 2
+         or (select (snapshot ->> 'total_cents')::integer from public.skbc_order_communications limit 1) <> 4000 then
+        raise exception 'grouped family snapshot lost orders, item rows, or combined total';
+      end if;
+      begin
+        perform public.claim_skbc_order_communication(
+          '40000000-0000-4000-8000-000000000001',
+          (select id from public.skbc_order_communications limit 1),
+          '60000000-0000-4000-8000-000000000001', false, false
+        );
+        raise exception 'unconfirmed send claim succeeded';
+      exception when invalid_parameter_value then null;
+      end;
+      perform public.claim_skbc_order_communication(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000001', false, true
+      );
+      begin
+        perform public.claim_skbc_order_communication(
+          '40000000-0000-4000-8000-000000000001',
+          (select id from public.skbc_order_communications limit 1),
+          '60000000-0000-4000-8000-000000000002', false, true
+        );
+        raise exception 'second sender claimed an in-flight communication';
+      exception when object_not_in_prerequisite_state then null;
+      end;
+      if (select count(*) from public.skbc_order_communication_attempts) <> 1 then
+        raise exception 'claim ledger did not preserve exactly one winning attempt';
+      end if;
+      perform public.complete_skbc_order_communication_attempt(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000001', 'delivered_unconfirmed', 'persistence unavailable'
+      );
+      begin
+        perform public.claim_skbc_order_communication(
+          '40000000-0000-4000-8000-000000000001',
+          (select id from public.skbc_order_communications limit 1),
+          '60000000-0000-4000-8000-000000000002', false, true
+        );
+        raise exception 'ambiguous delivery was automatically retried';
+      exception when object_not_in_prerequisite_state then null;
+      end;
+      perform public.reconcile_skbc_order_communication(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000001', false, true
+      );
+      perform public.claim_skbc_order_communication(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000003', false, true
+      );
+      perform public.complete_skbc_order_communication_attempt(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000003', 'smtp_failed', 'recipient rejected'
+      );
+      perform public.claim_skbc_order_communication(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000004', false, true
+      );
+      perform public.complete_skbc_order_communication_attempt(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000004', 'delivered', null
+      );
+      perform public.claim_skbc_order_communication(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000005', true, true
+      );
+      perform public.complete_skbc_order_communication_attempt(
+        '40000000-0000-4000-8000-000000000001',
+        (select id from public.skbc_order_communications limit 1),
+        '60000000-0000-4000-8000-000000000005', 'smtp_failed', 'forced resend rejected'
+      );
+      if (select status from public.skbc_order_communications limit 1) <> 'sent'
+         or not (select forced from public.skbc_order_communication_attempts where attempt_token = '60000000-0000-4000-8000-000000000005') then
+        raise exception 'failed forced resend lost the original confirmed delivery audit';
       end if;
       begin
         perform public.assign_skbc_order_payment_method('50000000-0000-4000-8000-000000000001', 'Cash');
@@ -502,4 +648,47 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     select set_config('request.jwt.claim.role', '', false);
   `;
   psql('legacy_schema', behavior);
+
+  psql('legacy_schema', `
+    insert into public.skbc_order_communications (
+      id, order_id, channel, direction, status, recipient_email, snapshot, prepared_at
+    ) values (
+      '70000000-0000-4000-8000-000000000001',
+      '50000000-0000-4000-8000-000000000001',
+      'email', 'outbound', 'prepared', 'race@example.com', '{}'::jsonb, now()
+    );
+  `);
+  const firstClaim = psqlAsync('legacy_schema', `
+    begin;
+    select set_config('request.jwt.claim.role', 'service_role', false);
+    select * from public.claim_skbc_order_communication(
+      '40000000-0000-4000-8000-000000000001',
+      '70000000-0000-4000-8000-000000000001',
+      '80000000-0000-4000-8000-000000000001', false, true
+    );
+    select pg_sleep(1);
+    commit;
+  `);
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  const secondClaim = psqlAsync('legacy_schema', `
+    begin;
+    select set_config('request.jwt.claim.role', 'service_role', false);
+    select * from public.claim_skbc_order_communication(
+      '40000000-0000-4000-8000-000000000001',
+      '70000000-0000-4000-8000-000000000001',
+      '80000000-0000-4000-8000-000000000002', false, true
+    );
+    commit;
+  `);
+  const [firstResult, secondResult] = await Promise.all([firstClaim, secondClaim]);
+  assert.equal(firstResult.status, 0, `first concurrent claim failed: ${firstResult.stderr}`);
+  assert.notEqual(secondResult.status, 0, 'second concurrent sender also claimed the communication');
+  assert.match(secondResult.stderr, /not retryable|object_not_in_prerequisite_state|55000/i);
+  psql('legacy_schema', `
+    do $$ begin
+      if (select count(*) from public.skbc_order_communication_attempts where communication_id = '70000000-0000-4000-8000-000000000001') <> 1 then
+        raise exception 'concurrent claims created more than one attempt';
+      end if;
+    end $$;
+  `);
 });

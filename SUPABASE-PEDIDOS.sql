@@ -201,7 +201,7 @@ create table if not exists public.skbc_order_communications (
   order_id uuid not null references public.skbc_merch_orders(id) on delete cascade,
   channel text not null check (channel in ('email', 'phone', 'whatsapp', 'in_person', 'internal')),
   direction text not null default 'outbound' check (direction in ('inbound', 'outbound', 'internal')),
-  status text not null default 'prepared' check (status in ('prepared', 'sent', 'failed')),
+  status text not null default 'prepared' check (status in ('prepared', 'sending', 'sent', 'failed', 'delivered_unconfirmed')),
   recipient_name text,
   recipient_email text,
   snapshot jsonb not null default '{}'::jsonb check (jsonb_typeof(snapshot) = 'object'),
@@ -211,6 +211,26 @@ create table if not exists public.skbc_order_communications (
   sent_at timestamptz,
   failed_at timestamptz,
   failure_message text,
+  attempt_token uuid,
+  attempt_started_at timestamptz,
+  created_by uuid default auth.uid(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.skbc_order_communication_attempts (
+  id uuid primary key default gen_random_uuid(),
+  communication_id uuid not null references public.skbc_order_communications(id) on delete cascade,
+  campaign_id uuid not null references public.skbc_order_campaigns(id),
+  attempt_token uuid not null unique,
+  forced boolean not null default false,
+  outcome text not null default 'sending' check (outcome in (
+    'sending', 'delivered', 'smtp_failed', 'delivered_unconfirmed',
+    'delivered_reconciled', 'not_delivered_reconciled'
+  )),
+  started_at timestamptz not null default now(),
+  smtp_accepted_at timestamptz,
+  completed_at timestamptz,
+  error_message text,
   created_by uuid default auth.uid(),
   created_at timestamptz not null default now()
 );
@@ -292,17 +312,19 @@ alter table public.skbc_order_communications
   add column if not exists sent_at timestamptz,
   add column if not exists failed_at timestamptz,
   add column if not exists failure_message text,
+  add column if not exists attempt_token uuid,
+  add column if not exists attempt_started_at timestamptz,
   alter column body drop not null;
 
 alter table public.skbc_order_communications
-  drop constraint if exists skbc_order_communications_body_check;
+  drop constraint if exists skbc_order_communications_body_check,
+  drop constraint if exists skbc_order_communications_status_check,
+  drop constraint if exists skbc_order_communications_status_valid;
 
 do $$
 begin
-  if not exists (select 1 from pg_constraint where conname = 'skbc_order_communications_status_valid') then
-    alter table public.skbc_order_communications add constraint skbc_order_communications_status_valid
-      check (status in ('prepared', 'sent', 'failed'));
-  end if;
+  alter table public.skbc_order_communications add constraint skbc_order_communications_status_valid
+    check (status in ('prepared', 'sending', 'sent', 'failed', 'delivered_unconfirmed'));
   if not exists (select 1 from pg_constraint where conname = 'skbc_order_communications_snapshot_object') then
     alter table public.skbc_order_communications add constraint skbc_order_communications_snapshot_object
       check (jsonb_typeof(snapshot) = 'object');
@@ -322,6 +344,10 @@ create index if not exists skbc_merch_order_items_variant_idx
   on public.skbc_merch_order_items (variant_id);
 create index if not exists skbc_order_communications_order_created_idx
   on public.skbc_order_communications (order_id, created_at desc);
+create index if not exists skbc_order_communication_attempts_communication_created_idx
+  on public.skbc_order_communication_attempts (communication_id, created_at desc);
+create index if not exists skbc_order_communication_attempts_campaign_created_idx
+  on public.skbc_order_communication_attempts (campaign_id, created_at desc);
 create index if not exists skbc_merch_admins_created_by_idx
   on public.skbc_merch_admins (created_by);
 
@@ -466,6 +492,7 @@ alter table public.skbc_merch_variants enable row level security;
 alter table public.skbc_order_campaigns enable row level security;
 alter table public.skbc_merch_order_items enable row level security;
 alter table public.skbc_order_communications enable row level security;
+alter table public.skbc_order_communication_attempts enable row level security;
 alter table public.skbc_merch_admins enable row level security;
 
 drop policy if exists "Public can submit merch orders" on public.skbc_merch_orders;
@@ -488,18 +515,10 @@ drop policy if exists "Admins can read merch order items" on public.skbc_merch_o
 drop policy if exists "Admins can update merch order items" on public.skbc_merch_order_items;
 drop policy if exists "Admins can delete merch order items" on public.skbc_merch_order_items;
 drop policy if exists "Admins can manage order communications" on public.skbc_order_communications;
+drop policy if exists "Admins can read order communication attempts" on public.skbc_order_communication_attempts;
 
 drop policy if exists "Public can read active merch products" on public.skbc_merch_products;
-create policy "Public can read active merch products" on public.skbc_merch_products
-for select to anon, authenticated using (is_active);
 drop policy if exists "Public can read active merch variants" on public.skbc_merch_variants;
-create policy "Public can read active merch variants" on public.skbc_merch_variants
-for select to anon, authenticated using (
-  is_active and exists (
-    select 1 from public.skbc_merch_products product
-    where product.id = product_id and product.is_active
-  )
-);
 
 create policy "Admins can read merch orders" on public.skbc_merch_orders
 for select to authenticated using (public.is_skbc_merch_admin());
@@ -528,6 +547,8 @@ for delete to authenticated using (public.is_skbc_merch_admin());
 create policy "Admins can manage order communications" on public.skbc_order_communications
 for all to authenticated using (public.is_skbc_merch_admin())
 with check (public.is_skbc_merch_admin());
+create policy "Admins can read order communication attempts" on public.skbc_order_communication_attempts
+for select to authenticated using (public.is_skbc_merch_admin());
 
 create or replace function public.submit_skbc_merch_order(
   p_idempotency_key uuid,
@@ -812,7 +833,7 @@ begin
   for update;
 
   select count(*)::integer,
-         count(*) filter (
+         count(distinct lower(btrim(merch_order.customer_email))) filter (
            where merch_order.status <> 'cancelled'
              and nullif(btrim(merch_order.customer_email), '') is not null
          )::integer
@@ -835,26 +856,57 @@ begin
     raise exception 'every non-cancelled order requires a payment method before closure' using errcode = '23514';
   end if;
 
+  with eligible_orders as (
+    select merch_order.*, lower(btrim(merch_order.customer_email)) as normalized_email
+    from public.skbc_merch_orders merch_order
+    where merch_order.campaign_id = p_campaign_id
+      and merch_order.status <> 'cancelled'
+      and nullif(btrim(merch_order.customer_email), '') is not null
+  ), grouped_families as (
+    select
+      eligible_order.normalized_email,
+      (array_agg(eligible_order.id order by eligible_order.created_at, eligible_order.id))[1] as representative_order_id,
+      (array_agg(eligible_order.customer_name order by eligible_order.created_at, eligible_order.id))[1] as recipient_name,
+      sum(coalesce(eligible_order.total_cents, 0))::integer as total_cents,
+      jsonb_agg(eligible_order.id order by eligible_order.created_at, eligible_order.id) as order_ids,
+      jsonb_agg(coalesce(eligible_order.order_number, eligible_order.id::text) order by eligible_order.created_at, eligible_order.id) as order_numbers,
+      jsonb_agg(eligible_order.payment_method order by eligible_order.created_at, eligible_order.id) as payment_methods,
+      jsonb_agg(
+        jsonb_build_object(
+          'id', eligible_order.id,
+          'order_number', eligible_order.order_number,
+          'customer_name', eligible_order.customer_name,
+          'customer_phone', eligible_order.customer_phone,
+          'member_reference', eligible_order.member_reference,
+          'payment_method', eligible_order.payment_method,
+          'status', eligible_order.status,
+          'total_cents', eligible_order.total_cents
+        ) order by eligible_order.created_at, eligible_order.id
+      ) as orders
+    from eligible_orders eligible_order
+    group by lower(btrim(eligible_order.customer_email)), eligible_order.normalized_email
+  )
   insert into public.skbc_order_communications (
     order_id, channel, direction, status, recipient_name, recipient_email,
     snapshot, subject, body, prepared_at
   )
-  select merch_order.id, 'email', 'outbound', 'prepared', merch_order.customer_name,
-         merch_order.customer_email,
+  select family.representative_order_id, 'email', 'outbound', 'prepared', family.recipient_name,
+         family.normalized_email,
          jsonb_build_object(
-           'order_id', merch_order.id,
-           'order_number', merch_order.order_number,
-           'customer_name', merch_order.customer_name,
-           'customer_email', merch_order.customer_email,
-           'customer_phone', merch_order.customer_phone,
-           'member_reference', merch_order.member_reference,
-           'payment_method', merch_order.payment_method,
-           'status', merch_order.status,
-           'total_cents', merch_order.total_cents,
+           'order_ids', family.order_ids,
+           'order_numbers', family.order_numbers,
+           'orders', family.orders,
+           'customer_name', family.recipient_name,
+           'customer_email', family.normalized_email,
+           'payment_methods', family.payment_methods,
+           'total_cents', family.total_cents,
            'items', coalesce((
-             select jsonb_agg(to_jsonb(item) order by item.created_at, item.id)
-             from public.skbc_merch_order_items item
-             where item.order_id = merch_order.id
+             select jsonb_agg(to_jsonb(item) order by merch_order.created_at, merch_order.id, item.created_at, item.id)
+             from public.skbc_merch_orders merch_order
+             join public.skbc_merch_order_items item on item.order_id = merch_order.id
+             where merch_order.campaign_id = p_campaign_id
+               and merch_order.status <> 'cancelled'
+               and lower(btrim(merch_order.customer_email)) = family.normalized_email
            ), '[]'::jsonb),
            'campaign', jsonb_build_object(
              'id', v_campaign.id,
@@ -862,13 +914,12 @@ begin
              'period_end', v_campaign.period_end
            )
          ),
-         'Pedido de material ' || coalesce(merch_order.order_number, merch_order.id::text),
+         'Pedido de material ' || array_to_string(array(
+           select jsonb_array_elements_text(family.order_numbers)
+         ), ', '),
          null,
          v_now
-  from public.skbc_merch_orders merch_order
-  where merch_order.campaign_id = p_campaign_id
-    and merch_order.status <> 'cancelled'
-    and nullif(btrim(merch_order.customer_email), '') is not null;
+  from grouped_families family;
 
   update public.skbc_merch_orders merch_order
   set frozen_at = v_now
@@ -878,6 +929,216 @@ begin
   where id = p_campaign_id;
 
   return query select p_campaign_id, v_order_count, v_communication_count;
+end;
+$$;
+
+create or replace function public.claim_skbc_order_communication(
+  p_campaign_id uuid,
+  p_communication_id uuid,
+  p_attempt_token uuid,
+  p_force_resend boolean,
+  p_confirmed boolean
+)
+returns table (
+  communication_id uuid,
+  communication_status text,
+  recipient_name text,
+  recipient_email text,
+  snapshot jsonb,
+  attempt_token uuid,
+  attempt_started_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = pg_catalog, public, pg_temp
+as $$
+declare
+  v_communication public.skbc_order_communications%rowtype;
+  v_campaign_status text;
+  v_started_at timestamptz := statement_timestamp();
+begin
+  if not public.can_manage_skbc_merch_orders() then
+    raise exception 'merch order management permission required' using errcode = '42501';
+  end if;
+  if p_campaign_id is null or p_communication_id is null or p_attempt_token is null then
+    raise exception 'campaign, communication, and attempt token are required' using errcode = '22023';
+  end if;
+  if p_force_resend is null then
+    raise exception 'force-resend mode must be explicit' using errcode = '22023';
+  end if;
+  if p_confirmed is distinct from true then
+    raise exception 'explicit server-side send confirmation is required' using errcode = '22023';
+  end if;
+
+  select communication, campaign.status
+    into v_communication, v_campaign_status
+  from public.skbc_order_communications communication
+  join public.skbc_merch_orders merch_order on merch_order.id = communication.order_id
+  join public.skbc_order_campaigns campaign on campaign.id = merch_order.campaign_id
+  where communication.id = p_communication_id
+    and merch_order.campaign_id = p_campaign_id
+    and communication.channel = 'email'
+    and communication.direction = 'outbound'
+  for update of communication;
+
+  if not found then
+    raise exception 'communication does not belong to the exact campaign' using errcode = 'P0002';
+  end if;
+  if v_campaign_status <> 'closed' then
+    raise exception 'campaign must be closed and reviewed before sending' using errcode = '55000';
+  end if;
+  if p_force_resend then
+    if v_communication.status <> 'sent' then
+      raise exception 'forced resend is allowed only for a confirmed sent communication' using errcode = '55000';
+    end if;
+  elsif v_communication.status not in ('prepared', 'failed') then
+    raise exception 'communication is not retryable without manual reconciliation' using errcode = '55000';
+  end if;
+
+  insert into public.skbc_order_communication_attempts (
+    communication_id, campaign_id, attempt_token, forced, outcome, started_at
+  ) values (
+    p_communication_id, p_campaign_id, p_attempt_token, p_force_resend, 'sending', v_started_at
+  );
+
+  update public.skbc_order_communications
+  set status = 'sending',
+      attempt_token = p_attempt_token,
+      attempt_started_at = v_started_at,
+      failed_at = null,
+      failure_message = null
+  where id = p_communication_id;
+
+  return query select v_communication.id, 'sending'::text, v_communication.recipient_name,
+    v_communication.recipient_email, v_communication.snapshot, p_attempt_token, v_started_at;
+end;
+$$;
+
+create or replace function public.complete_skbc_order_communication_attempt(
+  p_campaign_id uuid,
+  p_communication_id uuid,
+  p_attempt_token uuid,
+  p_outcome text,
+  p_error_message text default null
+)
+returns table (communication_id uuid, communication_status text)
+language plpgsql
+security definer
+set search_path = pg_catalog, public, pg_temp
+as $$
+declare
+  v_now timestamptz := statement_timestamp();
+  v_status text;
+  v_forced boolean;
+begin
+  if not public.can_manage_skbc_merch_orders() then
+    raise exception 'merch order management permission required' using errcode = '42501';
+  end if;
+  if p_outcome is null or p_outcome not in ('delivered', 'smtp_failed', 'delivered_unconfirmed') then
+    raise exception 'invalid communication attempt outcome' using errcode = '22023';
+  end if;
+
+  select attempt.forced into v_forced
+  from public.skbc_order_communications communication
+  join public.skbc_merch_orders merch_order on merch_order.id = communication.order_id
+  join public.skbc_order_communication_attempts attempt
+    on attempt.communication_id = communication.id
+   and attempt.attempt_token = p_attempt_token
+   and attempt.campaign_id = p_campaign_id
+  where communication.id = p_communication_id
+    and merch_order.campaign_id = p_campaign_id
+    and communication.status = 'sending'
+    and communication.attempt_token = p_attempt_token
+    and attempt.outcome = 'sending'
+  for update of communication, attempt;
+  if not found then
+    raise exception 'active communication attempt not found' using errcode = '55000';
+  end if;
+
+  v_status := case p_outcome
+    when 'delivered' then 'sent'
+    when 'smtp_failed' then case when v_forced then 'sent' else 'failed' end
+    else 'delivered_unconfirmed'
+  end;
+
+  update public.skbc_order_communications
+  set status = v_status,
+      sent_at = case when p_outcome = 'delivered' then v_now else sent_at end,
+      failed_at = case when p_outcome = 'smtp_failed' then v_now else null end,
+      failure_message = case when p_outcome = 'delivered' then null else left(nullif(btrim(p_error_message), ''), 240) end
+  where id = p_communication_id;
+
+  update public.skbc_order_communication_attempts
+  set outcome = p_outcome,
+      smtp_accepted_at = case when p_outcome in ('delivered', 'delivered_unconfirmed') then v_now else null end,
+      completed_at = v_now,
+      error_message = case when p_outcome = 'delivered' then null else left(nullif(btrim(p_error_message), ''), 240) end
+  where attempt_token = p_attempt_token;
+
+  return query select p_communication_id, v_status;
+end;
+$$;
+
+create or replace function public.reconcile_skbc_order_communication(
+  p_campaign_id uuid,
+  p_communication_id uuid,
+  p_attempt_token uuid,
+  p_delivered boolean,
+  p_confirmed boolean
+)
+returns table (communication_id uuid, communication_status text)
+language plpgsql
+security definer
+set search_path = pg_catalog, public, pg_temp
+as $$
+declare
+  v_status text;
+  v_now timestamptz := statement_timestamp();
+  v_forced boolean;
+begin
+  if not public.can_manage_skbc_merch_orders() then
+    raise exception 'merch order management permission required' using errcode = '42501';
+  end if;
+  if p_confirmed is distinct from true or p_delivered is null then
+    raise exception 'explicit reconciliation confirmation is required' using errcode = '22023';
+  end if;
+
+  select attempt.forced into v_forced
+  from public.skbc_order_communications communication
+  join public.skbc_merch_orders merch_order on merch_order.id = communication.order_id
+  join public.skbc_order_communication_attempts attempt
+    on attempt.communication_id = communication.id
+   and attempt.attempt_token = p_attempt_token
+   and attempt.campaign_id = p_campaign_id
+  where communication.id = p_communication_id
+    and merch_order.campaign_id = p_campaign_id
+    and communication.attempt_token = p_attempt_token
+    and communication.status in ('sending', 'delivered_unconfirmed')
+  for update of communication, attempt;
+  if not found then
+    raise exception 'ambiguous communication attempt not found' using errcode = '55000';
+  end if;
+
+  v_status := case when p_delivered or v_forced then 'sent' else 'failed' end;
+  update public.skbc_order_communications
+  set status = v_status,
+      sent_at = case when p_delivered then coalesce(sent_at, v_now) else sent_at end,
+      failed_at = case when p_delivered or v_forced then null else v_now end,
+      failure_message = case
+        when p_delivered then null
+        when v_forced then 'Manual reconciliation confirmed forced resend was not delivered; original delivery remains confirmed'
+        else 'Manual reconciliation confirmed no delivery'
+      end
+  where id = p_communication_id;
+
+  update public.skbc_order_communication_attempts
+  set outcome = case when p_delivered then 'delivered_reconciled' else 'not_delivered_reconciled' end,
+      smtp_accepted_at = case when p_delivered then coalesce(smtp_accepted_at, v_now) else smtp_accepted_at end,
+      completed_at = v_now,
+      error_message = case when p_delivered then error_message else 'Manual reconciliation confirmed no delivery' end
+  where attempt_token = p_attempt_token;
+
+  return query select p_communication_id, v_status;
 end;
 $$;
 
@@ -1071,6 +1332,9 @@ revoke all on function public.skbc_merch_campaign_period(timestamptz) from publi
 revoke all on function public.submit_skbc_merch_order(uuid, text, text, text, text, text, text, jsonb) from public;
 revoke all on function public.assign_skbc_order_payment_method(uuid, text) from public;
 revoke all on function public.close_skbc_order_campaign(uuid, integer, integer) from public;
+revoke all on function public.claim_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) from public;
+revoke all on function public.complete_skbc_order_communication_attempt(uuid, uuid, uuid, text, text) from public;
+revoke all on function public.reconcile_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) from public;
 revoke all on function public.seed_skbc_merch_catalog(jsonb, jsonb, text) from public;
 revoke all privileges on table public.skbc_merch_orders from public;
 revoke all privileges on table public.skbc_merch_products from public;
@@ -1078,6 +1342,7 @@ revoke all privileges on table public.skbc_merch_variants from public;
 revoke all privileges on table public.skbc_order_campaigns from public;
 revoke all privileges on table public.skbc_merch_order_items from public;
 revoke all privileges on table public.skbc_order_communications from public;
+revoke all privileges on table public.skbc_order_communication_attempts from public;
 revoke all privileges on table public.skbc_merch_admins from public;
 revoke all privileges on table public.skbc_merch_catalog_public from public;
 revoke all privileges on table public.skbc_merch_order_items_management from public;
@@ -1087,6 +1352,7 @@ revoke all privileges on table public.skbc_merch_variants from anon;
 revoke all privileges on table public.skbc_order_campaigns from anon;
 revoke all privileges on table public.skbc_merch_order_items from anon;
 revoke all privileges on table public.skbc_order_communications from anon;
+revoke all privileges on table public.skbc_order_communication_attempts from anon;
 revoke all privileges on table public.skbc_merch_admins from anon;
 revoke all privileges on table public.skbc_merch_catalog_public from anon;
 revoke all privileges on table public.skbc_merch_order_items_management from anon;
@@ -1096,6 +1362,7 @@ revoke all privileges on table public.skbc_merch_variants from authenticated;
 revoke all privileges on table public.skbc_order_campaigns from authenticated;
 revoke all privileges on table public.skbc_merch_order_items from authenticated;
 revoke all privileges on table public.skbc_order_communications from authenticated;
+revoke all privileges on table public.skbc_order_communication_attempts from authenticated;
 revoke all privileges on table public.skbc_merch_admins from authenticated;
 revoke all privileges on table public.skbc_merch_catalog_public from authenticated;
 revoke all privileges on table public.skbc_merch_order_items_management from authenticated;
@@ -1106,15 +1373,22 @@ grant execute on function public.is_skbc_merch_admin() to authenticated;
 grant execute on function public.can_manage_skbc_merch_orders() to authenticated;
 grant execute on function public.assign_skbc_order_payment_method(uuid, text) to authenticated;
 grant execute on function public.close_skbc_order_campaign(uuid, integer, integer) to authenticated;
+grant execute on function public.claim_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) to authenticated;
+grant execute on function public.complete_skbc_order_communication_attempt(uuid, uuid, uuid, text, text) to authenticated;
+grant execute on function public.reconcile_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) to authenticated;
 grant execute on function public.seed_skbc_merch_catalog(jsonb, jsonb, text) to authenticated;
 grant select on table public.skbc_merch_products, public.skbc_merch_variants to authenticated;
 grant select on table public.skbc_merch_orders, public.skbc_merch_order_items,
   public.skbc_order_campaigns, public.skbc_order_communications to authenticated;
-grant insert, update on table public.skbc_order_communications to authenticated;
+grant select on table public.skbc_merch_catalog_public to anon, authenticated;
+grant select on table public.skbc_order_communication_attempts to authenticated;
 
 grant execute on function public.can_manage_skbc_merch_orders() to service_role;
 grant execute on function public.assign_skbc_order_payment_method(uuid, text) to service_role;
 grant execute on function public.close_skbc_order_campaign(uuid, integer, integer) to service_role;
+grant execute on function public.claim_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) to service_role;
+grant execute on function public.complete_skbc_order_communication_attempt(uuid, uuid, uuid, text, text) to service_role;
+grant execute on function public.reconcile_skbc_order_communication(uuid, uuid, uuid, boolean, boolean) to service_role;
 grant execute on function public.seed_skbc_merch_catalog(jsonb, jsonb, text) to service_role;
 
 grant all privileges on table
@@ -1124,6 +1398,7 @@ grant all privileges on table
   public.skbc_merch_variants,
   public.skbc_order_campaigns,
   public.skbc_merch_order_items,
-  public.skbc_order_communications
+  public.skbc_order_communications,
+  public.skbc_order_communication_attempts
 to service_role;
 grant select on table public.skbc_merch_order_items_management to service_role;
