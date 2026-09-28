@@ -3,6 +3,8 @@ import { pathToFileURL } from "node:url";
 const ILLUSTRATIVE_ATTRIBUTION = "Imagen orientativa generada para SKBC";
 const COST_BASIS = "Approved estimate derived from public club price; no private supplier price stored";
 const ALL_SIZES = ["0000", "000", "00", "0", "1", "2", "3", "4", "5", "6", "7"];
+const BELT_COLORS = ["Blanco", "Amarillo", "Naranja", "Verde", "Azul", "Lila", "Marrón", "Rojo", "Negro"];
+const BELT_LENGTHS = ["240 cm", "260 cm", "280 cm", "300 cm", "320 cm"];
 
 const giDefinitions = [
   {
@@ -121,18 +123,18 @@ export const products = [
     is_active: true,
   })),
   {
-    slug: "white-belt",
-    name: "Obi blanco",
-    description: "Cinturón blanco para iniciación en artes marciales.",
-    brand: "SKBC",
-    supplier_reference: "BELT-WHITE",
+    slug: "fujimae-martial-arts-belt",
+    name: "Obi de artes marciales",
+    description: "Obi de algodón disponible en varios colores y longitudes. Como orientación: 240 cm para niños pequeños, 260 cm para niños mayores, 280 cm para adultos delgados, 300 cm para adultos de constitución media y 320 cm para tallas grandes. Si tienes dudas, consulta con el club antes de pedir.",
+    brand: "Fujimae",
+    supplier_reference: "15010",
     category: "belt",
-    recommended_level: "Iniciación",
+    recommended_level: "Todos los niveles",
     weight: null,
-    image_url: null,
+    image_url: "assets/products/fujimae/15010.png",
     source_url: null,
-    image_attribution: null,
-    metadata: { color: "Blanco" },
+    image_attribution: ILLUSTRATIVE_ATTRIBUTION,
+    metadata: { colors: BELT_COLORS, material: "Algodón", width: "4 cm", image_source_type: "codex_generated", image_attribution: ILLUSTRATIVE_ATTRIBUTION },
     sort_order: 10,
     is_active: true,
   },
@@ -168,14 +170,14 @@ export const variants = [
       is_active: true,
     };
   })),
-  {
-    product_slug: "white-belt",
-    supplier_reference: "BELT-WHITE",
-    sku: "BELT-WHITE",
-    name: "Blanco",
-    attributes: { color: "White", size: "One size" },
-    cost_cents: 500,
-    margin_cents: 0,
+  ...BELT_COLORS.flatMap((color, colorIndex) => BELT_LENGTHS.map((size, sizeIndex) => ({
+    product_slug: "fujimae-martial-arts-belt",
+    supplier_reference: "15010",
+    sku: `15010-${color.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()}-${size.replace(" cm", "")}`,
+    name: `${color} · ${size}`,
+    attributes: { color, size },
+    cost_cents: 450,
+    margin_cents: 50,
     price_cents: 500,
     unit_price_cents: 500,
     cost_basis: COST_BASIS,
@@ -184,9 +186,9 @@ export const variants = [
     promotion_starts_at: null,
     promotion_ends_at: null,
     promotion_is_active: false,
-    sort_order: 1,
+    sort_order: colorIndex * BELT_LENGTHS.length + sizeIndex + 1,
     is_active: true,
-  },
+  }))),
 ];
 
 const CATALOG_OWNER = "skbc-approved-material-catalog";

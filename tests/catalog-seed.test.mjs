@@ -26,11 +26,11 @@ const expectedReferences = [
 const illustrativeAttribution = "Imagen orientativa generada para SKBC";
 
 test("approved catalog contains only the nine Fujimae gis and white belt", () => {
-  const fujimae = products.filter((item) => item.brand === "Fujimae");
+  const fujimae = products.filter((item) => item.brand === "Fujimae" && item.category === "gi");
 
   assert.deepEqual(fujimae.map((item) => item.supplier_reference).sort(), expectedReferences);
   assert.equal(products.length, 10);
-  assert.equal(products.find((item) => item.slug === "white-belt").name, "Obi blanco");
+  assert.equal(products.find((item) => item.slug === "fujimae-martial-arts-belt").name, "Obi de artes marciales");
 });
 
 test("approved catalog has stable public prices", () => {
@@ -46,7 +46,24 @@ test("approved catalog has stable public prices", () => {
   assert.equal(variants.find((item) => item.sku === "10070-7").price_cents, 8000);
   assert.equal(variants.find((item) => item.sku === "10080-3").price_cents, 9500);
   assert.equal(variants.find((item) => item.sku === "10081-2").price_cents, 10500);
-  assert.equal(variants.find((item) => item.sku === "BELT-WHITE").price_cents, 500);
+  assert.equal(variants.find((item) => item.sku === "15010-BLANCO-240").price_cents, 500);
+  assert.equal(variants.filter((item) => item.supplier_reference === "15010").length, 45);
+});
+
+test("obi catalog covers every approved color and length with its own image", () => {
+  const belt = products.find((item) => item.supplier_reference === "15010");
+  const beltVariants = variants.filter((item) => item.supplier_reference === "15010");
+
+  assert.equal(belt.image_url, "assets/products/fujimae/15010.png");
+  assert.deepEqual([...new Set(beltVariants.map((item) => item.attributes.color))], [
+    "Blanco", "Amarillo", "Naranja", "Verde", "Azul", "Lila", "Marrón", "Rojo", "Negro",
+  ]);
+  assert.deepEqual([...new Set(beltVariants.map((item) => item.attributes.size))], [
+    "240 cm", "260 cm", "280 cm", "300 cm", "320 cm",
+  ]);
+
+  const imagePath = new URL(`../${belt.image_url}`, import.meta.url);
+  assert.ok(readFileSync(imagePath).length > 1000);
 });
 
 test("variants cover only approved sizes and separate cost margin and final price", () => {
@@ -80,7 +97,7 @@ test("ProWear keeps its stable price and inactive temporary promotion", () => {
 test("Fujimae products use the generated illustration without exposing supplier links", () => {
   const imageBuffers = [];
 
-  for (const product of products.filter((item) => item.brand === "Fujimae")) {
+  for (const product of products.filter((item) => item.brand === "Fujimae" && item.category === "gi")) {
     assert.equal(product.source_url, null);
     assert.match(product.description, /Dogi blanco/);
     assert.equal(product.image_attribution, illustrativeAttribution);

@@ -1249,9 +1249,12 @@ function merchCartHtml(copy) {
 }
 
 function merchVariantOptions(productId) {
+  const product = state.merchCatalog.products.find((item) => item.id === productId);
   return productVariants(productId).map((variant) => {
     const size = variant.attributes?.size || variant.name;
-    return `<option value="${variant.id}">${escapeHtml(size)} · ${money(activeVariantPrice(variant))}</option>`;
+    const color = variant.attributes?.color;
+    const label = productCategory(product || {}) === "belt" && color ? `${color} · ${size}` : size;
+    return `<option value="${variant.id}">${escapeHtml(label)} · ${money(activeVariantPrice(variant))}</option>`;
   }).join("");
 }
 

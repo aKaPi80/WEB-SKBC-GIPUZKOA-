@@ -80,5 +80,11 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
   assert.match(html, /styles\.css\?v=20260928-size-guide-cards-3/);
-  assert.match(html, /app\.js\?v=20260928-size-guide-cards/);
+  assert.match(html, /app\.js\?v=20260928-obi-variants/);
+});
+
+test('belt variants show both color and length in the order selector', () => {
+  const optionsSource = app.slice(app.indexOf('function merchVariantOptions'), app.indexOf('function addMerchLine'));
+  assert.match(optionsSource, /productCategory\(product \|\| \{\}\) === "belt"/);
+  assert.match(optionsSource, /`\$\{color\} · \$\{size\}`/);
 });
