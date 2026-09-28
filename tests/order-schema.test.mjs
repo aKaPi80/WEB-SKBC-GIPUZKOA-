@@ -86,6 +86,7 @@ test('anonymous catalog access exposes only the restricted public view', () => {
   assert.doesNotMatch(publicView, /\bcost_basis\b/i, 'public view must not expose cost basis');
   assert.doesNotMatch(publicView, /variant\.attributes\s*(?:,|as)/i, 'public view must not expose legacy private keys from raw attributes');
   assert.match(publicView, /jsonb_build_object\s*\(\s*'size'/i, 'public view must project only approved variant attributes');
+  assert.match(publicView, /'color'\s*,\s*variant\.attributes\s*->>\s*'color'/i, 'public view must expose the approved belt color');
   has(/grant select on (?:table )?public\.skbc_merch_catalog_public to anon/i, 'anon safe-view grant missing');
   assert.doesNotMatch(sql, /grant select on (?:table )?public\.skbc_merch_products\s*,\s*public\.skbc_merch_variants to anon/i, 'anon must not read private catalog tables');
 });

@@ -280,7 +280,10 @@ select
   variant.id as variant_id,
   variant.sku,
   variant.name as variant_name,
-  jsonb_strip_nulls(jsonb_build_object('size', variant.attributes ->> 'size')) as attributes,
+  jsonb_strip_nulls(jsonb_build_object(
+    'size', variant.attributes ->> 'size',
+    'color', variant.attributes ->> 'color'
+  )) as attributes,
   variant.price_cents,
   coalesce(
     case
