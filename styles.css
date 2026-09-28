@@ -3875,7 +3875,7 @@ textarea { resize: vertical; }
   inset: 0;
   display: none;
   place-items: center;
-  padding: 20px;
+  padding: 92px 20px 20px;
 }
 
 .merch-size-modal.is-open { display: grid; }
@@ -3884,7 +3884,7 @@ textarea { resize: vertical; }
   position: relative;
   display: grid;
   width: min(1120px, 96vw);
-  max-height: 94dvh;
+  max-height: calc(100dvh - 112px);
   overflow: hidden;
   border-radius: 6px;
   background: #fff;
@@ -3896,7 +3896,7 @@ textarea { resize: vertical; }
 .merch-size-modal__panel h3 { margin: 0; font-size: 21px; }
 .merch-size-modal__panel header button { width: 42px; height: 42px; border: 1px solid rgba(255, 255, 255, 0.32); border-radius: 50%; color: #fff; background: transparent; font-size: 27px; cursor: pointer; }
 .merch-size-modal__panel > div { overflow: auto; padding: 16px; background: #f4f5f5; }
-.merch-size-modal img { display: block; width: 100%; height: auto; max-height: calc(94dvh - 106px); object-fit: contain; background: #fff; }
+.merch-size-modal img { display: block; width: 100%; height: auto; max-height: calc(100dvh - 218px); object-fit: contain; background: #fff; }
 
 .merch-privacy {
   grid-template-columns: 22px minmax(0, 1fr);
@@ -3920,8 +3920,8 @@ textarea { resize: vertical; }
   .merch-grid { grid-template-columns: 1fr; }
   .merch-size-guide { grid-template-columns: 1fr; }
   .merch-size-guide .button { width: 100%; }
-  .merch-size-modal { padding: 8px; }
-  .merch-size-modal__panel { width: 100%; max-height: 96dvh; }
+  .merch-size-modal { padding: 76px 8px 8px; }
+  .merch-size-modal__panel { width: 100%; max-height: calc(100dvh - 84px); }
   .merch-size-modal__panel > div { padding: 8px; }
   .merch-product__body { min-height: 228px; }
   .merch-drawer { width: 100%; }
