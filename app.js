@@ -807,6 +807,7 @@ function privateNotificationWebhookUrl() {
 }
 
 function postPrivateNotification(type, subject, lines, payload = {}) {
+  postManagementTelegramNotification(type, payload);
   const url = privateNotificationWebhookUrl();
   if (!url) return;
   const message = Array.isArray(lines) ? lines.filter(Boolean).join("\n") : String(lines || "");
@@ -827,6 +828,16 @@ function postPrivateNotification(type, subject, lines, payload = {}) {
       payload,
       ...payload
     })
+  }).catch(() => {});
+}
+
+function postManagementTelegramNotification(type, payload) {
+  if (!['testimonial', 'kenshi'].includes(type) || !payload?.id) return;
+  fetch('https://skbc.vercel.app/api/external/website-alerts', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ type, id: payload.id })
   }).catch(() => {});
 }
 
@@ -895,6 +906,7 @@ async function submitLeadToSupabase(lead) {
 async function submitKenshiRequestToSupabase(request) {
   const config = kenshiInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
+  const requestWithId = { ...request, id: request.id || crypto.randomUUID() };
   const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
     method: "POST",
     headers: {
@@ -903,7 +915,7 @@ async function submitKenshiRequestToSupabase(request) {
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     },
-    body: JSON.stringify(request)
+    body: JSON.stringify(requestWithId)
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
@@ -920,7 +932,7 @@ async function submitKenshiRequestToSupabase(request) {
     `Mensaje: ${request.message || "Sin mensaje"}`,
     "",
     "Revísalo en el admin de SKBC GIPUZKOA."
-  ], request);
+  ], requestWithId);
   return true;
 }
 
@@ -1075,7 +1087,9 @@ async function submitTestimonialToSupabase(payload, photoFile) {
   const config = testimonialInboxConfig();
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
   const photoUrl = await uploadTestimonialPhoto(photoFile);
-  const body = photoUrl ? { ...payload, photo_url: photoUrl } : payload;
+  const body = photoUrl
+    ? { ...payload, id: payload.id || crypto.randomUUID(), photo_url: photoUrl }
+    : { ...payload, id: payload.id || crypto.randomUUID() };
   const insert = (insertBody) => fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
     method: "POST",
     headers: {
