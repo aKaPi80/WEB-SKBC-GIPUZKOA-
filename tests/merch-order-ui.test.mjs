@@ -79,8 +79,8 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.match(app, /assets\/guides\/guia-tallas-dogis\.png/);
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
-  assert.match(html, /styles\.css\?v=20260928-compact-catalog/);
-  assert.match(html, /app\.js\?v=20260928-reference-only/);
+  assert.match(html, /styles\.css\?v=20260928-category-accordions/);
+  assert.match(html, /app\.js\?v=20260928-category-accordions/);
 });
 
 test('catalog cards keep details collapsed until the customer opens them', () => {
@@ -95,6 +95,13 @@ test('catalog cards keep details collapsed until the customer opens them', () =>
 
 test('belt variants show both color and length in the order selector', () => {
   const optionsSource = app.slice(app.indexOf('function merchVariantOptions'), app.indexOf('function addMerchLine'));
-  assert.match(optionsSource, /productCategory\(product \|\| \{\}\) === "belt"/);
+  assert.match(optionsSource, /\["belt", "club"\]\.includes\(productCategory\(product \|\| \{\}\)\)/);
   assert.match(optionsSource, /`\$\{color\} · \$\{size\}`/);
+});
+
+test('catalog categories are collapsed accordions', () => {
+  const catalogSource = app.slice(app.indexOf('function merchCatalogHtml'), app.indexOf('function merchCartHtml'));
+  assert.match(catalogSource, /<details class="merch-category">/);
+  assert.match(catalogSource, /<summary class="merch-category__heading">/);
+  assert.match(styles, /\.merch-category\[open\]/);
 });

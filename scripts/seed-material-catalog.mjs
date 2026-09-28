@@ -5,6 +5,8 @@ const COST_BASIS = "Approved estimate derived from public club price; no private
 const ALL_SIZES = ["0000", "000", "00", "0", "1", "2", "3", "4", "5", "6", "7"];
 const BELT_COLORS = ["Blanco", "Amarillo", "Naranja", "Verde", "Azul", "Lila", "Marrón", "Rojo", "Negro"];
 const BELT_LENGTHS = ["240 cm", "260 cm", "280 cm", "300 cm", "320 cm"];
+const CLUB_SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
+const CLUB_COLORS = ["Blanco", "Negro", "Navy", "Rojo"];
 
 const giDefinitions = [
   {
@@ -100,6 +102,13 @@ const giDefinitions = [
   },
 ];
 
+const clubDefinitions = [
+  { slug: "skbc-printed-tshirt", reference: "SKBC-CAMISETA", name: "Camiseta SKBC impresa", description: "Camiseta del club personalizada con impresión SKBC.", image: "assets/optimized/1780564872665-camiseta-blanca.webp", price_cents: 1000, personalization: "Impresión SKBC" },
+  { slug: "skbc-printed-polo", reference: "SKBC-POLO", name: "Polo SKBC impreso", description: "Polo del club personalizado con impresión SKBC.", image: "assets/optimized/1781135899632-polooo.webp", price_cents: 1500, personalization: "Impresión SKBC" },
+  { slug: "skbc-embroidered-garment", reference: "SKBC-BORDADO", name: "Prenda SKBC bordada", description: "Prenda del club personalizada con bordado SKBC.", image: "assets/optimized/1780565070624-sudadera-negra.webp", price_cents: 3000, personalization: "Bordado SKBC" },
+  { slug: "skbc-embroidered-hoodie", reference: "SKBC-SUDADERA", name: "Sudadera SKBC bordada", description: "Sudadera del club personalizada con bordado SKBC.", image: "assets/optimized/1780565086940-sudadera-negra-kanji.webp", price_cents: 3500, personalization: "Bordado SKBC" },
+];
+
 export const products = [
   ...giDefinitions.map((definition, index) => ({
     slug: definition.slug,
@@ -138,6 +147,22 @@ export const products = [
     sort_order: 10,
     is_active: true,
   },
+  ...clubDefinitions.map((definition, index) => ({
+    slug: definition.slug,
+    name: definition.name,
+    description: definition.description,
+    brand: "SKBC",
+    supplier_reference: definition.reference,
+    category: "club",
+    recommended_level: null,
+    weight: null,
+    image_url: definition.image,
+    source_url: null,
+    image_attribution: null,
+    metadata: { personalization: definition.personalization, colors: CLUB_COLORS },
+    sort_order: index + 1,
+    is_active: true,
+  })),
 ];
 
 export const variants = [
@@ -189,6 +214,25 @@ export const variants = [
     sort_order: colorIndex * BELT_LENGTHS.length + sizeIndex + 1,
     is_active: true,
   }))),
+  ...clubDefinitions.flatMap((definition) => CLUB_COLORS.flatMap((color, colorIndex) => CLUB_SIZES.map((size, sizeIndex) => ({
+    product_slug: definition.slug,
+    supplier_reference: definition.reference,
+    sku: `${definition.reference}-${color.toUpperCase()}-${size}`,
+    name: `${color} · ${size}`,
+    attributes: { color, size },
+    cost_cents: definition.price_cents,
+    margin_cents: 0,
+    price_cents: definition.price_cents,
+    unit_price_cents: definition.price_cents,
+    cost_basis: "Legacy SKBC public price; supplier cost not recorded",
+    promotion: { price_cents: null, starts_at: null, ends_at: null, is_active: false },
+    promotion_price_cents: null,
+    promotion_starts_at: null,
+    promotion_ends_at: null,
+    promotion_is_active: false,
+    sort_order: colorIndex * CLUB_SIZES.length + sizeIndex + 1,
+    is_active: true,
+  })))),
 ];
 
 const CATALOG_OWNER = "skbc-approved-material-catalog";

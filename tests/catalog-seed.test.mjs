@@ -25,12 +25,15 @@ const expectedReferences = [
 ];
 const illustrativeAttribution = "Imagen orientativa generada para SKBC";
 
-test("approved catalog contains only the nine Fujimae gis and white belt", () => {
+test("approved catalog contains dogis, obi, and the four club garments", () => {
   const fujimae = products.filter((item) => item.brand === "Fujimae" && item.category === "gi");
 
   assert.deepEqual(fujimae.map((item) => item.supplier_reference).sort(), expectedReferences);
-  assert.equal(products.length, 10);
+  assert.equal(products.length, 14);
   assert.equal(products.find((item) => item.slug === "fujimae-martial-arts-belt").name, "Obi de artes marciales");
+  assert.deepEqual(products.filter((item) => item.category === "club").map((item) => item.name), [
+    "Camiseta SKBC impresa", "Polo SKBC impreso", "Prenda SKBC bordada", "Sudadera SKBC bordada",
+  ]);
 });
 
 test("approved catalog has stable public prices", () => {
@@ -48,6 +51,8 @@ test("approved catalog has stable public prices", () => {
   assert.equal(variants.find((item) => item.sku === "10081-2").price_cents, 10500);
   assert.equal(variants.find((item) => item.sku === "15010-BLANCO-240").price_cents, 500);
   assert.equal(variants.filter((item) => item.supplier_reference === "15010").length, 45);
+  assert.equal(variants.filter((item) => item.supplier_reference === "SKBC-CAMISETA").length, 24);
+  assert.equal(variants.find((item) => item.sku === "SKBC-SUDADERA-NEGRO-XL").price_cents, 3500);
 });
 
 test("obi catalog covers every approved color and length with its own image", () => {
@@ -165,7 +170,7 @@ test("dry-run succeeds without Supabase admin environment", () => {
 
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /dry run/i);
-  assert.match(result.stdout, /10 products/i);
+  assert.match(result.stdout, /14 products/i);
 });
 
 test("execution requires dedicated website Supabase admin environment", () => {

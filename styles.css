@@ -3523,25 +3523,40 @@ textarea { resize: vertical; }
 }
 
 .merch-category {
-  display: grid;
-  gap: 18px;
+  overflow: hidden;
+  border: 1px solid #d7dad7;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .merch-category__heading {
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 78px;
+  padding: 18px 22px;
+  cursor: pointer;
+  list-style: none;
 }
 
-.merch-category__heading h3 {
-  margin: 0;
-  font-size: 26px;
-}
+.merch-category__heading::-webkit-details-marker { display: none; }
+.merch-category__heading:focus-visible { outline: 3px solid rgba(204, 35, 41, 0.32); outline-offset: -3px; }
 
-.merch-category__heading span {
+.merch-category__title { display: flex; align-items: baseline; gap: 12px; }
+.merch-category__title strong { color: var(--ink); font-size: 26px; }
+.merch-category__title small {
   color: var(--red);
   font-weight: 950;
 }
+
+.merch-category__toggle { display: flex; align-items: center; gap: 14px; color: var(--ink); font-size: 12px; font-weight: 950; text-transform: uppercase; }
+.merch-category__toggle i { width: 11px; height: 11px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translate(-2px, 2px); transition: transform 180ms ease; }
+.merch-category[open] .merch-category__toggle i { transform: rotate(225deg) translate(-2px, 2px); }
+.merch-category[open] .merch-category__toggle span { font-size: 0; }
+.merch-category[open] .merch-category__toggle span::after { content: "Ocultar artículos"; font-size: 12px; }
+.merch-category__content { padding: 0 18px 18px; border-top: 1px solid #e1e4e1; }
+.merch-category__content .merch-grid { padding-top: 18px; }
 
 .merch-category__empty {
   min-height: 70px;

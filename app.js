@@ -1233,10 +1233,12 @@ function merchCatalogHtml() {
     : "";
   return fallbackNotice + MERCH_CATEGORIES.map(({ key, label }) => {
     const products = state.merchCatalog.products.filter((product) => productCategory(product) === key);
-    return `<section class="merch-category" aria-labelledby="merch-category-${key}">
-      <div class="merch-category__heading"><h3 id="merch-category-${key}">${label}</h3><span>${products.length}</span></div>
-      ${products.length ? `<div class="merch-grid">${products.map(merchProductCard).join("")}</div>` : `<p class="merch-category__empty">Sin artículos disponibles ahora mismo.</p>`}
-    </section>`;
+    return `<details class="merch-category">
+      <summary class="merch-category__heading"><span class="merch-category__title"><strong>${label}</strong><small>${products.length}</small></span><span class="merch-category__toggle"><span>Ver artículos</span><i aria-hidden="true"></i></span></summary>
+      <div class="merch-category__content">
+        ${products.length ? `<div class="merch-grid">${products.map(merchProductCard).join("")}</div>` : `<p class="merch-category__empty">Sin artículos disponibles ahora mismo.</p>`}
+      </div>
+    </details>`;
   }).join("");
 }
 
@@ -1258,7 +1260,7 @@ function merchVariantOptions(productId) {
   return productVariants(productId).map((variant) => {
     const size = variant.attributes?.size || variant.name;
     const color = variant.attributes?.color;
-    const label = productCategory(product || {}) === "belt" && color ? `${color} · ${size}` : size;
+    const label = ["belt", "club"].includes(productCategory(product || {})) && color ? `${color} · ${size}` : size;
     return `<option value="${variant.id}">${escapeHtml(label)} · ${money(activeVariantPrice(variant))}</option>`;
   }).join("");
 }
