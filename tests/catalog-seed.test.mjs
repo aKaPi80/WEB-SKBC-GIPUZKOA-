@@ -7,7 +7,8 @@ import test from "node:test";
 import {
   products,
   variants,
-  buildSeedRequests,
+  buildSeedRpcRequest,
+  executeSeed,
 } from "../scripts/seed-material-catalog.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -22,6 +23,7 @@ const expectedReferences = [
   "10080",
   "10081",
 ];
+const illustrativeAttribution = "Imagen orientativa generada para SKBC; producto Fujimae consultable en la ficha oficial";
 
 test("approved catalog contains only the nine Fujimae gis and white belt", () => {
   const fujimae = products.filter((item) => item.brand === "Fujimae");
@@ -75,27 +77,65 @@ test("ProWear keeps its stable price and inactive temporary promotion", () => {
   }
 });
 
-test("Fujimae products record legitimate source attribution and local WebP images", () => {
+test("Fujimae products use the generated illustration and preserve only official product-page sources", () => {
+  const imageBuffers = [];
+
   for (const product of products.filter((item) => item.brand === "Fujimae")) {
-    assert.match(product.source_url, /^https:\/\/(?:www\.)?fujimae\.com\//);
-    assert.equal(product.image_attribution, "Product image source: Fujimae");
-    assert.match(product.metadata.image_source_url, /^https:\/\/fujimae\.com\/[0-9]+-zoom_producto\//);
+    assert.match(product.source_url, /^https:\/\/fujimae\.com\/es\/vestimenta-karate\//);
+    assert.equal(product.image_attribution, illustrativeAttribution);
+    assert.equal(product.metadata.image_attribution, illustrativeAttribution);
+    assert.equal(product.metadata.image_source_type, "codex_generated");
+    assert.equal("image_source_url" in product.metadata, false);
     assert.match(product.image_url, /^assets\/products\/fujimae\/[0-9]+\.webp$/);
     assert.equal(existsSync(`${repoRoot}/${product.image_url}`), true, product.image_url);
 
-    const header = readFileSync(`${repoRoot}/${product.image_url}`).subarray(0, 12);
+    const image = readFileSync(`${repoRoot}/${product.image_url}`);
+    const header = image.subarray(0, 12);
     assert.equal(header.toString("ascii", 0, 4), "RIFF", product.image_url);
     assert.equal(header.toString("ascii", 8, 12), "WEBP", product.image_url);
+    imageBuffers.push(image);
   }
+
+  assert.equal(imageBuffers.slice(1).every((image) => image.equals(imageBuffers[0])), true);
 });
 
-test("seed requests are deterministic idempotent upserts", () => {
-  const first = buildSeedRequests();
-  const second = buildSeedRequests();
+test("seed request calls the atomic owner-scoped catalog RPC", () => {
+  const first = buildSeedRpcRequest();
+  const second = buildSeedRpcRequest();
 
   assert.deepEqual(first, second);
-  assert.deepEqual(first.map((request) => request.onConflict), ["supplier_reference", "sku"]);
-  assert.equal(first.every((request) => request.prefer.includes("resolution=merge-duplicates")), true);
+  assert.equal(first.path, "/rest/v1/rpc/seed_skbc_merch_catalog");
+  assert.equal(first.body.p_catalog_owner, "skbc-approved-material-catalog");
+  assert.equal(first.body.p_products.length, products.length);
+  assert.equal(first.body.p_variants.length, variants.length);
+  assert.equal(first.body.p_products.every((product) => product.catalog_owner === first.body.p_catalog_owner), true);
+  assert.equal(first.body.p_variants.every((variant) => variant.catalog_owner === first.body.p_catalog_owner), true);
+});
+
+test("execution posts one atomic RPC request and returns its counts", async () => {
+  const calls = [];
+  const fetchImpl = async (url, options) => {
+    calls.push({ url, options });
+    return new Response(JSON.stringify({ products_upserted: 10, variants_upserted: 65, products_deactivated: 1, variants_deactivated: 2 }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  };
+
+  const result = await executeSeed({
+    env: {
+      WEB_ORDERS_SUPABASE_URL: "https://website-project.supabase.co/",
+      WEB_ORDERS_SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
+    },
+    fetchImpl,
+  });
+
+  assert.deepEqual(result, { products: 10, variants: 65, productsDeactivated: 1, variantsDeactivated: 2 });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, "https://website-project.supabase.co/rest/v1/rpc/seed_skbc_merch_catalog");
+  assert.equal(calls[0].options.method, "POST");
+  assert.equal(calls[0].options.headers.authorization, "Bearer test-service-role-key");
+  assert.deepEqual(JSON.parse(calls[0].options.body), buildSeedRpcRequest().body);
 });
 
 test("dry-run succeeds without Supabase admin environment", () => {

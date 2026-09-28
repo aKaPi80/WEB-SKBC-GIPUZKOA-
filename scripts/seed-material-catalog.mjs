@@ -1,6 +1,6 @@
 import { pathToFileURL } from "node:url";
 
-const FUJIMAE_ATTRIBUTION = "Product image source: Fujimae";
+const ILLUSTRATIVE_ATTRIBUTION = "Imagen orientativa generada para SKBC; producto Fujimae consultable en la ficha oficial";
 const COST_BASIS = "Approved estimate derived from public club price; no private supplier price stored";
 const ALL_SIZES = ["0000", "000", "00", "0", "1", "2", "3", "4", "5", "6", "7"];
 
@@ -15,7 +15,6 @@ const giDefinitions = [
     sizes: ALL_SIZES,
     priceForSize: (size) => (["0000", "000", "00", "0", "1", "2"].includes(size) ? 3000 : 3500),
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7454-karate-gi-basic.html",
-    imageSourceUrl: "https://fujimae.com/12807-zoom_producto/karate-gi-basic.jpg",
   },
   {
     reference: "10010",
@@ -27,7 +26,6 @@ const giDefinitions = [
     sizes: ALL_SIZES,
     priceForSize: (size) => (["0000", "000", "00", "0", "1", "2"].includes(size) ? 4000 : 4500),
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7468-karate-gi-training.html",
-    imageSourceUrl: "https://fujimae.com/12806-zoom_producto/karate-gi-training.jpg",
   },
   {
     reference: "10021",
@@ -39,7 +37,6 @@ const giDefinitions = [
     sizes: ["000", "00", "0", "1", "2", "3", "4", "5", "7"],
     priceForSize: (size) => (["000", "00", "0", "1", "2"].includes(size) ? 4500 : 6000),
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/8221-karate-gi-training-lite-2.html",
-    imageSourceUrl: "https://fujimae.com/12808-zoom_producto/karate-gi-training-lite-2.jpg",
   },
   {
     reference: "10041",
@@ -51,7 +48,6 @@ const giDefinitions = [
     sizes: ["3", "4", "5", "6", "7"],
     priceForSize: () => 6500,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7791-karate-gi-shinsei.html",
-    imageSourceUrl: "https://fujimae.com/7349-zoom_producto/karate-gi-shinsei.jpg",
   },
   {
     reference: "10050",
@@ -63,7 +59,6 @@ const giDefinitions = [
     sizes: ["3", "4", "5", "6", "7"],
     priceForSize: () => 8500,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7694-karate-gi-legacy-ii.html",
-    imageSourceUrl: "https://fujimae.com/7218-zoom_producto/karate-gi-legacy-ii.jpg",
   },
   {
     reference: "10060",
@@ -76,7 +71,6 @@ const giDefinitions = [
     priceForSize: () => 9500,
     promotionPriceCents: 8800,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7734-karate-gi-kumite-prowear.html",
-    imageSourceUrl: "https://fujimae.com/12718-zoom_producto/karate-gi-kumite-prowear.jpg",
   },
   {
     reference: "10070",
@@ -88,7 +82,6 @@ const giDefinitions = [
     sizes: ["2", "3", "4", "5", "6", "7"],
     priceForSize: () => 8000,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/7735-karate-gi-kata-budokan.html",
-    imageSourceUrl: "https://fujimae.com/12719-zoom_producto/karate-gi-kata-budokan.jpg",
   },
   {
     reference: "10080",
@@ -100,7 +93,6 @@ const giDefinitions = [
     sizes: ["3", "4", "5", "6", "7"],
     priceForSize: () => 9500,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/8103-karate-gi-kumite-training-upcycle.html",
-    imageSourceUrl: "https://fujimae.com/12727-zoom_producto/karate-gi-kumite-training-upcycle.jpg",
   },
   {
     reference: "10081",
@@ -112,7 +104,6 @@ const giDefinitions = [
     sizes: ["2", "3", "4", "5", "6", "7"],
     priceForSize: () => 10500,
     sourceUrl: "https://fujimae.com/es/vestimenta-karate/8162-karate-gi-kumite-prowear-hyperlite-qs.html",
-    imageSourceUrl: "https://fujimae.com/11645-zoom_producto/karate-gi-kumite-prowear-hyperlite-qs.jpg",
   },
 ];
 
@@ -128,12 +119,12 @@ export const products = [
     weight: definition.weight,
     image_url: `assets/products/fujimae/${definition.reference}.webp`,
     source_url: definition.sourceUrl,
-    image_attribution: FUJIMAE_ATTRIBUTION,
+    image_attribution: ILLUSTRATIVE_ATTRIBUTION,
     metadata: {
       color: "White",
       includes: ["jacket", "trousers"],
-      image_source_url: definition.imageSourceUrl,
-      image_attribution: FUJIMAE_ATTRIBUTION,
+      image_source_type: "codex_generated",
+      image_attribution: ILLUSTRATIVE_ATTRIBUTION,
     },
     sort_order: index + 1,
     is_active: true,
@@ -207,28 +198,21 @@ export const variants = [
   },
 ];
 
-const productPayload = () => products.map(({ metadata, ...product }) => ({ ...product, metadata }));
-const variantPayload = (productIds = new Map()) => variants.map(({ product_slug: productSlug, promotion, ...variant }) => ({
-  ...variant,
-  product_id: productIds.get(productSlug) ?? null,
-  metadata: { promotion },
-}));
+const CATALOG_OWNER = "skbc-approved-material-catalog";
 
-export function buildSeedRequests(productIds = new Map()) {
-  return [
-    {
-      table: "skbc_merch_products",
-      onConflict: "supplier_reference",
-      prefer: "resolution=merge-duplicates,return=representation",
-      rows: productPayload(),
+export function buildSeedRpcRequest() {
+  return {
+    path: "/rest/v1/rpc/seed_skbc_merch_catalog",
+    body: {
+      p_catalog_owner: CATALOG_OWNER,
+      p_products: products.map((product) => ({ ...product, catalog_owner: CATALOG_OWNER })),
+      p_variants: variants.map(({ promotion, ...variant }) => ({
+        ...variant,
+        catalog_owner: CATALOG_OWNER,
+        metadata: { promotion },
+      })),
     },
-    {
-      table: "skbc_merch_variants",
-      onConflict: "sku",
-      prefer: "resolution=merge-duplicates,return=representation",
-      rows: variantPayload(productIds),
-    },
-  ];
+  };
 }
 
 function requiredEnvironment(env) {
@@ -243,35 +227,32 @@ function requiredEnvironment(env) {
   return { url: url.replace(/\/+$/, ""), serviceRoleKey };
 }
 
-async function upsert({ url, serviceRoleKey }, request) {
-  const response = await fetch(`${url}/rest/v1/${request.table}?on_conflict=${encodeURIComponent(request.onConflict)}`, {
+async function callSeedRpc({ url, serviceRoleKey }, request, fetchImpl) {
+  const response = await fetchImpl(`${url}${request.path}`, {
     method: "POST",
     headers: {
       apikey: serviceRoleKey,
       authorization: `Bearer ${serviceRoleKey}`,
       "content-type": "application/json",
-      prefer: request.prefer,
     },
-    body: JSON.stringify(request.rows),
+    body: JSON.stringify(request.body),
   });
 
-  if (!response.ok) throw new Error(`${request.table} upsert failed (${response.status}): ${await response.text()}`);
+  if (!response.ok) throw new Error(`catalog seed RPC failed (${response.status}): ${await response.text()}`);
   return response.json();
 }
 
-export async function executeSeed({ env = process.env } = {}) {
+export async function executeSeed({ env = process.env, fetchImpl = fetch } = {}) {
   const credentials = requiredEnvironment(env);
-  const [productRequest] = buildSeedRequests();
-  const savedProducts = await upsert(credentials, productRequest);
-  const productIds = new Map(savedProducts.map((product) => [product.slug, product.id]));
-  const [, variantRequest] = buildSeedRequests(productIds);
-
-  if (variantRequest.rows.some((variant) => !variant.product_id)) {
-    throw new Error("Product upsert did not return every product id; variants were not written");
-  }
-
-  const savedVariants = await upsert(credentials, variantRequest);
-  return { products: savedProducts.length, variants: savedVariants.length };
+  const payload = await callSeedRpc(credentials, buildSeedRpcRequest(), fetchImpl);
+  const result = Array.isArray(payload) ? payload[0] : payload;
+  if (!result) throw new Error("catalog seed RPC returned no result");
+  return {
+    products: result.products_upserted,
+    variants: result.variants_upserted,
+    productsDeactivated: result.products_deactivated,
+    variantsDeactivated: result.variants_deactivated,
+  };
 }
 
 async function main() {
@@ -281,7 +262,7 @@ async function main() {
   }
 
   const result = await executeSeed();
-  console.log(`Imported ${result.products} products and ${result.variants} variants.`);
+  console.log(`Imported ${result.products} products and ${result.variants} variants; deactivated ${result.productsDeactivated} products and ${result.variantsDeactivated} variants.`);
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

@@ -54,6 +54,65 @@ test('every foreign key has a supporting leading-column index', () => {
   has(/user_id uuid primary key references auth\.users/i, 'admin user_id FK must be indexed by its primary key');
 });
 
+test('catalog stores approved product and variant economics', () => {
+  for (const field of [
+    'brand', 'supplier_reference', 'category', 'recommended_level', 'weight',
+    'source_url', 'image_attribution', 'metadata',
+  ]) {
+    has(new RegExp(`(?:add column if not exists )?${field}\\s+`, 'i'), `missing product field ${field}`);
+  }
+  has(/supplier_reference text not null unique|unique\s*\(\s*supplier_reference\s*\)/i, 'product supplier reference must be unique and non-null');
+  has(/metadata jsonb[^;]+jsonb_typeof\s*\(\s*metadata\s*\)\s*=\s*'object'/i, 'product metadata must be an object');
+
+  for (const field of [
+    'supplier_reference', 'cost_cents', 'margin_cents', 'price_cents', 'cost_basis',
+    'promotion_price_cents', 'promotion_starts_at', 'promotion_ends_at',
+    'promotion_is_active', 'metadata',
+  ]) {
+    has(new RegExp(`(?:add column if not exists )?${field}\\s+`, 'i'), `missing variant field ${field}`);
+  }
+  has(/cost_cents\s*>=\s*0/i, 'variant cost must be non-negative');
+  has(/price_cents\s*=\s*cost_cents\s*\+\s*margin_cents/i, 'price must equal cost plus margin');
+  has(/promotion_ends_at\s+is null[^;]+promotion_starts_at/i, 'promotion dates must be ordered');
+  has(/function public\.sync_skbc_merch_variant_price/i, 'legacy unit price synchronization trigger is required');
+});
+
+test('submit RPC securely calculates the effective public price', () => {
+  has(/promotion_is_active[^;]+promotion_price_cents[^;]+promotion_starts_at[^;]+promotion_ends_at/i, 'RPC must validate the active promotion window');
+  has(/coalesce\s*\([^;]*promotion_price_cents[^;]*price_cents/i, 'RPC must fall back from promotion to authoritative price');
+  has(/supplier_reference[^;]+cost_cents[^;]+size/i, 'RPC must snapshot supplier fields on order items');
+  assert.doesNotMatch(sql, /v_variant\.unit_price_cents\s*\)/i, 'RPC must not trust legacy unit price as authoritative');
+});
+
+test('admin payment and campaign close RPCs are atomic and locked down', () => {
+  has(/function public\.assign_skbc_order_payment_method\s*\(\s*p_order_id uuid\s*,\s*p_payment_method text\s*\)/i, 'payment RPC signature must match management');
+  has(/function public\.close_skbc_order_campaign\s*\(\s*p_campaign_id uuid\s*,\s*p_expected_order_count integer\s*,\s*p_expected_communication_count integer\s*\)/i, 'close RPC must require management confirmation counts');
+  has(/function public\.can_manage_skbc_merch_orders\s*\(\s*\)/i, 'admin/service-role authorization helper is required');
+  has(/assign_skbc_order_payment_method[\s\S]+?for update/i, 'payment RPC must lock order and campaign');
+  has(/close_skbc_order_campaign[\s\S]+?for update/i, 'close RPC must lock campaign data');
+  has(/prepared_communication_count/i, 'close RPC must return prepared communication count');
+  has(/v_order_count\s*<>\s*p_expected_order_count[\s\S]+?v_communication_count\s*<>\s*p_expected_communication_count/i, 'close RPC must reject stale confirmation counts under lock');
+  has(/at time zone\s+'Europe\/Madrid'[\s\S]+?period_end/i, 'close RPC must enforce the Madrid-local campaign end');
+  has(/v_campaign\.status\s*<>\s*'open'/i, 'only open campaigns may close');
+  has(/frozen_at/i, 'orders must record when their data was frozen');
+  has(/snapshot jsonb/i, 'communications must store a frozen snapshot');
+  has(/recipient_email text/i, 'communications must store their recipient');
+  has(/status text[^;]+prepared/i, 'communications must support prepared status');
+  has(/function public\.protect_skbc_frozen_order/i, 'frozen orders/items need database enforcement');
+  has(/revoke all on function public\.assign_skbc_order_payment_method[^;]+from public/i, 'payment RPC must revoke PUBLIC execution');
+  has(/revoke all on function public\.close_skbc_order_campaign[^;]+from public/i, 'close RPC must revoke PUBLIC execution');
+  assert.doesNotMatch(sql, /grant (?:insert|update|delete)[^;]+skbc_merch_products[^;]+to authenticated/i, 'catalog writes must go through guarded RPCs');
+});
+
+test('catalog seed RPC atomically upserts owned rows and deactivates stale rows', () => {
+  has(/function public\.seed_skbc_merch_catalog\s*\(\s*p_products jsonb\s*,\s*p_variants jsonb\s*,\s*p_catalog_owner text/i, 'seed RPC must accept Task 3 arrays and owner');
+  has(/on conflict\s*\(\s*supplier_reference\s*\)\s*do update/i, 'seed RPC must upsert products by supplier reference');
+  has(/on conflict\s*\(\s*sku\s*\)\s*do update/i, 'seed RPC must upsert variants by SKU');
+  has(/catalog_owner/i, 'seed RPC must mark catalog ownership');
+  has(/is_active\s*=\s*false/i, 'seed RPC must deactivate stale owned rows');
+  has(/revoke all on function public\.seed_skbc_merch_catalog[^;]+from public/i, 'seed RPC must revoke PUBLIC execution');
+});
+
 test('documents that deployment must wait for the Task 4 RPC client switch', () => {
   assert.match(rawSql, /do not deploy[^\r\n]*(?:task 4|rpc client)/i, 'missing prominent Task 4 deployment dependency');
 });
@@ -222,13 +281,17 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       ('00000000-0000-4000-8000-000000000002');
     insert into public.skbc_merch_admins (user_id)
     values ('00000000-0000-4000-8000-000000000001');
-    insert into public.skbc_merch_products (id, slug, name) values
-      ('10000000-0000-4000-8000-000000000001', 'gi', 'Gi'),
-      ('10000000-0000-4000-8000-000000000002', 'inactive', 'Inactive');
-    insert into public.skbc_merch_variants (id, product_id, sku, name, unit_price_cents, is_active) values
-      ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'GI-A', 'A', 2500, true),
-      ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', 'GI-B', 'B', 1500, true),
-      ('20000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002', 'OFF', 'Off', 100, false);
+    insert into public.skbc_merch_products (id, slug, name, supplier_reference, is_active) values
+      ('10000000-0000-4000-8000-000000000001', 'gi', 'Gi', 'GI', true),
+      ('10000000-0000-4000-8000-000000000002', 'inactive', 'Inactive', 'OFF', false);
+    insert into public.skbc_merch_variants (
+      id, product_id, sku, name, supplier_reference, cost_cents, margin_cents,
+      price_cents, unit_price_cents, cost_basis, promotion_price_cents,
+      promotion_starts_at, promotion_ends_at, promotion_is_active, attributes, is_active
+    ) values
+      ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'GI-A', 'A', 'GI', 2000, 500, 2500, 1, 'test', 2000, now() - interval '1 day', now() + interval '1 day', true, '{"size":"A"}', true),
+      ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', 'GI-B', 'B', 'GI', 1000, 500, 1500, 1, 'test', null, null, null, false, '{"size":"B"}', true),
+      ('20000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002', 'OFF', 'Off', 'OFF', 100, 0, 100, 1, 'test', null, null, null, false, '{"size":"Off"}', false);
 
     set role authenticated;
     select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002', false);
@@ -243,12 +306,45 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     end $$;
     reset role;
 
+    insert into public.skbc_order_campaigns (id, period_start, period_end)
+    values ('40000000-0000-4000-8000-000000000001', date '2020-01-16', date '2020-02-15');
+    insert into public.skbc_merch_orders (
+      id, campaign_id, customer_name, customer_phone, customer_email, total_cents
+    ) values (
+      '50000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001',
+      'Historical Member', '600000001', 'historical@example.com', 2500
+    );
+
     set role authenticated;
     select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', false);
     do $$ begin
-      if (select count(*) from public.skbc_merch_orders) <> 1 then raise exception 'admin cannot read orders'; end if;
+      if (select count(*) from public.skbc_merch_orders) <> 2 then raise exception 'admin cannot read orders'; end if;
+      perform public.assign_skbc_order_payment_method('50000000-0000-4000-8000-000000000001', 'Transfer');
+      begin
+        perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 2, 1);
+        raise exception 'stale close confirmation succeeded';
+      exception when serialization_failure then null;
+      end;
+      perform public.close_skbc_order_campaign('40000000-0000-4000-8000-000000000001', 1, 1);
+      if (select count(*) from public.skbc_order_communications where order_id = '50000000-0000-4000-8000-000000000001' and status = 'prepared') <> 1 then
+        raise exception 'close did not prepare exactly one communication';
+      end if;
+      begin
+        perform public.assign_skbc_order_payment_method('50000000-0000-4000-8000-000000000001', 'Cash');
+        raise exception 'frozen payment update succeeded';
+      exception when object_not_in_prerequisite_state then null;
+      end;
     end $$;
     reset role;
+
+    do $$ begin
+      begin
+        update public.skbc_merch_orders set customer_name = 'Changed'
+        where id = '50000000-0000-4000-8000-000000000001';
+        raise exception 'frozen order trigger allowed an update';
+      exception when object_not_in_prerequisite_state then null;
+      end;
+    end $$;
 
     set role anon;
     create temp table first_order as
@@ -266,6 +362,9 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     do $$ begin
       if (select order_id from first_order) <> (select order_id from retry_order) then
         raise exception 'normalized retry did not return original order';
+      end if;
+      if (select total_cents from first_order) <> 5000 then
+        raise exception 'effective promotion price was not applied';
       end if;
       begin
         perform public.submit_skbc_merch_order(
@@ -285,6 +384,20 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
         raise exception 'mismatched retry succeeded';
       exception when unique_violation then
         if sqlerrm not like '%different request%' then raise; end if;
+      end;
+    end $$;
+    reset role;
+
+    set role authenticated;
+    select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', false);
+    do $$ declare current_campaign uuid; begin
+      select campaign_id into current_campaign
+      from public.skbc_merch_orders
+      where id = (select order_id from first_order);
+      begin
+        perform public.close_skbc_order_campaign(current_campaign, 1, 1);
+        raise exception 'campaign closed before its Madrid-local period ended';
+      exception when object_not_in_prerequisite_state then null;
       end;
     end $$;
     reset role;
@@ -311,6 +424,25 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       select period_start, period_end into s, e from public.skbc_merch_campaign_period('2026-10-25 01:30:00+00');
       if s <> date '2026-10-16' then raise exception 'autumn DST period failed'; end if;
     end $$;
+
+    select set_config('request.jwt.claim.role', 'service_role', false);
+    do $$ declare seeded record; begin
+      select * into seeded from public.seed_skbc_merch_catalog(
+        '[{"slug":"seeded","name":"Seeded","supplier_reference":"SEED","catalog_owner":"integration-owner","is_active":true}]'::jsonb,
+        '[{"product_slug":"seeded","sku":"SEED-1","name":"One","supplier_reference":"SEED","cost_cents":100,"margin_cents":50,"price_cents":150,"cost_basis":"test","catalog_owner":"integration-owner","is_active":true}]'::jsonb,
+        'integration-owner'
+      );
+      if seeded.products_upserted <> 1 or seeded.variants_upserted <> 1 then
+        raise exception 'atomic seed counts were wrong';
+      end if;
+      select * into seeded from public.seed_skbc_merch_catalog(
+        '[]'::jsonb, '[]'::jsonb, 'integration-owner'
+      );
+      if seeded.products_deactivated <> 1 or seeded.variants_deactivated <> 1 then
+        raise exception 'stale owned rows were not deactivated';
+      end if;
+    end $$;
+    select set_config('request.jwt.claim.role', '', false);
   `;
   psql('legacy_schema', behavior);
 });
