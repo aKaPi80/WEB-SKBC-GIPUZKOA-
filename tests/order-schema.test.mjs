@@ -34,6 +34,26 @@ test('declares the normalized material-order schema and keeps the legacy header'
   has(/create (?:or replace )?function public\.submit_skbc_merch_order\s*\(/i, 'missing submit RPC');
 });
 
+test('every foreign key has a supporting leading-column index', () => {
+  const indexedForeignKeys = [
+    ['skbc_merch_variants', 'product_id'],
+    ['skbc_merch_orders', 'campaign_id'],
+    ['skbc_merch_order_items', 'order_id'],
+    ['skbc_merch_order_items', 'variant_id'],
+    ['skbc_order_communications', 'order_id'],
+    ['skbc_merch_admins', 'created_by'],
+  ];
+
+  for (const [table, column] of indexedForeignKeys) {
+    has(
+      new RegExp(`create (?:unique )?index if not exists [^ ]+ on public\\.${table} \\(${column}(?:[, )])`, 'i'),
+      `missing supporting index for ${table}.${column}`,
+    );
+  }
+
+  has(/user_id uuid primary key references auth\.users/i, 'admin user_id FK must be indexed by its primary key');
+});
+
 test('documents that deployment must wait for the Task 4 RPC client switch', () => {
   assert.match(rawSql, /do not deploy[^\r\n]*(?:task 4|rpc client)/i, 'missing prominent Task 4 deployment dependency');
 });

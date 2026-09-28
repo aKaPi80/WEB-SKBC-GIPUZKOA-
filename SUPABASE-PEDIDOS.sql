@@ -103,8 +103,12 @@ create index if not exists skbc_merch_variants_product_sort_idx
   on public.skbc_merch_variants (product_id, sort_order, name);
 create index if not exists skbc_merch_order_items_order_idx
   on public.skbc_merch_order_items (order_id);
+create index if not exists skbc_merch_order_items_variant_idx
+  on public.skbc_merch_order_items (variant_id);
 create index if not exists skbc_order_communications_order_created_idx
   on public.skbc_order_communications (order_id, created_at desc);
+create index if not exists skbc_merch_admins_created_by_idx
+  on public.skbc_merch_admins (created_by);
 
 create or replace function public.set_skbc_merch_updated_at()
 returns trigger language plpgsql
