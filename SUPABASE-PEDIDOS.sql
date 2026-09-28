@@ -195,6 +195,10 @@ begin
      or nullif(btrim(p_customer_phone), '') is null then
     raise exception 'customer name and phone are required' using errcode = '22023';
   end if;
+  if nullif(btrim(p_customer_email), '') is null
+     or btrim(p_customer_email) !~* '^[^[:space:]@]+@[^[:space:]@.]+(\.[^[:space:]@.]+)+$' then
+    raise exception 'a valid customer email is required' using errcode = '22023';
+  end if;
   if p_items is null or jsonb_typeof(p_items) <> 'array'
      or jsonb_array_length(p_items) not between 1 and 30 then
     raise exception 'items must contain between 1 and 30 lines' using errcode = '22023';

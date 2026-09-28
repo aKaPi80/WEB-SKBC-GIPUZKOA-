@@ -33,6 +33,11 @@ test('submit RPC exposes the approved signature and return contract', () => {
   has(/set search_path\s*=\s*public\s*,\s*pg_temp/i, 'RPC must pin its search path');
 });
 
+test('submit RPC requires a nonblank syntactically plausible customer email', () => {
+  has(/nullif\s*\(\s*btrim\s*\(\s*p_customer_email\s*\)\s*,\s*''\s*\)\s+is null/i, 'RPC must reject blank email addresses');
+  has(/btrim\s*\(\s*p_customer_email\s*\)\s*!~\*?\s*'[^']*@[^']*\\\.[^']*'/i, 'RPC must require an @ sign and dotted domain');
+});
+
 test('submit RPC enforces campaign, line, variant, quantity, pricing, and idempotency rules', () => {
   has(/jsonb_array_length\s*\(\s*p_items\s*\)\s*(?:=|<)\s*0|jsonb_array_length\s*\(\s*p_items\s*\)\s+not between\s+1\s+and\s+30/i, 'RPC must reject empty item arrays');
   has(/jsonb_array_length\s*\(\s*p_items\s*\)\s*>\s*30|jsonb_array_length\s*\(\s*p_items\s*\)\s+not between\s+1\s+and\s+30/i, 'RPC must cap item arrays at 30 lines');
