@@ -3706,6 +3706,8 @@ textarea { resize: vertical; }
   pointer-events: auto;
 }
 
+.section > .merch-drawer-shell.size-guide-open { z-index: 1000 !important; }
+
 .merch-drawer__backdrop {
   position: absolute;
   inset: 0;
