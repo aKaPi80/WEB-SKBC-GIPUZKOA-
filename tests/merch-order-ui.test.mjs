@@ -79,8 +79,16 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.match(app, /assets\/guides\/guia-tallas-dogis\.png/);
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
-  assert.match(html, /styles\.css\?v=20260928-size-guide-cards-3/);
-  assert.match(html, /app\.js\?v=20260928-obi-variants/);
+  assert.match(html, /styles\.css\?v=20260928-compact-catalog/);
+  assert.match(html, /app\.js\?v=20260928-compact-catalog/);
+});
+
+test('catalog cards keep details collapsed until the customer opens them', () => {
+  const cardSource = app.slice(app.indexOf('function merchProductCard'), app.indexOf('function merchCatalogHtml'));
+  assert.match(cardSource, /<details class="merch-product__details">/);
+  assert.match(cardSource, /<summary class="merch-product__summary">/);
+  assert.match(cardSource, /Ver detalles/);
+  assert.match(styles, /\.merch-product__details\[open\]/);
 });
 
 test('belt variants show both color and length in the order selector', () => {

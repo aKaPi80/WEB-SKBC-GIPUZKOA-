@@ -1195,21 +1195,26 @@ function merchProductCard(product) {
     ? `<button class="merch-size-thumb" type="button" data-open-size-guide><img src="assets/guides/guia-tallas-dogis.png" alt="Vista previa de la guía de tallas" /><span>Guía de tallas · Ver en grande</span></button>`
     : "";
   return `<article class="merch-product">
-    <div class="merch-product__media">
-      <div class="merch-product__image">
-        <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
-        <small>${escapeHtml(attribution)}</small>
+    <details class="merch-product__details">
+      <summary class="merch-product__summary">
+        <div class="merch-product__image">
+          <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
+          <small>${escapeHtml(attribution)}</small>
+        </div>
+        <div class="merch-product__heading">
+          <span>${escapeHtml(product.brand || "SKBC")} · Ref. ${escapeHtml(product.supplier_reference)}</span>
+          <h3>${escapeHtml(product.name)}</h3>
+          <strong class="merch-product__toggle"><span>Ver detalles</span><i aria-hidden="true"></i></strong>
+        </div>
+      </summary>
+      <div class="merch-product__body">
+        <p>${escapeHtml(product.description || "Material disponible por encargo a través del club.")}</p>
+        ${sizeGuide}
+        <div class="merch-actions">
+          <button class="button" type="button" data-order-product="${product.id}" ${orderable ? "" : "disabled"}>${orderable ? "Añadir al pedido" : "Pendiente de confirmación"}</button>
+        </div>
       </div>
-      ${sizeGuide}
-    </div>
-    <div class="merch-product__body">
-      <span>${escapeHtml(product.brand || "SKBC")} · Ref. ${escapeHtml(product.supplier_reference)}</span>
-      <h3>${escapeHtml(product.name)}</h3>
-      <p>${escapeHtml(product.description || "Material disponible por encargo a través del club.")}</p>
-      <div class="merch-actions">
-        <button class="button" type="button" data-order-product="${product.id}" ${orderable ? "" : "disabled"}>${orderable ? "Añadir al pedido" : "Pendiente de confirmación"}</button>
-      </div>
-    </div>
+    </details>
   </article>`;
 }
 
