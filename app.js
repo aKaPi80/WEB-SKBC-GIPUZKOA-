@@ -1276,10 +1276,10 @@ function merchDrawer(copy, settings) {
           <div id="merchCart">${merchCartHtml(copy)}</div>
         </section>
 
-        <details class="merch-size-guide">
-          <summary>${copy.merch.sizeGuideTitle || "Guía de tallas"}</summary>
-          <p>${copy.merch.sizeGuideText || "Orientación Fujimae por altura: 0000 (110 cm), 000 (120 cm), 00 (130 cm), 0 (140 cm), 1 (150 cm), 2 (160 cm), 3 (170 cm), 4 (180 cm), 5 (190 cm), 6 (200 cm), 7 (210 cm)."}</p>
-        </details>
+        <section class="merch-size-guide">
+          <div><strong>${copy.merch.sizeGuideTitle || "Guía de tallas"}</strong><span>Consulta la tabla antes de elegir la talla.</span></div>
+          <button class="button secondary" type="button" data-open-size-guide>Ver guía de tallas</button>
+        </section>
 
         <form class="merch-form" novalidate>
           <h4>${copy.merch.buyerTitle}</h4>
@@ -1297,6 +1297,13 @@ function merchDrawer(copy, settings) {
         </form>
       </div>
     </aside>
+    <div class="merch-size-modal" data-size-guide-modal aria-hidden="true">
+      <button class="merch-size-modal__backdrop" type="button" data-close-size-guide aria-label="Cerrar guía de tallas"></button>
+      <section class="merch-size-modal__panel" role="dialog" aria-modal="true" aria-labelledby="merchSizeGuideTitle" tabindex="-1">
+        <header><div><span>Dogis Fujimae</span><h3 id="merchSizeGuideTitle">Guía de tallas</h3></div><button type="button" data-close-size-guide aria-label="Cerrar guía de tallas">×</button></header>
+        <div><img src="assets/guides/guia-tallas-dogis.png" alt="Tabla de tallas de dogis por estatura" /></div>
+      </section>
+    </div>
   </div>`;
 }
 
@@ -2549,6 +2556,8 @@ function closeCalendarModal() {
 function bindMerch(copy = t()) {
   const shell = document.querySelector("[data-merch-drawer]");
   const drawer = shell?.querySelector(".merch-drawer");
+  const sizeGuideModal = shell?.querySelector("[data-size-guide-modal]");
+  const sizeGuidePanel = sizeGuideModal?.querySelector(".merch-size-modal__panel");
   const lineForm = shell?.querySelector(".merch-line-form");
   const orderForm = shell?.querySelector(".merch-form");
   let returnFocus = null;
@@ -2585,10 +2594,26 @@ function bindMerch(copy = t()) {
 
   const closeDrawer = () => {
     if (!shell) return;
+    sizeGuideModal?.classList.remove("is-open");
+    sizeGuideModal?.setAttribute("aria-hidden", "true");
     shell.classList.remove("is-open");
     shell.setAttribute("aria-hidden", "true");
     document.body.classList.remove("merch-drawer-open");
     returnFocus?.focus();
+  };
+
+  const openSizeGuide = () => {
+    if (!sizeGuideModal || !sizeGuidePanel) return;
+    sizeGuideModal.classList.add("is-open");
+    sizeGuideModal.setAttribute("aria-hidden", "false");
+    sizeGuidePanel.focus();
+  };
+
+  const closeSizeGuide = () => {
+    if (!sizeGuideModal) return;
+    sizeGuideModal.classList.remove("is-open");
+    sizeGuideModal.setAttribute("aria-hidden", "true");
+    shell?.querySelector("[data-open-size-guide]")?.focus();
   };
 
   const updateLineProduct = (productId) => {
@@ -2628,8 +2653,10 @@ function bindMerch(copy = t()) {
     button.addEventListener("click", () => openDrawer(button, button.dataset.orderProduct));
   });
   shell?.querySelectorAll("[data-close-merch]").forEach((button) => button.addEventListener("click", closeDrawer));
+  shell?.querySelector("[data-open-size-guide]")?.addEventListener("click", openSizeGuide);
+  shell?.querySelectorAll("[data-close-size-guide]").forEach((button) => button.addEventListener("click", closeSizeGuide));
   drawer?.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeDrawer();
+    if (event.key === "Escape") sizeGuideModal?.classList.contains("is-open") ? closeSizeGuide() : closeDrawer();
     if (event.key === "Tab") {
       const focusable = [...drawer.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, a[href]')];
       const first = focusable[0];

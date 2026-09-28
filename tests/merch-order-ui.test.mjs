@@ -74,5 +74,9 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.match(styles, /\.merch-status--error/);
   assert.match(styles, /\.merch-status--success/);
   assert.match(content, /Gu[ií]a de tallas/);
-  assert.match(html, /app\.js\?v=20260928-private-catalog/);
+  assert.match(app, /data-open-size-guide/);
+  assert.match(app, /assets\/guides\/guia-tallas-dogis\.png/);
+  assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
+  assert.match(styles, /\.merch-size-modal\.is-open/);
+  assert.match(html, /app\.js\?v=20260928-size-guide/);
 });
