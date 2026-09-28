@@ -1191,10 +1191,16 @@ function activeVariantPrice(variant) {
 function merchProductCard(product) {
   const attribution = product.image_attribution || product.metadata?.image_attribution || "Imagen orientativa generada para SKBC";
   const orderable = state.merchCatalog.catalogSource !== "fallback" && productVariants(product.id).some((variant) => variant.is_orderable !== false);
+  const sizeGuide = productCategory(product) === "gi"
+    ? `<button class="merch-size-thumb" type="button" data-open-size-guide><img src="assets/guides/guia-tallas-dogis.png" alt="Vista previa de la guía de tallas" /><span>Guía de tallas · Ver en grande</span></button>`
+    : "";
   return `<article class="merch-product">
-    <div class="merch-product__image">
-      <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
-      <small>${escapeHtml(attribution)}</small>
+    <div class="merch-product__media">
+      <div class="merch-product__image">
+        <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
+        <small>${escapeHtml(attribution)}</small>
+      </div>
+      ${sizeGuide}
     </div>
     <div class="merch-product__body">
       <span>${escapeHtml(product.brand || "SKBC")} · Ref. ${escapeHtml(product.supplier_reference)}</span>
@@ -2561,6 +2567,7 @@ function bindMerch(copy = t()) {
   const lineForm = shell?.querySelector(".merch-line-form");
   const orderForm = shell?.querySelector(".merch-form");
   let returnFocus = null;
+  let sizeGuideReturnFocus = null;
 
   const setMerchSubmitting = (submitting) => {
     state.merchOrder = { ...state.merchOrder, status: submitting ? "loading" : state.merchOrder.status };
@@ -2596,14 +2603,17 @@ function bindMerch(copy = t()) {
     if (!shell) return;
     sizeGuideModal?.classList.remove("is-open");
     sizeGuideModal?.setAttribute("aria-hidden", "true");
+    shell.classList.remove("size-guide-open");
     shell.classList.remove("is-open");
     shell.setAttribute("aria-hidden", "true");
     document.body.classList.remove("merch-drawer-open");
     returnFocus?.focus();
   };
 
-  const openSizeGuide = () => {
+  const openSizeGuide = (trigger) => {
     if (!sizeGuideModal || !sizeGuidePanel) return;
+    sizeGuideReturnFocus = trigger;
+    shell?.classList.add("size-guide-open");
     sizeGuideModal.classList.add("is-open");
     sizeGuideModal.setAttribute("aria-hidden", "false");
     sizeGuidePanel.focus();
@@ -2613,7 +2623,8 @@ function bindMerch(copy = t()) {
     if (!sizeGuideModal) return;
     sizeGuideModal.classList.remove("is-open");
     sizeGuideModal.setAttribute("aria-hidden", "true");
-    shell?.querySelector("[data-open-size-guide]")?.focus();
+    shell?.classList.remove("size-guide-open");
+    sizeGuideReturnFocus?.focus();
   };
 
   const updateLineProduct = (productId) => {
@@ -2653,7 +2664,7 @@ function bindMerch(copy = t()) {
     button.addEventListener("click", () => openDrawer(button, button.dataset.orderProduct));
   });
   shell?.querySelectorAll("[data-close-merch]").forEach((button) => button.addEventListener("click", closeDrawer));
-  shell?.querySelector("[data-open-size-guide]")?.addEventListener("click", openSizeGuide);
+  document.querySelectorAll("[data-open-size-guide]").forEach((button) => button.addEventListener("click", () => openSizeGuide(button)));
   shell?.querySelectorAll("[data-close-size-guide]").forEach((button) => button.addEventListener("click", closeSizeGuide));
   drawer?.addEventListener("keydown", (event) => {
     if (event.key === "Escape") sizeGuideModal?.classList.contains("is-open") ? closeSizeGuide() : closeDrawer();
