@@ -29,7 +29,7 @@ export function validateOrderContact(contact) {
   if (!email) errors.email = 'required';
   else if (!EMAIL_PATTERN.test(email)) errors.email = 'invalid';
   if (!phone) errors.phone = 'required';
-  else if (!PHONE_PATTERN.test(phone)) errors.phone = 'invalid';
+  else if (!PHONE_PATTERN.test(phone) || phone.replace(/\D/g, '').length < 6) errors.phone = 'invalid';
   if (contact?.privacyAccepted !== true) errors.privacyAccepted = 'required';
 
   return { valid: Object.keys(errors).length === 0, errors };

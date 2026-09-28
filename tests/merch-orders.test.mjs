@@ -79,6 +79,21 @@ test('validateOrderContact reports required and malformed contact fields', () =>
   }), { valid: true, errors: {} });
 });
 
+test('validateOrderContact requires at least six phone digits after formatting is removed', () => {
+  const contact = {
+    name: 'Aixa',
+    email: 'aixa@example.com',
+    privacyAccepted: true,
+  };
+
+  assert.equal(validateOrderContact({ ...contact, phone: '+( )---' }).errors.phone, 'invalid');
+  assert.equal(validateOrderContact({ ...contact, phone: '+34---6' }).errors.phone, 'invalid');
+  assert.deepEqual(
+    validateOrderContact({ ...contact, phone: '+34 (600) 000-000' }),
+    { valid: true, errors: {} },
+  );
+});
+
 test('payload maps trimmed contact fields and never sends trusted prices or totals', () => {
   const payload = buildOrderPayload({
     name: ' Aixa ',
