@@ -2,8 +2,12 @@ const STORAGE_KEY = "skbc_content_v2";
 const state = {
   content: loadContent(),
   lang: new URLSearchParams(location.search).get("lang") || localStorage.getItem("skbc_lang") || "es",
-  merchCart: []
+  merchCart: [],
+  merchCatalog: { status: "idle", products: [], variants: [], error: "" },
+  merchOrder: { idempotencyKey: crypto.randomUUID(), status: "idle", message: "" }
 };
+
+const merchOrderHelpersPromise = import("./merch-orders.js");
 
 const formStartedAt = Date.now();
 
@@ -760,7 +764,6 @@ function orderInboxConfig() {
     enabled: config.enabled === true || config.enabled === "true",
     supabaseUrl: String(config.supabaseUrl || testimonialConfig.supabaseUrl || "").replace(/\/+$/, ""),
     anonKey: String(config.anonKey || testimonialConfig.anonKey || "").trim(),
-    table: config.table || "skbc_merch_orders",
     emailWebhookUrl: String(config.emailWebhookUrl || "").trim()
   };
 }
@@ -1126,187 +1129,192 @@ function faqSection(copy) {
 }
 
 function money(value) {
-  const number = Number(String(value || "0").replace(",", "."));
-  return Number.isFinite(number) ? `${number.toFixed(number % 1 ? 2 : 0)}€` : `${value}€`;
+  const cents = Number(value || 0);
+  return new Intl.NumberFormat(state.lang === "eu" ? "eu-ES" : `${state.lang}-ES`, {
+    style: "currency",
+    currency: "EUR"
+  }).format(cents / 100);
 }
 
-function merchProducts(settings) {
-  return (settings.merch?.products || []).filter((product) => product && product.enabled !== false);
+const MERCH_CATEGORIES = [
+  { key: "gi", label: "Dogis" },
+  { key: "belt", label: "Cinturones" },
+  { key: "club", label: "Ropa del club" },
+  { key: "other", label: "Otros" }
+];
+
+function productCategory(product) {
+  const category = String(product.category || "").toLowerCase();
+  if (["gi", "dogi", "dogis"].includes(category)) return "gi";
+  if (["belt", "cinturon", "cinturones"].includes(category)) return "belt";
+  if (["club", "clothing", "ropa"].includes(category)) return "club";
+  return "other";
 }
 
-function colorOption(color) {
-  const label = `${color.code || ""}${color.code ? " · " : ""}${color.name || ""}`.trim();
-  return `<option value="${label}">${label}</option>`;
+function productVariants(productId) {
+  return state.merchCatalog.variants.filter((variant) => variant.product_id === productId);
 }
 
-function merchProductCard(product, index, copy) {
-  const sizes = product.sizes?.length ? product.sizes : ["S", "M", "L", "XL"];
-  const colors = product.colors?.length ? product.colors : [{ code: "", name: "Consultar", hex: "#d9dee7" }];
+function activeVariantPrice(variant) {
+  const promotionStarted = !variant.promotion_starts_at || new Date(variant.promotion_starts_at) <= new Date();
+  const promotionOpen = !variant.promotion_ends_at || new Date(variant.promotion_ends_at) >= new Date();
+  return variant.promotion_is_active && promotionStarted && promotionOpen
+    ? variant.promotion_price_cents
+    : variant.price_cents;
+}
+
+function merchProductCard(product) {
+  const attribution = product.image_attribution || product.metadata?.image_attribution || "Imagen orientativa generada para SKBC";
+  const sourceLink = product.source_url
+    ? `<a href="${escapeHtml(product.source_url)}" target="_blank" rel="noreferrer">Ficha oficial Fujimae</a>`
+    : "";
   return `<article class="merch-product">
     <div class="merch-product__image">
-      <img src="${product.image || "assets/logo-skbc.png"}" alt="${product.name}" />
+      <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
+      <small>${escapeHtml(attribution)}</small>
     </div>
     <div class="merch-product__body">
-      <span>${copy.merch.base}: ${product.jhkName || "JHK"} · ${copy.merch.ref}: ${product.jhkRef || "Consultar"}</span>
-      <div class="merch-product__title">
-        <h3>${product.name}</h3>
-        <strong>${money(product.price)}</strong>
-      </div>
-      <p>${copy.merch.personalization}: ${product.personalization || "SKBC"}</p>
-      <div class="swatches">
-        ${colors.map((color) => `<i title="${color.code || ""} ${color.name || ""}" style="--swatch:${color.hex || "#d9dee7"}"></i>`).join("")}
-      </div>
-      <div class="merch-controls">
-        <label>${copy.merch.size}<select data-merch-size="${index}">${sizes.map((size) => `<option>${size}</option>`).join("")}</select></label>
-        <label>${copy.merch.color}<select data-merch-color="${index}">${colors.map(colorOption).join("")}</select></label>
-        <label>${copy.merch.quantity}<input type="number" min="1" value="1" data-merch-quantity="${index}" /></label>
-      </div>
+      <span>${escapeHtml(product.brand || "SKBC")} · Ref. ${escapeHtml(product.supplier_reference)}</span>
+      <h3>${escapeHtml(product.name)}</h3>
+      <p>${escapeHtml(product.description || "Material disponible por encargo a través del club.")}</p>
       <div class="merch-actions">
-        <button class="button" type="button" data-add-merch="${index}">${copy.merch.add}</button>
-        <a href="${product.jhkUrl || state.content.settings.merch?.catalogUrl}" target="_blank" rel="noreferrer">${copy.merch.catalog}</a>
+        <button class="button" type="button" data-order-product="${product.id}">Añadir al pedido</button>
+        ${sourceLink}
       </div>
     </div>
   </article>`;
 }
 
-function merchTotal() {
-  return state.merchCart.reduce((total, item) => total + Number(item.price || 0) * Number(item.quantity || 1), 0);
+function merchCatalogHtml() {
+  if (state.merchCatalog.status === "loading" || state.merchCatalog.status === "idle") {
+    return `<div class="merch-status merch-status--loading" role="status"><span></span><strong>Cargando catálogo...</strong></div>`;
+  }
+  if (state.merchCatalog.status === "error") {
+    return `<div class="merch-status merch-status--error" role="alert"><strong>No se pudo cargar el catálogo.</strong><p>${escapeHtml(state.merchCatalog.error)}</p><button class="button secondary" type="button" data-retry-merch>Reintentar</button></div>`;
+  }
+  if (!state.merchCatalog.products.length) {
+    return `<div class="merch-status" role="status"><strong>Catálogo temporalmente vacío</strong><p>Vuelve a consultarlo más tarde.</p></div>`;
+  }
+  return MERCH_CATEGORIES.map(({ key, label }) => {
+    const products = state.merchCatalog.products.filter((product) => productCategory(product) === key);
+    return `<section class="merch-category" aria-labelledby="merch-category-${key}">
+      <div class="merch-category__heading"><h3 id="merch-category-${key}">${label}</h3><span>${products.length}</span></div>
+      ${products.length ? `<div class="merch-grid">${products.map(merchProductCard).join("")}</div>` : `<p class="merch-category__empty">Sin artículos disponibles ahora mismo.</p>`}
+    </section>`;
+  }).join("");
 }
 
 function merchCartHtml(copy) {
-  if (!state.merchCart.length) return `<p class="merch-empty">${copy.merch.emptyOrder}</p>`;
+  if (!state.merchCart.length) return `<p class="merch-empty">${copy.merch.emptyOrder || "Tu pedido está vacío."}</p>`;
+  const total = state.merchCart.reduce((sum, line) => sum + activeVariantPrice(line) * line.quantity, 0);
   return `<ul class="merch-cart-list">
-    ${state.merchCart.map((item, index) => `<li>
-      <span><strong>${item.name}</strong><small>${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity || 1))}</small></span>
-      <button type="button" data-remove-merch="${index}">${copy.merch.remove}</button>
+    ${state.merchCart.map((line) => `<li>
+      <span><strong>${escapeHtml(line.productName)}</strong><small>Para ${escapeHtml(line.recipient)} · ${escapeHtml(line.variantName)} · x${line.quantity}</small></span>
+      <span class="merch-cart-list__price">${money(activeVariantPrice(line) * line.quantity)}</span>
+      <button type="button" data-remove-merch="${line.lineId}" aria-label="Quitar ${escapeHtml(line.productName)} del pedido">×</button>
     </li>`).join("")}
   </ul>
-  <p class="merch-total">${copy.merch.total}: <strong>${money(merchTotal())}</strong></p>`;
+  <p class="merch-total">${copy.merch.total}: <strong>${money(total)}</strong></p>`;
 }
 
-function merchWhatsappLines(order, copy) {
-  return [
-    "Nuevo pedido merchandising SKBC GIPUZKOA",
-    "",
-    `Nombre: ${order.customer_name}`,
-    `Teléfono: ${order.customer_phone}`,
-    `Email: ${order.customer_email || "No indicado"}`,
-    "",
-    "Productos SKBC:",
-    ...(order.items.length ? order.items.map((item) => `- ${item.name} · REF ${item.ref || "consultar"} · ${item.size} · ${item.color} · x${item.quantity} · ${money(Number(item.price) * Number(item.quantity))}`) : ["- Sin productos SKBC directos"]),
-    "",
-    `Total estimado: ${money(order.total_estimated)}`,
-    "",
-    "Producto personalizado JHK:",
-    `Referencia/enlace: ${order.custom_reference || "No indicado"}`,
-    `Detalles: ${order.custom_details || "No indicado"}`,
-    "",
-    `Forma de pago: ${order.payment_method}`,
-    `Comentarios: ${order.comments || "Sin comentarios"}`,
-    "",
-    copy.merch.orderThanks || ""
-  ];
+function merchVariantOptions(productId) {
+  return productVariants(productId).map((variant) => {
+    const size = variant.attributes?.size || variant.name;
+    return `<option value="${variant.id}">${escapeHtml(size)} · ${money(activeVariantPrice(variant))}</option>`;
+  }).join("");
 }
 
-function merchOrderFromForm(form) {
-  return {
-    customer_name: String(form.get("name") || "").trim(),
-    customer_phone: String(form.get("phone") || "").trim(),
-    customer_email: String(form.get("email") || "").trim(),
-    payment_method: String(form.get("payment") || "").trim(),
-    custom_reference: String(form.get("customReference") || "").trim(),
-    custom_details: String(form.get("customDetails") || "").trim(),
-    comments: String(form.get("comments") || "").trim(),
-    items: state.merchCart.map((item) => ({ ...item })),
-    total_estimated: merchTotal(),
-    status: "pending",
-    source: "website",
-    page_lang: state.lang
-  };
+function merchDrawer(copy, settings) {
+  const firstProduct = state.merchCatalog.products[0];
+  return `<div class="merch-drawer-shell" data-merch-drawer aria-hidden="true">
+    <button class="merch-drawer__backdrop" type="button" data-close-merch aria-label="Cerrar pedido"></button>
+    <aside class="merch-drawer" role="dialog" aria-modal="true" aria-labelledby="merchDrawerTitle" tabindex="-1">
+      <header class="merch-drawer__header">
+        <div><span>Pedido de material</span><h3 id="merchDrawerTitle">${copy.merch.orderTitle}</h3></div>
+        <button type="button" data-close-merch aria-label="Cerrar pedido">×</button>
+      </header>
+      <div class="merch-drawer__body">
+        <form class="merch-line-form">
+          <h4>Añadir artículo</h4>
+          <label>Artículo<select name="productId" required>${state.merchCatalog.products.map((product) => `<option value="${product.id}">${escapeHtml(product.name)}</option>`).join("")}</select></label>
+          <div class="merch-form-row">
+            <label>Talla / variante<select name="variantId" required>${firstProduct ? merchVariantOptions(firstProduct.id) : ""}</select></label>
+            <label>Cantidad<input name="quantity" type="number" min="1" max="10" value="1" required /></label>
+          </div>
+          <label>Nombre de quien lo usará<input name="recipient" autocomplete="off" required /></label>
+          <p class="merch-line-price" data-merch-line-price></p>
+          <button class="button secondary" type="submit">Añadir línea</button>
+        </form>
+
+        <section class="merch-cart" aria-labelledby="merchCartTitle">
+          <h4 id="merchCartTitle">Tu pedido</h4>
+          <div id="merchCart">${merchCartHtml(copy)}</div>
+        </section>
+
+        <details class="merch-size-guide">
+          <summary>${copy.merch.sizeGuideTitle || "Guía de tallas"}</summary>
+          <p>${copy.merch.sizeGuideText || "Orientación Fujimae por altura: 0000 (110 cm), 000 (120 cm), 00 (130 cm), 0 (140 cm), 1 (150 cm), 2 (160 cm), 3 (170 cm), 4 (180 cm), 5 (190 cm), 6 (200 cm), 7 (210 cm)."}</p>
+        </details>
+
+        <form class="merch-form" novalidate>
+          <h4>${copy.merch.buyerTitle}</h4>
+          <label>${copy.merch.name}<input name="name" autocomplete="name" required /></label>
+          <div class="merch-form-row">
+            <label>${copy.merch.email}<input name="email" type="email" autocomplete="email" required /></label>
+            <label>${copy.merch.phone}<input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /></label>
+          </div>
+          <label>Número de socio/a <span>(opcional)</span><input name="memberReference" autocomplete="off" /></label>
+          <label>${copy.merch.comments} <span>(opcional)</span><textarea name="comments" rows="3"></textarea></label>
+          <label class="merch-privacy"><input name="privacyAccepted" type="checkbox" required /> <span>Acepto que SKBC use estos datos para gestionar este pedido.</span></label>
+          <p class="merch-order-note">${settings.merch?.note || "El club confirmará disponibilidad y pago."}</p>
+          <button class="button" type="submit" ${state.merchCart.length ? "" : "disabled"}>${copy.merch.send}</button>
+          <p class="merch-form-status merch-status--${state.merchOrder.status}" aria-live="polite">${escapeHtml(state.merchOrder.message)}</p>
+        </form>
+      </div>
+    </aside>
+  </div>`;
 }
 
-async function submitMerchOrderToSupabase(order) {
+async function loadMerchCatalog() {
   const config = orderInboxConfig();
-  if (!config.enabled || !config.supabaseUrl || !config.anonKey) return false;
-  const body = {
-    customer_name: order.customer_name,
-    customer_phone: order.customer_phone,
-    customer_email: order.customer_email,
-    payment_method: order.payment_method,
-    custom_reference: order.custom_reference,
-    custom_details: order.custom_details,
-    comments: order.comments,
-    items: order.items,
-    total_estimated: order.total_estimated,
-    status: order.status,
-    source: order.source,
-    page_lang: order.page_lang
-  };
-  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}`, {
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) throw new Error("La tienda todavía no está conectada.");
+  state.merchCatalog = { status: "loading", products: [], variants: [], error: "" };
+  const headers = { apikey: config.anonKey, Authorization: `Bearer ${config.anonKey}` };
+  const [productsResponse, variantsResponse] = await Promise.all([
+    fetch(`${config.supabaseUrl}/rest/v1/skbc_merch_products?is_active=eq.true&select=*&order=sort_order.asc`, { headers }),
+    fetch(`${config.supabaseUrl}/rest/v1/skbc_merch_variants?is_active=eq.true&select=*&order=sort_order.asc`, { headers })
+  ]);
+  if (!productsResponse.ok || !variantsResponse.ok) throw new Error("Comprueba la conexión e inténtalo de nuevo.");
+  const [products, variants] = await Promise.all([productsResponse.json(), variantsResponse.json()]);
+  state.merchCatalog = { status: "ready", products, variants, error: "" };
+}
+
+async function submitMerchOrderToSupabase(payload) {
+  const config = orderInboxConfig();
+  if (!config.enabled || !config.supabaseUrl || !config.anonKey) throw new Error("La tienda todavía no está conectada.");
+  const response = await fetch(`${config.supabaseUrl}/rest/v1/rpc/submit_skbc_merch_order`, {
     method: "POST",
     headers: {
       apikey: config.anonKey,
       Authorization: `Bearer ${config.anonKey}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal"
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(payload)
   });
-  if (!response.ok) throw new Error("No se pudo guardar el pedido en Supabase");
-  postPrivateNotification("order", "Nuevo pedido abierto en SKBC GIPUZKOA", merchWhatsappLines(order, t()), order);
-  return true;
+  const result = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(result?.message || "No se pudo enviar el pedido.");
+  return Array.isArray(result) ? result[0] : result;
 }
 
 function merchSection(settings, copy) {
   if (settings.merch?.enabled === false) return "";
-  const products = merchProducts(settings);
   return `<section class="section merch-section" id="merchandising">
     <div class="merch-hero">
-      <div>
-        <p class="eyebrow">${copy.merch.eyebrow}</p>
-        <h2>${copy.merch.title}</h2>
-        <p>${copy.merch.text}</p>
-      </div>
-      <ol class="merch-steps">
-        <li><strong>01</strong><span>${copy.merch.stepChoose || "Elige prenda, talla, color y cantidad."}</span></li>
-        <li><strong>02</strong><span>${copy.merch.stepReserve || "Envia la reserva sin pago online."}</span></li>
-        <li><strong>03</strong><span>${copy.merch.stepConfirm || "Te contactamos para confirmar disponibilidad y pago."}</span></li>
-      </ol>
+      <div><p class="eyebrow">Material SKBC</p><h2>Equípate para entrenar</h2><p>Consulta el material disponible y prepara un pedido por cada persona y artículo. El club confirmará disponibilidad y pago.</p></div>
+      <button class="button merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button>
     </div>
-    <div class="merch-layout">
-      <div class="merch-catalog">
-        <div class="merch-subheading">
-          <span>${copy.merch.readyLabel || "Productos SKBC preparados"}</span>
-          <p>${copy.merch.readyText || "Selecciona una de las prendas configuradas por el club."}</p>
-        </div>
-        ${products.map((product, index) => merchProductCard(product, index, copy)).join("")}
-        <article class="merch-custom">
-          <span>${copy.merch.customLabel || "Pedido especial"}</span>
-          <h3>${copy.merch.customTitle}</h3>
-          <p>${copy.merch.customText}</p>
-          <a class="button secondary" href="${settings.merch?.catalogUrl || "https://www.jhktshirt.com/es/"}" target="_blank" rel="noreferrer">${copy.merch.catalog}</a>
-        </article>
-      </div>
-      <aside class="merch-order">
-        <h3>${copy.merch.orderTitle}</h3>
-        <p class="merch-order-note">${copy.merch.orderIntro || "Revisa tu reserva. No se realiza ningun pago online."}</p>
-        <div id="merchCart">${merchCartHtml(copy)}</div>
-        <form class="merch-form">
-          <h4>${copy.merch.buyerTitle}</h4>
-          <label>${copy.merch.name}<input name="name" required /></label>
-          <label>${copy.merch.phone}<input name="phone" required /></label>
-          <label>${copy.merch.email}<input name="email" type="email" /></label>
-          <label>${copy.merch.payment}<select name="payment"><option>${copy.merch.paymentDojo}</option><option>${copy.merch.paymentContact}</option></select></label>
-          <label>${copy.merch.customReference}<input name="customReference" /></label>
-          <label>${copy.merch.customDetails}<textarea name="customDetails" rows="3"></textarea></label>
-          <label>${copy.merch.comments}<textarea name="comments" rows="3"></textarea></label>
-          ${antiSpamFields("merch-order")}
-          <p><strong>${copy.merch.noteTitle}:</strong> ${settings.merch?.note || ""}</p>
-          <button class="button" type="submit">${copy.merch.send}</button>
-          <p class="merch-form-status" aria-live="polite"></p>
-        </form>
-      </aside>
-    </div>
+    <div class="merch-catalog">${merchCatalogHtml()}</div>
+    ${merchDrawer(copy, settings)}
   </section>`;
 }
 
@@ -2489,71 +2497,173 @@ function closeCalendarModal() {
 }
 
 function bindMerch(copy = t()) {
-  const products = merchProducts(state.content.settings);
-  document.querySelectorAll("[data-add-merch]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = Number(button.dataset.addMerch);
-      const product = products[index];
-      if (!product) return;
-      const quantity = Math.max(1, Number(document.querySelector(`[data-merch-quantity="${index}"]`)?.value || 1));
-      state.merchCart.push({
-        name: product.name,
-        ref: product.jhkRef || "",
-        price: Number(product.price || 0),
-        size: document.querySelector(`[data-merch-size="${index}"]`)?.value || "",
-        color: document.querySelector(`[data-merch-color="${index}"]`)?.value || "",
-        quantity
+  const shell = document.querySelector("[data-merch-drawer]");
+  const drawer = shell?.querySelector(".merch-drawer");
+  const lineForm = shell?.querySelector(".merch-line-form");
+  const orderForm = shell?.querySelector(".merch-form");
+  let returnFocus = null;
+
+  const updateCart = () => {
+    shell?.querySelector("#merchCart")?.replaceChildren();
+    const cart = shell?.querySelector("#merchCart");
+    if (cart) cart.innerHTML = merchCartHtml(copy);
+    const count = document.querySelector("[data-open-merch] span");
+    if (count) count.textContent = state.merchCart.length;
+    const submit = orderForm?.querySelector('button[type="submit"]');
+    if (submit) submit.disabled = !state.merchCart.length;
+    bindRemoveButtons();
+  };
+
+  const closeDrawer = () => {
+    if (!shell) return;
+    shell.classList.remove("is-open");
+    shell.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("merch-drawer-open");
+    returnFocus?.focus();
+  };
+
+  const updateLineProduct = (productId) => {
+    if (!lineForm) return;
+    const productSelect = lineForm.elements.productId;
+    const variantSelect = lineForm.elements.variantId;
+    if (productId) productSelect.value = productId;
+    variantSelect.innerHTML = merchVariantOptions(productSelect.value);
+    const variant = state.merchCatalog.variants.find((item) => item.id === variantSelect.value);
+    const price = lineForm.querySelector("[data-merch-line-price]");
+    if (price) price.textContent = variant ? `Precio: ${money(activeVariantPrice(variant))}` : "Sin variantes disponibles";
+  };
+
+  const openDrawer = (trigger, productId = "") => {
+    if (!shell || !drawer) return;
+    returnFocus = trigger;
+    shell.classList.add("is-open");
+    shell.setAttribute("aria-hidden", "false");
+    document.body.classList.add("merch-drawer-open");
+    updateLineProduct(productId);
+    drawer.focus();
+  };
+
+  const bindRemoveButtons = () => {
+    shell?.querySelectorAll("[data-remove-merch]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const { removeCartLine } = await merchOrderHelpersPromise;
+        state.merchCart = removeCartLine(state.merchCart, button.dataset.removeMerch);
+        updateCart();
       });
-      render();
-      document.querySelector("#merchandising")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+  };
+
+  document.querySelector("[data-open-merch]")?.addEventListener("click", (event) => openDrawer(event.currentTarget));
+  document.querySelectorAll("[data-order-product]").forEach((button) => {
+    button.addEventListener("click", () => openDrawer(button, button.dataset.orderProduct));
   });
-  document.querySelectorAll("[data-remove-merch]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.merchCart.splice(Number(button.dataset.removeMerch), 1);
-      render();
-      document.querySelector("#merchandising")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-  document.querySelector(".merch-form")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formElement = event.currentTarget;
-    const statusElement = formElement.querySelector(".merch-form-status");
-    try {
-      verifyPublicForm(formElement, "merch-order", { minMs: 4000, cooldownMs: 180000 });
-    } catch (error) {
-      const message = error.message || "No se pudo enviar el pedido.";
-      if (statusElement) statusElement.textContent = message;
-      alert(message);
-      return;
-    }
-    const form = new FormData(formElement);
-    const order = merchOrderFromForm(form);
-    if (!order.items.length && !order.custom_reference && !order.custom_details) {
-      if (statusElement) statusElement.textContent = copy.merch.orderRequired || "Añade algún producto antes de enviar el pedido.";
-      alert(copy.merch.orderRequired || "Añade algún producto antes de enviar el pedido.");
-      return;
-    }
-    const lines = merchWhatsappLines(order, copy);
-    if (statusElement) statusElement.textContent = "Enviando pedido...";
-    try {
-      const saved = await submitMerchOrderToSupabase(order);
-      if (saved) {
-        state.merchCart = [];
-        formElement.reset();
-        render();
-        document.querySelector(".merch-form-status")?.replaceChildren(document.createTextNode(copy.merch.orderThanks || "Pedido guardado correctamente."));
-        if (confirm(`${copy.merch.orderThanks || "Pedido guardado correctamente."}\n\n${copy.merch.whatsappOptional || "¿Enviar también por WhatsApp?"}`)) {
-          window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
-        }
-        return;
+  shell?.querySelectorAll("[data-close-merch]").forEach((button) => button.addEventListener("click", closeDrawer));
+  drawer?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeDrawer();
+    if (event.key === "Tab") {
+      const focusable = [...drawer.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, a[href]')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
       }
-    } catch (error) {
-      if (statusElement) statusElement.textContent = copy.merch.orderError || `${error.message}. Se abrirá WhatsApp como alternativa.`;
-      alert(copy.merch.orderError || `${error.message}. Se abrirá WhatsApp como alternativa.`);
     }
-    window.open(whatsappLink(lines.join("\n")), "_blank", "noopener,noreferrer");
   });
+
+  lineForm?.elements.productId?.addEventListener("change", (event) => updateLineProduct(event.target.value));
+  lineForm?.elements.variantId?.addEventListener("change", () => updateLineProduct());
+  lineForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!lineForm.reportValidity()) return;
+    const product = state.merchCatalog.products.find((item) => item.id === lineForm.elements.productId.value);
+    const variant = state.merchCatalog.variants.find((item) => item.id === lineForm.elements.variantId.value);
+    if (!product || !variant) return;
+    const { addCartLine } = await merchOrderHelpersPromise;
+    state.merchCart = addCartLine(state.merchCart, {
+      variantId: variant.id,
+      recipient: lineForm.elements.recipient.value.trim(),
+      quantity: Number(lineForm.elements.quantity.value),
+      unitPriceCents: activeVariantPrice(variant),
+      productName: product.name,
+      variantName: variant.attributes?.size || variant.name,
+      price_cents: variant.price_cents,
+      promotion_price_cents: variant.promotion_price_cents,
+      promotion_is_active: variant.promotion_is_active,
+      promotion_starts_at: variant.promotion_starts_at,
+      promotion_ends_at: variant.promotion_ends_at
+    });
+    lineForm.elements.recipient.value = "";
+    lineForm.elements.quantity.value = "1";
+    updateCart();
+  });
+
+  bindRemoveButtons();
+  if (lineForm?.elements.productId?.value) updateLineProduct();
+
+  orderForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const status = orderForm.querySelector(".merch-form-status");
+    const submit = orderForm.querySelector('button[type="submit"]');
+    const form = new FormData(orderForm);
+    const contact = {
+      name: form.get("name"),
+      email: form.get("email"),
+      phone: form.get("phone"),
+      memberReference: form.get("memberReference"),
+      comments: form.get("comments"),
+      privacyAccepted: form.get("privacyAccepted") === "on",
+      pageLang: state.lang
+    };
+    const { buildOrderPayload, validateOrderContact } = await merchOrderHelpersPromise;
+    const validation = validateOrderContact(contact);
+    if (!validation.valid || !orderForm.reportValidity()) {
+      state.merchOrder = { ...state.merchOrder, status: "error", message: "Revisa los campos obligatorios antes de enviar." };
+      status.className = "merch-form-status merch-status--error";
+      status.textContent = state.merchOrder.message;
+      return;
+    }
+    if (!state.merchCart.length) return;
+    submit.disabled = true;
+    state.merchOrder = { ...state.merchOrder, status: "loading", message: "Enviando pedido..." };
+    status.className = "merch-form-status merch-status--loading";
+    status.textContent = state.merchOrder.message;
+    try {
+      const payload = buildOrderPayload(contact, state.merchCart, state.merchOrder.idempotencyKey);
+      const result = await submitMerchOrderToSupabase(payload);
+      state.merchCart = [];
+      state.merchOrder = {
+        idempotencyKey: crypto.randomUUID(),
+        status: "success",
+        message: `Pedido ${result?.order_number || "recibido"}. Te contactaremos para confirmarlo.`
+      };
+      orderForm.reset();
+      status.className = "merch-form-status merch-status--success";
+      status.textContent = state.merchOrder.message;
+      updateCart();
+    } catch (error) {
+      state.merchOrder = { ...state.merchOrder, status: "error", message: error.message || "No se pudo enviar. Tus datos y tu pedido siguen aquí para reintentarlo." };
+      status.className = "merch-form-status merch-status--error";
+      status.textContent = state.merchOrder.message;
+      submit.disabled = false;
+    }
+  });
+
+  document.querySelector("[data-retry-merch]")?.addEventListener("click", () => {
+    state.merchCatalog.status = "idle";
+    render();
+  });
+
+  if (state.merchCatalog.status === "idle") {
+    state.merchCatalog.status = "loading";
+    loadMerchCatalog().then(render).catch((error) => {
+      state.merchCatalog = { status: "error", products: [], variants: [], error: error.message };
+      render();
+    });
+  }
 }
 
 function openProfile(profile) {
