@@ -84,6 +84,13 @@ test('submit RPC requires a nonblank syntactically plausible customer email', ()
   has(/btrim\s*\(\s*p_customer_email\s*\)\s*!~\*?\s*'[^']*@[^']*\\\.[^']*'/i, 'RPC must require an @ sign and dotted domain');
 });
 
+test('submit RPC requires at least six phone digits while allowing formatting', () => {
+  has(
+    /regexp_replace\s*\(\s*coalesce\s*\(\s*p_customer_phone\s*,\s*''\s*\)\s*,\s*'\[\^0-9\]'\s*,\s*''\s*,\s*'g'\s*\)\s*!~\s*'\^\[0-9\]\{6,\}\$'/i,
+    'RPC must reject phones with fewer than six numeric digits after removing formatting',
+  );
+});
+
 test('idempotency is bound to a canonical request hash', () => {
   has(/add column if not exists request_hash text/i, 'orders must store a request hash');
   has(/v_request_payload jsonb/i, 'RPC must build a canonical request payload');
@@ -92,7 +99,7 @@ test('idempotency is bound to a canonical request hash', () => {
   has(/idempotency key[^']*(?:different|payload|parameters)/i, 'RPC must clearly reject a mismatched retry');
   has(/idempotency_key[^;]+request_hash/i, 'RPC must persist the key and request hash together');
   assert.ok(
-    sql.indexOf('select existing.id') < sql.indexOf("customer name and phone are required"),
+    sql.indexOf('select existing.id') < sql.indexOf('if nullif(btrim(p_customer_name)'),
     'idempotency lookup must precede business validation',
   );
 });
@@ -246,13 +253,13 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     set role anon;
     create temp table first_order as
       select * from public.submit_skbc_merch_order(
-        '30000000-0000-4000-8000-000000000001', ' Alice ', 'ALICE@EXAMPLE.COM ', ' 600111222 ',
+        '30000000-0000-4000-8000-000000000001', ' Alice ', 'ALICE@EXAMPLE.COM ', ' +34 (600) 111-222 ',
         ' M-1 ', ' hello ', 'ES',
         '[{"variant_id":"20000000-0000-4000-8000-000000000002","quantity":"2"},{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
       );
     create temp table retry_order as
       select * from public.submit_skbc_merch_order(
-        '30000000-0000-4000-8000-000000000001', 'Alice', 'alice@example.com', '600111222',
+        '30000000-0000-4000-8000-000000000001', 'Alice', 'alice@example.com', '+34 (600) 111-222',
         'M-1', 'hello', 'es',
         '[{"quantity":1,"variant_id":"20000000-0000-4000-8000-000000000001"},{"quantity":2,"variant_id":"20000000-0000-4000-8000-000000000002"}]'::jsonb
       );
@@ -260,6 +267,15 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       if (select order_id from first_order) <> (select order_id from retry_order) then
         raise exception 'normalized retry did not return original order';
       end if;
+      begin
+        perform public.submit_skbc_merch_order(
+          '30000000-0000-4000-8000-000000000003', 'Phone Test', 'phone@example.com', '+()- .',
+          null, null, 'es',
+          '[{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
+        );
+        raise exception 'punctuation-only phone succeeded';
+      exception when invalid_parameter_value then null;
+      end;
       begin
         perform public.submit_skbc_merch_order(
           '30000000-0000-4000-8000-000000000001', 'Alice', 'alice@example.com', 'DIFFERENT',

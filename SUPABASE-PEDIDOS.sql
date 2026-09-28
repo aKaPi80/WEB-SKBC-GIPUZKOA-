@@ -314,8 +314,10 @@ begin
   end if;
 
   if nullif(btrim(p_customer_name), '') is null
-     or nullif(btrim(p_customer_phone), '') is null then
-    raise exception 'customer name and phone are required' using errcode = '22023';
+     or nullif(btrim(p_customer_phone), '') is null
+     or regexp_replace(coalesce(p_customer_phone, ''), '[^0-9]', '', 'g') !~ '^[0-9]{6,}$' then
+    raise exception 'customer name and a phone with at least six digits are required'
+      using errcode = '22023';
   end if;
   if nullif(btrim(p_customer_email), '') is null
      or btrim(p_customer_email) !~* '^[^[:space:]@]+@[^[:space:]@.]+(\.[^[:space:]@.]+)+$' then
