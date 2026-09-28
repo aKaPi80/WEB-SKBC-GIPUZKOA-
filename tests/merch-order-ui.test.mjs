@@ -9,13 +9,22 @@ const [app, content, html, styles] = await Promise.all([
   readFile(new URL('../styles.css', import.meta.url), 'utf8'),
 ]);
 
-test('public catalog is loaded from active Supabase product and variant tables', () => {
-  assert.match(app, /skbc_merch_products\?[^`"']*is_active=eq\.true/);
-  assert.match(app, /skbc_merch_variants\?[^`"']*is_active=eq\.true/);
+test('public catalog is loaded only from the restricted safe catalog view', () => {
+  const loader = app.slice(app.indexOf('async function loadMerchCatalog'), app.indexOf('async function submitMerchOrderToSupabase'));
+  assert.match(loader, /skbc_merch_catalog_public\?/);
+  assert.doesNotMatch(loader, /select=\*/);
+  assert.doesNotMatch(loader, /skbc_merch_products|skbc_merch_variants/);
   assert.match(app, /Dogis/);
   assert.match(app, /Cinturones/);
   assert.match(app, /Ropa del club/);
   assert.match(app, /Otros/);
+});
+
+test('catalog failure renders an approved browse-only fallback with pending confirmation messaging', () => {
+  assert.match(app, /APPROVED_FALLBACK_CATALOG/);
+  assert.match(app, /disponibilidad y precios pendientes de confirmaci[oó]n/i);
+  assert.match(app, /catalogSource[^\n]+fallback/);
+  assert.match(app, /variant\.is_orderable/);
 });
 
 test('product cards disclose source and generated-image attribution without prices', () => {
@@ -46,6 +55,16 @@ test('submission uses only the normalized RPC and retains the idempotency key on
 
   const binder = app.slice(app.indexOf('function bindMerch'), app.indexOf('function openProfile'));
   assert.doesNotMatch(binder, /whatsapp|window\.open|confirm\(/i);
+  assert.match(binder, /setMerchSubmitting/);
+  assert.match(binder, /structuredClone|map\(\(line\) => \(\{ \.\.\.line \}\)\)/);
+  assert.match(binder, /failedFingerprint/);
+  assert.match(binder, /removeSubmittedCartLines/);
+});
+
+test('official source links are sanitized through the HTTPS allowlist helper', () => {
+  const cardSource = app.slice(app.indexOf('function merchProductCard'), app.indexOf('function merchCartHtml'));
+  assert.match(cardSource, /safeHttpsUrl/);
+  assert.doesNotMatch(cardSource, /href="\$\{escapeHtml\(product\.source_url\)\}/);
 });
 
 test('ordering UI includes stable drawer states and the supplied size guide', () => {

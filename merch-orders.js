@@ -3,6 +3,7 @@ const PHONE_PATTERN = /^[+\d][\d\s().-]{5,19}$/;
 const MONTHS_ES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
 const trimmed = (value) => String(value ?? '').trim();
+const MAX_RECIPIENT_LENGTH = 120;
 
 export function addCartLine(cart, line) {
   return [...cart, { ...line, lineId: line.lineId || crypto.randomUUID() }];
@@ -10,6 +11,11 @@ export function addCartLine(cart, line) {
 
 export function removeCartLine(cart, lineId) {
   return cart.filter((line) => line.lineId !== lineId);
+}
+
+export function removeSubmittedCartLines(cart, submittedCart) {
+  const submittedIds = new Set(submittedCart.map((line) => line.lineId));
+  return cart.filter((line) => !submittedIds.has(line.lineId));
 }
 
 export function cartTotalCents(cart) {
@@ -33,6 +39,36 @@ export function validateOrderContact(contact) {
   if (contact?.privacyAccepted !== true) errors.privacyAccepted = 'required';
 
   return { valid: Object.keys(errors).length === 0, errors };
+}
+
+export function validateCartRecipients(cart) {
+  const errors = {};
+  cart.forEach((line, index) => {
+    const recipient = trimmed(line?.recipient);
+    if (!recipient) errors[index] = 'required';
+    else if (recipient.length > MAX_RECIPIENT_LENGTH) errors[index] = 'too_long';
+  });
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+export function orderPayloadFingerprint(payload) {
+  const { p_idempotency_key: ignored, ...request } = payload;
+  return JSON.stringify(request);
+}
+
+export function resolveIdempotencyKey(orderState, fingerprint, makeUuid = () => crypto.randomUUID()) {
+  return orderState.failedFingerprint && orderState.failedFingerprint !== fingerprint
+    ? makeUuid()
+    : orderState.idempotencyKey;
+}
+
+export function safeHttpsUrl(value) {
+  try {
+    const url = new URL(trimmed(value));
+    return url.protocol === 'https:' ? url.href : '';
+  } catch {
+    return '';
+  }
 }
 
 export function buildOrderPayload(contact, cart, idempotencyKey) {

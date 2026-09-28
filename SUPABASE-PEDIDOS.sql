@@ -188,6 +188,7 @@ create table if not exists public.skbc_merch_order_items (
   sku text not null,
   supplier_reference text not null,
   size text not null,
+  recipient text,
   quantity integer not null check (quantity between 1 and 10),
   cost_cents integer not null check (cost_cents >= 0),
   unit_price_cents integer not null check (unit_price_cents >= 0),
@@ -217,6 +218,7 @@ create table if not exists public.skbc_order_communications (
 alter table public.skbc_merch_order_items
   add column if not exists supplier_reference text,
   add column if not exists size text,
+  add column if not exists recipient text,
   add column if not exists cost_cents integer;
 
 update public.skbc_merch_order_items item
@@ -231,6 +233,55 @@ alter table public.skbc_merch_order_items
   alter column supplier_reference set not null,
   alter column size set not null,
   alter column cost_cents set not null;
+
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'skbc_merch_order_items_recipient_valid') then
+    alter table public.skbc_merch_order_items add constraint skbc_merch_order_items_recipient_valid
+      check (recipient is null or (btrim(recipient) <> '' and char_length(btrim(recipient)) <= 120));
+  end if;
+end;
+$$;
+
+create or replace view public.skbc_merch_catalog_public as
+select
+  product.id as product_id,
+  product.name as product_name,
+  product.description,
+  product.brand,
+  product.supplier_reference as product_supplier_reference,
+  product.category,
+  product.recommended_level,
+  product.weight,
+  product.image_url,
+  case when product.source_url ~* '^https://' then product.source_url end as source_url,
+  product.image_attribution,
+  product.sort_order as product_sort_order,
+  variant.id as variant_id,
+  variant.sku,
+  variant.name as variant_name,
+  jsonb_strip_nulls(jsonb_build_object('size', variant.attributes ->> 'size')) as attributes,
+  variant.price_cents,
+  coalesce(
+    case
+      when variant.promotion_is_active
+       and variant.promotion_price_cents is not null
+       and (variant.promotion_starts_at is null or variant.promotion_starts_at <= statement_timestamp())
+       and (variant.promotion_ends_at is null or variant.promotion_ends_at >= statement_timestamp())
+      then variant.promotion_price_cents
+    end,
+    variant.price_cents
+  ) as effective_price_cents,
+  variant.sort_order as variant_sort_order
+from public.skbc_merch_products product
+join public.skbc_merch_variants variant on variant.product_id = product.id
+where product.is_active and variant.is_active;
+
+create or replace view public.skbc_merch_order_items_management as
+select id, order_id, variant_id, product_name, variant_name, sku,
+       supplier_reference, size, recipient, quantity, cost_cents,
+       unit_price_cents, line_total_cents, created_at
+from public.skbc_merch_order_items;
 
 alter table public.skbc_order_communications
   add column if not exists status text not null default 'prepared',
@@ -526,6 +577,7 @@ begin
         from (
           select jsonb_build_object(
             'variant_id', lower(btrim(coalesce(item ->> 'variant_id', ''))),
+            'recipient', btrim(coalesce(item ->> 'recipient', '')),
             'quantity', case
               when coalesce(item ->> 'quantity', '') ~ '^[0-9]+$'
                 then ((item ->> 'quantity')::numeric)::text
@@ -596,6 +648,10 @@ begin
        or coalesce(v_item ->> 'quantity', '') !~ '^[0-9]+$' then
       raise exception 'each item requires a valid variant_id and integer quantity' using errcode = '22023';
     end if;
+    if nullif(btrim(v_item ->> 'recipient'), '') is null
+       or char_length(btrim(v_item ->> 'recipient')) > 120 then
+      raise exception 'each item requires a recipient of at most 120 characters' using errcode = '22023';
+    end if;
     v_variant_id := (v_item ->> 'variant_id')::uuid;
     v_quantity := (v_item ->> 'quantity')::integer;
     if v_quantity < 1 or v_quantity > 10 then
@@ -630,6 +686,7 @@ begin
       'variant_id', v_variant.id, 'sku', v_variant.sku,
       'product_name', v_variant.product_name, 'variant_name', v_variant.variant_name,
       'supplier_reference', v_variant.supplier_reference, 'size', v_variant.size,
+      'recipient', btrim(v_item ->> 'recipient'),
       'cost_cents', v_variant.cost_cents, 'quantity', v_quantity,
       'unit_price_cents', v_variant.effective_price_cents,
       'line_total_cents', v_quantity * v_variant.effective_price_cents
@@ -653,11 +710,11 @@ begin
 
   insert into public.skbc_merch_order_items (
     order_id, variant_id, product_name, variant_name, sku, supplier_reference,
-    size, cost_cents, quantity, unit_price_cents
+    size, recipient, cost_cents, quantity, unit_price_cents
   )
   select v_order_id, (priced ->> 'variant_id')::uuid, priced ->> 'product_name',
          priced ->> 'variant_name', priced ->> 'sku',
-         priced ->> 'supplier_reference', priced ->> 'size',
+         priced ->> 'supplier_reference', priced ->> 'size', priced ->> 'recipient',
          (priced ->> 'cost_cents')::integer,
          (priced ->> 'quantity')::integer, (priced ->> 'unit_price_cents')::integer
   from jsonb_array_elements(v_priced_items) priced;
@@ -730,7 +787,8 @@ begin
   if not public.can_manage_skbc_merch_orders() then
     raise exception 'merch order management permission required' using errcode = '42501';
   end if;
-  if p_expected_order_count < 0 or p_expected_communication_count < 0 then
+  if p_expected_order_count is null or p_expected_communication_count is null
+     or p_expected_order_count < 0 or p_expected_communication_count < 0 then
     raise exception 'expected counts must be non-negative' using errcode = '22023';
   end if;
 
@@ -762,8 +820,8 @@ begin
   from public.skbc_merch_orders merch_order
   where merch_order.campaign_id = p_campaign_id;
 
-  if v_order_count <> p_expected_order_count
-     or v_communication_count <> p_expected_communication_count then
+  if v_order_count is distinct from p_expected_order_count
+     or v_communication_count is distinct from p_expected_communication_count then
     raise exception 'stale campaign confirmation counts: expected orders %, communications %; found orders %, communications %',
       p_expected_order_count, p_expected_communication_count, v_order_count, v_communication_count
       using errcode = '40001';
@@ -854,6 +912,7 @@ begin
   if nullif(btrim(p_catalog_owner), '') is null then
     raise exception 'catalog owner is required' using errcode = '22023';
   end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_catalog_owner, 0));
   if p_products is null or p_variants is null
      or jsonb_typeof(p_products) <> 'array' or jsonb_typeof(p_variants) <> 'array' then
     raise exception 'products and variants must be arrays' using errcode = '22023';
@@ -864,6 +923,22 @@ begin
   ) then
     raise exception 'every seeded row must match the catalog owner' using errcode = '22023';
   end if;
+
+  update public.skbc_merch_products product
+  set catalog_owner = p_catalog_owner
+  where product.catalog_owner is null
+    and exists (
+      select 1 from jsonb_array_elements(p_products) seeded
+      where seeded ->> 'supplier_reference' = product.supplier_reference
+    );
+
+  update public.skbc_merch_variants variant
+  set catalog_owner = p_catalog_owner
+  where variant.catalog_owner is null
+    and exists (
+      select 1 from jsonb_array_elements(p_variants) seeded
+      where seeded ->> 'sku' = variant.sku
+    );
 
   for v_product in select value from jsonb_array_elements(p_products)
   loop
@@ -1004,6 +1079,8 @@ revoke all privileges on table public.skbc_order_campaigns from public;
 revoke all privileges on table public.skbc_merch_order_items from public;
 revoke all privileges on table public.skbc_order_communications from public;
 revoke all privileges on table public.skbc_merch_admins from public;
+revoke all privileges on table public.skbc_merch_catalog_public from public;
+revoke all privileges on table public.skbc_merch_order_items_management from public;
 revoke all privileges on table public.skbc_merch_orders from anon;
 revoke all privileges on table public.skbc_merch_products from anon;
 revoke all privileges on table public.skbc_merch_variants from anon;
@@ -1011,6 +1088,8 @@ revoke all privileges on table public.skbc_order_campaigns from anon;
 revoke all privileges on table public.skbc_merch_order_items from anon;
 revoke all privileges on table public.skbc_order_communications from anon;
 revoke all privileges on table public.skbc_merch_admins from anon;
+revoke all privileges on table public.skbc_merch_catalog_public from anon;
+revoke all privileges on table public.skbc_merch_order_items_management from anon;
 revoke all privileges on table public.skbc_merch_orders from authenticated;
 revoke all privileges on table public.skbc_merch_products from authenticated;
 revoke all privileges on table public.skbc_merch_variants from authenticated;
@@ -1018,7 +1097,9 @@ revoke all privileges on table public.skbc_order_campaigns from authenticated;
 revoke all privileges on table public.skbc_merch_order_items from authenticated;
 revoke all privileges on table public.skbc_order_communications from authenticated;
 revoke all privileges on table public.skbc_merch_admins from authenticated;
-grant select on table public.skbc_merch_products, public.skbc_merch_variants to anon;
+revoke all privileges on table public.skbc_merch_catalog_public from authenticated;
+revoke all privileges on table public.skbc_merch_order_items_management from authenticated;
+grant select on table public.skbc_merch_catalog_public to anon;
 grant execute on function public.submit_skbc_merch_order(uuid, text, text, text, text, text, text, jsonb) to anon;
 
 grant execute on function public.is_skbc_merch_admin() to authenticated;
@@ -1045,3 +1126,4 @@ grant all privileges on table
   public.skbc_merch_order_items,
   public.skbc_order_communications
 to service_role;
+grant select on table public.skbc_merch_order_items_management to service_role;

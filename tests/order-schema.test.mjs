@@ -77,6 +77,29 @@ test('catalog stores approved product and variant economics', () => {
   has(/function public\.sync_skbc_merch_variant_price/i, 'legacy unit price synchronization trigger is required');
 });
 
+test('anonymous catalog access exposes only the restricted public view', () => {
+  has(/create (?:or replace )?view public\.skbc_merch_catalog_public/i, 'missing restricted public catalog view');
+  has(/effective_price_cents/i, 'public catalog must expose its effective drawer price');
+  const publicView = sql.slice(sql.indexOf('create or replace view public.skbc_merch_catalog_public'), sql.indexOf('create or replace view public.skbc_merch_order_items_management'));
+  assert.doesNotMatch(publicView, /\bcost_cents\b/i, 'public view must not expose costs');
+  assert.doesNotMatch(publicView, /\bmargin_cents\b/i, 'public view must not expose margins');
+  assert.doesNotMatch(publicView, /\bcost_basis\b/i, 'public view must not expose cost basis');
+  assert.doesNotMatch(publicView, /variant\.attributes\s*(?:,|as)/i, 'public view must not expose legacy private keys from raw attributes');
+  assert.match(publicView, /jsonb_build_object\s*\(\s*'size'/i, 'public view must project only approved variant attributes');
+  has(/grant select on (?:table )?public\.skbc_merch_catalog_public to anon/i, 'anon safe-view grant missing');
+  assert.doesNotMatch(sql, /grant select on (?:table )?public\.skbc_merch_products\s*,\s*public\.skbc_merch_variants to anon/i, 'anon must not read private catalog tables');
+});
+
+test('order items persist normalized recipients and expose them only through management access', () => {
+  has(/add column if not exists recipient text/i, 'recipient migration missing');
+  has(/'recipient'\s*,\s*btrim\s*\(\s*coalesce\s*\(\s*item\s*->>\s*'recipient'/i, 'canonical hash must include normalized recipient');
+  has(/recipient[^;]+btrim\s*\(\s*v_item\s*->>\s*'recipient'\s*\)/i, 'priced item snapshot must include normalized recipient');
+  has(/insert into public\.skbc_merch_order_items\s*\([^)]*recipient/i, 'normalized rows must persist recipient');
+  has(/create (?:or replace )?view public\.skbc_merch_order_items_management/i, 'management query view missing');
+  has(/grant select on (?:table )?public\.skbc_merch_order_items_management to service_role/i, 'service role management grant missing');
+  has(/revoke all privileges on (?:table )?public\.skbc_merch_order_items_management from anon/i, 'anon management view privileges must be revoked');
+});
+
 test('submit RPC securely calculates the effective public price', () => {
   has(/promotion_is_active[^;]+promotion_price_cents[^;]+promotion_starts_at[^;]+promotion_ends_at/i, 'RPC must validate the active promotion window');
   has(/coalesce\s*\([^;]*promotion_price_cents[^;]*price_cents/i, 'RPC must fall back from promotion to authoritative price');
@@ -91,7 +114,7 @@ test('admin payment and campaign close RPCs are atomic and locked down', () => {
   has(/assign_skbc_order_payment_method[\s\S]+?for update/i, 'payment RPC must lock order and campaign');
   has(/close_skbc_order_campaign[\s\S]+?for update/i, 'close RPC must lock campaign data');
   has(/prepared_communication_count/i, 'close RPC must return prepared communication count');
-  has(/v_order_count\s*<>\s*p_expected_order_count[\s\S]+?v_communication_count\s*<>\s*p_expected_communication_count/i, 'close RPC must reject stale confirmation counts under lock');
+  has(/v_order_count\s+is distinct from\s+p_expected_order_count[\s\S]+?v_communication_count\s+is distinct from\s+p_expected_communication_count/i, 'close RPC must reject stale confirmation counts under lock');
   has(/at time zone\s+'Europe\/Madrid'[\s\S]+?period_end/i, 'close RPC must enforce the Madrid-local campaign end');
   has(/v_campaign\.status\s*<>\s*'open'/i, 'only open campaigns may close');
   has(/frozen_at/i, 'orders must record when their data was frozen');
@@ -111,6 +134,15 @@ test('catalog seed RPC atomically upserts owned rows and deactivates stale rows'
   has(/catalog_owner/i, 'seed RPC must mark catalog ownership');
   has(/is_active\s*=\s*false/i, 'seed RPC must deactivate stale owned rows');
   has(/revoke all on function public\.seed_skbc_merch_catalog[^;]+from public/i, 'seed RPC must revoke PUBLIC execution');
+  has(/pg_advisory_xact_lock\s*\(\s*hashtextextended\s*\(\s*p_catalog_owner/i, 'seed RPC must serialize writes per owner');
+  has(/catalog_owner\s+is null[\s\S]+catalog_owner\s*=\s*p_catalog_owner/i, 'seed RPC must adopt matching unowned legacy rows');
+  has(/catalog_owner\s*=\s*p_catalog_owner[\s\S]+belongs to another catalog owner/i, 'seed RPC must not steal rows owned by another catalog owner');
+});
+
+test('campaign close explicitly rejects null optimistic-lock counts', () => {
+  has(/p_expected_order_count\s+is null\s+or\s+p_expected_communication_count\s+is null/i, 'close RPC must reject null expected counts');
+  has(/v_order_count\s+is distinct from\s+p_expected_order_count/i, 'close RPC must compare order count null-safely');
+  has(/v_communication_count\s+is distinct from\s+p_expected_communication_count/i, 'close RPC must compare communication count null-safely');
 });
 
 test('documents that deployment must wait for the Task 4 RPC client switch', () => {
@@ -195,7 +227,7 @@ test('anonymous privileges are catalog-read and RPC-execute only', () => {
     has(new RegExp(`revoke all (?:privileges )?on (?:table )?public\\.${escaped(table)} from anon`, 'i'), `anon privileges not revoked for ${table}`);
   }
 
-  has(/grant select on (?:table )?public\.skbc_merch_products\s*,\s*public\.skbc_merch_variants to anon/i, 'anon catalog read grant missing');
+  has(/grant select on (?:table )?public\.skbc_merch_catalog_public to anon/i, 'anon safe catalog read grant missing');
   has(/grant execute on function public\.submit_skbc_merch_order\s*\(\s*uuid\s*,\s*text\s*,\s*text\s*,\s*text\s*,\s*text\s*,\s*text\s*,\s*text\s*,\s*jsonb\s*\) to anon/i, 'anon RPC execution grant missing');
   has(/revoke all on function public\.submit_skbc_merch_order[^;]+from public/i, 'RPC must revoke default PUBLIC execution');
 });
@@ -347,17 +379,24 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
     end $$;
 
     set role anon;
+    do $$ begin
+      if (select count(*) from public.skbc_merch_catalog_public) <> 2 then raise exception 'safe public catalog visibility failed'; end if;
+      begin
+        perform count(*) from public.skbc_merch_variants;
+        raise exception 'anon read private variant economics';
+      exception when insufficient_privilege then null; end;
+    end $$;
     create temp table first_order as
       select * from public.submit_skbc_merch_order(
         '30000000-0000-4000-8000-000000000001', ' Alice ', 'ALICE@EXAMPLE.COM ', ' +34 (600) 111-222 ',
         ' M-1 ', ' hello ', 'ES',
-        '[{"variant_id":"20000000-0000-4000-8000-000000000002","quantity":"2"},{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
+        '[{"variant_id":"20000000-0000-4000-8000-000000000002","recipient":" Bob ","quantity":"2"},{"variant_id":"20000000-0000-4000-8000-000000000001","recipient":"Alice","quantity":1}]'::jsonb
       );
     create temp table retry_order as
       select * from public.submit_skbc_merch_order(
         '30000000-0000-4000-8000-000000000001', 'Alice', 'alice@example.com', '+34 (600) 111-222',
         'M-1', 'hello', 'es',
-        '[{"quantity":1,"variant_id":"20000000-0000-4000-8000-000000000001"},{"quantity":2,"variant_id":"20000000-0000-4000-8000-000000000002"}]'::jsonb
+        '[{"quantity":1,"recipient":"Alice","variant_id":"20000000-0000-4000-8000-000000000001"},{"quantity":2,"recipient":"Bob","variant_id":"20000000-0000-4000-8000-000000000002"}]'::jsonb
       );
     do $$ begin
       if (select order_id from first_order) <> (select order_id from retry_order) then
@@ -370,7 +409,7 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
         perform public.submit_skbc_merch_order(
           '30000000-0000-4000-8000-000000000003', 'Phone Test', 'phone@example.com', '+()- .',
           null, null, 'es',
-          '[{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1}]'::jsonb
+          '[{"variant_id":"20000000-0000-4000-8000-000000000001","recipient":"Phone Test","quantity":1}]'::jsonb
         );
         raise exception 'punctuation-only phone succeeded';
       exception when invalid_parameter_value then null;
@@ -379,7 +418,7 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
         perform public.submit_skbc_merch_order(
           '30000000-0000-4000-8000-000000000001', 'Alice', 'alice@example.com', 'DIFFERENT',
           'M-1', 'hello', 'es',
-          '[{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1},{"variant_id":"20000000-0000-4000-8000-000000000002","quantity":2}]'::jsonb
+          '[{"variant_id":"20000000-0000-4000-8000-000000000001","recipient":"Alice","quantity":1},{"variant_id":"20000000-0000-4000-8000-000000000002","recipient":"Bob","quantity":2}]'::jsonb
         );
         raise exception 'mismatched retry succeeded';
       exception when unique_violation then
@@ -387,6 +426,12 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       end;
     end $$;
     reset role;
+
+    do $$ begin
+      if (select count(*) from public.skbc_merch_order_items where recipient in ('Alice', 'Bob')) <> 2 then
+        raise exception 'normalized recipients were not persisted';
+      end if;
+    end $$;
 
     set role authenticated;
     select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', false);
@@ -407,7 +452,7 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       begin
         perform public.submit_skbc_merch_order(
           '30000000-0000-4000-8000-000000000002', 'Bob', 'bob@example.com', '600333444', null, null, 'es',
-          '[{"variant_id":"20000000-0000-4000-8000-000000000001","quantity":1},{"variant_id":"20000000-0000-4000-8000-000000000003","quantity":1}]'::jsonb
+          '[{"variant_id":"20000000-0000-4000-8000-000000000001","recipient":"Bob","quantity":1},{"variant_id":"20000000-0000-4000-8000-000000000003","recipient":"Bob","quantity":1}]'::jsonb
         );
         raise exception 'inactive variant succeeded';
       exception when invalid_parameter_value then null; end;
@@ -425,6 +470,14 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       if s <> date '2026-10-16' then raise exception 'autumn DST period failed'; end if;
     end $$;
 
+    insert into public.skbc_merch_products (slug, name, supplier_reference, catalog_owner, is_active)
+    values ('seeded', 'Legacy Seeded', 'SEED', null, true);
+    insert into public.skbc_merch_variants (
+      product_id, sku, name, supplier_reference, cost_cents, margin_cents,
+      price_cents, unit_price_cents, cost_basis, catalog_owner, is_active
+    ) select id, 'SEED-1', 'Legacy One', 'SEED', 90, 10, 100, 100, 'legacy', null, true
+      from public.skbc_merch_products where supplier_reference = 'SEED';
+
     select set_config('request.jwt.claim.role', 'service_role', false);
     do $$ declare seeded record; begin
       select * into seeded from public.seed_skbc_merch_catalog(
@@ -434,6 +487,10 @@ test('PostgreSQL integration: migration, authorization, idempotency, rollback, a
       );
       if seeded.products_upserted <> 1 or seeded.variants_upserted <> 1 then
         raise exception 'atomic seed counts were wrong';
+      end if;
+      if exists (select 1 from public.skbc_merch_products where supplier_reference = 'SEED' and catalog_owner is distinct from 'integration-owner')
+         or exists (select 1 from public.skbc_merch_variants where sku = 'SEED-1' and catalog_owner is distinct from 'integration-owner') then
+        raise exception 'matching unowned legacy rows were not adopted';
       end if;
       select * into seeded from public.seed_skbc_merch_catalog(
         '[]'::jsonb, '[]'::jsonb, 'integration-owner'

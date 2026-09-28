@@ -7,6 +7,10 @@ import {
   campaignLabel,
   cartTotalCents,
   removeCartLine,
+  removeSubmittedCartLines,
+  resolveIdempotencyKey,
+  safeHttpsUrl,
+  validateCartRecipients,
   validateOrderContact,
 } from '../merch-orders.js';
 
@@ -124,6 +128,40 @@ test('payload maps trimmed contact fields and never sends trusted prices or tota
   assert.equal('total' in payload, false);
   assert.equal('unit_price_cents' in payload.p_items[0], false);
   assert.equal('line_total_cents' in payload.p_items[0], false);
+});
+
+test('cart recipients are required, trimmed, and length-limited', () => {
+  assert.deepEqual(validateCartRecipients([
+    { recipient: ' Iraia ' },
+    { recipient: '' },
+    { recipient: 'x'.repeat(121) },
+  ]), {
+    valid: false,
+    errors: { 1: 'required', 2: 'too_long' },
+  });
+  assert.deepEqual(validateCartRecipients([{ recipient: ' Iraia ' }]), { valid: true, errors: {} });
+});
+
+test('failed exact retries retain their key and changed payloads rotate it', () => {
+  const uuid = () => 'rotated-key';
+  assert.equal(resolveIdempotencyKey({ idempotencyKey: 'original', failedFingerprint: 'same' }, 'same', uuid), 'original');
+  assert.equal(resolveIdempotencyKey({ idempotencyKey: 'original', failedFingerprint: 'old' }, 'changed', uuid), 'rotated-key');
+  assert.equal(resolveIdempotencyKey({ idempotencyKey: 'original', failedFingerprint: '' }, 'first', uuid), 'original');
+});
+
+test('successful submission removes only lines from its immutable snapshot', () => {
+  const submitted = [{ lineId: 'line-1' }, { lineId: 'line-2' }];
+  const current = [{ lineId: 'line-1' }, { lineId: 'line-2' }, { lineId: 'line-3' }];
+  assert.deepEqual(removeSubmittedCartLines(current, submitted), [{ lineId: 'line-3' }]);
+  assert.deepEqual(submitted, [{ lineId: 'line-1' }, { lineId: 'line-2' }]);
+});
+
+test('source links allow only absolute HTTPS URLs', () => {
+  assert.equal(safeHttpsUrl('https://fujimae.com/product'), 'https://fujimae.com/product');
+  assert.equal(safeHttpsUrl('http://fujimae.com/product'), '');
+  assert.equal(safeHttpsUrl('javascript:alert(1)'), '');
+  assert.equal(safeHttpsUrl('//fujimae.com/product'), '');
+  assert.equal(safeHttpsUrl('not a url'), '');
 });
 
 test('campaignLabel renders the monthly campaign range in Spanish', () => {
