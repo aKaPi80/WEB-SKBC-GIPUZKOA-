@@ -6,9 +6,10 @@
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
     <link rel="stylesheet" href="admin.css?v=20260831-calendar-visual-editor" />
-    <link rel="stylesheet" href="admin-simple.css?v=20261018-catalog" />
+    <link rel="stylesheet" href="admin-simple.css?v=20261018-news" />
     <script src="admin-simple.js?v=20261018-catalog"></script>
     <script src="admin-catalog.js?v=20261018-catalog"></script>
+    <script src="admin-news.js?v=20261018-news"></script>
     <style>
       .admin-login {
         display: grid;
@@ -135,7 +136,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20261018-catalog";
+          script.src = "admin.js?v=20261018-news";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

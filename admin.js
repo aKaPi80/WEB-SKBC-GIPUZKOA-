@@ -16,7 +16,7 @@ let publishedContentSignature = contentSignature(publishedContentSnapshot);
 let currentPanel = "dashboard";
 let currentEventIndex = null;
 let currentEventYear = new Date().getFullYear();
-let currentNewsIndex = null;
+
 let dirty = false;
 let imageFrameEditor = null;
 
@@ -2165,216 +2165,7 @@ async function translateValue(value, target, type) {
 }
 
 function renderNews() {
-  const editor = document.querySelector("#editor");
-  const news = data.settings.news || [];
-  const sortedNews = news
-    .map((item, index) => ({ item, index }))
-    .sort((a, b) => String(a.item.date || "9999-12-31").localeCompare(String(b.item.date || "9999-12-31")));
-  if (currentNewsIndex !== null && currentNewsIndex > news.length - 1) currentNewsIndex = news.length ? news.length - 1 : null;
-  const sectionCopy = ["es", "eu", "en"].map((lang) => groupTemplate({
-    title: `Cabecera de noticias (${lang.toUpperCase()})`,
-    help: "Estos textos son los que se ven encima de las noticias en la web.",
-    fields: [
-      ["Etiqueta pequeña", ["languages", lang, "news", "eyebrow"], "input"],
-      ["Título visible", ["languages", lang, "news", "title"], "input"],
-      ["Texto descriptivo", ["languages", lang, "news", "text"], "textarea"],
-      ["Texto si no hay noticias", ["languages", lang, "news", "empty"], "input"]
-    ]
-  })).join("");
-  editor.innerHTML = `
-    ${renderIntro(`<div class="intro-actions"><button id="add-news" class="primary" type="button">Añadir noticia</button></div>`)}
-    <div class="news-workspace">
-      <div class="news-editor">
-        <div class="custom-card">${sectionCopy}<button class="translate-section" data-translate-news-copy type="button">Traducir cabecera de noticias</button></div>
-        ${news.length && currentNewsIndex !== null ? newsTemplate(news[currentNewsIndex], currentNewsIndex) : emptyNewsEditor(news.length)}
-      </div>
-      <aside class="news-sidebar">
-        <header>
-          <h3>Noticias</h3>
-          <p>Tenlas siempre a mano. Pulsa una tarjeta para abrirla y editarla.</p>
-        </header>
-        <div class="news-mini-list">
-          ${sortedNews.length ? sortedNews.map(({ item, index }) => newsMiniCard(item, index)).join("") : `<p class="empty-news-list">Todavía no hay noticias creadas.</p>`}
-        </div>
-      </aside>
-    </div>
-  `;
-  bindFields(editor);
-  document.querySelector("#add-news").addEventListener("click", addNews);
-  editor.querySelectorAll("[data-select-news]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = Number(button.dataset.selectNews);
-      currentNewsIndex = currentNewsIndex === index ? null : index;
-      renderNews();
-    });
-  });
-  editor.querySelectorAll("[data-remove-news]").forEach((button) => {
-    button.addEventListener("click", () => removeNews(Number(button.dataset.removeNews)));
-  });
-  editor.querySelectorAll("[data-clear-news-expiry]").forEach((button) => {
-    button.addEventListener("click", () => clearNewsExpiry(Number(button.dataset.clearNewsExpiry)));
-  });
-  editor.querySelector("[data-translate-news-copy]")?.addEventListener("click", (event) => translateNewsCopy(event.currentTarget));
-  editor.querySelectorAll("[data-translate-news]").forEach((button) => {
-    button.addEventListener("click", () => translateNewsItem(Number(button.dataset.translateNews), button));
-  });
-}
-
-function newsExpiryStatus(item) {
-  const expiresAt = String(item?.expiresAt || "").trim();
-  if (!expiresAt) return { expired: false, label: "" };
-  const date = new Date(expiresAt);
-  if (!Number.isFinite(date.getTime())) return { expired: false, label: "Caducidad no válida" };
-  const label = `Caduca ${expiresAt.replace("T", " ")}`;
-  return { expired: date.getTime() <= Date.now(), label };
-}
-
-function emptyNewsEditor(count) {
-  return `
-    <article class="editor-group empty-news-editor">
-      <header>
-        <div>
-          <h3>${count ? "Selecciona una noticia" : "No hay noticias"}</h3>
-          <p>${count ? "Pulsa una tarjeta del lado derecho para abrir su edición aquí." : "Pulsa Añadir noticia para crear avisos visibles en la web."}</p>
-        </div>
-      </header>
-    </article>
-  `;
-}
-
-function newsMiniCard(item, index) {
-  const copy = item.languages?.es || {};
-  const title = copy.title || `Noticia ${index + 1}`;
-  const text = copy.text || "";
-  const date = item.date || "Sin fecha";
-  const expiry = newsExpiryStatus(item);
-  const enabled = item.enabled === false ? "Oculta" : expiry.expired ? "Caducada" : "Activa";
-  const image = item.image ? `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" />` : "";
-  return `
-    <article class="news-mini ${currentNewsIndex === index ? "active" : ""} ${item.image ? "" : "no-image"} ${expiry.expired ? "expired" : ""}" style="--news-color:${escapeHtml(item.color || "#1f6fa9")}">
-      <button type="button" data-select-news="${index}">
-        ${image}
-        <span>
-          <strong>${escapeHtml(title)}</strong>
-          <small>${escapeHtml(date)} · ${enabled}${expiry.label ? ` · ${escapeHtml(expiry.label)}` : ""}</small>
-          ${text ? `<em>${escapeHtml(text.slice(0, 92))}${text.length > 92 ? "..." : ""}</em>` : ""}
-        </span>
-      </button>
-    </article>
-  `;
-}
-
-function newsTemplate(item, index) {
-  const base = ["settings", "news", index];
-  const groups = [{
-    title: `Noticia ${index + 1}`,
-    help: "Puedes poner fecha, caducidad opcional, color, enlace opcional y textos en los tres idiomas. Si Caduca el queda vacío, la noticia no caduca automáticamente.",
-    fields: [
-      ["Activa", [...base, "enabled"], "booleanText"],
-      ["Fecha", [...base, "date"], "date"],
-      ["Caduca el", [...base, "expiresAt"], "datetime"],
-      ["Color de fondo/acento", [...base, "color"], "color"],
-      ["Imagen de la noticia", [...base, "image"], "input"],
-      ["URL opcional", [...base, "url"], "input"],
-      ["ES título", [...base, "languages", "es", "title"], "input"],
-      ["ES texto", [...base, "languages", "es", "text"], "textarea"],
-      ["EU título", [...base, "languages", "eu", "title"], "input"],
-      ["EU texto", [...base, "languages", "eu", "text"], "textarea"],
-      ["EN título", [...base, "languages", "en", "title"], "input"],
-      ["EN texto", [...base, "languages", "en", "text"], "textarea"]
-    ]
-  }];
-  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="secondary clear-news-expiry" data-clear-news-expiry="${index}" type="button">Dejar sin caducidad</button><button class="translate-section" data-translate-news="${index}" type="button">Traducir esta noticia a EU/EN</button><button class="danger" data-remove-news="${index}" type="button">Eliminar esta noticia</button></div>`;
-}
-
-async function translateNewsCopy(button) {
-  const source = data.languages?.es?.news || {};
-  try {
-    button.disabled = true;
-    button.textContent = "Traduciendo...";
-    for (const key of ["eyebrow", "title", "text", "empty"]) {
-      const value = source[key] || "";
-      const [eu, en] = await Promise.all([translateText(value, "eu"), translateText(value, "en")]);
-      setByPath(data, ["languages", "eu", "news", key], eu || value);
-      setByPath(data, ["languages", "en", "news", key], en || value);
-    }
-    markDirty();
-    setStatus("Cabecera de noticias traducida. Revisa y guarda antes de publicar.", "warning");
-    renderNews();
-  } catch (error) {
-    setStatus(`No se pudo traducir la cabecera: ${error.message}`, "danger");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Traducir cabecera de noticias";
-  }
-}
-
-async function translateNewsItem(index, button) {
-  const item = data.settings.news?.[index];
-  const source = item?.languages?.es || {};
-  if (!source.title && !source.text) {
-    setStatus("Escribe primero la noticia en castellano.", "danger");
-    return;
-  }
-  try {
-    button.disabled = true;
-    button.textContent = "Traduciendo...";
-    const [euTitle, euText, enTitle, enText] = await Promise.all([
-      translateText(source.title, "eu"),
-      translateText(source.text, "eu"),
-      translateText(source.title, "en"),
-      translateText(source.text, "en")
-    ]);
-    item.languages.eu = { title: euTitle || source.title, text: euText || source.text };
-    item.languages.en = { title: enTitle || source.title, text: enText || source.text };
-    markDirty();
-    setStatus("Noticia traducida. Revisa y guarda antes de publicar.", "warning");
-    renderNews();
-  } catch (error) {
-    setStatus(`No se pudo traducir la noticia: ${error.message}`, "danger");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Traducir esta noticia a EU/EN";
-  }
-}
-
-function addNews() {
-  if (!data.settings.news) data.settings.news = [];
-  const today = new Date();
-  const date = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-  data.settings.news.push({
-    enabled: true,
-    date,
-    expiresAt: "",
-    color: "#1f6fa9",
-    image: "",
-    url: "",
-    languages: {
-      es: { title: "Nueva noticia", text: "Texto de la noticia." },
-      eu: { title: "Albiste berria", text: "Albistearen testua." },
-      en: { title: "New update", text: "News text." }
-    }
-  });
-  currentNewsIndex = data.settings.news.length - 1;
-  markDirty();
-  renderNews();
-}
-
-function clearNewsExpiry(index) {
-  if (!data.settings.news?.[index]) return;
-  data.settings.news[index].expiresAt = "";
-  markDirty();
-  setStatus("Caducidad eliminada de la noticia. Falta publicar.", "warning");
-  renderNews();
-}
-
-function removeNews(index) {
-  if (!confirm("¿Eliminar esta noticia?")) return;
-  data.settings.news.splice(index, 1);
-  if (currentNewsIndex === index) currentNewsIndex = null;
-  if (currentNewsIndex !== null && currentNewsIndex > index) currentNewsIndex -= 1;
-  markDirty();
-  renderNews();
+  window.SKBC_ADMIN_NEWS.render();
 }
 
 function testimonialInboxConfig() {
@@ -4621,6 +4412,14 @@ function escapeAttr(value) {
 
 function openPanel(panel) {
   if (!panel || panel === currentPanel) return;
+  if (currentPanel === "news" && window.SKBC_ADMIN_NEWS.isBusy()) {
+    setStatus("Espera a que termine la imagen o la traducción.", "warning");
+    return;
+  }
+  if (currentPanel === "news" && window.SKBC_ADMIN_NEWS.hasDraft()) {
+    if (window.SKBC_ADMIN_NEWS.hasUnsaved() && !confirm("¿Salir sin guardar los cambios de esta noticia?")) return;
+    window.SKBC_ADMIN_NEWS.cancel();
+  }
   currentPanel = panel;
   render();
   document.querySelector("#editor")?.scrollIntoView({ block: "start" });
@@ -4654,6 +4453,10 @@ document.querySelector("#save").addEventListener("click", () => {
 });
 
 document.querySelector("#publish").addEventListener("click", async () => {
+  if (window.SKBC_ADMIN_NEWS?.hasDraft()) {
+    setStatus("Guarda la noticia o pulsa Cancelar antes de publicar los cambios.", "warning");
+    return;
+  }
   if (location.protocol === "file:") {
     setStatus("Para publicar, abre el editor con ABRIR-EDITOR-Y-PUBLICAR.bat", "danger");
     alert("El navegador no puede publicar en GitHub desde file://.\n\nAbre ABRIR-EDITOR-Y-PUBLICAR.bat y usa el editor desde localhost.");
@@ -4877,11 +4680,19 @@ document.querySelector("#reset").addEventListener("click", () => {
 });
 
 window.addEventListener("beforeunload", (event) => {
-  if (!dirty) return;
+  if (!dirty && !window.SKBC_ADMIN_NEWS.hasUnsaved() && !window.SKBC_ADMIN_NEWS.isBusy()) return;
   event.preventDefault();
   event.returnValue = "";
 });
 
+window.SKBC_ADMIN_NEWS.configure({
+  getItems: () => (data.settings.news ||= []),
+  onChange: markDirty,
+  setStatus,
+  upload: uploadImageFile,
+  translate: translateText,
+  afterRender: enhanceMobileCollapsers
+});
 window.SKBC_ADMIN_SIMPLE.install({ openPanel });
 render();
 setStatus("Sin cambios pendientes", "neutral");

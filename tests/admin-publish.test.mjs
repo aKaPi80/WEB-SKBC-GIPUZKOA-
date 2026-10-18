@@ -11,7 +11,7 @@ test('publication updates the editor and content without replacing public applic
   const target = join(root, 'target');
   try {
     await mkdir(local); await mkdir(target);
-    for (const name of ['admin.html', 'admin.js', 'admin.css', 'admin-simple.js', 'admin-simple.css', 'admin-catalog.js']) await writeFile(join(local, name), name);
+    for (const name of ['admin.html', 'admin.js', 'admin.css', 'admin-simple.js', 'admin-simple.css', 'admin-catalog.js', 'admin-news.js']) await writeFile(join(local, name), name);
     await writeFile(join(local, 'app.js'), 'OLD APP');
     await writeFile(join(target, 'app.js'), 'CURRENT APP');
     await mkdir(join(target, 'assets'), { recursive: true });

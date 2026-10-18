@@ -18,6 +18,7 @@ test('an edit made during a publication remains pending and is not included in t
   const baseline = { settings: {}, languages: { es: { title: 'Before' } } };
   const submitted = { settings: {}, languages: { es: { title: 'Submitted' } } };
   const context = {
+    window: {},
     document: { querySelector: () => element }, location: { protocol: 'http:' },
     confirm: () => true, alert: () => {}, setStatus: () => {}, shouldUseGithubApi: () => false,
     structuredClone, data: structuredClone(submitted), publishedContentSnapshot: baseline,

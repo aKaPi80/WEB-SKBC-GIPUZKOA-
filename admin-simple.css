@@ -1,4 +1,31 @@
 /* Quiet task-first management shell. */
+.simple-news-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.simple-news-heading h2 { font-size: 30px; font-weight: 650; margin: 10px 0; letter-spacing: -.025em; }
+.simple-news-heading p:last-child, .simple-news-note { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.simple-news-list { margin-top: 26px; border-top: 1px solid var(--line); }
+.simple-news-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.simple-news-row h3 { font-size: 17px; margin: 0 0 8px; font-weight: 600; overflow-wrap: anywhere; }
+.simple-news-row p { margin: 0; font-size: 13px; color: var(--muted); }
+.simple-news-row__actions { display: flex; gap: 10px; flex-shrink: 0; }
+.simple-news-empty { padding: 30px 0; }
+.simple-news-empty p { color: var(--muted); line-height: 1.6; }
+.simple-news-form { max-width: 800px; }
+.simple-news-form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.simple-news-form label { display: grid; gap: 9px; margin: 20px 0; font-size: 14px; font-weight: 600; }
+.simple-news-form input:not([type="checkbox"]):not([type="color"]), .simple-news-form textarea { width: 100%; border: 1px solid #cbd0d1; border-radius: 7px; padding: 13px; background: #fff; color: var(--ink); font: inherit; font-weight: 400; }
+.simple-news-form textarea { resize: vertical; min-height: 150px; line-height: 1.6; }
+.simple-news-short { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 25px; }
+.simple-news-form label.simple-news-checkbox { display: flex; align-items: center; gap: 10px; }
+.simple-news-checkbox input { width: 20px; height: 20px; }
+.simple-news-form__actions { display: flex; gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); }
+.simple-news-error { color: #a52121; font-size: 14px; }
+.simple-news-undo { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 16px; border: 1px solid #e1d1a7; background: #fff9e9; border-radius: 8px; }
+@media (max-width: 540px) {
+  .simple-news-heading { align-items: flex-start; flex-direction: column; }
+  .simple-news-row { flex-direction: column; align-items: stretch; gap: 14px; }
+  .simple-news-row__actions button { flex: 1; }
+  .simple-news-short { grid-template-columns: 1fr; gap: 0; }
+}
 .admin-catalog-category { margin: 24px 0 32px; }
 .admin-catalog-category > h3 { font-size: 18px; font-weight: 650; }
 .admin-catalog-category > h3 span { color: var(--muted); font-weight: 400; }
