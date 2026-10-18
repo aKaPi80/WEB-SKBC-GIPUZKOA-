@@ -44,7 +44,7 @@ window.SKBC_CONTENT = {
       "heroOverlay": "strong"
     },
     "alertBanner": {
-      "enabled": true,
+      "enabled": false,
       "style": "vacation",
       "text": {
         "es": "VACACIONES!!!! NOS VEMOS DE VUELTA EN SEPTIEMBRE!! SI QUIERES UNIRTE PIDE INFORMACION PARA EMPEZAR JUNTO A NOSOTROS EN SEPTIEMBRE!!",
@@ -57,7 +57,7 @@ window.SKBC_CONTENT = {
       "expiresAt": "2026-08-23T09:21"
     },
     "specialVisual": {
-      "mode": "none",
+      "mode": "autumn",
       "intensity": "high",
       "message": "",
       "schedule": [
@@ -81,8 +81,8 @@ window.SKBC_CONTENT = {
           "enabled": true,
           "mode": "autumn",
           "intensity": "medium",
-          "start": "2027-10-01",
-          "end": "2027-11-15",
+          "start": "2026-10-01",
+          "end": "2026-11-15",
           "message": "Otoño en el dojo"
         }
       ]
