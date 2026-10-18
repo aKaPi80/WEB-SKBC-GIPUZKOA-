@@ -103,7 +103,15 @@ test('the real cursor dislodges accumulations without blocking clicks or touch s
       }, mode);
       await page.waitForFunction(() => {
         const particle = document.querySelector('.seasonal-layer span');
-        return particle && Math.abs(particle.getBoundingClientRect().bottom - 508) < 0.2;
+        if (!particle) return false;
+        const rect = particle.getBoundingClientRect();
+        const key = `${rect.x},${rect.y},${rect.width},${rect.height}`;
+        const previous = window.seasonalRestSample;
+        if (!previous || previous.key !== key) {
+          window.seasonalRestSample = { key, time: performance.now() };
+          return false;
+        }
+        return performance.now() - previous.time > 80 && Math.abs(rect.bottom - 508) < 0.05;
       });
       const particle = page.locator('.seasonal-layer span');
       const resting = await particle.boundingBox();

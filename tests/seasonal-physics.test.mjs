@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-const { createParticle, step, floorSurface } = createRequire(import.meta.url)('../seasonal-effects.js');
+const { createParticle, step, floorSurface, orientationVector, isTiltDevice } = createRequire(import.meta.url)('../seasonal-effects.js');
 const options = { width: 1000, height: 800, mode: 'autumn', random: () => 0.5 };
 const surface = { id: 'logo', left: 100, right: 300, top: 200, radius: 0 };
 const leaf = (id, values = {}) => Object.assign(createParticle(id, options), {
@@ -134,4 +134,38 @@ test('cursor gusts can detach bottom accumulations', () => {
   step([], [floor], 0.02, 1, { ...options, deposits: [p], pointer });
   assert.equal(p.support, null);
   assert.ok(p.vx > 0);
+});
+
+test('orientation maps portrait and landscape tilts to screen coordinates safely', () => {
+  assert.ok(orientationVector(0, -25, 0).x < 0);
+  assert.ok(orientationVector(0, 25, 0).x > 0);
+  assert.ok(orientationVector(25, 0, 90).x > 0);
+  assert.ok(orientationVector(25, 0, 270).x < 0);
+  assert.equal(orientationVector(null, 25, 0), null);
+  assert.equal(orientationVector(0, NaN, 0), null);
+});
+
+test('tilt is restricted to phones and iPads, including iPad desktop mode', () => {
+  assert.equal(isTiltDevice({ userAgent: 'iPhone Safari', platform: 'iPhone', maxTouchPoints: 5 }), true);
+  assert.equal(isTiltDevice({ userAgent: 'Macintosh Safari', platform: 'MacIntel', maxTouchPoints: 5 }), true);
+  assert.equal(isTiltDevice({ userAgent: 'Android Chrome', platform: 'Linux', maxTouchPoints: 5 }), true);
+  assert.equal(isTiltDevice({ userAgent: 'Windows Chrome', platform: 'Win32', maxTouchPoints: 10 }), false);
+  assert.equal(isTiltDevice({ userAgent: 'Macintosh Safari', platform: 'MacIntel', maxTouchPoints: 0 }), false);
+});
+
+test('phone tilt steers every particle type left and right and can release deposits', () => {
+  for (const mode of ['autumn', 'christmas', 'carnival']) {
+    const left = leaf(0, { x: 500, y: 300 });
+    const right = leaf(0, { x: 500, y: 300 });
+    for (let i = 0; i < 20; i++) {
+      step([left], [], 0.04, i * 0.04, { ...options, mode, tilt: { x: -1, y: 0 } });
+      step([right], [], 0.04, i * 0.04, { ...options, mode, tilt: { x: 1, y: 0 } });
+    }
+    assert.ok(left.x < 490, `${mode} must drift left`);
+    assert.ok(right.x > 510, `${mode} must drift right`);
+    const resting = leaf(-1, { x: 200, y: 793, support: 'page-floor', offset: 200, resting: 30, floor: true });
+    step([], [floorSurface(1000, 800, 0)], 0.03, 0, { ...options, mode, deposits: [resting], tilt: { x: -1, y: 0 } });
+    assert.equal(resting.support, null);
+    assert.ok(resting.vx < 0);
+  }
 });

@@ -192,8 +192,53 @@ button, input, select, textarea { font: inherit; }
 }
 .seasonal-layer--christmas span { box-shadow: 0 0 3px rgba(255, 255, 255, .35); }
 @media (prefers-reduced-motion: reduce) {
-  .seasonal-layer { display: none; }
+  html:not([data-seasonal-motion="on"]) .seasonal-layer { display: none; }
 }
+[data-seasonal-motion="off"] .seasonal-layer { display: none; }
+.seasonal-controls {
+  position: fixed;
+  z-index: 80;
+  left: max(12px, env(safe-area-inset-left));
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  max-width: 84px;
+  pointer-events: none;
+}
+.seasonal-controls__panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: min(340px, calc(100vw - 24px));
+  max-height: 50vh;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 12px;
+  background: #24282d;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.seasonal-controls:not([open]) .seasonal-controls__panel { display: none; }
+.seasonal-controls summary { list-style: none; width: max-content; }
+.seasonal-controls summary::-webkit-details-marker { display: none; }
+.seasonal-controls button,
+.seasonal-controls summary {
+  pointer-events: auto;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 18px;
+  background: #24282d;
+  color: #fff;
+  padding: 10px 12px;
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.seasonal-controls button:disabled { opacity: .6; cursor: default; }
+.seasonal-controls button:focus-visible,
+.seasonal-controls summary:focus-visible { outline: 3px solid #c77dff; outline-offset: 2px; }
+.seasonal-motion-status { flex-basis: 100%; color: #fff; font-size: 12px; background: #24282d; border-radius: 8px; padding: 8px 10px; }
+.seasonal-motion-status:empty { display: none; }
 
 .special-badge {
   position: fixed;

@@ -28,6 +28,16 @@
   function floorSurface(width, documentHeight, scrollY) {
     return { id: 'page-floor', left: 0, right: width, top: documentHeight - scrollY - 2, radius: 0 };
   }
+  function isTiltDevice(device) {
+    return /iPad|iPhone|iPod|Android/i.test(device.userAgent || '') ||
+      (device.platform === 'MacIntel' && device.maxTouchPoints > 1);
+  }
+  function orientationVector(beta, gamma, angle = 0) {
+    if (!Number.isFinite(beta) || !Number.isFinite(gamma)) return null;
+    const radians = (Number.isFinite(angle) ? angle : 0) * Math.PI / 180;
+    return { x: gamma * Math.cos(radians) + beta * Math.sin(radians),
+      y: beta * Math.cos(radians) - gamma * Math.sin(radians) };
+  }
   function recycle(p, options) {
     if (p.id < 0) { p.alive = false; return; }
     Object.assign(p, createParticle(p.id, options), {
@@ -88,6 +98,15 @@
       p.ignore = Math.max(0, (p.ignore || 0) - dt);
       const gust = Math.sin(time * 0.47 + p.phase) + 0.4 * Math.sin(time * 1.3);
       cursorGust(p, options.pointer, dt, time, options.mode);
+      const tiltX = Math.max(-1, Math.min(1, options.tilt?.x || 0));
+      const tiltY = Math.max(-1, Math.min(1, options.tilt?.y || 0));
+      if (p.support !== null && Math.abs(tiltX) > 0.08) {
+        p.offset += tiltX * dt * (options.mode === 'christmas' ? 18 : 35);
+        if (Math.abs(tiltX) > 0.65) {
+          release(p, Math.sign(tiltX));
+          p.vx = tiltX * model.wind * 5;
+        }
+      }
       if (p.support !== null) {
         const base = typeof p.support === 'number'
           ? all.find(other => other.id === p.support && other.support !== null && other.alive !== false)
@@ -108,8 +127,8 @@
         }
       }
       const oldY = p.y;
-      p.vx += (gust * model.wind - p.vx) * dt * 1.3;
-      p.vy = Math.min(model.terminal * (0.8 + p.size / 35), p.vy + model.gravity * dt);
+      p.vx += (gust * model.wind + tiltX * model.wind * 4 - p.vx) * dt * 1.3;
+      p.vy = Math.min(model.terminal * (0.8 + p.size / 35), p.vy + model.gravity * (1 + tiltY * 0.65) * dt);
       p.x += p.vx * dt;
       p.y += p.vy * dt;
       p.angle += (p.spin * model.spin + gust * 22) * dt;
@@ -156,22 +175,114 @@
       }
     }
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = { createParticle, step, floorSurface };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { createParticle, step, floorSurface, orientationVector, isTiltDevice };
   if (typeof document === 'undefined') return;
 
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = isTiltDevice(navigator);
+  let motionOverride = null, tiltWanted = false, sensorGranted = false;
+  const motionAllowed = () => motionOverride ?? !preference.matches;
   const selector = '.card, .split-media, .learn-photo, .team-feature__image, .instructor-photo, .news-card, .brand-mark, .hero-logo, .club-logo-panel, .ika-badge';
   let active = null;
   let stop = () => {};
+  const restart = () => { active = null; reconcile(); };
+  function mobileControls(options) {
+    if (!mobile) return () => {};
+    const labels = {
+      es: { group: 'Efectos de temporada', show: 'Mostrar efectos', hide: 'Ocultar efectos', enable: 'Activar inclinación', disable: 'Desactivar inclinación', denied: 'Sin acceso al sensor. Los efectos siguen funcionando.', waiting: 'Inclina el dispositivo para mover las partículas.', missing: 'No llegan datos del sensor. Los efectos siguen funcionando.' },
+      eu: { group: 'Sasoiko efektuak', show: 'Erakutsi efektuak', hide: 'Ezkutatu efektuak', enable: 'Aktibatu inklinazioa', disable: 'Desaktibatu inklinazioa', denied: 'Ez dago sentsorerako sarbiderik. Efektuek martxan jarraitzen dute.', waiting: 'Okertu gailua partikulak mugitzeko.', missing: 'Ez da sentsorearen daturik jasotzen. Efektuek martxan jarraitzen dute.' },
+      en: { group: 'Seasonal effects', show: 'Show effects', hide: 'Hide effects', enable: 'Enable tilt', disable: 'Disable tilt', denied: 'Sensor unavailable. The effects keep running.', waiting: 'Tilt your device to move the particles.', missing: 'No sensor data received. The effects keep running.' }
+    };
+    const copy = labels[document.documentElement.lang] || labels.es;
+    const controls = document.createElement('details');
+    controls.className = 'seasonal-controls';
+    controls.setAttribute('role', 'group'); controls.setAttribute('aria-label', copy.group);
+    const summary = document.createElement('summary');
+    summary.textContent = { es: 'Efectos', eu: 'Efektuak', en: 'Effects' }[document.documentElement.lang] || 'Efectos';
+    const panel = document.createElement('div'); panel.className = 'seasonal-controls__panel';
+    controls.append(summary, panel);
+    const toggle = document.createElement('button'); toggle.type = 'button';
+    toggle.className = 'seasonal-visibility-toggle';
+    toggle.textContent = motionAllowed() ? copy.hide : copy.show;
+    toggle.setAttribute('aria-pressed', String(motionAllowed()));
+    toggle.addEventListener('click', () => {
+      motionOverride = !motionAllowed(); tiltWanted = false; restart();
+    });
+    panel.append(toggle);
+    let disposed = false, neutral = null, listening = false, timer = 0;
+    const sensor = window.DeviceOrientationEvent;
+    const tiltButton = document.createElement('button'); tiltButton.type = 'button';
+    tiltButton.className = 'seasonal-tilt-toggle';
+    const status = document.createElement('span'); status.className = 'seasonal-motion-status';
+    status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
+    const reset = () => { neutral = null; options.tiltTarget = { x: 0, y: 0 }; options.tilt = { x: 0, y: 0 }; };
+    function orientation(event) {
+      if (document.hidden) return;
+      const angle = screen.orientation?.angle ?? window.orientation ?? 0;
+      const vector = orientationVector(event.beta, event.gamma, angle);
+      if (!vector) return;
+      clearTimeout(timer);
+      if (status.textContent) { status.textContent = ''; controls.open = false; }
+      if (!neutral || neutral.angle !== angle) neutral = { ...vector, angle };
+      const clamp = value => Math.abs(value) < 0.035 ? 0 : Math.max(-1, Math.min(1, value));
+      options.tiltTarget = { x: clamp((vector.x - neutral.x) / 32), y: clamp((vector.y - neutral.y) / 45) };
+    }
+    function updateButton() {
+      tiltButton.textContent = tiltWanted ? copy.disable : copy.enable;
+      tiltButton.setAttribute('aria-pressed', String(tiltWanted));
+      tiltButton.disabled = !motionAllowed();
+    }
+    function startSensor() {
+      if (listening || disposed) return;
+      listening = true; reset();
+      addEventListener('deviceorientation', orientation, { passive: true });
+      status.textContent = copy.waiting;
+      timer = setTimeout(() => { if (!disposed) status.textContent = copy.missing; }, 3000);
+      updateButton();
+    }
+    function stopSensor() {
+      removeEventListener('deviceorientation', orientation); listening = false;
+      clearTimeout(timer); reset(); status.textContent = ''; updateButton();
+    }
+    if (sensor && window.isSecureContext) {
+      tiltButton.addEventListener('click', async () => {
+        if (tiltWanted) { tiltWanted = false; stopSensor(); controls.open = false; return; }
+        tiltButton.disabled = true;
+        try {
+          // Safari requires this call directly inside the user's button gesture.
+          const permission = !sensorGranted && typeof sensor.requestPermission === 'function'
+            ? await sensor.requestPermission() : 'granted';
+          if (disposed) return;
+          if (permission !== 'granted') { status.textContent = copy.denied; updateButton(); return; }
+          sensorGranted = true; tiltWanted = true; startSensor();
+        } catch {
+          if (!disposed) { status.textContent = copy.denied; updateButton(); }
+        }
+      });
+      updateButton(); panel.append(tiltButton);
+      if (tiltWanted && motionAllowed()) startSensor();
+    }
+    panel.append(status); document.body.append(controls);
+    addEventListener('orientationchange', reset);
+    document.addEventListener('visibilitychange', reset);
+    return () => {
+      disposed = true; stopSensor(); controls.remove();
+      removeEventListener('orientationchange', reset);
+      document.removeEventListener('visibilitychange', reset);
+    };
+  }
   function reconcile() {
     const layer = document.querySelector('.seasonal-layer');
     if (layer === active) return;
     stop();
     active = layer;
-    if (!layer || preference.matches) return;
+    document.documentElement.dataset.seasonalMotion = motionAllowed() ? 'on' : 'off';
+    if (!layer) return;
     const mode = Object.keys(modes).find(value => layer.classList.contains(`seasonal-layer--${value}`));
     if (!mode) return;
-    const options = { width: innerWidth, height: innerHeight, mode, deposits: [] };
+    const options = { width: innerWidth, height: innerHeight, mode, deposits: [], tilt: { x: 0, y: 0 } };
+    const cleanupMobile = mobileControls(options);
+    if (!motionAllowed()) { stop = cleanupMobile; return; }
     const nodes = [...layer.children].filter(node => !node.classList.contains('seasonal-deposit') && getComputedStyle(node).display !== 'none');
     options.maxDeposits = Math.min(nodes.length * 2, innerWidth < 600 ? 32 : 72);
     const depositNodes = [];
@@ -195,6 +306,9 @@
       if (disposed) return;
       const time = timestamp / 1000;
       if (time >= measureAt) { measure(); measureAt = time + 0.25; }
+      const smoothing = Math.min(1, (last ? time - last : 0) * 5);
+      options.tilt.x += ((options.tiltTarget?.x || 0) - options.tilt.x) * smoothing;
+      options.tilt.y += ((options.tiltTarget?.y || 0) - options.tilt.y) * smoothing;
       step(particles, surfaces, last ? time - last : 0, time, options);
       if (options.pointer) {
         options.pointer.fromX = options.pointer.x;
@@ -252,15 +366,18 @@
     document.addEventListener('pointercancel', clearPointer, { passive: true });
     addEventListener('blur', clearPointer);
     document.addEventListener('visibilitychange', visibility);
+    addEventListener('pageshow', visibility);
     if (!document.hidden) frame = requestAnimationFrame(draw);
     stop = () => {
       disposed = true; cancelAnimationFrame(frame);
+      cleanupMobile();
       removeEventListener('scroll', invalidate); removeEventListener('resize', invalidate);
       document.removeEventListener('pointermove', pointerMove);
       document.removeEventListener('pointerout', pointerOut);
       document.removeEventListener('pointercancel', clearPointer);
       removeEventListener('blur', clearPointer);
       document.removeEventListener('visibilitychange', visibility);
+      removeEventListener('pageshow', visibility);
       layer.classList.remove('seasonal-layer--physics');
       depositNodes.forEach(node => node.remove());
       nodes.forEach(node => { node.style.removeProperty('transform'); node.style.removeProperty('opacity'); });
@@ -269,6 +386,6 @@
   }
   const observer = new MutationObserver(reconcile);
   observer.observe(document.body, { childList: true, subtree: true });
-  preference.addEventListener('change', () => { stop(); active = null; stop = () => {}; reconcile(); });
+  preference.addEventListener('change', () => { motionOverride = null; tiltWanted = false; restart(); });
   reconcile();
 })();
