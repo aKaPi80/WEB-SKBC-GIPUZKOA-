@@ -28,6 +28,10 @@
           item[key]=value;
         }
         item.languages.es.title=item.languages.es.title.trim();
+        for (const lang of ['eu','en']) {
+          item.languages[lang].title ||= item.languages.es.title;
+          item.languages[lang].text ||= item.languages.es.text;
+        }
         if (store.index === null) getItems().push(item);
         else getItems()[store.index]=item;
         store.cancel();onChange();
@@ -77,6 +81,7 @@
         ${field('Enlace','url')}${field('Dejar de mostrar a partir de','expiresAt','datetime-local')}${field('Color','color','color')}
       </details>
       <details class="simple-advanced"><summary>Euskera e inglés (opcional)</summary>
+        <p class="simple-news-note">Si los dejas vacíos, se mostrará el texto en castellano.</p>
         <button type="button" data-news-translate>Traducir desde el castellano</button>
         ${field('Título en euskera','languages.eu.title')}${field('Texto en euskera','languages.eu.text','textarea')}
         ${field('Título en inglés','languages.en.title')}${field('Texto en inglés','languages.en.text','textarea')}

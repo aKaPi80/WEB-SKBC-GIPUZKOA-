@@ -39,6 +39,10 @@ test('unsafe links cannot enter the saved news list',async()=>{
   const {store,items}=await setup();store.start();store.draft.languages.es.title='Título';store.draft.url='javascript:alert(1)';
   assert.throws(()=>store.save(),/enlace/);assert.equal(items.length,0);
 });
+test('optional empty translations fall back to Spanish so the public cards are not blank',async()=>{
+  const {store,items}=await setup();store.start();store.draft.languages.es={title:'Curso',text:'Información del curso'};store.save();
+  assert.equal(items[0].languages.eu.title,'Curso');assert.equal(items[0].languages.en.text,'Información del curso');
+});
 test('publishing does not submit a news draft before explicit save',async()=>{
   const source=await readFile(new URL('../admin.js',import.meta.url),'utf8');
   const handlerSource=source.slice(source.indexOf('document.querySelector("#publish").addEventListener'),source.indexOf('async function publishWithGithubApi'));
