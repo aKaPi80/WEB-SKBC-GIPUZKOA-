@@ -64,7 +64,7 @@ window.SKBC_CONTENT = {
         {
           "enabled": true,
           "mode": "christmas",
-          "intensity": "medium",
+          "intensity": "high",
           "start": "2026-12-20",
           "end": "2027-01-07",
           "message": "FELIZ NAVIDAD!!"
@@ -72,7 +72,7 @@ window.SKBC_CONTENT = {
         {
           "enabled": true,
           "mode": "womensDay",
-          "intensity": "medium",
+          "intensity": "high",
           "start": "2027-03-08",
           "end": "2027-03-08",
           "message": "8M · respeto, igualdad y confianza"
@@ -80,7 +80,7 @@ window.SKBC_CONTENT = {
         {
           "enabled": true,
           "mode": "autumn",
-          "intensity": "medium",
+          "intensity": "high",
           "start": "2026-10-01",
           "end": "2026-11-15",
           "message": "Otoño en el dojo"
