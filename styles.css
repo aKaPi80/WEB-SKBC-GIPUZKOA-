@@ -177,6 +177,24 @@ button, input, select, textarea { font: inherit; }
   100% { transform: translate3d(var(--drift), 112vh, 0) rotate(360deg); }
 }
 
+/* Physics particles live only in the fixed overlay, never inside page layout. */
+.seasonal-layer--physics span {
+  top: 0;
+  left: 0;
+  animation: none;
+  transform-origin: center;
+  will-change: transform;
+}
+.seasonal-layer--autumn span {
+  background-image: linear-gradient(25deg, transparent 47%, rgba(80, 35, 10, .35) 49% 52%, transparent 54%),
+    linear-gradient(140deg, rgba(255, 220, 120, .28), transparent 65%);
+  filter: drop-shadow(1px 2px 1px rgba(30, 15, 0, .12));
+}
+.seasonal-layer--christmas span { box-shadow: 0 0 3px rgba(255, 255, 255, .35); }
+@media (prefers-reduced-motion: reduce) {
+  .seasonal-layer { display: none; }
+}
+
 .special-badge {
   position: fixed;
   left: 50%;
@@ -248,130 +266,6 @@ button, input, select, textarea { font: inherit; }
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
-[data-special-visual="christmas"] .card,
-[data-special-visual="christmas"] .split-media,
-[data-special-visual="christmas"] .learn-photo,
-[data-special-visual="christmas"] .team-feature__image,
-[data-special-visual="christmas"] .instructor-photo,
-[data-special-visual="christmas"] .news-card,
-[data-special-visual="christmas"] .brand-mark,
-[data-special-visual="christmas"] .hero-logo,
-[data-special-visual="christmas"] .club-logo-panel,
-[data-special-visual="christmas"] .ika-badge,
-[data-special-visual="autumn"] .card,
-[data-special-visual="autumn"] .split-media,
-[data-special-visual="autumn"] .learn-photo,
-[data-special-visual="autumn"] .team-feature__image,
-[data-special-visual="autumn"] .instructor-photo,
-[data-special-visual="autumn"] .news-card,
-[data-special-visual="autumn"] .brand-mark,
-[data-special-visual="autumn"] .hero-logo,
-[data-special-visual="autumn"] .club-logo-panel,
-[data-special-visual="autumn"] .ika-badge,
-[data-special-visual="carnival"] .card,
-[data-special-visual="carnival"] .split-media,
-[data-special-visual="carnival"] .learn-photo,
-[data-special-visual="carnival"] .team-feature__image,
-[data-special-visual="carnival"] .instructor-photo,
-[data-special-visual="carnival"] .news-card,
-[data-special-visual="carnival"] .brand-mark,
-[data-special-visual="carnival"] .hero-logo,
-[data-special-visual="carnival"] .club-logo-panel,
-[data-special-visual="carnival"] .ika-badge {
-  position: relative;
-  overflow: hidden;
-}
-[data-special-visual="christmas"] .card::before,
-[data-special-visual="christmas"] .split-media::before,
-[data-special-visual="christmas"] .learn-photo::before,
-[data-special-visual="christmas"] .team-feature__image::before,
-[data-special-visual="christmas"] .instructor-photo::before,
-[data-special-visual="christmas"] .news-card::before,
-[data-special-visual="christmas"] .brand-mark::before,
-[data-special-visual="christmas"] .hero-logo::before,
-[data-special-visual="christmas"] .club-logo-panel::before,
-[data-special-visual="christmas"] .ika-badge::before,
-[data-special-visual="autumn"] .card::before,
-[data-special-visual="autumn"] .split-media::before,
-[data-special-visual="autumn"] .learn-photo::before,
-[data-special-visual="autumn"] .team-feature__image::before,
-[data-special-visual="autumn"] .instructor-photo::before,
-[data-special-visual="autumn"] .news-card::before,
-[data-special-visual="autumn"] .brand-mark::before,
-[data-special-visual="autumn"] .hero-logo::before,
-[data-special-visual="autumn"] .club-logo-panel::before,
-[data-special-visual="autumn"] .ika-badge::before,
-[data-special-visual="carnival"] .card::before,
-[data-special-visual="carnival"] .split-media::before,
-[data-special-visual="carnival"] .learn-photo::before,
-[data-special-visual="carnival"] .team-feature__image::before,
-[data-special-visual="carnival"] .instructor-photo::before,
-[data-special-visual="carnival"] .news-card::before,
-[data-special-visual="carnival"] .brand-mark::before,
-[data-special-visual="carnival"] .hero-logo::before,
-[data-special-visual="carnival"] .club-logo-panel::before,
-[data-special-visual="carnival"] .ika-badge::before {
-  position: absolute;
-  top: -3px;
-  left: 6%;
-  right: 6%;
-  height: 16px;
-  content: "";
-  border-radius: 0 0 999px 999px / 0 0 70% 70%;
-  background:
-    radial-gradient(circle at 8% 100%, #fff 0 10px, transparent 11px),
-    radial-gradient(circle at 24% 92%, #fff 0 13px, transparent 14px),
-    radial-gradient(circle at 43% 98%, #fff 0 9px, transparent 10px),
-    radial-gradient(circle at 61% 90%, #fff 0 14px, transparent 15px),
-    radial-gradient(circle at 82% 100%, #fff 0 11px, transparent 12px),
-    linear-gradient(180deg, #fff, #edf8ff);
-  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.68), 0 5px 8px rgba(31, 111, 169, 0.12);
-  pointer-events: none;
-  z-index: 3;
-}
-[data-special-visual="autumn"] .card::before,
-[data-special-visual="autumn"] .split-media::before,
-[data-special-visual="autumn"] .learn-photo::before,
-[data-special-visual="autumn"] .team-feature__image::before,
-[data-special-visual="autumn"] .instructor-photo::before,
-[data-special-visual="autumn"] .news-card::before,
-[data-special-visual="autumn"] .brand-mark::before,
-[data-special-visual="autumn"] .hero-logo::before,
-[data-special-visual="autumn"] .club-logo-panel::before,
-[data-special-visual="autumn"] .ika-badge::before {
-  height: 18px;
-  border-radius: 0 0 18px 18px;
-  background:
-    radial-gradient(ellipse at 8% 72%, #8a3e20 0 9px, transparent 10px),
-    radial-gradient(ellipse at 22% 90%, #d59a2f 0 12px, transparent 13px),
-    radial-gradient(ellipse at 38% 72%, #b85c2a 0 9px, transparent 10px),
-    radial-gradient(ellipse at 55% 95%, #8a3e20 0 13px, transparent 14px),
-    radial-gradient(ellipse at 74% 74%, #d59a2f 0 10px, transparent 11px),
-    radial-gradient(ellipse at 91% 88%, #b85c2a 0 12px, transparent 13px);
-  box-shadow: 0 2px 8px rgba(106, 54, 25, 0.28);
-}
-[data-special-visual="carnival"] .card::before,
-[data-special-visual="carnival"] .split-media::before,
-[data-special-visual="carnival"] .learn-photo::before,
-[data-special-visual="carnival"] .team-feature__image::before,
-[data-special-visual="carnival"] .instructor-photo::before,
-[data-special-visual="carnival"] .news-card::before,
-[data-special-visual="carnival"] .brand-mark::before,
-[data-special-visual="carnival"] .hero-logo::before,
-[data-special-visual="carnival"] .club-logo-panel::before,
-[data-special-visual="carnival"] .ika-badge::before {
-  height: 14px;
-  border-radius: 0 0 14px 14px;
-  background:
-    radial-gradient(circle at 10% 80%, #f4c542 0 5px, transparent 6px),
-    radial-gradient(circle at 24% 72%, #d63b8c 0 4px, transparent 5px),
-    radial-gradient(circle at 38% 90%, #2aa8d8 0 6px, transparent 7px),
-    radial-gradient(circle at 54% 75%, #4bbf73 0 4px, transparent 5px),
-    radial-gradient(circle at 68% 88%, #f4c542 0 5px, transparent 6px),
-    radial-gradient(circle at 84% 74%, #d63b8c 0 4px, transparent 5px),
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
-  box-shadow: 0 2px 8px rgba(24, 30, 40, 0.18);
-}
 [data-special-visual="womensDay"] body::before {
   position: fixed;
   inset: 0;
