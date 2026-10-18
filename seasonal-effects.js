@@ -33,6 +33,26 @@
     // Briefly ignore the same landing surface while sliding off its lip.
     p.ignore = 0.65;
   }
+  function cursorGust(p, pointer, dt, time, mode) {
+    if (!pointer || time - pointer.time > 0.18 || dt === 0) return;
+    const sx = pointer.x - pointer.fromX, sy = pointer.y - pointer.fromY;
+    const lengthSquared = sx * sx + sy * sy;
+    const t = lengthSquared ? Math.max(0, Math.min(1,
+      ((p.x - pointer.fromX) * sx + (p.y - pointer.fromY) * sy) / lengthSquared)) : 0;
+    const dx = p.x - (pointer.fromX + sx * t), dy = p.y - (pointer.fromY + sy * t);
+    const distance = Math.hypot(dx, dy);
+    const radius = mode === 'christmas' ? 65 : 52;
+    const speed = Math.min(1600, Math.hypot(pointer.vx, pointer.vy));
+    if (distance >= radius || speed < 15) return;
+    const strength = (1 - distance / radius) * (mode === 'christmas' ? 0.48 : 1);
+    const impulse = (450 + speed * 1.8) * strength * dt;
+    if (p.support !== null) release(p, pointer.vx >= 0 ? 1 : -1);
+    p.vx = Math.max(-260, Math.min(260, p.vx +
+      (dx / Math.max(8, distance) + pointer.vx / 1600) * impulse));
+    p.vy = Math.max(-160, p.vy + (dy / Math.max(8, distance) * 0.45 - 0.6) * impulse);
+    p.spin = Math.max(-3, Math.min(3, p.spin + pointer.vx / 1600 * strength));
+    p.ignore = Math.max(p.ignore || 0, 0.25);
+  }
   function step(particles, surfaces, delta, time, options) {
     const dt = Math.min(Math.max(delta, 0), 0.04);
     const model = modes[options.mode];
@@ -41,6 +61,7 @@
       p.age += dt;
       p.ignore = Math.max(0, (p.ignore || 0) - dt);
       const gust = Math.sin(time * 0.47 + p.phase) + 0.4 * Math.sin(time * 1.3);
+      cursorGust(p, options.pointer, dt, time, options.mode);
       if (p.support !== null) {
         const base = typeof p.support === 'number'
           ? particles.find(other => other.id === p.support && other.support !== null)
@@ -138,6 +159,10 @@
       const time = timestamp / 1000;
       if (time >= measureAt) { measure(); measureAt = time + 0.25; }
       step(particles, surfaces, last ? time - last : 0, time, options);
+      if (options.pointer) {
+        options.pointer.fromX = options.pointer.x;
+        options.pointer.fromY = options.pointer.y;
+      }
       last = time;
       particles.forEach((p, index) => {
         const flutter = mode === 'christmas' || p.support !== null ? 1 : 0.45 + Math.abs(Math.cos(time * 2.2 + p.phase)) * 0.55;
@@ -148,18 +173,44 @@
       });
       frame = requestAnimationFrame(draw);
     }
-    const invalidate = () => { measureAt = -1; };
+    const clearPointer = () => { options.pointer = null; };
+    const invalidate = () => { measureAt = -1; clearPointer(); };
+    function pointerMove(event) {
+      // Touch gestures keep their normal scrolling behaviour.
+      if (event.pointerType === 'touch') return;
+      const time = performance.now() / 1000;
+      const previous = options.pointer;
+      const recent = previous && time - previous.time < 0.18;
+      const dt = recent ? Math.max(0.008, time - previous.time) : 0.016;
+      options.pointer = {
+        fromX: recent ? previous.fromX : event.clientX - event.movementX,
+        fromY: recent ? previous.fromY : event.clientY - event.movementY,
+        x: event.clientX, y: event.clientY,
+        vx: Math.max(-1600, Math.min(1600, (recent ? event.clientX - previous.x : event.movementX) / dt)),
+        vy: Math.max(-1600, Math.min(1600, (recent ? event.clientY - previous.y : event.movementY) / dt)),
+        time
+      };
+    }
+    const pointerOut = event => { if (!event.relatedTarget) clearPointer(); };
     function visibility() {
-      cancelAnimationFrame(frame); last = 0;
+      cancelAnimationFrame(frame); last = 0; clearPointer();
       if (!document.hidden) frame = requestAnimationFrame(draw);
     }
     addEventListener('scroll', invalidate, { passive: true });
     addEventListener('resize', invalidate, { passive: true });
+    document.addEventListener('pointermove', pointerMove, { passive: true });
+    document.addEventListener('pointerout', pointerOut, { passive: true });
+    document.addEventListener('pointercancel', clearPointer, { passive: true });
+    addEventListener('blur', clearPointer);
     document.addEventListener('visibilitychange', visibility);
     if (!document.hidden) frame = requestAnimationFrame(draw);
     stop = () => {
       disposed = true; cancelAnimationFrame(frame);
       removeEventListener('scroll', invalidate); removeEventListener('resize', invalidate);
+      document.removeEventListener('pointermove', pointerMove);
+      document.removeEventListener('pointerout', pointerOut);
+      document.removeEventListener('pointercancel', clearPointer);
+      removeEventListener('blur', clearPointer);
       document.removeEventListener('visibilitychange', visibility);
       layer.classList.remove('seasonal-layer--physics');
       nodes.forEach(node => { node.style.removeProperty('transform'); node.style.removeProperty('opacity'); });

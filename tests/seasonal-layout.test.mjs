@@ -77,3 +77,49 @@ test('physics runs in an isolated overlay and respects reduced motion and replac
     assert.equal(await page.locator('.seasonal-layer').count(), 0);
   } finally { await browser.close(); }
 });
+
+test('the real cursor dislodges accumulations without blocking clicks or touch scrolling', async () => {
+  const browser = await chromium.launch({ headless: true, channel: 'msedge' });
+  try {
+    const css = await readFile(new URL('../styles.css', import.meta.url), 'utf8');
+    const script = await readFile(new URL('../seasonal-effects.js', import.meta.url), 'utf8');
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    await page.setContent(`<style>${css}</style>
+      <div class="card" style="position:absolute;left:600px;top:508px;width:240px;height:120px"></div>
+      <button id="action" style="position:absolute;left:650px;top:480px;width:140px;height:60px">Test</button>`);
+    await page.evaluate(() => {
+      Math.random = () => 0.5;
+      window.testClicks = 0;
+      document.querySelector('#action').onclick = () => window.testClicks++;
+    });
+    await page.addScriptTag({ content: script });
+    for (const mode of ['autumn', 'christmas', 'carnival']) {
+      await page.evaluate(mode => {
+        document.querySelector('.seasonal-layer')?.remove();
+        const layer = document.createElement('div');
+        layer.className = `seasonal-layer seasonal-layer--${mode}`;
+        layer.innerHTML = '<span style="--size:10px"></span>';
+        document.body.append(layer);
+      }, mode);
+      await page.waitForFunction(() => {
+        const particle = document.querySelector('.seasonal-layer span');
+        return particle && Math.abs(particle.getBoundingClientRect().bottom - 508) < 0.2;
+      });
+      const particle = page.locator('.seasonal-layer span');
+      const resting = await particle.boundingBox();
+      await page.evaluate(() => document.dispatchEvent(new PointerEvent('pointermove', {
+        pointerType: 'touch', clientX: 720, clientY: 503, movementX: 100, bubbles: true
+      })));
+      await page.waitForTimeout(100);
+      assert.deepEqual(await particle.boundingBox(), resting, 'touch movement must leave the decoration alone');
+      await page.mouse.move(640, 503);
+      await page.mouse.move(780, 503, { steps: 6 });
+      await page.waitForFunction(before => {
+        const r = document.querySelector('.seasonal-layer span').getBoundingClientRect();
+        return Math.abs(r.x - before.x) + Math.abs(r.y - before.y) > 5;
+      }, resting);
+      await page.locator('#action').click();
+    }
+    assert.equal(await page.evaluate(() => window.testClicks), 3);
+  } finally { await browser.close(); }
+});

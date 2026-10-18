@@ -64,3 +64,38 @@ test('snow, leaves and confetti have different fall speeds', () => {
   });
   assert.equal(new Set(speeds).size, 3);
 });
+
+test('a moving cursor sweeps resting particles off their support in every mode', () => {
+  for (const mode of ['autumn', 'christmas', 'carnival']) {
+    const p = leaf(0, { y: 195, support: 'logo', offset: 100, resting: 2 });
+    const pointer = { fromX: 100, fromY: 190, x: 300, y: 190, vx: 900, vy: 0, time: 1 };
+    step([p], [surface], 0.02, 1, { ...options, mode, pointer });
+    assert.equal(p.support, null, `${mode} must respond to a cursor crossing its position`);
+    assert.ok(p.vx > 0);
+  }
+});
+
+test('distant and expired cursors leave accumulations in place', () => {
+  for (const pointer of [
+    { fromX: 600, fromY: 600, x: 700, y: 600, vx: 900, vy: 0, time: 1 },
+    { fromX: 100, fromY: 190, x: 300, y: 190, vx: 900, vy: 0, time: 0 }
+  ]) {
+    const p = leaf(0, { y: 195, support: 'logo', offset: 100, resting: 2 });
+    step([p], [surface], 0.02, 1, { ...options, pointer });
+    assert.equal(p.support, 'logo');
+  }
+});
+
+test('cursor gusts move snow more gently than leaves and preserve finite velocities', () => {
+  const pointer = { fromX: 180, fromY: 195, x: 200, y: 195, vx: 1600, vy: 0, time: 1 };
+  const speeds = ['autumn', 'christmas'].map(mode => {
+    const p = leaf(0, { y: 195 });
+    step([p], [], 0.04, 1, { ...options, mode, pointer });
+    const initialSpeed = p.vx;
+    for (let i = 0; i < 20; i++) step([p], [], 0.04, 1, { ...options, mode, pointer });
+    assert.ok(Number.isFinite(p.x) && Number.isFinite(p.y));
+    assert.ok(Math.abs(p.vx) <= 260);
+    return initialSpeed;
+  });
+  assert.ok(speeds[0] > speeds[1]);
+});
