@@ -3,7 +3,6 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.skbcgipuzkoa.com/</loc>
-    <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.skbcgipuzkoa.com/" />
@@ -13,7 +12,6 @@
   </url>
   <url>
     <loc>https://www.skbcgipuzkoa.com/?lang=eu</loc>
-    <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.skbcgipuzkoa.com/" />
@@ -23,7 +21,6 @@
   </url>
   <url>
     <loc>https://www.skbcgipuzkoa.com/?lang=en</loc>
-    <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.skbcgipuzkoa.com/" />

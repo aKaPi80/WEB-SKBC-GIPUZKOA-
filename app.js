@@ -1,7 +1,7 @@
 const STORAGE_KEY = "skbc_content_v2";
 const state = {
   content: loadContent(),
-  lang: new URLSearchParams(location.search).get("lang") || localStorage.getItem("skbc_lang") || "es",
+  lang: ["es", "eu", "en"].includes(new URLSearchParams(location.search).get("lang")) ? new URLSearchParams(location.search).get("lang") : "es",
   merchCart: [],
   merchCatalog: { status: "idle", catalogSource: "remote", products: [], variants: [], error: "" },
   merchOrder: { idempotencyKey: crypto.randomUUID(), failedFingerprint: "", status: "idle", message: "" }
@@ -201,8 +201,21 @@ function systemSettings() {
   return state.content.settings.system || {};
 }
 
+function optimizedImage(path) {
+  // Only alias known, immutable assets; new editor uploads retain their own URL.
+  const aliases = {
+    "assets/logo-skbc.png": "assets/optimized/logo-skbc-lossless.webp",
+    "assets/logo-skbc-full.png": "assets/optimized/logo-skbc-full.webp",
+    "assets/ika-logo-white.png": "assets/optimized/ika-logo-white.webp",
+    "assets/uploads/1781000961499-fondo-web.png": "assets/optimized/dojo-background.webp"
+  };
+  const value = String(path || "");
+  const [pathname] = value.split(/[?#]/);
+  return aliases[pathname] ? aliases[pathname] + value.slice(pathname.length) : value;
+}
+
 function systemLogo(key, fallback) {
-  return systemSettings()[key] || fallback;
+  return optimizedImage(systemSettings()[key] || fallback);
 }
 
 function decorativeBackgroundSettings() {
@@ -1645,7 +1658,7 @@ function setMeta(copy) {
         addressCountry: system.addressCountry || "ES"
       },
       areaServed: [system.addressLocality || "Tolosa", system.addressRegion || "Gipuzkoa", "Euskadi", "España"],
-      sameAs: [state.content.settings.instagram, state.content.settings.facebook, state.content.settings.youtube, state.content.settings.ikaUrl].filter(Boolean),
+      sameAs: [state.content.settings.instagram, state.content.settings.facebook, state.content.settings.youtube].filter(Boolean),
       knowsAbout: String(system.knowsAbout || "Shorinji Kempo | artes marciales | defensa personal").split("|").map((item) => item.trim()).filter(Boolean)
     }, null, 2);
   }
@@ -1869,7 +1882,7 @@ function render() {
   document.documentElement.style.setProperty("--decorative-bg-size", decorative.size);
   document.documentElement.style.setProperty("--decorative-bg-position", decorative.position);
   document.documentElement.style.setProperty("--decorative-bg-opacity", decorative.opacity);
-  document.documentElement.style.setProperty("--decorative-bg-image", decorative.preset === "custom" && decorative.customImage ? `url("${decorative.customImage}")` : "none");
+  document.documentElement.style.setProperty("--decorative-bg-image", decorative.preset === "custom" && decorative.customImage ? `url("${optimizedImage(decorative.customImage)}")` : "none");
   const peopleImages = settings.images.people || {};
   const socialEmbeds = embeddedSocial(settings);
   const galleryImages = uniqueImages(settings.images.gallery);
@@ -1956,7 +1969,7 @@ function render() {
           <a class="button" href="${settings.ikaUrl}" target="_blank" rel="noreferrer">${copy.ika.button}</a>
         </div>
         <div class="ika-badge">
-          <img src="assets/ika-logo-white.png?v=2" alt="Logo International Kempo Association" />
+          <img src="${optimizedImage('assets/ika-logo-white.png?v=2')}" alt="Logo International Kempo Association" />
           <strong>${copy.ika.badge || copy.ika.title}</strong>
           <span>International Kempo Association</span>
         </div>
@@ -2895,8 +2908,14 @@ function closeGalleryImage() {
 }
 
 document.querySelectorAll("[data-lang]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
     state.lang = button.dataset.lang;
+    const url = new URL(location.href);
+    url.searchParams.delete("lang");
+    if (state.lang !== "es") url.searchParams.set("lang", state.lang);
+    history.replaceState(null, "", url);
     localStorage.setItem("skbc_lang", state.lang);
     trackEvent("language_change", { language: state.lang });
     render();

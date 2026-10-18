@@ -397,7 +397,10 @@ button, input, select, textarea { font: inherit; }
   border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: 999px;
 }
-.language-switch button {
+.language-switch :is(button, a) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 34px;
   height: 30px;
   border: 0;
@@ -407,7 +410,7 @@ button, input, select, textarea { font: inherit; }
   font-weight: 900;
   cursor: pointer;
 }
-.language-switch button.active { color: var(--ink); background: #fff; }
+.language-switch :is(button, a).active { color: var(--ink); background: #fff; }
 .kenshi-access {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.44);
@@ -3240,16 +3243,18 @@ textarea { resize: vertical; }
 }
 
 @media (max-width: 640px) {
-  .topbar { padding: 12px 16px; gap: 10px; }
-  .brand-mark { width: 40px; height: 40px; }
-  .brand strong { font-size: 15px; }
+  .topbar { padding: 12px 10px; gap: 6px; grid-template-columns: auto auto auto auto; }
+  .brand { gap: 8px; }
+  .brand-mark { width: 34px; height: 34px; }
+  .brand strong { font-size: 13px; }
+  .menu-button { width: 36px; height: 36px; }
   .brand small { display: none; }
   .kenshi-access {
     min-height: 34px;
     padding: 0 10px;
     font-size: 11px;
   }
-  .language-switch button { min-width: 30px; height: 28px; font-size: 12px; }
+  .language-switch :is(button, a) { min-width: 28px; height: 28px; font-size: 12px; }
   .hero { min-height: auto; padding: 128px 18px 34px; }
   .hero-actions, .hero-actions .button, .contact-form .button { width: 100%; }
   .news-carousel {
@@ -3300,6 +3305,10 @@ textarea { resize: vertical; }
   .photo { min-height: 250px; }
   .whatsapp-float { right: 12px; left: 96px; bottom: 12px; border-radius: 6px; }
   .admin-link { left: 12px; bottom: 12px; border-radius: 6px; }
+}
+
+@media (max-width: 375px) {
+  .brand strong { display: none; }
 }
 
 @media print {
