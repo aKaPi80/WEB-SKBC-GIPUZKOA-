@@ -25,6 +25,30 @@
     const r = surface.radius;
     return surface.top + r - Math.sqrt(Math.max(0, r * r - dx * dx));
   }
+  function floorSurface(width, documentHeight, scrollY) {
+    return { id: 'page-floor', left: 0, right: width, top: documentHeight - scrollY - 2, radius: 0 };
+  }
+  function recycle(p, options) {
+    if (p.id < 0) { p.alive = false; return; }
+    Object.assign(p, createParticle(p.id, options), {
+      y: -20 - (options.random || Math.random)() * 100, ignore: 0, floor: false
+    });
+  }
+  function storeDeposit(p, options) {
+    const limit = options.maxDeposits ?? 64;
+    if (limit <= 0) return;
+    options.nextDepositId = (options.nextDepositId || 0) - 1;
+    const deposit = { ...p, id: options.nextDepositId, alive: true };
+    const empty = options.deposits.findIndex(item => item.alive === false);
+    if (empty >= 0) options.deposits[empty] = deposit;
+    else if (options.deposits.length < limit) options.deposits.push(deposit);
+    else {
+      const slot = (options.depositCursor || 0) % limit;
+      options.deposits[slot] = deposit;
+      options.depositCursor = slot + 1;
+    }
+    recycle(p, options);
+  }
   function release(p, direction) {
     p.support = null;
     p.vx = direction * (24 + p.size);
@@ -57,14 +81,16 @@
     const dt = Math.min(Math.max(delta, 0), 0.04);
     const model = modes[options.mode];
     if (!model) return;
-    for (const p of particles) {
+    const all = [...particles, ...(options.deposits || [])].filter(p => p.alive !== false);
+    const floor = surfaces.find(surface => surface.id === 'page-floor');
+    for (const p of all) {
       p.age += dt;
       p.ignore = Math.max(0, (p.ignore || 0) - dt);
       const gust = Math.sin(time * 0.47 + p.phase) + 0.4 * Math.sin(time * 1.3);
       cursorGust(p, options.pointer, dt, time, options.mode);
       if (p.support !== null) {
         const base = typeof p.support === 'number'
-          ? particles.find(other => other.id === p.support && other.support !== null)
+          ? all.find(other => other.id === p.support && other.support !== null && other.alive !== false)
           : surfaces.find(surface => surface.id === p.support);
         p.resting -= dt;
         if (!base || p.resting <= 0) {
@@ -95,17 +121,20 @@
           .filter(s => previousBottom <= s.top && bottom >= s.top)
           .sort((a, b) => a.top - b.top);
         // A hit can disturb a resting leaf before a new leaf finds its balance.
-        const hit = particles.find(other => other !== p && other.support !== null &&
+        const hit = all.find(other => other !== p && other.alive !== false && other.support !== null &&
+          (!other.floor || !floor || other.y > floor.top - 20) &&
           Math.abs(p.x - other.x) < (p.size + other.size) * 0.55 &&
           previousBottom <= other.y && bottom >= other.y - other.size / 2);
         if (hit) {
-          const gentle = options.mode === 'christmas' || p.vy < 45;
+          const gentle = hit.floor || options.mode === 'christmas' || p.vy < 45;
           if (!gentle) release(hit, p.x >= hit.x ? -1 : 1);
           p.vx *= -0.35;
           p.vy *= 0.3;
           if (gentle) {
             p.support = hit.id; p.offset = p.x - hit.x; p.resting = model.rest;
             p.y = hit.y - (hit.size + p.size) * 0.42;
+            p.floor = hit.floor;
+            if (p.floor) p.resting = options.mode === 'christmas' ? 35 : 60;
           }
         } else if (candidates.length) {
           const { base, top } = candidates[0];
@@ -113,17 +142,21 @@
           p.support = base.id;
           p.offset = p.x - base.left;
           p.resting = model.rest * (0.6 + (p.phase / (Math.PI * 2)) * 0.8);
+          p.floor = base.id === 'page-floor';
+          if (p.floor) p.resting = options.mode === 'christmas' ? 35 : 60;
           p.vy = 0;
           p.angle = Math.sin(p.phase) * 24;
         }
       }
+      if (p.id >= 0 && p.floor && p.support !== null && options.deposits) {
+        storeDeposit(p, options);
+      }
       if (p.y > options.height + 30 || p.x < -80 || p.x > options.width + 80) {
-        const fresh = createParticle(p.id, options);
-        Object.assign(p, fresh, { y: -20 - (options.random || Math.random)() * 100, ignore: 0 });
+        recycle(p, options);
       }
     }
   }
-  if (typeof module !== 'undefined' && module.exports) module.exports = { createParticle, step };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { createParticle, step, floorSurface };
   if (typeof document === 'undefined') return;
 
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -138,8 +171,10 @@
     if (!layer || preference.matches) return;
     const mode = Object.keys(modes).find(value => layer.classList.contains(`seasonal-layer--${value}`));
     if (!mode) return;
-    const options = { width: innerWidth, height: innerHeight, mode };
-    const nodes = [...layer.children].filter(node => getComputedStyle(node).display !== 'none');
+    const options = { width: innerWidth, height: innerHeight, mode, deposits: [] };
+    const nodes = [...layer.children].filter(node => !node.classList.contains('seasonal-deposit') && getComputedStyle(node).display !== 'none');
+    options.maxDeposits = Math.min(nodes.length * 2, innerWidth < 600 ? 32 : 72);
+    const depositNodes = [];
     const particles = nodes.map((node, id) => createParticle(id, options));
     layer.classList.add('seasonal-layer--physics');
     let surfaces = [], measureAt = -1, last = 0, frame = 0, disposed = false;
@@ -153,6 +188,8 @@
         const radius = element.matches('.hero-logo, .brand-mark') ? Math.min(rect.width, rect.height) / 2 : 0;
         return [{ id: elements.get(element), left: rect.left, right: rect.right, top: rect.top, radius }];
       });
+      const documentHeight = document.scrollingElement?.scrollHeight || document.documentElement.scrollHeight;
+      surfaces.push(floorSurface(innerWidth, documentHeight, scrollY));
     }
     function draw(timestamp) {
       if (disposed) return;
@@ -164,12 +201,24 @@
         options.pointer.fromY = options.pointer.y;
       }
       last = time;
-      particles.forEach((p, index) => {
+      function render(p, node) {
+        node.style.display = p.alive === false ? 'none' : 'block';
+        if (p.alive === false) return;
         const flutter = mode === 'christmas' || p.support !== null ? 1 : 0.45 + Math.abs(Math.cos(time * 2.2 + p.phase)) * 0.55;
-        nodes[index].style.width = `${p.width}px`;
-        nodes[index].style.height = `${p.size}px`;
-        nodes[index].style.transform = `translate3d(${p.x - p.width / 2}px,${p.y - p.size / 2}px,0) rotate(${p.angle}deg) scaleX(${flutter})`;
-        nodes[index].style.opacity = p.support !== null && p.resting < 1 ? Math.max(0, p.resting) * 0.82 : 0.82;
+        node.style.width = `${p.width}px`;
+        node.style.height = `${p.size}px`;
+        node.style.transform = `translate3d(${p.x - p.width / 2}px,${p.y - p.size / 2}px,0) rotate(${p.angle}deg) scaleX(${flutter})`;
+        node.style.opacity = p.support !== null && p.resting < 1 ? Math.max(0, p.resting) * 0.82 : 0.82;
+      }
+      particles.forEach((p, index) => render(p, nodes[index]));
+      options.deposits.forEach((p, index) => {
+        if (!depositNodes[index]) {
+          const node = document.createElement('span');
+          node.className = 'seasonal-deposit';
+          layer.append(node);
+          depositNodes[index] = node;
+        }
+        render(p, depositNodes[index]);
       });
       frame = requestAnimationFrame(draw);
     }
@@ -213,6 +262,7 @@
       removeEventListener('blur', clearPointer);
       document.removeEventListener('visibilitychange', visibility);
       layer.classList.remove('seasonal-layer--physics');
+      depositNodes.forEach(node => node.remove());
       nodes.forEach(node => { node.style.removeProperty('transform'); node.style.removeProperty('opacity'); });
       elements.clear();
     };

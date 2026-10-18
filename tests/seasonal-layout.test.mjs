@@ -123,3 +123,48 @@ test('the real cursor dislodges accumulations without blocking clicks or touch s
     assert.equal(await page.evaluate(() => window.testClicks), 3);
   } finally { await browser.close(); }
 });
+
+test('bottom deposits stay at the real page end, preserve document size and respond to the cursor', async () => {
+  const browser = await chromium.launch({ headless: true, channel: 'msedge' });
+  try {
+    const css = await readFile(new URL('../styles.css', import.meta.url), 'utf8');
+    const script = await readFile(new URL('../seasonal-effects.js', import.meta.url), 'utf8');
+    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    await page.setContent(`<style>${css}</style><div style="height:3000px"></div>`);
+    await page.evaluate(() => { Math.random = () => 0.98; });
+    await page.addScriptTag({ content: script });
+    const height = await page.evaluate(() => document.scrollingElement.scrollHeight);
+    const insert = mode => page.evaluate(mode => {
+      document.querySelector('.seasonal-layer')?.remove();
+      const layer = document.createElement('div');
+      layer.className = `seasonal-layer seasonal-layer--${mode}`;
+      layer.innerHTML = '<span style="--size:10px"></span>';
+      document.body.append(layer);
+    }, mode);
+    await insert('autumn');
+    await page.waitForTimeout(250);
+    assert.equal(await page.locator('.seasonal-deposit').count(), 0, 'no artificial floor at the viewport bottom');
+    for (const mode of ['autumn', 'christmas', 'carnival']) {
+      await page.evaluate(() => scrollTo(0, document.scrollingElement.scrollHeight));
+      await insert(mode);
+      await page.waitForSelector('.seasonal-deposit');
+      assert.equal(await page.evaluate(() => document.scrollingElement.scrollHeight), height);
+      const deposit = page.locator('.seasonal-deposit').first();
+      const resting = await deposit.boundingBox();
+      assert.ok(resting.y > 960 && resting.y < 1000);
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.waitForFunction(() => document.querySelector('.seasonal-deposit').getBoundingClientRect().top > 1000);
+      await page.evaluate(() => scrollTo(0, document.scrollingElement.scrollHeight));
+      await page.waitForFunction(() => document.querySelector('.seasonal-deposit').getBoundingClientRect().top < 1000);
+      const before = await deposit.boundingBox();
+      await page.mouse.move(1300, 990);
+      await page.mouse.move(1435, 990, { steps: 8 });
+      await page.waitForFunction(before => {
+        const r = document.querySelector('.seasonal-deposit').getBoundingClientRect();
+        return Math.abs(r.x - before.x) + Math.abs(r.y - before.y) > 3;
+      }, before);
+    }
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForFunction(() => !document.querySelector('.seasonal-deposit'));
+  } finally { await browser.close(); }
+});

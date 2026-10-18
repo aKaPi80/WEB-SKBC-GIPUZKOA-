@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-const { createParticle, step } = createRequire(import.meta.url)('../seasonal-effects.js');
+const { createParticle, step, floorSurface } = createRequire(import.meta.url)('../seasonal-effects.js');
 const options = { width: 1000, height: 800, mode: 'autumn', random: () => 0.5 };
 const surface = { id: 'logo', left: 100, right: 300, top: 200, radius: 0 };
 const leaf = (id, values = {}) => Object.assign(createParticle(id, options), {
@@ -98,4 +98,40 @@ test('cursor gusts move snow more gently than leaves and preserve finite velocit
     return initialSpeed;
   });
   assert.ok(speeds[0] > speeds[1]);
+});
+
+test('the accumulation floor belongs to the document end, not the viewport', () => {
+  assert.equal(floorSurface(1000, 3000, 0).top, 2998);
+  assert.equal(floorSurface(1000, 3000, 2200).top, 798);
+});
+
+test('particles settle at the page end while the falling supply continues', () => {
+  for (const mode of ['autumn', 'christmas', 'carnival']) {
+    const deposits = [];
+    const floor = { id: 'page-floor', left: 0, right: 1000, top: 798, radius: 0 };
+    const p = leaf(0, { y: 792, vy: 70 });
+    step([p], [floor], 0.04, 0, { ...options, mode, deposits });
+    assert.equal(deposits.length, 1, mode);
+    assert.equal(deposits[0].support, 'page-floor');
+    assert.ok(p.y < 0, 'the airborne particle returns above the screen');
+  }
+});
+
+test('bottom accumulations have a bounded pool and stay attached when scrolling away', () => {
+  const deposits = [];
+  const config = { ...options, deposits, maxDeposits: 3 };
+  const floor = floorSurface(1000, 800, 0);
+  for (let i = 0; i < 20; i++) step([leaf(i, { x: 100 + i * 30, y: 792, vy: 70 })], [floor], 0.04, i, config);
+  assert.equal(deposits.length, 3);
+  step([], [floorSurface(1000, 3000, 0)], 0.04, 21, config);
+  assert.ok(deposits.every(p => p.y > options.height), 'stored leaves move offscreen with the document end');
+});
+
+test('cursor gusts can detach bottom accumulations', () => {
+  const floor = floorSurface(1000, 800, 0);
+  const p = leaf(-1, { x: 200, y: 793, support: 'page-floor', offset: 200, resting: 30, floor: true });
+  const pointer = { fromX: 100, fromY: 790, x: 300, y: 790, vx: 900, vy: 0, time: 1 };
+  step([], [floor], 0.02, 1, { ...options, deposits: [p], pointer });
+  assert.equal(p.support, null);
+  assert.ok(p.vx > 0);
 });
