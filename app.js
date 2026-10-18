@@ -1659,6 +1659,9 @@ function renderNav(copy) {
     brandImage.src = systemLogo("brandLogo", "assets/logo-skbc.png");
     brandImage.alt = `Logo ${system.siteName || "SKBC GIPUZKOA"}`;
   }
+  const brandMark = document.querySelector(".brand-mark");
+  brandMark?.querySelector(".logo-mourning")?.remove();
+  if (brandMark) brandMark.insertAdjacentHTML("beforeend", mourningRibbon(state.content.settings, "brand"));
   const brandTitle = document.querySelector(".brand strong");
   if (brandTitle) brandTitle.textContent = system.siteName || "SKBC GIPUZKOA";
   const brandSubtitle = document.querySelector(".brand small");
@@ -1700,27 +1703,37 @@ function renderNav(copy) {
 
 function specialVisualSettings(settings) {
   const visual = settings.specialVisual || {};
-  const allowedModes = new Set(["none", "christmas", "autumn", "carnival", "womensDay", "mourning"]);
+  const particleModes = new Set(["christmas", "autumn", "carnival"]);
+  const allowedModes = new Set(["none", ...particleModes, "womensDay", "mourning"]);
   const allowedIntensities = new Set(["low", "medium", "high"]);
+  const enabled = value => value === true || value === "true";
   const manual = {
     mode: allowedModes.has(visual.mode) ? visual.mode : "none",
     intensity: allowedIntensities.has(visual.intensity) ? visual.intensity : "medium",
     message: String(visual.message || "").trim()
   };
-  const today = new Date();
-  const todayKey = dateKey(today);
-  const activeSchedule = (visual.schedule || []).find((item) => {
-    if (!item || item.enabled === false) return false;
+  const todayKey = dateKey(new Date());
+  const active = (Array.isArray(visual.schedule) ? visual.schedule : []).filter(item => {
+    if (!item || item.enabled === false || item.enabled === "false") return false;
     if (!allowedModes.has(item.mode) || item.mode === "none") return false;
     const start = String(item.start || "").trim();
     const end = String(item.end || start).trim();
     return start && end && todayKey >= start && todayKey <= end;
   });
-  if (!activeSchedule) return manual;
+  const seasonal = active.find(item => particleModes.has(item.mode));
+  const mourningSchedule = active.find(item => item.mode === "mourning");
+  const womensSchedule = active.find(item => item.mode === "womensDay");
+  const mourning = enabled(visual.mourning) || manual.mode === "mourning" || Boolean(mourningSchedule);
+  const womensDay = enabled(visual.womensDay) || manual.mode === "womensDay" || Boolean(womensSchedule);
+  const weather = seasonal?.mode || (particleModes.has(manual.mode) ? manual.mode : "none");
   return {
-    mode: activeSchedule.mode,
-    intensity: allowedIntensities.has(activeSchedule.intensity) ? activeSchedule.intensity : manual.intensity,
-    message: String(activeSchedule.message || manual.message || "").trim()
+    mode: weather !== "none" ? weather : womensDay ? "womensDay" : mourning ? "mourning" : "none",
+    intensity: allowedIntensities.has(seasonal?.intensity) ? seasonal.intensity : manual.intensity,
+    message: String(seasonal?.message || manual.message || "").trim(),
+    mourning,
+    womensDay,
+    mourningMessage: String(mourningSchedule?.message || (manual.mode === "mourning" ? manual.message : "")).trim(),
+    womensDayMessage: String(womensSchedule?.message || (manual.mode === "womensDay" ? manual.message : "")).trim()
   };
 }
 
@@ -1763,33 +1776,41 @@ function seasonalParticles(mode) {
   }).join("");
 }
 
-function specialVisualLayer(settings) {
+function mourningRibbon(settings, variant = "hero") {
   const visual = specialVisualSettings(settings);
-  if (visual.mode === "none") return "";
-  const message = escapeHtml(visual.message || specialVisualCopy(visual.mode));
-  const particles = seasonalParticles(visual.mode);
-  const layer = particles ? `<div class="seasonal-layer seasonal-layer--${visual.mode}" aria-hidden="true">${particles}</div>` : "";
-  const icon = visual.mode === "mourning"
-    ? `<svg class="mourning-ribbon" viewBox="0 0 220 300" aria-hidden="true" focusable="false">
+  if (!visual.mourning) return "";
+  const id = variant === "brand" ? "brand" : "hero";
+  const label = escapeHtml(visual.mourningMessage || specialVisualCopy("mourning"));
+  return `<span class="logo-mourning logo-mourning--${id}" role="img" aria-label="${label}" title="${label}"><svg class="mourning-ribbon" viewBox="0 0 220 300" aria-hidden="true" focusable="false">
         <defs>
-          <linearGradient id="mourningRibbonA" x1="0" x2="1" y1="0" y2="1">
+          <linearGradient id="mourningRibbon-${id}-A" x1="0" x2="1" y1="0" y2="1">
             <stop offset="0" stop-color="#0b0f10" />
             <stop offset="0.48" stop-color="#293134" />
             <stop offset="1" stop-color="#050505" />
           </linearGradient>
-          <linearGradient id="mourningRibbonB" x1="1" x2="0" y1="0" y2="1">
+          <linearGradient id="mourningRibbon-${id}-B" x1="1" x2="0" y1="0" y2="1">
             <stop offset="0" stop-color="#111719" />
             <stop offset="0.5" stop-color="#4a5356" />
             <stop offset="1" stop-color="#030303" />
           </linearGradient>
         </defs>
-        <path d="M110 20C63 20 38 55 47 98c7 34 31 70 63 111 31-41 56-77 63-111 9-43-16-78-63-78Zm0 34c24 0 36 16 32 39-4 20-17 44-32 68-16-24-29-48-33-68-4-23 9-39 33-39Z" fill="url(#mourningRibbonA)" />
-        <path d="M102 143 28 272h55l73-128c15-26 21-47 16-71-3-17-11-31-24-40 6 33-5 65-46 110Z" fill="url(#mourningRibbonA)" />
-        <path d="M119 143 192 272h-55L64 144C49 118 43 97 48 73c3-17 11-31 24-40-6 33 5 65 47 110Z" fill="url(#mourningRibbonB)" />
+        <path d="M110 20C63 20 38 55 47 98c7 34 31 70 63 111 31-41 56-77 63-111 9-43-16-78-63-78Zm0 34c24 0 36 16 32 39-4 20-17 44-32 68-16-24-29-48-33-68-4-23 9-39 33-39Z" fill="url(#mourningRibbon-${id}-A)" />
+        <path d="M102 143 28 272h55l73-128c15-26 21-47 16-71-3-17-11-31-24-40 6 33-5 65-46 110Z" fill="url(#mourningRibbon-${id}-A)" />
+        <path d="M119 143 192 272h-55L64 144C49 118 43 97 48 73c3-17 11-31 24-40-6 33 5 65 47 110Z" fill="url(#mourningRibbon-${id}-B)" />
         <path d="M80 244h35l-31 43-15-29 11-14Zm60 0h-35l31 43 15-29-11-14Z" fill="#050505" />
-      </svg>`
-    : `<span aria-hidden="true"></span>`;
-  const badge = message ? `<div class="special-badge special-badge--${visual.mode}">${icon}<strong>${message}</strong></div>` : "";
+      </svg></span>`;
+}
+
+function specialVisualLayer(settings) {
+  const visual = specialVisualSettings(settings);
+  const particles = seasonalParticles(visual.mode);
+  const layer = particles ? `<div class="seasonal-layer seasonal-layer--${visual.mode}" aria-hidden="true">${particles}</div>` : "";
+  const badgeMode = visual.womensDay ? "womensDay" : visual.mode;
+  if (badgeMode === "none" || badgeMode === "mourning") return layer;
+  const message = escapeHtml(visual.womensDay
+    ? visual.womensDayMessage || specialVisualCopy("womensDay")
+    : visual.message || specialVisualCopy(visual.mode));
+  const badge = message ? `<div class="special-badge special-badge--${badgeMode}"><span aria-hidden="true"></span><strong>${message}</strong></div>` : "";
   return `${layer}${badge}`;
 }
 
@@ -1839,6 +1860,8 @@ function render() {
   document.documentElement.dataset.theme = settings.theme?.palette || "skbc";
   document.documentElement.dataset.overlay = settings.theme?.heroOverlay || "classic";
   document.documentElement.dataset.specialVisual = visual.mode;
+  document.documentElement.dataset.womensDay = String(visual.womensDay);
+  document.documentElement.dataset.mourning = String(visual.mourning);
   document.documentElement.dataset.specialIntensity = visual.intensity;
   document.documentElement.dataset.alertBanner = alertBanner.enabled ? alertBanner.style : "none";
   document.documentElement.dataset.decorativeBackground = decorative.enabled ? decorative.preset : "none";
@@ -1857,7 +1880,7 @@ function render() {
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
       <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
-      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" /></div>
+      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}</div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>

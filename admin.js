@@ -140,11 +140,13 @@ const settingsGroups = [
   },
   {
     title: "Estilo visual",
-    help: "Elige una paleta sugerida, el contraste de la foto principal y efectos especiales temporales como Navidad, otoño, carnaval, Día de la Mujer o luto.",
+    help: "Elige los efectos de temporada y activa, si corresponde, el lazo de luto o los colores del Día de la Mujer. Se pueden combinar sin cambiar la posición de los logos.",
     fields: [
       ["Paleta visual", ["settings", "theme", "palette"], "palette"],
       ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"],
       ["Efecto especial manual", ["settings", "specialVisual", "mode"], "specialVisualMode"],
+      ["Lazo de luto (combinable con cualquier efecto)", ["settings", "specialVisual", "mourning"], "specialVisualToggle"],
+      ["Día de la Mujer (colores y mensaje combinables)", ["settings", "specialVisual", "womensDay"], "specialVisualToggle"],
       ["Intensidad del efecto", ["settings", "specialVisual", "intensity"], "specialVisualIntensity"],
       ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"],
       ["Programador de efectos", ["settings", "specialVisual", "schedule"], "specialVisualSchedule"]
@@ -474,7 +476,7 @@ function setByPath(root, path, value) {
 }
 
 function parseFieldValue(value, type) {
-  if (type === "booleanText") return value === "true";
+  if (type === "booleanText" || type === "specialVisualToggle") return value === "true";
   if (type === "array") return value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
   if (type === "linkList") {
     return value.split(/\r?\n/)
@@ -520,6 +522,7 @@ function parseFieldValue(value, type) {
 }
 
 function formatFieldValue(value, type) {
+  if (type === "specialVisualToggle") return value === true || value === "true" ? "true" : "false";
   if (type === "booleanText") return value === false ? "false" : "true";
   if (type === "array" || type === "galleryImages") return Array.isArray(value) ? value.join("\n") : "";
   if (type === "linkList") return Array.isArray(value) ? value.map((item) => `${item.label || ""} | ${item.url || ""}`).join("\n") : "";
@@ -1361,6 +1364,9 @@ function controlTemplate(id, encodedPath, value, type) {
       ["mourning", "Luto: lazo negro"]
     ], type);
   }
+  if (type === "specialVisualToggle") {
+    return selectTemplate(id, encodedPath, value || "false", [["false", "Desactivado"], ["true", "Activado"]], type);
+  }
   if (type === "specialVisualIntensity") {
     return selectTemplate(id, encodedPath, value || "medium", [["low", "Suave"], ["medium", "Media"], ["high", "Alta"]], type);
   }
@@ -1436,7 +1442,7 @@ function specialVisualScheduleTemplate(id, encodedPath, value) {
   const rows = items.length ? items : [{ enabled: true, mode: "christmas", intensity: "medium", start: "", end: "", message: "" }];
   return `
     <div class="special-schedule-builder" data-hidden-id="${id}">
-      <small>Programa efectos por fechas sin tocar la web pública. Si hoy entra dentro de una programación activa, se aplicará automáticamente.</small>
+      <small>Programa efectos por fechas. Puedes solapar luto y Día de la Mujer con nieve, hojas o confeti; las conmemoraciones se combinan con el efecto de temporada.</small>
       <textarea id="${id}" class="special-schedule-raw" data-type="specialVisualSchedule" data-path="${encodedPath}" hidden>${escapeHtml(value)}</textarea>
       <div class="special-schedule-rows">
         ${rows.map((item) => specialVisualScheduleRow(item)).join("")}

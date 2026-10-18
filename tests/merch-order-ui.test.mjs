@@ -80,7 +80,7 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
   assert.match(html, /styles\.css\?v=[^"\s]+/);
-  assert.match(html, /app\.js\?v=20261018-product-images/);
+  assert.match(html, /app\.js\?v=[^"\s]+/);
 });
 
 test('catalog cards keep details collapsed until the customer opens them', () => {

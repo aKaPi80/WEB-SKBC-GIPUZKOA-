@@ -238,35 +238,19 @@ button, input, select, textarea { font: inherit; }
   border: 3px solid #fff;
   background: transparent;
 }
-.special-badge--mourning {
-  left: auto;
-  right: clamp(18px, 4vw, 58px);
-  top: clamp(96px, 9vw, 136px);
-  display: grid;
-  width: min(230px, calc(100vw - 32px));
-  justify-items: center;
-  gap: 6px;
-  padding: 0;
-  color: #050505;
-  background: transparent;
-  box-shadow: none;
-  transform: none;
+.logo-mourning {
+  position: absolute;
+  z-index: 4;
+  top: 8%;
+  right: 12%;
+  width: 23%;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.32));
 }
-.mourning-ribbon {
-  width: 152px;
-  max-width: 68vw;
-  height: auto;
-  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.22));
-}
-.special-badge--mourning strong {
-  text-align: center;
-  color: #050505;
-  font-size: 15px;
-  line-height: 1.18;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
-}
+.logo-mourning .mourning-ribbon { display: block; width: 100%; height: auto; }
+.logo-mourning--brand { display: none; width: 35%; right: 0; top: 0; }
 
-[data-special-visual="womensDay"] body::before {
+[data-womens-day="true"] body::before {
   position: fixed;
   inset: 0;
   z-index: 3;
@@ -274,12 +258,12 @@ button, input, select, textarea { font: inherit; }
   background: linear-gradient(135deg, rgba(107, 42, 160, 0.12), rgba(190, 85, 210, 0.06));
   pointer-events: none;
 }
-[data-special-visual="womensDay"] {
+[data-womens-day="true"] {
   --red: #7b2cbf;
   --red-dark: #5f218f;
   --gold: #c77dff;
 }
-[data-special-visual="mourning"] .brand-mark {
+[data-mourning="true"] .brand-mark {
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.22), 0 10px 26px rgba(0, 0, 0, 0.26);
 }
 
@@ -303,6 +287,7 @@ button, input, select, textarea { font: inherit; }
 }
 .brand { display: inline-flex; align-items: center; gap: 12px; min-width: max-content; }
 .brand-mark {
+  position: relative;
   display: inline-flex;
   width: 52px;
   height: 52px;
@@ -3201,6 +3186,7 @@ textarea { resize: vertical; }
   }
   .split-reverse .split-media { order: initial; }
   .hero-logo { display: none; }
+  .logo-mourning--brand { display: block; }
   .hero-proof { position: relative; right: auto; left: auto; margin-top: 54px; }
   .hero-content { padding-bottom: 0; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
