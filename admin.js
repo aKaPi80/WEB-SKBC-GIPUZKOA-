@@ -11,7 +11,7 @@ const MEDIA_REPLACEMENTS = {
 };
 
 let data = load();
-let publishedContentSnapshot = structuredClone(data);
+let publishedContentSnapshot = cloneDefault();
 let publishedContentSignature = contentSignature(publishedContentSnapshot);
 let currentPanel = "dashboard";
 let currentEventIndex = null;
@@ -24,19 +24,19 @@ const panelTitles = {
   dashboard: "Panel de control",
   settings: "Ajustes generales",
   system: "SEO y sistema",
-  es: "Textos en espaÃ±ol",
+  es: "Textos en español",
   eu: "Textos en euskera",
-  en: "Textos en inglÃ©s",
-  custom: "Ãreas nuevas",
+  en: "Textos en inglés",
+  custom: "Áreas nuevas",
   advanced: "Todo el contenido"
 };
 
 const labels = {
   dashboard: "Panel",
-  es: "EspaÃ±ol",
+  es: "Español",
   system: "SEO/Sistema",
   eu: "Euskera",
-  en: "InglÃ©s",
+  en: "Inglés",
   people: "Personas",
   custom: "Secciones",
   advanced: "Avanzado"
@@ -58,6 +58,8 @@ panelTitles.orders = "Pedidos de tienda";
 labels.orders = "Pedidos";
 panelTitles.kenshi = "Area Kenshi";
 labels.kenshi = "Kenshi";
+Object.assign(panelTitles, { dashboard: "Inicio", es: "Textos de la web", eu: "Textos en euskera", en: "Textos en inglés", settings: "Fotos, horarios y contacto", orders: "Pedidos", leads: "Contactos", merch: "Productos de la tienda" });
+Object.assign(labels, { dashboard: "Inicio", es: "Español", eu: "Euskera", en: "Inglés", settings: "Editar web" });
 
 const settingsGroups = [
   {
@@ -78,7 +80,7 @@ const settingsGroups = [
     fields: [
       ["Galerías de fotos", ["settings", "galleryLinks"], "linkList"],
       ["Posts/Reels de Instagram", ["settings", "socialFeeds", "instagramUrls"], "textarea"],
-      ["VÃ­deos de YouTube", ["settings", "socialFeeds", "youtubeUrls"], "textarea"]
+      ["Vídeos de YouTube", ["settings", "socialFeeds", "youtubeUrls"], "textarea"]
     ]
   },
   {
@@ -138,7 +140,7 @@ const settingsGroups = [
   },
   {
     title: "Estilo visual",
-    help: "Elige una paleta sugerida, el contraste de la foto principal y efectos especiales temporales como Navidad, otoÃ±o, carnaval, DÃ­a de la Mujer o luto.",
+    help: "Elige una paleta sugerida, el contraste de la foto principal y efectos especiales temporales como Navidad, otoño, carnaval, Día de la Mujer o luto.",
     fields: [
       ["Paleta visual", ["settings", "theme", "palette"], "palette"],
       ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"],
@@ -165,30 +167,30 @@ const settingsGroups = [
     ]
   },
   {
-    title: "ImÃ¡genes principales",
+    title: "Imágenes principales",
     help: "Estas son las fotos de fondo principales de la web. Pega una URL o una ruta local dentro de esta carpeta.",
     fields: [
       ["Foto hero/inicio", ["settings", "images", "hero"], "input"],
-      ["Foto niÃ±os", ["settings", "images", "kids"], "input"],
+      ["Foto niños", ["settings", "images", "kids"], "input"],
       ["Foto adultos", ["settings", "images", "adults"], "input"],
-      ["Foto tÃ©cnica/aprendizaje", ["settings", "images", "learn"], "input"],
-      ["Foto equipo tÃ©cnico", ["settings", "images", "people", "technicalTeam"], "input"],
+      ["Foto técnica/aprendizaje", ["settings", "images", "learn"], "input"],
+      ["Foto equipo técnico", ["settings", "images", "people", "technicalTeam"], "input"],
       ["Imágenes de galería", ["settings", "images", "gallery"], "galleryImages"]
     ]
   },
   {
     title: "Fotos de personas",
-    help: "Estas miniaturas se usan en equipo tÃ©cnico y directiva. Si no hay foto correcta, deja el campo vacÃ­o.",
+    help: "Estas miniaturas se usan en equipo técnico y directiva. Si no hay foto correcta, deja el campo vacío.",
     fields: [
-      ["Ãlvaro Calvo", ["settings", "images", "people", "alvaro"], "input"],
-      ["IÃ±aki Ventureira", ["settings", "images", "people", "inaki"], "input"],
-      ["Andoni DomÃ­nguez", ["settings", "images", "people", "andoni"], "input"],
+      ["Álvaro Calvo", ["settings", "images", "people", "alvaro"], "input"],
+      ["Iñaki Ventureira", ["settings", "images", "people", "inaki"], "input"],
+      ["Andoni Domínguez", ["settings", "images", "people", "andoni"], "input"],
       ["Oskar Mateos", ["settings", "images", "people", "oskar"], "input"],
       ["Asier Azurmendi", ["settings", "images", "people", "asier"], "input"],
       ["Igone Lasa", ["settings", "images", "people", "igone"], "input"],
-      ["IÃ±aki Iturrioz", ["settings", "images", "people", "iturrioz"], "input"],
+      ["Iñaki Iturrioz", ["settings", "images", "people", "iturrioz"], "input"],
       ["Bharat Martin", ["settings", "images", "people", "bharat"], "input"],
-      ["Pablo SÃ¡nchez", ["settings", "images", "people", "pablo"], "input"],
+      ["Pablo Sánchez", ["settings", "images", "people", "pablo"], "input"],
       ["Uxue Garikano", ["settings", "images", "people", "uxue"], "input"],
       ["Jorge Redondo", ["settings", "images", "people", "jorge"], "input"]
     ]
@@ -252,13 +254,13 @@ function languageGroups(lang) {
   const root = ["languages", lang];
   return [
     {
-      title: "SEO y navegaciÃ³n",
-      help: "TÃ­tulo y descripciÃ³n para Google, menÃº, llamada principal y formularios.",
+      title: "SEO y navegación",
+      help: "Título y descripción para Google, menú, llamada principal y formularios.",
       fields: [
-        ["TÃ­tulo SEO", [...root, "seoTitle"], "input"],
-        ["DescripciÃ³n SEO", [...root, "seoDescription"], "textarea"],
-        ["MenÃº principal", [...root, "nav"], "array"],
-        ["BotÃ³n principal corto", [...root, "ctaShort"], "input"]
+        ["Título SEO", [...root, "seoTitle"], "input"],
+        ["Descripción SEO", [...root, "seoDescription"], "textarea"],
+        ["Menú principal", [...root, "nav"], "array"],
+        ["Botón principal corto", [...root, "ctaShort"], "input"]
       ]
     },
     {
@@ -266,77 +268,77 @@ function languageGroups(lang) {
       help: "Primera pantalla de la web.",
       fields: [
         ["Etiqueta superior", [...root, "hero", "eyebrow"], "input"],
-        ["TÃ­tulo principal", [...root, "hero", "title"], "textarea"],
+        ["Título principal", [...root, "hero", "title"], "textarea"],
         ["Texto principal", [...root, "hero", "text"], "textarea"],
-        ["BotÃ³n principal", [...root, "hero", "primary"], "input"],
-        ["BotÃ³n secundario", [...root, "hero", "secondary"], "input"],
+        ["Botón principal", [...root, "hero", "primary"], "input"],
+        ["Botón secundario", [...root, "hero", "secondary"], "input"],
         ["Tarjetas del hero", [...root, "hero", "cards"], "matrix"]
       ]
     },
     {
       title: "Bloques de aprendizaje",
-      help: "Beneficios, explicaciÃ³n de Shorinji Kempo, niÃ±os y adultos.",
+      help: "Beneficios, explicación de Shorinji Kempo, niños y adultos.",
       fields: [
-        ["TÃ­tulo beneficios", [...root, "benefits", "title"], "input"],
+        ["Título beneficios", [...root, "benefits", "title"], "input"],
         ["Texto beneficios", [...root, "benefits", "text"], "textarea"],
         ["Tarjetas beneficios", [...root, "benefits", "items"], "matrix"],
-        ["TÃ­tulo Shorinji Kempo", [...root, "shorinji", "title"], "input"],
+        ["Título Shorinji Kempo", [...root, "shorinji", "title"], "input"],
         ["Texto Shorinji Kempo", [...root, "shorinji", "text"], "textarea"],
         ["Bloques Shorinji Kempo", [...root, "shorinji", "blocks"], "matrix"],
-        ["TÃ­tulo niÃ±os", [...root, "kids", "title"], "input"],
-        ["Texto niÃ±os", [...root, "kids", "text"], "textarea"],
-        ["Lista niÃ±os", [...root, "kids", "items"], "array"],
-        ["BotÃ³n niÃ±os", [...root, "kids", "cta"], "input"],
-        ["TÃ­tulo adultos", [...root, "adults", "title"], "input"],
+        ["Título niños", [...root, "kids", "title"], "input"],
+        ["Texto niños", [...root, "kids", "text"], "textarea"],
+        ["Lista niños", [...root, "kids", "items"], "array"],
+        ["Botón niños", [...root, "kids", "cta"], "input"],
+        ["Título adultos", [...root, "adults", "title"], "input"],
         ["Texto adultos", [...root, "adults", "text"], "textarea"],
         ["Tarjetas adultos", [...root, "adults", "items"], "matrix"],
-        ["TÃ­tulo quÃ© aprenden", [...root, "learn", "title"], "input"],
-        ["Texto quÃ© aprenden", [...root, "learn", "text"], "textarea"],
-        ["Tarjetas quÃ© aprenden", [...root, "learn", "items"], "matrix"],
-        ["Conceptos quÃ© aprenden", [...root, "learn", "concepts"], "array"],
-        ["BotÃ³n quÃ© aprenden", [...root, "learn", "button"], "input"],
-        ["URL botÃ³n quÃ© aprenden", [...root, "learn", "url"], "input"]
+        ["Título qué aprenden", [...root, "learn", "title"], "input"],
+        ["Texto qué aprenden", [...root, "learn", "text"], "textarea"],
+        ["Tarjetas qué aprenden", [...root, "learn", "items"], "matrix"],
+        ["Conceptos qué aprenden", [...root, "learn", "concepts"], "array"],
+        ["Botón qué aprenden", [...root, "learn", "button"], "input"],
+        ["URL botón qué aprenden", [...root, "learn", "url"], "input"]
       ]
     },
     {
       title: "Club, IKA y profesor",
-      help: "Identidad del club, representaciÃ³n internacional y responsable tÃ©cnico.",
+      help: "Identidad del club, representación internacional y responsable técnico.",
       fields: [
-        ["TÃ­tulo club", [...root, "club", "title"], "input"],
+        ["Título club", [...root, "club", "title"], "input"],
         ["Texto club", [...root, "club", "text"], "textarea"],
         ["Tarjetas club", [...root, "club", "items"], "matrix"],
-        ["TÃ­tulo IKA", [...root, "ika", "title"], "input"],
+        ["Título IKA", [...root, "ika", "title"], "input"],
         ["Texto IKA", [...root, "ika", "text"], "textarea"],
         ["Nota IKA", [...root, "ika", "note"], "textarea"],
-        ["TÃ­tulo responsable tÃ©cnico", [...root, "instructor", "title"], "input"],
-        ["Texto responsable tÃ©cnico", [...root, "instructor", "text"], "textarea"],
+        ["Título responsable técnico", [...root, "instructor", "title"], "input"],
+        ["Texto responsable técnico", [...root, "instructor", "text"], "textarea"],
         ["Texto adicional responsable", [...root, "instructor", "extra"], "textarea"]
       ]
     },
     {
       title: "Equipo y directiva",
-      help: "Puedes aÃ±adir, quitar o cambiar nombres desde estas listas.",
+      help: "Puedes añadir, quitar o cambiar nombres desde estas listas.",
       fields: [
-        ["TÃ­tulo equipo tÃ©cnico", [...root, "technicalTeam", "title"], "input"],
-        ["Texto equipo tÃ©cnico", [...root, "technicalTeam", "text"], "textarea"],
-        ["Responsables tÃ©cnicos", [...root, "technicalTeam", "leads"], "matrix"],
-        ["Miembros equipo tÃ©cnico", [...root, "technicalTeam", "members"], "array"],
-        ["TÃ­tulo directiva", [...root, "board", "title"], "input"],
+        ["Título equipo técnico", [...root, "technicalTeam", "title"], "input"],
+        ["Texto equipo técnico", [...root, "technicalTeam", "text"], "textarea"],
+        ["Responsables técnicos", [...root, "technicalTeam", "leads"], "matrix"],
+        ["Miembros equipo técnico", [...root, "technicalTeam", "members"], "array"],
+        ["Título directiva", [...root, "board", "title"], "input"],
         ["Miembros directiva", [...root, "board", "members"], "array"]
       ]
     },
     {
-      title: "Horarios, galerÃ­as, redes, merchandising y contacto",
+      title: "Horarios, galerías, redes, merchandising y contacto",
       help: "Zona final de la web, enlaces y formulario.",
       fields: [
-        ["TÃ­tulo horarios", [...root, "schedule", "title"], "input"],
+        ["Título horarios", [...root, "schedule", "title"], "input"],
         ["Texto horarios", [...root, "schedule", "text"], "textarea"],
-        ["Horario niÃ±os", [...root, "schedule", "kids"], "input"],
+        ["Horario niños", [...root, "schedule", "kids"], "input"],
         ["Horario adultos", [...root, "schedule", "adults"], "input"],
         ["Lugar", [...root, "schedule", "place"], "input"],
-        ["TÃ­tulo galerÃ­a", [...root, "media", "title"], "input"],
-        ["Texto galerÃ­a", [...root, "media", "text"], "textarea"],
-        ["TÃ­tulo redes", [...root, "social", "title"], "input"],
+        ["Título galería", [...root, "media", "title"], "input"],
+        ["Texto galería", [...root, "media", "text"], "textarea"],
+        ["Título redes", [...root, "social", "title"], "input"],
         ["Texto redes", [...root, "social", "text"], "textarea"],
         ["Texto Instagram", [...root, "social", "instagram"], "input"],
         ["Texto Facebook", [...root, "social", "facebook"], "input"],
@@ -360,7 +362,7 @@ function languageGroups(lang) {
         ["Título preguntas frecuentes", [...root, "faq", "title"], "input"],
         ["Texto preguntas frecuentes", [...root, "faq", "text"], "textarea"],
         ["Preguntas frecuentes", [...root, "faq", "items"], "matrix"],
-        ["TÃ­tulo merchandising", [...root, "merch", "title"], "input"],
+        ["Título merchandising", [...root, "merch", "title"], "input"],
         ["Texto merchandising", [...root, "merch", "text"], "textarea"],
         ["Botón catálogo JHK", [...root, "merch", "catalog"], "input"],
         ["Título pedido", [...root, "merch", "orderTitle"], "input"],
@@ -375,12 +377,12 @@ function languageGroups(lang) {
         ["Relaciones Kenshi", [...root, "kenshi", "relationships"], "array"],
         ["Botón solicitud Kenshi", [...root, "kenshi", "submit"], "input"],
         ["Mensaje gracias Kenshi", [...root, "kenshi", "thanks"], "input"],
-        ["TÃ­tulo contacto", [...root, "contact", "title"], "input"],
+        ["Título contacto", [...root, "contact", "title"], "input"],
         ["Texto contacto", [...root, "contact", "text"], "textarea"],
         ["Campo teléfono contacto", [...root, "contact", "phone"], "input"],
         ["Campo email contacto", [...root, "contact", "email"], "input"],
         ["Opciones formulario", [...root, "contact", "options"], "array"],
-        ["BotÃ³n formulario", [...root, "contact", "submit"], "input"]
+        ["Botón formulario", [...root, "contact", "submit"], "input"]
       ]
     }
   ];
@@ -539,7 +541,7 @@ function setStatus(text, mode = "neutral") {
 
 function markDirty() {
   dirty = true;
-  setStatus("Cambios pendientes de guardar", "warning");
+  setStatus("Cambios sin publicar", "warning");
 }
 
 function render() {
@@ -549,7 +551,8 @@ function render() {
   const mobilePanelSelect = document.querySelector("#mobile-panel-select");
   if (mobilePanelSelect) mobilePanelSelect.value = currentPanel;
 
-  if (currentPanel === "custom") renderCustom();
+  if (currentPanel === "tools") document.querySelector("#editor").innerHTML = window.SKBC_ADMIN_SIMPLE.tools();
+  else if (currentPanel === "custom") renderCustom();
   else if (currentPanel === "dashboard") renderDashboard();
   else if (currentPanel === "system") renderSystem();
   else if (currentPanel === "people") renderPeople();
@@ -564,14 +567,15 @@ function render() {
   else renderGroups(currentPanel === "settings" ? settingsGroups : languageGroups(currentPanel));
 
   enhanceMobileCollapsers();
+  window.SKBC_ADMIN_SIMPLE.enhance(currentPanel);
 }
 
 function renderIntro(extra = "") {
   return `
     <div class="editor-intro">
-      <p>${currentPanel === "settings" ? "ConfiguraciÃ³n" : labels[currentPanel]}</p>
+      <p>${currentPanel === "settings" ? "Configuración" : labels[currentPanel]}</p>
       <h2>${panelTitles[currentPanel]}</h2>
-      <span>Cuando termines, pulsa Guardar cambios y abre la web para comprobarlo.</span>
+      <span>Cuando termines, revisa la web y pulsa Publicar cambios.</span>
       ${extra}
     </div>
   `;
@@ -579,6 +583,7 @@ function renderIntro(extra = "") {
 
 function renderGroups(groups) {
   const editor = document.querySelector("#editor");
+  if (["es", "eu", "en"].includes(currentPanel)) groups = [...groups.slice(1), groups[0]];
   editor.innerHTML = `${renderIntro()}${groups.map(groupTemplate).join("")}`;
   bindFields(editor);
   bindSectionTranslations(editor);
@@ -599,7 +604,7 @@ function enhanceMobileCollapsers() {
     const header = group.querySelector(":scope > header");
     if (!header) return;
     group.dataset.mobileAccordionReady = "true";
-    group.dataset.mobileCollapsed = group.dataset.mobileKeepOpen === "true" || (index === 0 && currentPanel === "dashboard") ? "false" : "true";
+    group.dataset.mobileCollapsed = group.dataset.mobileKeepOpen === "true" || ["orders", "leads", "testimonials", "kenshi", "events", "news"].includes(currentPanel) || (index === 0 && currentPanel === "dashboard") ? "false" : "true";
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "mobile-collapse-toggle";
@@ -641,9 +646,17 @@ function enhanceMobileCollapsers() {
     summary.append(title, subtitle, toggle);
     row.prepend(summary);
   });
+  window.SKBC_ADMIN_SIMPLE.enhance(currentPanel);
 }
 
 function renderDashboard() {
+  const today = new Date().toISOString().slice(0, 10);
+  const events = (data.settings.events || []).flatMap(event => generatedEventDates(event).map(date => ({ title: event.languages?.es?.title || "Evento", date })))
+    .filter(event => event.date >= today).sort((a,b) => a.date.localeCompare(b.date));
+  document.querySelector("#editor").innerHTML = window.SKBC_ADMIN_SIMPLE.home(events);
+}
+
+function renderLegacyDashboard() {
   const editor = document.querySelector("#editor");
   const events = data.settings.events || [];
   const news = data.settings.news || [];
@@ -1333,18 +1346,18 @@ function controlTemplate(id, encodedPath, value, type) {
     return `<input id="${id}" type="color" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value || "#1f6fa9")}" />`;
   }
   if (type === "palette") {
-    return selectTemplate(id, encodedPath, value, [["skbc", "SKBC original"], ["azul", "Azul deportivo"], ["dojo", "Dojo cÃ¡lido"], ["clara", "Clara familiar"]]);
+    return selectTemplate(id, encodedPath, value, [["skbc", "SKBC original"], ["azul", "Azul deportivo"], ["dojo", "Dojo cálido"], ["clara", "Clara familiar"]]);
   }
   if (type === "overlay") {
-    return selectTemplate(id, encodedPath, value, [["classic", "Contraste normal"], ["soft", "MÃ¡s luminoso"], ["strong", "MÃ¡s oscuro"]]);
+    return selectTemplate(id, encodedPath, value, [["classic", "Contraste normal"], ["soft", "Más luminoso"], ["strong", "Más oscuro"]]);
   }
   if (type === "specialVisualMode") {
     return selectTemplate(id, encodedPath, value || "none", [
       ["none", "Normal, sin efecto"],
       ["christmas", "Navidad: nieve"],
-      ["autumn", "OtoÃ±o: hojas"],
+      ["autumn", "Otoño: hojas"],
       ["carnival", "Carnaval: confeti"],
-      ["womensDay", "DÃ­a de la Mujer: morado"],
+      ["womensDay", "Día de la Mujer: morado"],
       ["mourning", "Luto: lazo negro"]
     ], type);
   }
@@ -1464,8 +1477,8 @@ function renderCustom() {
   const editor = document.querySelector("#editor");
   const sections = data.settings.customSections || [];
   editor.innerHTML = `
-    ${renderIntro(`<div class="intro-actions"><button id="add-section" class="primary" type="button">AÃ±adir Ã¡rea</button></div>`)}
-    ${sections.length ? sections.map(customSectionTemplate).join("") : `<article class="editor-group"><header><h3>No hay Ã¡reas nuevas</h3><p>Pulsa AÃ±adir Ã¡rea para crear un bloque nuevo en la web.</p></header></article>`}
+    ${renderIntro(`<div class="intro-actions"><button id="add-section" class="primary" type="button">Añadir área</button></div>`)}
+    ${sections.length ? sections.map(customSectionTemplate).join("") : `<article class="editor-group"><header><h3>No hay áreas nuevas</h3><p>Pulsa Añadir área para crear un bloque nuevo en la web.</p></header></article>`}
   `;
   bindFields(editor);
   document.querySelector("#add-section").addEventListener("click", addCustomSection);
@@ -2665,7 +2678,7 @@ function friendlySupabaseError(result, fallback = "No se pudo completar la opera
   const raw = String(result?.message || result?.msg || result?.error_description || result?.error || fallback);
   if (/jwt expired|invalid jwt|jwt/i.test(raw)) {
     localStorage.removeItem(SUPABASE_SESSION_KEY);
-    return "La sesión privada de Supabase ha caducado. Vuelve al Panel, conecta Supabase una vez y pulsa cargar de nuevo.";
+    return "Tu sesión ha caducado. Recarga el editor para volver a entrar. Descarga antes una copia si tienes cambios sin publicar.";
   }
   return raw;
 }
@@ -2673,12 +2686,13 @@ function friendlySupabaseError(result, fallback = "No se pudo completar la opera
 function privateSessionNoticeTemplate(title = "Bandeja privada") {
   const session = supabaseSession();
   const connected = Boolean(session?.access_token);
+  if (connected) return `<p class="simple-session">Sesión privada activa · ${escapeHtml(title)}</p>`;
   return `
     <article class="editor-group private-session-card" data-mobile-keep-open="true" data-private-connected="${connected ? "true" : "false"}">
       <header>
         <div>
-          <h3>${connected ? "Supabase conectado" : "Conecta Supabase una vez"}</h3>
-          <p>${connected ? "Esta misma sesión sirve para contactos, testimonios, pedidos y Área Kenshi." : "La contraseña se introduce solo en el Panel. Después puedes cargar cualquier bandeja privada."}</p>
+          <h3>Inicia sesión para ver esta sección</h3>
+          <p>Usa el mismo email y contraseña con los que entras al gestor.</p>
         </div>
       </header>
       <div class="private-session-body">
@@ -2686,7 +2700,7 @@ function privateSessionNoticeTemplate(title = "Bandeja privada") {
           <strong>${escapeHtml(title)}</strong>
           <span>${connected ? `Sesión activa: ${escapeHtml(session?.user?.email || "usuario conectado")}` : "Sin sesión privada activa"}</span>
         </div>
-        <button type="button" data-open-panel="dashboard">${connected ? "Gestionar conexión en Panel" : "Ir al Panel para conectar"}</button>
+        <a class="button-like" href="admin.html">Volver a entrar</a>
       </div>
     </article>
   `;
@@ -3666,14 +3680,14 @@ function renderOrders() {
   const config = orderInboxConfig();
   editor.innerHTML = `
     ${renderIntro(`<div class="intro-actions">
-      <button id="load-orders" class="primary" type="button">Cargar pedidos</button>
+      <button id="load-orders" type="button">Actualizar pedidos</button>
     </div>`)}
     ${privateSessionNoticeTemplate("Pedidos recibidos")}
     <article class="editor-group">
       <header>
         <div>
           <h3>Pedidos recibidos</h3>
-          <p id="orders-status">${config.enabled ? "Pulsa Cargar pedidos. Puedes borrar pedidos antiguos o ya cerrados para mantener limpia la lista." : "Activa y configura Supabase primero."}</p>
+          <p id="orders-status">${config.enabled ? "Los pedidos se cargan automáticamente al abrir este apartado." : "Activa y configura la conexión de pedidos primero."}</p>
         </div>
       </header>
       <div class="intro-actions">
@@ -3686,6 +3700,7 @@ function renderOrders() {
   document.querySelector("#load-orders").addEventListener("click", loadOrders);
   document.querySelector("#delete-closed-orders").addEventListener("click", deleteClosedOrders);
   enhanceMobileCollapsers();
+  if (supabaseSession()?.access_token) void loadOrders();
 }
 
 async function loginOrdersSupabase() {
@@ -3718,37 +3733,40 @@ async function loadOrders() {
   const config = orderInboxConfig();
   const list = document.querySelector("#orders-list");
   const status = document.querySelector("#orders-status");
+  const button = document.querySelector("#load-orders");
+  if (!list || !status || button?.disabled) return;
   if (!config.enabled || !config.supabaseUrl || !config.anonKey) {
-    setStatus("Configura y activa pedidos con Supabase primero.", "danger");
+    status.textContent = "La conexión de pedidos no está configurada.";
     return;
   }
   if (!supabaseSession()?.access_token) {
-    setStatus("Inicia sesión en Supabase para ver pedidos.", "danger");
+    status.textContent = "Vuelve a entrar al gestor para ver los pedidos.";
     return;
   }
-  status.textContent = "Cargando pedidos...";
-  const response = await fetch(`${config.supabaseUrl}/rest/v1/${config.table}?select=*&order=created_at.desc&limit=50`, {
-    headers: supabaseHeaders(undefined, config)
-  });
-  const items = await response.json();
-  if (!response.ok) {
-    const message = friendlySupabaseError(items, "No se pudieron cargar pedidos.");
-    status.textContent = message;
-    setStatus(message, "danger");
-    return;
+  if (button) button.disabled = true;
+  status.textContent = "Cargando pedidos…";
+  list.setAttribute("aria-busy", "true");
+  try {
+    const response = await fetch(config.supabaseUrl + "/rest/v1/" + config.table + "?select=*&order=created_at.desc&limit=50", {headers:supabaseHeaders(undefined, config)});
+    const items = await response.json();
+    if (!response.ok) throw new Error(friendlySupabaseError(items, "No se pudieron cargar pedidos."));
+    if (!Array.isArray(items)) throw new Error("No se pudieron leer los pedidos.");
+    if (!list.isConnected) return;
+    status.textContent = items.length ? items.length + " pedidos recientes. Se muestran hasta 50." : "No hay pedidos.";
+    list.innerHTML = items.length ? items.map(orderTemplate).join("") : '<p class="empty-note">No hay pedidos.</p>';
+    list.querySelectorAll("[data-order-status]").forEach(select => select.addEventListener("change", () => updateOrderStatus(select.dataset.orderStatus, select.value)));
+    list.querySelectorAll("[data-delete-order]").forEach(button => button.addEventListener("click", () => deleteOrder(button.dataset.deleteOrder, button.dataset.orderLabel || "")));
+  } catch (error) {
+    if (list.isConnected) status.textContent = "No se pudieron cargar los pedidos. " + error.message + " Pulsa Actualizar pedidos para reintentar.";
+  } finally {
+    list.setAttribute("aria-busy", "false");
+    if (button?.isConnected) button.disabled = false;
   }
-  status.textContent = items.length ? `${items.length} pedido(s) recibido(s).` : "No hay pedidos.";
-  list.innerHTML = items.length ? items.map(orderTemplate).join("") : `<p class="empty-note">No hay pedidos.</p>`;
-  list.querySelectorAll("[data-order-status]").forEach((select) => {
-    select.addEventListener("change", () => updateOrderStatus(select.dataset.orderStatus, select.value));
-  });
-  list.querySelectorAll("[data-delete-order]").forEach((button) => {
-    button.addEventListener("click", () => deleteOrder(button.dataset.deleteOrder, button.dataset.orderLabel || ""));
-  });
 }
 
 function orderTemplate(order) {
   const items = Array.isArray(order.items) ? order.items : [];
+  const statusLabels = { pending: "Pendiente", seen: "Revisado", contacted: "Contactado", payment_pending: "Pendiente de pago", paid: "Pagado", delivered: "Entregado", cancelled: "Cancelado" };
   const phone = String(order.customer_phone || "").replace(/\D/g, "");
   const whatsappText = [
     "Hola, te escribimos por tu pedido de merchandising de SKBC GIPUZKOA.",
@@ -3757,19 +3775,19 @@ function orderTemplate(order) {
   ].join("\n");
   const whatsappUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(whatsappText)}` : "";
   return `<article class="pending-testimonial order-card">
-    <span>${escapeHtml(order.status || "pending")} · ${escapeHtml(new Date(order.created_at || Date.now()).toLocaleString("es-ES"))}</span>
+    <span>${escapeHtml(statusLabels[order.status || "pending"] || order.status)} · ${escapeHtml(new Date(order.created_at || Date.now()).toLocaleString("es-ES"))}</span>
     <h3>${escapeHtml(order.customer_name || "Sin nombre")}</h3>
     <p><strong>Teléfono:</strong> ${escapeHtml(order.customer_phone || "")}</p>
     <p><strong>Email:</strong> ${escapeHtml(order.customer_email || "No indicado")}</p>
     <p><strong>Pago:</strong> ${escapeHtml(order.payment_method || "")}</p>
-    <p><strong>Total:</strong> ${escapeHtml(String(order.total_estimated || 0))} €</p>
-    ${items.length ? `<ul>${items.map((item) => `<li>${escapeHtml(item.name || "")} · ${escapeHtml(item.size || "")} · ${escapeHtml(item.color || "")} · x${escapeHtml(item.quantity || 1)}</li>`).join("")}</ul>` : ""}
+    <p><strong>Total:</strong> ${escapeHtml(String(Number.isInteger(order.total_cents) ? order.total_cents / 100 : (order.total_estimated || 0)))} €</p>
+    ${items.length ? `<ul>${items.map((item) => `<li>${escapeHtml(item.product_name || item.name || "Artículo")} · ${escapeHtml(item.size || "")} · ${escapeHtml(item.recipient || item.color || "")} · x${escapeHtml(item.quantity || 1)}</li>`).join("")}</ul>` : ""}
     ${order.custom_reference ? `<p><strong>JHK:</strong> ${escapeHtml(order.custom_reference)}</p>` : ""}
     ${order.custom_details ? `<p><strong>Detalles:</strong> ${escapeHtml(order.custom_details)}</p>` : ""}
     ${order.comments ? `<p><strong>Comentarios:</strong> ${escapeHtml(order.comments)}</p>` : ""}
     <div>
       <select data-order-status="${escapeHtml(order.id)}">
-        ${["pending", "seen", "contacted", "payment_pending", "paid", "delivered", "cancelled"].map((status) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}
+        ${Object.entries(statusLabels).map(([status, label]) => `<option value="${status}" ${status === order.status ? "selected" : ""}>${label}</option>`).join("")}
       </select>
       ${whatsappUrl ? `<a class="button-like" href="${whatsappUrl}" target="_blank" rel="noreferrer">WhatsApp cliente</a>` : ""}
       <button class="danger" type="button" data-delete-order="${escapeHtml(order.id)}" data-order-label="${escapeHtml(order.customer_name || order.id || "pedido")}">Eliminar pedido</button>
@@ -3830,27 +3848,43 @@ async function deleteClosedOrders() {
 function renderMerch() {
   const editor = document.querySelector("#editor");
   if (!data.settings.merch) data.settings.merch = { enabled: true, products: [] };
-  const products = data.settings.merch.products || [];
-  const intro = `<div class="intro-actions"><button id="add-merch-product" class="primary" type="button">Añadir producto</button></div>`;
+  const intro = `<div class="intro-actions"><button id="refresh-admin-catalog" type="button">Actualizar catálogo</button></div>`;
   const general = groupTemplate({
     title: "Configuración de tienda",
-    help: "La tienda funciona como reserva: no cobra online. El pedido se envía por WhatsApp para confirmarlo contigo.",
+    help: "La tienda recibe pedidos por encargo. Los pedidos se consultan en la pestaña Pedidos.",
     fields: [
       ["Tienda activa", ["settings", "merch", "enabled"], "booleanText"],
-      ["Enlace catálogo JHK", ["settings", "merch", "catalogUrl"], "input"],
       ["Nota de pago/confirmación", ["settings", "merch", "note"], "textarea"]
     ]
   });
   editor.innerHTML = `
     ${renderIntro(intro)}
+    <div id="admin-live-catalog" role="status" aria-live="polite">Cargando catálogo…</div>
+    <details class="simple-advanced"><summary>Ajustes de la tienda</summary>
     ${general}
-    ${products.length ? products.map(merchProductTemplate).join("") : `<article class="editor-group"><header><h3>No hay productos</h3><p>Pulsa Añadir producto para crear la tienda.</p></header></article>`}
+    </details>
   `;
   bindFields(editor);
-  document.querySelector("#add-merch-product").addEventListener("click", addMerchProduct);
-  editor.querySelectorAll("[data-remove-merch-product]").forEach((button) => {
-    button.addEventListener("click", () => removeMerchProduct(Number(button.dataset.removeMerchProduct)));
-  });
+  document.querySelector("#refresh-admin-catalog").addEventListener("click", loadAdminMerchCatalog);
+  void loadAdminMerchCatalog();
+}
+
+async function loadAdminMerchCatalog() {
+  const target = document.querySelector("#admin-live-catalog");
+  const button = document.querySelector("#refresh-admin-catalog");
+  if (!target || button?.disabled) return;
+  if (button) button.disabled = true;
+  target.textContent = "Cargando catálogo…";
+  target.setAttribute("aria-busy", "true");
+  try {
+    const products = await window.SKBC_ADMIN_CATALOG.load(orderInboxConfig());
+    if (target.isConnected) target.innerHTML = window.SKBC_ADMIN_CATALOG.html(products);
+  } catch (error) {
+    if (target.isConnected) target.textContent = error.message || "No se pudo cargar el catálogo. Pulsa Actualizar catálogo para reintentar.";
+  } finally {
+    target.setAttribute("aria-busy", "false");
+    if (button?.isConnected) button.disabled = false;
+  }
 }
 
 function merchProductTemplate(product, index) {
@@ -3907,29 +3941,29 @@ function customSectionTemplate(section, index) {
   const base = ["settings", "customSections", index];
   const groups = [
     {
-      title: `Ãrea ${index + 1}`,
+      title: `Área ${index + 1}`,
       help: "Puedes activarla, cambiar estilo, imagen, enlace y traducir sus textos.",
       fields: [
         ["Activa: true o false", [...base, "enabled"], "booleanText"],
         ["Estilo: normal, soft o dark", [...base, "style"], "sectionStyle"],
         ["Imagen de fondo/lateral", [...base, "image"], "input"],
-        ["URL del botÃ³n", [...base, "url"], "input"],
+        ["URL del botón", [...base, "url"], "input"],
         ["ES etiqueta", [...base, "languages", "es", "eyebrow"], "input"],
-        ["ES tÃ­tulo", [...base, "languages", "es", "title"], "input"],
+        ["ES título", [...base, "languages", "es", "title"], "input"],
         ["ES texto", [...base, "languages", "es", "text"], "textarea"],
-        ["ES botÃ³n", [...base, "languages", "es", "button"], "input"],
+        ["ES botón", [...base, "languages", "es", "button"], "input"],
         ["EU etiqueta", [...base, "languages", "eu", "eyebrow"], "input"],
-        ["EU tÃ­tulo", [...base, "languages", "eu", "title"], "input"],
+        ["EU título", [...base, "languages", "eu", "title"], "input"],
         ["EU texto", [...base, "languages", "eu", "text"], "textarea"],
-        ["EU botÃ³n", [...base, "languages", "eu", "button"], "input"],
+        ["EU botón", [...base, "languages", "eu", "button"], "input"],
         ["EN etiqueta", [...base, "languages", "en", "eyebrow"], "input"],
-        ["EN tÃ­tulo", [...base, "languages", "en", "title"], "input"],
+        ["EN título", [...base, "languages", "en", "title"], "input"],
         ["EN texto", [...base, "languages", "en", "text"], "textarea"],
-        ["EN botÃ³n", [...base, "languages", "en", "button"], "input"]
+        ["EN botón", [...base, "languages", "en", "button"], "input"]
       ]
     }
   ];
-  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-section="${index}" type="button">Eliminar esta Ã¡rea</button></div>`;
+  return `<div class="custom-card">${groups.map(groupTemplate).join("")}<button class="danger" data-remove-section="${index}" type="button">Eliminar esta área</button></div>`;
 }
 
 function addCustomSection() {
@@ -3940,7 +3974,7 @@ function addCustomSection() {
     image: "",
     url: "",
     languages: {
-      es: { eyebrow: "Nueva Ã¡rea", title: "TÃ­tulo de la nueva Ã¡rea", text: "Escribe aquÃ­ el contenido.", button: "" },
+      es: { eyebrow: "Nueva área", title: "Título de la nueva área", text: "Escribe aquí el contenido.", button: "" },
       eu: { eyebrow: "Atal berria", title: "Atal berriaren izenburua", text: "Idatzi hemen edukia.", button: "" },
       en: { eyebrow: "New area", title: "New area title", text: "Write the content here.", button: "" }
     }
@@ -3950,7 +3984,7 @@ function addCustomSection() {
 }
 
 function removeCustomSection(index) {
-  if (!confirm("Â¿Eliminar esta Ã¡rea nueva?")) return;
+  if (!confirm("¿Eliminar esta área nueva?")) return;
   data.settings.customSections.splice(index, 1);
   markDirty();
   renderCustom();
@@ -3959,11 +3993,11 @@ function removeCustomSection(index) {
 function renderAdvanced() {
   const editor = document.querySelector("#editor");
   editor.innerHTML = `
-    ${renderIntro(`<p class="advanced-warning">AquÃ­ puedes editar absolutamente todo. Antes de tocarlo, usa Exportar copia.</p>`)}
+    ${renderIntro(`<p class="advanced-warning">Aquí puedes editar absolutamente todo. Antes de tocarlo, usa Exportar copia.</p>`)}
     <article class="editor-group">
       <header>
         <h3>Contenido completo</h3>
-        <p>Formato JSON. Si hay una coma mal puesta, no se aplicarÃ¡ el cambio.</p>
+        <p>Formato JSON. Si hay una coma mal puesta, no se aplicará el cambio.</p>
       </header>
       <div class="advanced-editor">
         <textarea id="json-editor" spellcheck="false">${escapeHtml(JSON.stringify(data, null, 2))}</textarea>
@@ -3977,7 +4011,7 @@ function renderAdvanced() {
       markDirty();
       setStatus("JSON aplicado. Falta guardar cambios.", "warning");
     } catch (error) {
-      setStatus(`JSON no vÃ¡lido: ${error.message}`, "danger");
+      setStatus(`JSON no válido: ${error.message}`, "danger");
     }
   });
 }
@@ -4508,7 +4542,7 @@ async function uploadImageFile(file) {
   }
 
   if (location.protocol === "file:") {
-    throw new Error("Abre el editor con ABRIR-EDITOR-Y-PUBLICAR.bat para subir imÃ¡genes.");
+    throw new Error("Abre el editor con ABRIR-EDITOR-Y-PUBLICAR.bat para subir imágenes.");
   }
 
   const response = await fetch("/api/upload-image", {
@@ -4626,12 +4660,16 @@ document.querySelector("#publish").addEventListener("click", async () => {
     return;
   }
 
-  if (!confirm("Â¿Guardar estos cambios y publicarlos en GitHub Pages?")) return;
+  if (!confirm("¿Publicar estos cambios en la web?")) return;
 
+  const submittedContent = structuredClone(data);
   try {
-    setStatus("Publicando en GitHub...", "warning");
+    setStatus("Publicando cambios…", "warning");
+    document.querySelector("#publish").disabled = true;
+    document.querySelector("#editor").inert = true;
+    document.querySelector("#admin-shell aside").inert = true;
     if (shouldUseGithubApi()) {
-      const result = await publishWithGithubApi(data);
+      const result = await publishWithGithubApi(submittedContent);
       dirty = false;
       setStatus(result.message, "ok");
       alert(`${result.message}\n\nURL: ${result.url}`);
@@ -4641,15 +4679,21 @@ document.querySelector("#publish").addEventListener("click", async () => {
     const response = await fetch("/api/publish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ content: submittedContent, baseline: publishedContentSnapshot })
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "No se pudo publicar");
-    dirty = false;
-    setStatus(result.message || "Publicado en GitHub Pages", "ok");
+    dirty = !deepEqual(data, submittedContent);
+    publishedContentSnapshot = structuredClone(submittedContent);
+    publishedContentSignature = contentSignature(submittedContent);
+    setStatus(dirty ? "Cambios publicados. Hay nuevos cambios sin publicar." : (result.message || "Cambios publicados"), dirty ? "warning" : "ok");
     alert(`${result.message}\n\nURL: ${result.url}`);
   } catch (error) {
-    setStatus(`Error al publicar: ${error.message}`, "danger");
+    setStatus(`No se pudo publicar: ${error.message}`, "danger");
+  } finally {
+    document.querySelector("#publish").disabled = false;
+    document.querySelector("#editor").inert = false;
+    document.querySelector("#admin-shell aside").inert = false;
   }
 });
 
@@ -4746,9 +4790,7 @@ function wait(ms) {
 
 function shouldUseGithubApi() {
   return location.hostname.endsWith("github.io")
-    || location.hostname.endsWith("skbcgipuzkoa.com")
-    || location.hostname === "localhost"
-    || location.hostname === "127.0.0.1";
+    || location.hostname.endsWith("skbcgipuzkoa.com");
 }
 
 async function githubToken() {
@@ -4757,7 +4799,7 @@ async function githubToken() {
 
   const token = prompt("Pega tu token de GitHub con permiso de escritura solo para este repositorio:");
   if (!token) throw new Error("No se ha introducido token de GitHub.");
-  if (confirm("Â¿Guardar este token en este navegador para futuras publicaciones?")) {
+  if (confirm("¿Guardar este token en este navegador para futuras publicaciones?")) {
     localStorage.setItem(GITHUB_TOKEN_KEY, token.trim());
   } else {
     sessionStorage.setItem(GITHUB_TOKEN_KEY, token.trim());
@@ -4777,7 +4819,7 @@ async function githubRequest(url, token, options = {}) {
   });
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const error = new Error(result.message || `GitHub respondiÃ³ ${response.status}`);
+    const error = new Error(result.message || `GitHub respondió ${response.status}`);
     error.status = response.status;
     error.result = result;
     throw error;
@@ -4840,7 +4882,8 @@ window.addEventListener("beforeunload", (event) => {
   event.returnValue = "";
 });
 
+window.SKBC_ADMIN_SIMPLE.install({ openPanel });
 render();
-setStatus("Listo para editar", "neutral");
+setStatus("Sin cambios pendientes", "neutral");
 
 

@@ -6,6 +6,9 @@
     <title>Editor privado SKBC GIPUZKOA</title>
     <meta name="robots" content="noindex,nofollow,noarchive" />
     <link rel="stylesheet" href="admin.css?v=20260831-calendar-visual-editor" />
+    <link rel="stylesheet" href="admin-simple.css?v=20261018-catalog" />
+    <script src="admin-simple.js?v=20261018-catalog"></script>
+    <script src="admin-catalog.js?v=20261018-catalog"></script>
     <style>
       .admin-login {
         display: grid;
@@ -69,10 +72,10 @@
           <p>SKBC GIPUZKOA</p>
           <h1>Editor privado</h1>
         </div>
-        <p>Acceso protegido con Supabase. Usa el email y contraseña de tu usuario de Supabase.</p>
+        <p>Entra con tu email y contraseña para gestionar la web del club.</p>
         <label>Email <input id="admin-login-email" type="email" autocomplete="email" required /></label>
         <label>Contraseña <input id="admin-login-password" type="password" autocomplete="current-password" required /></label>
-        <button class="primary" type="submit">Entrar al editor</button>
+        <button class="primary" type="submit">Entrar</button>
         <span class="admin-login__error" id="admin-login-error"></span>
       </form>
     </section>
@@ -81,62 +84,23 @@
       <header class="admin-header">
         <div>
           <p>SKBC GIPUZKOA</p>
-          <h1>Editor sencillo de la web</h1>
+          <h1>Gestión de la web</h1>
           <span id="status">Listo para editar</span>
         </div>
-        <nav>
-          <a href="index.html">Ver web</a>
-          <button id="save" class="primary" type="button">Info guardado</button>
-          <button id="publish" type="button">Publicar en GitHub</button>
-          <button id="export" type="button">Exportar copia</button>
-          <label class="import-button">
-            Importar copia
-            <input id="import" type="file" accept="application/json" />
-          </label>
-          <button id="reset" class="quiet" type="button">Recargar publicado</button>
+        <nav aria-label="Publicación">
+          <a href="index.html" target="_blank" rel="noreferrer">Ver web ↗</a>
+          <button id="publish" class="primary" type="button">Publicar cambios</button>
         </nav>
+        <div class="admin-utility-storage" hidden>
+          <button id="save" type="button">Información</button>
+          <button id="export" type="button">Exportar copia</button>
+          <input id="import" type="file" accept="application/json" />
+          <button id="reset" type="button">Descartar cambios</button>
+        </div>
       </header>
 
       <main>
-        <aside>
-          <label class="mobile-panel-picker">
-            <span>Ir a sección</span>
-            <select id="mobile-panel-select">
-              <option value="dashboard">Panel</option>
-              <option value="settings">Ajustes</option>
-              <option value="system">SEO/Sistema</option>
-              <option value="es">Español</option>
-              <option value="eu">Euskera</option>
-              <option value="en">Inglés</option>
-              <option value="people">Personas</option>
-              <option value="events">Calendario</option>
-              <option value="news">Noticias</option>
-              <option value="leads">Contactos</option>
-              <option value="testimonials">Testimonios</option>
-              <option value="merch">Tienda</option>
-              <option value="orders">Pedidos</option>
-              <option value="kenshi">Kenshi</option>
-              <option value="custom">Áreas</option>
-              <option value="advanced">Todo</option>
-            </select>
-          </label>
-          <button class="tab active" data-panel="dashboard" type="button">Panel</button>
-          <button class="tab" data-panel="settings" type="button">Ajustes</button>
-          <button class="tab" data-panel="system" type="button">SEO/Sistema</button>
-          <button class="tab" data-panel="es" type="button">Español</button>
-          <button class="tab" data-panel="eu" type="button">Euskera</button>
-          <button class="tab" data-panel="en" type="button">Inglés</button>
-          <button class="tab" data-panel="people" type="button">Personas</button>
-          <button class="tab" data-panel="events" type="button">Calendario</button>
-          <button class="tab" data-panel="news" type="button">Noticias</button>
-          <button class="tab" data-panel="leads" type="button">Contactos</button>
-          <button class="tab" data-panel="testimonials" type="button">Testimonios</button>
-          <button class="tab" data-panel="merch" type="button">Tienda</button>
-          <button class="tab" data-panel="orders" type="button">Pedidos</button>
-          <button class="tab" data-panel="kenshi" type="button">Kenshi</button>
-          <button class="tab" data-panel="custom" type="button">Áreas</button>
-          <button class="tab" data-panel="advanced" type="button">Todo</button>
-        </aside>
+        <aside aria-label="Navegación principal"></aside>
         <section id="editor"></section>
       </main>
     </div>
@@ -171,7 +135,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20260831-calendar-visual-editor";
+          script.src = "admin.js?v=20261018-catalog";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }
