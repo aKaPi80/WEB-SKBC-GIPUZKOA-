@@ -169,3 +169,36 @@ test('phone tilt steers every particle type left and right and can release depos
     assert.ok(resting.vx < 0);
   }
 });
+
+test('buttons and cards collect persistent deposits while keeping the airborne supply', () => {
+  for (const mode of ['autumn', 'christmas', 'carnival']) {
+    const deposits = [];
+    const button = { id: 'button', left: 100, right: 300, top: 200, radius: 0, pileLimit: 12 };
+    const p = leaf(0, { y: 194 });
+    step([p], [button], 0.04, 0, { ...options, mode, deposits });
+    assert.equal(deposits.length, 1, mode);
+    assert.equal(deposits[0].surface, 'button');
+    assert.ok(deposits[0].resting >= 30);
+    assert.ok(p.y < 0);
+  }
+});
+
+test('button piles grow in layers but never exceed their allowed height', () => {
+  const button = { id: 'button', left: 100, right: 300, top: 200, radius: 0, pileLimit: 22 };
+  const config = { ...options, deposits: [], maxDeposits: 20 };
+  for (let i = 0; i < 15; i++) {
+    const p = leaf(i, { x: 200, y: 160, vy: 65 });
+    for (let frame = 0; frame < 30 && p.y > 0; frame++) step([p], [button], 0.04, frame * 0.04, config);
+  }
+  assert.ok(config.deposits.length > 2);
+  assert.ok(config.deposits.some(p => p.y < 194), 'a second layer must form');
+  assert.ok(config.deposits.every(p => 200 - p.y + p.size / 2 <= 22.1), 'piles cannot grow across button labels');
+});
+
+test('a released lower particle cannot land on its own upper particle and create a support cycle', () => {
+  const lower = leaf(-1, { y: 179, vy: 120, surface: 'logo' });
+  const upper = leaf(-2, { y: 185, support: -1, offset: 0, resting: 30, surface: 'logo' });
+  step([], [surface], 0.04, 0, { ...options, deposits: [lower, upper] });
+  assert.notEqual(lower.support, upper.id);
+  assert.equal(upper.support, null);
+});

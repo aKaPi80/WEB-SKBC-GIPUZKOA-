@@ -92,7 +92,27 @@
     const model = modes[options.mode];
     if (!model) return;
     const all = [...particles, ...(options.deposits || [])].filter(p => p.alive !== false);
-    const floor = surfaces.find(surface => surface.id === 'page-floor');
+    const byParticle = new Map(all.map(p => [p.id, p]));
+    const bySurface = new Map(surfaces.map(surface => [surface.id, surface]));
+    function rootSurface(p) {
+      if (p.surface && bySurface.has(p.surface)) return bySurface.get(p.surface);
+      const seen = new Set();
+      while (typeof p?.support === 'number' && !seen.has(p.id)) {
+        seen.add(p.id); p = byParticle.get(p.support);
+      }
+      return p ? bySurface.get(p.support) : null;
+    }
+    function dependsOn(p, id) {
+      const seen = new Set();
+      while (typeof p?.support === 'number' && !seen.has(p.id)) {
+        if (p.support === id) return true;
+        seen.add(p.id); p = byParticle.get(p.support);
+      }
+      return false;
+    }
+    const restingTime = surface => surface?.id === 'page-floor'
+      ? options.mode === 'christmas' ? 60 : 95
+      : options.mode === 'christmas' ? 45 : 75;
     for (const p of all) {
       p.age += dt;
       p.ignore = Math.max(0, (p.ignore || 0) - dt);
@@ -109,10 +129,10 @@
       }
       if (p.support !== null) {
         const base = typeof p.support === 'number'
-          ? all.find(other => other.id === p.support && other.support !== null && other.alive !== false)
-          : surfaces.find(surface => surface.id === p.support);
+          ? byParticle.get(p.support)
+          : bySurface.get(p.support);
         p.resting -= dt;
-        if (!base || p.resting <= 0) {
+        if (!base || base.alive === false || (typeof p.support === 'number' && base.support === null) || p.resting <= 0) {
           release(p, Math.cos(p.phase) >= 0 ? 1 : -1);
         } else {
           const stacked = typeof p.support === 'number';
@@ -141,11 +161,15 @@
           .sort((a, b) => a.top - b.top);
         // A hit can disturb a resting leaf before a new leaf finds its balance.
         const hit = all.find(other => other !== p && other.alive !== false && other.support !== null &&
-          (!other.floor || !floor || other.y > floor.top - 20) &&
           Math.abs(p.x - other.x) < (p.size + other.size) * 0.55 &&
-          previousBottom <= other.y && bottom >= other.y - other.size / 2);
+          previousBottom <= other.y && bottom >= other.y - other.size / 2 && !dependsOn(other, p.id) &&
+          (() => {
+            const root = rootSurface(other);
+            const nextTop = other.y - (other.size + p.size) * 0.42 - p.size / 2;
+            return !root || nextTop >= topAt(root, p.x) - (root.pileLimit ?? (root.id === 'page-floor' ? 38 : 22));
+          })());
         if (hit) {
-          const gentle = hit.floor || options.mode === 'christmas' || p.vy < 45;
+          const gentle = hit.id < 0 || hit.floor || options.mode === 'christmas' || p.vy < 45;
           if (!gentle) release(hit, p.x >= hit.x ? -1 : 1);
           p.vx *= -0.35;
           p.vy *= 0.3;
@@ -153,7 +177,9 @@
             p.support = hit.id; p.offset = p.x - hit.x; p.resting = model.rest;
             p.y = hit.y - (hit.size + p.size) * 0.42;
             p.floor = hit.floor;
-            if (p.floor) p.resting = options.mode === 'christmas' ? 35 : 60;
+            const root = rootSurface(hit);
+            p.surface = root?.id;
+            if (root) p.resting = restingTime(root);
           }
         } else if (candidates.length) {
           const { base, top } = candidates[0];
@@ -162,12 +188,13 @@
           p.offset = p.x - base.left;
           p.resting = model.rest * (0.6 + (p.phase / (Math.PI * 2)) * 0.8);
           p.floor = base.id === 'page-floor';
-          if (p.floor) p.resting = options.mode === 'christmas' ? 35 : 60;
+          p.surface = base.id;
+          if (options.deposits) p.resting = restingTime(base);
           p.vy = 0;
           p.angle = Math.sin(p.phase) * 24;
         }
       }
-      if (p.id >= 0 && p.floor && p.support !== null && options.deposits) {
+      if (p.id >= 0 && p.support !== null && options.deposits) {
         storeDeposit(p, options);
       }
       if (p.y > options.height + 30 || p.x < -80 || p.x > options.width + 80) {
@@ -182,7 +209,7 @@
   const mobile = isTiltDevice(navigator);
   let motionOverride = null, tiltWanted = false, sensorGranted = false;
   const motionAllowed = () => motionOverride ?? !preference.matches;
-  const selector = '.card, .split-media, .learn-photo, .team-feature__image, .instructor-photo, .news-card, .brand-mark, .hero-logo, .club-logo-panel, .ika-badge';
+  const selector = '.card, .split-media, .learn-photo, .team-feature__image, .instructor-photo, .news-card, .brand-mark, .hero-logo, .club-logo-panel, .ika-badge, .button, .nav-cta, .social-row a, .language-switch, .whatsapp-float, button';
   let active = null;
   let stop = () => {};
   const restart = () => { active = null; reconcile(); };
@@ -284,20 +311,27 @@
     const cleanupMobile = mobileControls(options);
     if (!motionAllowed()) { stop = cleanupMobile; return; }
     const nodes = [...layer.children].filter(node => !node.classList.contains('seasonal-deposit') && getComputedStyle(node).display !== 'none');
-    options.maxDeposits = Math.min(nodes.length * 2, innerWidth < 600 ? 32 : 72);
+    options.maxDeposits = Math.min(nodes.length * 5, mobile || innerWidth < 600 ? 84 : 180);
     const depositNodes = [];
     const particles = nodes.map((node, id) => createParticle(id, options));
     layer.classList.add('seasonal-layer--physics');
     let surfaces = [], measureAt = -1, last = 0, frame = 0, disposed = false;
     const elements = new Map();
+    let nextSurfaceId = 0;
     function measure() {
       options.width = innerWidth; options.height = innerHeight;
+      const anchors = new Set(options.deposits.filter(p => p.alive !== false && p.support !== null).map(p => p.surface));
+      for (const element of elements.keys()) if (!element.isConnected) elements.delete(element);
       surfaces = [...document.querySelectorAll(selector)].flatMap(element => {
+        if (element.closest('.seasonal-controls')) return [];
         const rect = element.getBoundingClientRect();
-        if (rect.width < 15 || rect.height < 15 || rect.bottom < 0 || rect.top > innerHeight) return [];
-        if (!elements.has(element)) elements.set(element, `surface-${elements.size}`);
+        if (rect.width < 15 || rect.height < 15) return [];
+        if ((rect.bottom < 0 || rect.top > innerHeight) && !anchors.has(elements.get(element))) return [];
+        if (getComputedStyle(element).visibility !== 'visible') return [];
+        if (!elements.has(element)) elements.set(element, `surface-${nextSurfaceId++}`);
         const radius = element.matches('.hero-logo, .brand-mark') ? Math.min(rect.width, rect.height) / 2 : 0;
-        return [{ id: elements.get(element), left: rect.left, right: rect.right, top: rect.top, radius }];
+        const small = element.matches('button, .button, .nav-cta, .social-row a, .language-switch, .whatsapp-float');
+        return [{ id: elements.get(element), left: rect.left, right: rect.right, top: rect.top, radius, pileLimit: small ? 20 : 28 }];
       });
       const documentHeight = document.scrollingElement?.scrollHeight || document.documentElement.scrollHeight;
       surfaces.push(floorSurface(innerWidth, documentHeight, scrollY));

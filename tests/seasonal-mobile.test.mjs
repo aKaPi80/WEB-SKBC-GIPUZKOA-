@@ -158,3 +158,39 @@ test('missing Safari sensor data falls back to normal animation and page restore
     assert.equal(await page.locator('.seasonal-controls').count(), 1);
   } finally { await browser.close(); }
 });
+
+test('button accumulations work on PC and Safari mobile, stay attached during scrolling and preserve clicks', async () => {
+  for (const device of ['Desktop Chrome', 'iPhone 13', 'iPad Pro 11']) {
+    const browser = device === 'Desktop Chrome' ? await chromium.launch({ headless: true, channel: 'msedge' }) : await webkit.launch();
+    try {
+      const page = await scene(browser, device);
+      await page.evaluate(() => {
+        const button = document.createElement('button');
+        button.id = 'collecting-button'; button.textContent = 'Acción';
+        button.style.cssText = 'position:absolute;left:calc(50% - 90px);top:calc(50vh + 10px);width:180px;height:44px';
+        window.pileClicks = 0;
+        button.onclick = () => window.pileClicks++;
+        document.body.append(button);
+      });
+      const before = await page.locator('#collecting-button').boundingBox();
+      const height = await page.evaluate(() => document.scrollingElement.scrollHeight);
+      await layer(page, 'autumn');
+      await page.waitForSelector('.seasonal-deposit');
+      const deposit = page.locator('.seasonal-deposit').first();
+      const landed = await deposit.boundingBox();
+      assert.ok(Math.abs(landed.y + landed.height - before.y) < 1);
+      assert.deepEqual(await page.locator('#collecting-button').boundingBox(), before);
+      await page.evaluate(() => scrollTo(0, 1000));
+      await page.waitForFunction(() => document.querySelector('.seasonal-deposit').getBoundingClientRect().bottom < 0);
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.waitForFunction(top => {
+        const r = document.querySelector('.seasonal-deposit').getBoundingClientRect();
+        return Math.abs(r.bottom - top) < 1;
+      }, before.y);
+      await page.locator('#collecting-button').click();
+      assert.equal(await page.evaluate(() => window.pileClicks), 1);
+      assert.equal(await page.evaluate(() => document.scrollingElement.scrollHeight), height);
+      await page.close();
+    } finally { await browser.close(); }
+  }
+});

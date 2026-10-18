@@ -102,7 +102,7 @@ test('the real cursor dislodges accumulations without blocking clicks or touch s
         document.body.append(layer);
       }, mode);
       await page.waitForFunction(() => {
-        const particle = document.querySelector('.seasonal-layer span');
+        const particle = document.querySelector('.seasonal-deposit');
         if (!particle) return false;
         const rect = particle.getBoundingClientRect();
         const key = `${rect.x},${rect.y},${rect.width},${rect.height}`;
@@ -113,7 +113,7 @@ test('the real cursor dislodges accumulations without blocking clicks or touch s
         }
         return performance.now() - previous.time > 80 && Math.abs(rect.bottom - 508) < 0.05;
       });
-      const particle = page.locator('.seasonal-layer span');
+      const particle = page.locator('.seasonal-deposit').first();
       const resting = await particle.boundingBox();
       await page.evaluate(() => document.dispatchEvent(new PointerEvent('pointermove', {
         pointerType: 'touch', clientX: 720, clientY: 503, movementX: 100, bubbles: true
@@ -123,7 +123,7 @@ test('the real cursor dislodges accumulations without blocking clicks or touch s
       await page.mouse.move(640, 503);
       await page.mouse.move(780, 503, { steps: 6 });
       await page.waitForFunction(before => {
-        const r = document.querySelector('.seasonal-layer span').getBoundingClientRect();
+        const r = document.querySelector('.seasonal-deposit').getBoundingClientRect();
         return Math.abs(r.x - before.x) + Math.abs(r.y - before.y) > 5;
       }, resting);
       await page.locator('#action').click();
