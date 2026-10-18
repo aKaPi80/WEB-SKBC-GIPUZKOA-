@@ -27,9 +27,9 @@ test('catalog failure renders an approved browse-only fallback with pending conf
   assert.match(app, /variant\.is_orderable/);
 });
 
-test('product cards show SKBC descriptions and attribution without supplier links or prices', () => {
+test('product cards show SKBC descriptions without generation notes, supplier links or prices', () => {
   const cardSource = app.slice(app.indexOf('function merchProductCard'), app.indexOf('function merchCartHtml'));
-  assert.match(cardSource, /image_attribution/);
+  assert.doesNotMatch(cardSource, /image_attribution|Imagen orientativa generada/);
   assert.match(cardSource, /product\.description/);
   assert.doesNotMatch(cardSource, /source_url|Ficha oficial Fujimae|href=/);
   assert.doesNotMatch(cardSource, /price_cents|unit_price_cents|money\(/);
@@ -80,7 +80,7 @@ test('ordering UI includes stable drawer states and the supplied size guide', ()
   assert.doesNotMatch(app, /0000 \(110 cm\).*7 \(210 cm\)/);
   assert.match(styles, /\.merch-size-modal\.is-open/);
   assert.match(html, /styles\.css\?v=20260928-category-accordions/);
-  assert.match(html, /app\.js\?v=20260928-category-accordions/);
+  assert.match(html, /app\.js\?v=20261018-product-images/);
 });
 
 test('catalog cards keep details collapsed until the customer opens them', () => {

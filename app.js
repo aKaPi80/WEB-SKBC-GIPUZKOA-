@@ -1203,7 +1203,6 @@ function activeVariantPrice(variant) {
 }
 
 function merchProductCard(product) {
-  const attribution = product.image_attribution || product.metadata?.image_attribution || "Imagen orientativa generada para SKBC";
   const orderable = state.merchCatalog.catalogSource !== "fallback" && productVariants(product.id).some((variant) => variant.is_orderable !== false);
   const sizeGuide = productCategory(product) === "gi"
     ? `<button class="merch-size-thumb" type="button" data-open-size-guide><img src="assets/guides/guia-tallas-dogis.png" alt="Vista previa de la guía de tallas" /><span>Guía de tallas · Ver en grande</span></button>`
@@ -1213,7 +1212,6 @@ function merchProductCard(product) {
       <summary class="merch-product__summary">
         <div class="merch-product__image">
           <img src="${escapeHtml(product.image_url || "assets/logo-skbc-full.png")}" alt="Imagen orientativa de ${escapeHtml(product.name)}" loading="lazy" />
-          <small>${escapeHtml(attribution)}</small>
         </div>
         <div class="merch-product__heading">
           <span>Ref. ${escapeHtml(product.supplier_reference)}</span>
