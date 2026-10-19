@@ -140,12 +140,13 @@ const settingsGroups = [
   },
   {
     title: "Estilo visual",
-    help: "Elige los efectos de temporada y activa, si corresponde, el lazo de luto o los colores del Día de la Mujer. Se pueden combinar sin cambiar la posición de los logos.",
+    help: "Elige los efectos de temporada y combina el lazo negro, el lazo rosa de solidaridad con las personas afectadas por el cáncer de mama y los colores del Día de la Mujer. Los lazos permanecen adheridos al logo.",
     fields: [
       ["Paleta visual", ["settings", "theme", "palette"], "palette"],
       ["Contraste de la foto principal", ["settings", "theme", "heroOverlay"], "overlay"],
       ["Efecto especial manual", ["settings", "specialVisual", "mode"], "specialVisualMode"],
       ["Lazo de luto (combinable con cualquier efecto)", ["settings", "specialVisual", "mourning"], "specialVisualToggle"],
+      ["Lazo rosa · cáncer de mama (combinable con cualquier efecto)", ["settings", "specialVisual", "breastCancer"], "specialVisualToggle"],
       ["Día de la Mujer (colores y mensaje combinables)", ["settings", "specialVisual", "womensDay"], "specialVisualToggle"],
       ["Intensidad del efecto", ["settings", "specialVisual", "intensity"], "specialVisualIntensity"],
       ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"],
@@ -1361,7 +1362,8 @@ function controlTemplate(id, encodedPath, value, type) {
       ["autumn", "Otoño: hojas"],
       ["carnival", "Carnaval: confeti"],
       ["womensDay", "Día de la Mujer: morado"],
-      ["mourning", "Luto: lazo negro"]
+      ["mourning", "Luto: lazo negro"],
+      ["breastCancer", "Cáncer de mama: lazo rosa"]
     ], type);
   }
   if (type === "specialVisualToggle") {
@@ -1442,7 +1444,7 @@ function specialVisualScheduleTemplate(id, encodedPath, value) {
   const rows = items.length ? items : [{ enabled: true, mode: "christmas", intensity: "medium", start: "", end: "", message: "" }];
   return `
     <div class="special-schedule-builder" data-hidden-id="${id}">
-      <small>Programa efectos por fechas. Puedes solapar luto y Día de la Mujer con nieve, hojas o confeti; las conmemoraciones se combinan con el efecto de temporada.</small>
+      <small>Programa efectos por fechas. Puedes solapar el lazo rosa, luto y Día de la Mujer con nieve, hojas o confeti. Para octubre, programa el lazo rosa del 1 al 31; se oculta al finalizar las fechas.</small>
       <textarea id="${id}" class="special-schedule-raw" data-type="specialVisualSchedule" data-path="${encodedPath}" hidden>${escapeHtml(value)}</textarea>
       <div class="special-schedule-rows">
         ${rows.map((item) => specialVisualScheduleRow(item)).join("")}
@@ -1459,7 +1461,7 @@ function specialVisualScheduleRow(item = {}) {
   return `
     <div class="special-schedule-row">
       <label>Estado ${selectPlain("enabled", enabled, [["true", "Activa"], ["false", "Pausada"]])}</label>
-      <label>Efecto ${selectPlain("mode", mode, [["christmas", "Navidad: nieve"], ["autumn", "Otoño: hojas"], ["carnival", "Carnaval: confeti"], ["womensDay", "Día de la Mujer"], ["mourning", "Luto"]])}</label>
+      <label>Efecto ${selectPlain("mode", mode, [["christmas", "Navidad: nieve"], ["autumn", "Otoño: hojas"], ["carnival", "Carnaval: confeti"], ["womensDay", "Día de la Mujer"], ["mourning", "Luto"], ["breastCancer", "Cáncer de mama: lazo rosa"]])}</label>
       <label>Intensidad ${selectPlain("intensity", intensity, [["low", "Suave"], ["medium", "Media"], ["high", "Alta"]])}</label>
       <label>Desde <input data-schedule-field="start" type="date" value="${escapeHtml(item.start || "")}" /></label>
       <label>Hasta <input data-schedule-field="end" type="date" value="${escapeHtml(item.end || "")}" /></label>

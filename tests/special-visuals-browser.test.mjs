@@ -23,8 +23,8 @@ test('combined commemorations attach ribbons to logos without changing layout at
       }));
       const baseline = await geometry();
       for (const mode of ['christmas', 'autumn', 'carnival']) {
-        const settings = { specialVisual: { mode, mourning: true, womensDay: true } };
-        const html = { hero: api.mourningRibbon(settings, 'hero'), brand: api.mourningRibbon(settings, 'brand'), layer: api.specialVisualLayer(settings) };
+        const settings = { specialVisual: { mode, mourning: true, womensDay: true, breastCancer: true } };
+        const html = { hero: api.mourningRibbon(settings, 'hero') + api.pinkRibbon(settings, 'hero'), brand: api.mourningRibbon(settings, 'brand') + api.pinkRibbon(settings, 'brand'), layer: api.specialVisualLayer(settings) };
         await page.evaluate(({ html, mode }) => {
           document.querySelector('.hero-logo').innerHTML = html.hero;
           document.querySelector('.brand-mark').innerHTML = html.brand;
@@ -46,6 +46,12 @@ test('combined commemorations attach ribbons to logos without changing layout at
         assert.ok(box.x + box.width <= parent.x + parent.width + 1);
         assert.equal(await ribbon.evaluate(node => getComputedStyle(node).position), 'absolute');
         assert.equal(await ribbon.evaluate(node => getComputedStyle(node).pointerEvents), 'none');
+        const pink = page.locator(`${visibleLogo} .logo-pink`);
+        assert.equal(await pink.isVisible(), true);
+        const pinkBox = await pink.boundingBox();
+        assert.ok(pinkBox.x >= parent.x && pinkBox.y >= parent.y);
+        assert.ok(pinkBox.x + pinkBox.width <= box.x, 'pink and mourning ribbons must not overlap');
+        assert.equal(await pink.evaluate(node => getComputedStyle(node).pointerEvents), 'none');
         assert.equal(await page.locator('.special-badge--mourning').count(), 0);
         assert.equal(await page.locator('html').evaluate(node => getComputedStyle(node).getPropertyValue('--red').trim()), '#7b2cbf');
       }

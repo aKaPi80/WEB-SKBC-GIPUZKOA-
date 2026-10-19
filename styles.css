@@ -283,7 +283,7 @@ button, input, select, textarea { font: inherit; }
   border: 3px solid #fff;
   background: transparent;
 }
-.logo-mourning {
+.logo-mourning, .logo-pink {
   position: absolute;
   z-index: 4;
   top: 8%;
@@ -294,6 +294,10 @@ button, input, select, textarea { font: inherit; }
 }
 .logo-mourning .mourning-ribbon { display: block; width: 100%; height: auto; }
 .logo-mourning--brand { display: none; width: 35%; right: 0; top: 0; }
+.logo-pink .pink-ribbon { display: block; width: 100%; height: auto; }
+.logo-pink--brand { display: none; width: 35%; right: 0; top: 0; }
+[data-mourning="true"] .logo-pink { right: auto; left: 12%; }
+[data-mourning="true"] .logo-pink--brand { left: 0; }
 
 [data-womens-day="true"] body::before {
   position: fixed;
@@ -3260,6 +3264,7 @@ textarea { resize: vertical; }
   .split-reverse .split-media { order: initial; }
   .hero-logo { display: none; }
   .logo-mourning--brand { display: block; }
+  .logo-pink--brand { display: block; }
   .hero-proof { position: relative; right: auto; left: auto; margin-top: 54px; }
   .hero-content { padding-bottom: 0; }
   .photo-grid { grid-template-columns: 1fr 1fr; }

@@ -78,4 +78,32 @@ test('editor toggles default off and persist actual booleans', async () => {
   }
   assert.match(source, /\["settings", "specialVisual", "mourning"\]/);
   assert.match(source, /\["settings", "specialVisual", "womensDay"\]/);
+  assert.match(source, /\["settings", "specialVisual", "breastCancer"\]/);
+});
+
+test('pink ribbon combines independently with weather, mourning and Womens Day', async () => {
+  const api = await setup();
+  for (const mode of ['none', 'autumn', 'christmas', 'carnival']) {
+    const settings = { specialVisual: { mode, breastCancer: true, mourning: true, womensDay: true } };
+    const visual = api.specialVisualSettings(settings);
+    assert.equal(visual.breastCancer, true);
+    assert.equal(visual.mourning, true);
+    assert.equal(visual.mode, mode === 'none' ? 'womensDay' : mode);
+    assert.match(api.pinkRibbon(settings, 'hero'), /logo-pink--hero/);
+    assert.match(api.pinkRibbon(settings, 'brand'), /pinkRibbon-brand-A/);
+    assert.match(api.mourningRibbon(settings, 'hero'), /mourningRibbon-hero-A/);
+  }
+  assert.equal(api.pinkRibbon({}, 'hero'), '');
+  assert.equal(api.pinkRibbon({ specialVisual: { breastCancer: 'false' } }), '');
+  assert.equal(api.specialVisualLayer({ specialVisual: { mode: 'breastCancer' } }), '');
+});
+
+test('pink ribbon schedule respects dates, pause and escaped accessible text', async () => {
+  const api = await setup();
+  const row = { mode: 'breastCancer', start: '2026-10-01', end: '2026-10-31', message: '<Solidaridad>' };
+  assert.equal(api.specialVisualSettings({ specialVisual: { schedule: [row] } }).breastCancer, true);
+  assert.match(api.pinkRibbon({ specialVisual: { schedule: [row] } }), /&lt;Solidaridad&gt;/);
+  for (const inactive of [{ ...row, enabled: false }, { ...row, enabled: 'false' }, { ...row, end: '2026-10-17' }, { ...row, start: '2026-10-19' }]) {
+    assert.equal(api.specialVisualSettings({ specialVisual: { schedule: [inactive] } }).breastCancer, false);
+  }
 });

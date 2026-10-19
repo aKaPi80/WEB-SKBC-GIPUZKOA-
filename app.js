@@ -1673,8 +1673,8 @@ function renderNav(copy) {
     brandImage.alt = `Logo ${system.siteName || "SKBC GIPUZKOA"}`;
   }
   const brandMark = document.querySelector(".brand-mark");
-  brandMark?.querySelector(".logo-mourning")?.remove();
-  if (brandMark) brandMark.insertAdjacentHTML("beforeend", mourningRibbon(state.content.settings, "brand"));
+  brandMark?.querySelectorAll(".logo-mourning, .logo-pink").forEach(ribbon => ribbon.remove());
+  if (brandMark) brandMark.insertAdjacentHTML("beforeend", mourningRibbon(state.content.settings, "brand") + pinkRibbon(state.content.settings, "brand"));
   const brandTitle = document.querySelector(".brand strong");
   if (brandTitle) brandTitle.textContent = system.siteName || "SKBC GIPUZKOA";
   const brandSubtitle = document.querySelector(".brand small");
@@ -1717,7 +1717,7 @@ function renderNav(copy) {
 function specialVisualSettings(settings) {
   const visual = settings.specialVisual || {};
   const particleModes = new Set(["christmas", "autumn", "carnival"]);
-  const allowedModes = new Set(["none", ...particleModes, "womensDay", "mourning"]);
+  const allowedModes = new Set(["none", ...particleModes, "womensDay", "mourning", "breastCancer"]);
   const allowedIntensities = new Set(["low", "medium", "high"]);
   const enabled = value => value === true || value === "true";
   const manual = {
@@ -1736,15 +1736,19 @@ function specialVisualSettings(settings) {
   const seasonal = active.find(item => particleModes.has(item.mode));
   const mourningSchedule = active.find(item => item.mode === "mourning");
   const womensSchedule = active.find(item => item.mode === "womensDay");
+  const pinkSchedule = active.find(item => item.mode === "breastCancer");
   const mourning = enabled(visual.mourning) || manual.mode === "mourning" || Boolean(mourningSchedule);
   const womensDay = enabled(visual.womensDay) || manual.mode === "womensDay" || Boolean(womensSchedule);
+  const breastCancer = enabled(visual.breastCancer) || manual.mode === "breastCancer" || Boolean(pinkSchedule);
   const weather = seasonal?.mode || (particleModes.has(manual.mode) ? manual.mode : "none");
   return {
-    mode: weather !== "none" ? weather : womensDay ? "womensDay" : mourning ? "mourning" : "none",
+    mode: weather !== "none" ? weather : womensDay ? "womensDay" : mourning ? "mourning" : breastCancer ? "breastCancer" : "none",
     intensity: allowedIntensities.has(seasonal?.intensity) ? seasonal.intensity : manual.intensity,
     message: String(seasonal?.message || manual.message || "").trim(),
     mourning,
     womensDay,
+    breastCancer,
+    breastCancerMessage: String(pinkSchedule?.message || (manual.mode === "breastCancer" ? manual.message : "")).trim(),
     mourningMessage: String(mourningSchedule?.message || (manual.mode === "mourning" ? manual.message : "")).trim(),
     womensDayMessage: String(womensSchedule?.message || (manual.mode === "womensDay" ? manual.message : "")).trim()
   };
@@ -1757,21 +1761,24 @@ function specialVisualCopy(mode) {
       autumn: "OtoÃ±o en el dojo",
       carnival: "Carnavales en Tolosa",
       womensDay: "8M · respeto, igualdad y confianza",
-      mourning: "SKBC GIPUZKOA se suma al luto"
+      mourning: "SKBC GIPUZKOA se suma al luto",
+      breastCancer: "Solidaridad con las personas afectadas por el cáncer de mama"
     },
     eu: {
       christmas: "Jai zoriontsuak",
       autumn: "Udazkena dojon",
       carnival: "Inauteriak Tolosan",
       womensDay: "M8 · errespetua, berdintasuna eta konfiantza",
-      mourning: "SKBC GIPUZKOA doluarekin bat egiten du"
+      mourning: "SKBC GIPUZKOA doluarekin bat egiten du",
+      breastCancer: "Elkartasuna bularreko minbiziak eragindako pertsonekin"
     },
     en: {
       christmas: "Happy holidays",
       autumn: "Autumn at the dojo",
       carnival: "Carnival in Tolosa",
       womensDay: "8M · respect, equality and confidence",
-      mourning: "SKBC GIPUZKOA joins in mourning"
+      mourning: "SKBC GIPUZKOA joins in mourning",
+      breastCancer: "Solidarity with people affected by breast cancer"
     }
   };
   return (labels[state.lang] || labels.es)[mode] || "";
@@ -1790,27 +1797,38 @@ function seasonalParticles(mode) {
 }
 
 function mourningRibbon(settings, variant = "hero") {
+  return logoRibbon(settings, variant, "mourning");
+}
+
+function pinkRibbon(settings, variant = "hero") {
+  return logoRibbon(settings, variant, "breastCancer");
+}
+
+function logoRibbon(settings, variant, kind) {
   const visual = specialVisualSettings(settings);
-  if (!visual.mourning) return "";
+  if (!visual[kind]) return "";
   const id = variant === "brand" ? "brand" : "hero";
-  const label = escapeHtml(visual.mourningMessage || specialVisualCopy("mourning"));
-  return `<span class="logo-mourning logo-mourning--${id}" role="img" aria-label="${label}" title="${label}"><svg class="mourning-ribbon" viewBox="0 0 220 300" aria-hidden="true" focusable="false">
+  const pink = kind === "breastCancer";
+  const name = pink ? "pink" : "mourning";
+  const colors = pink ? ["#a91c60", "#f28cbb", "#bc236b", "#d23b82", "#ffb2d4", "#a11b56"] : ["#0b0f10", "#293134", "#050505", "#111719", "#4a5356", "#030303"];
+  const label = escapeHtml(visual[`${kind}Message`] || specialVisualCopy(kind));
+  return `<span class="logo-${name} logo-${name}--${id}" role="img" aria-label="${label}" title="${label}"><svg class="${name}-ribbon" viewBox="0 0 220 300" aria-hidden="true" focusable="false">
         <defs>
-          <linearGradient id="mourningRibbon-${id}-A" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stop-color="#0b0f10" />
-            <stop offset="0.48" stop-color="#293134" />
-            <stop offset="1" stop-color="#050505" />
+          <linearGradient id="${name}Ribbon-${id}-A" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="${colors[0]}" />
+            <stop offset="0.48" stop-color="${colors[1]}" />
+            <stop offset="1" stop-color="${colors[2]}" />
           </linearGradient>
-          <linearGradient id="mourningRibbon-${id}-B" x1="1" x2="0" y1="0" y2="1">
-            <stop offset="0" stop-color="#111719" />
-            <stop offset="0.5" stop-color="#4a5356" />
-            <stop offset="1" stop-color="#030303" />
+          <linearGradient id="${name}Ribbon-${id}-B" x1="1" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="${colors[3]}" />
+            <stop offset="0.5" stop-color="${colors[4]}" />
+            <stop offset="1" stop-color="${colors[5]}" />
           </linearGradient>
         </defs>
-        <path d="M110 20C63 20 38 55 47 98c7 34 31 70 63 111 31-41 56-77 63-111 9-43-16-78-63-78Zm0 34c24 0 36 16 32 39-4 20-17 44-32 68-16-24-29-48-33-68-4-23 9-39 33-39Z" fill="url(#mourningRibbon-${id}-A)" />
-        <path d="M102 143 28 272h55l73-128c15-26 21-47 16-71-3-17-11-31-24-40 6 33-5 65-46 110Z" fill="url(#mourningRibbon-${id}-A)" />
-        <path d="M119 143 192 272h-55L64 144C49 118 43 97 48 73c3-17 11-31 24-40-6 33 5 65 47 110Z" fill="url(#mourningRibbon-${id}-B)" />
-        <path d="M80 244h35l-31 43-15-29 11-14Zm60 0h-35l31 43 15-29-11-14Z" fill="#050505" />
+        <path d="M110 20C63 20 38 55 47 98c7 34 31 70 63 111 31-41 56-77 63-111 9-43-16-78-63-78Zm0 34c24 0 36 16 32 39-4 20-17 44-32 68-16-24-29-48-33-68-4-23 9-39 33-39Z" fill="url(#${name}Ribbon-${id}-A)" />
+        <path d="M102 143 28 272h55l73-128c15-26 21-47 16-71-3-17-11-31-24-40 6 33-5 65-46 110Z" fill="url(#${name}Ribbon-${id}-A)" />
+        <path d="M119 143 192 272h-55L64 144C49 118 43 97 48 73c3-17 11-31 24-40-6 33 5 65 47 110Z" fill="url(#${name}Ribbon-${id}-B)" />
+        <path d="M80 244h35l-31 43-15-29 11-14Zm60 0h-35l31 43 15-29-11-14Z" fill="${colors[2]}" />
       </svg></span>`;
 }
 
@@ -1819,7 +1837,7 @@ function specialVisualLayer(settings) {
   const particles = seasonalParticles(visual.mode);
   const layer = particles ? `<div class="seasonal-layer seasonal-layer--${visual.mode}" aria-hidden="true">${particles}</div>` : "";
   const badgeMode = visual.womensDay ? "womensDay" : visual.mode;
-  if (badgeMode === "none" || badgeMode === "mourning") return layer;
+  if (["none", "mourning", "breastCancer"].includes(badgeMode)) return layer;
   const message = escapeHtml(visual.womensDay
     ? visual.womensDayMessage || specialVisualCopy("womensDay")
     : visual.message || specialVisualCopy(visual.mode));
@@ -1893,7 +1911,7 @@ function render() {
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
       <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
-      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}</div>
+      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}${pinkRibbon(settings, "hero")}</div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>

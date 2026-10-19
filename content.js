@@ -63,6 +63,13 @@ window.SKBC_CONTENT = {
       "schedule": [
         {
           "enabled": true,
+          "mode": "breastCancer",
+          "start": "2026-10-01",
+          "end": "2026-10-31",
+          "message": ""
+        },
+        {
+          "enabled": true,
           "mode": "christmas",
           "intensity": "high",
           "start": "2026-12-20",
