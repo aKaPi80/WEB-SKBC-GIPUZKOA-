@@ -3987,9 +3987,9 @@ textarea { resize: vertical; }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  body { cursor: url("assets/cursor-gassho.svg") 16 3, auto; }
+  body { cursor: url("assets/cursor-gassho-natural.png") 20 2, auto; }
   body :is(a[href], button, summary, select, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"]) {
-    cursor: url("assets/cursor-gassho.svg") 16 3, pointer;
+    cursor: url("assets/cursor-gassho-natural.png") 20 2, pointer;
   }
   body :is(input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="search"], input[type="url"], input[type="password"], input[type="number"], textarea, [contenteditable="true"], [contenteditable=""]) {
     cursor: text;
