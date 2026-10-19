@@ -1902,6 +1902,11 @@ function render() {
           <a class="button" href="${whatsappLink(copy.hero.primary)}" target="_blank" rel="noreferrer">${copy.hero.primary}</a>
           <a class="button secondary" href="#horarios">${copy.hero.secondary}</a>
         </div>
+        <a class="hero-ika" href="${escapeHtml(settings.ikaUrl)}" target="_blank" rel="noopener noreferrer">
+          <img src="${optimizedImage('assets/ika-logo-white.png')}" width="52" height="66" alt="International Kempo Association (IKA)" />
+          <span><strong>SKBC GIPUZKOA</strong><span>${state.lang === 'eu' ? 'IKAren ordezkari ofiziala Espainian' : state.lang === 'en' ? 'Official IKA representative in Spain' : 'Representante oficial IKA España'}</span></span>
+          <span class="hero-ika__arrow" aria-hidden="true">↗</span>
+        </a>
       </div>
       <div class="hero-proof">
         ${copy.hero.cards.map((card) => `<article><strong>${card[0]}</strong><span>${card[1]}</span></article>`).join("")}

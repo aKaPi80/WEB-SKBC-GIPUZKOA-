@@ -530,6 +530,31 @@ h2 { margin-bottom: 18px; font-size: clamp(32px, 4vw, 52px); line-height: 1.08; 
 h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .hero-content p:not(.eyebrow) { max-width: 660px; color: rgba(255,255,255,.9); font-size: clamp(18px, 2.1vw, 23px); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.hero-ika {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 28px;
+  padding: 12px 18px 12px 12px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(16,17,19,.82);
+}
+.hero-ika img { display: block; flex: 0 0 auto; width: 52px; height: 66px; object-fit: contain; border-radius: 3px; background: #fff; }
+.hero-ika strong { display: block; margin-bottom: 3px; font-size: 14px; letter-spacing: .05em; }
+.hero-ika > span > span { display: block; font-size: 14px; line-height: 1.4; color: rgba(255,255,255,.88); }
+.hero-ika__arrow { margin-left: 8px; font-size: 21px; color: var(--gold); }
+.hero-ika:hover { border-color: var(--gold); }
+.hero-ika:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+@media (max-width: 640px) {
+  .hero-ika { gap: 12px; padding-right: 12px; }
+  .hero-ika > span { min-width: 0; }
+  .hero-ika > span > span { font-size: 13px; }
+  .hero-ika__arrow { margin-left: 0; }
+}
 .hero-proof {
   position: absolute;
   right: clamp(18px, 5vw, 70px);
