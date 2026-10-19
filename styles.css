@@ -515,6 +515,13 @@ button, input, select, textarea { font: inherit; }
   height: 100%;
   object-fit: contain;
 }
+.hero-dojo-seal { display: block; }
+.hero-dojo-seal img { display: block; width: 100%; height: auto; }
+.hero-dojo-seal--desktop { position: absolute; z-index: 3; width: 27%; right: -5%; bottom: -4%; }
+.hero-dojo-seal--mobile { display: none; }
+@media (max-width: 1100px) {
+  .hero-dojo-seal--mobile { display: block; width: 110px; margin: 28px auto 0; }
+}
 .hero-content {
   position: relative;
   z-index: 2;

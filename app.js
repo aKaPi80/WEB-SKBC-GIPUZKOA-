@@ -214,6 +214,11 @@ function optimizedImage(path) {
   return aliases[pathname] ? aliases[pathname] + value.slice(pathname.length) : value;
 }
 
+function dojoSeal(variant) {
+  const label = { es: 'Sello del dojo SKBC GIPUZKOA', eu: 'SKBC GIPUZKOA dojoaren zigilua', en: 'SKBC GIPUZKOA dojo seal' }[state.lang] || 'Sello del dojo SKBC GIPUZKOA';
+  return `<span class="hero-dojo-seal hero-dojo-seal--${variant}"><img src="assets/dojo-seal.webp" width="320" height="310" alt="${label}" /></span>`;
+}
+
 function socialShortcuts(settings) {
   const icons = {
     instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>',
@@ -1928,7 +1933,7 @@ function render() {
   document.querySelector("#app").innerHTML = `
     <section class="hero" id="inicio">
       <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
-      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}${pinkRibbon(settings, "hero")}</div>
+      <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}${pinkRibbon(settings, "hero")}${dojoSeal('desktop')}</div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>
@@ -1937,6 +1942,7 @@ function render() {
           <a class="button" href="${whatsappLink(copy.hero.primary)}" target="_blank" rel="noreferrer">${copy.hero.primary}</a>
           <a class="button secondary" href="#horarios">${copy.hero.secondary}</a>
         </div>
+        ${dojoSeal('mobile')}
         <a class="hero-ika" href="${escapeHtml(settings.ikaUrl)}" target="_blank" rel="noopener noreferrer">
           <img src="${optimizedImage('assets/ika-logo-white.png')}" width="52" height="66" alt="International Kempo Association (IKA)" />
           <span><strong>SKBC GIPUZKOA</strong><span>${state.lang === 'eu' ? 'IKAren ordezkari ofiziala Espainian' : state.lang === 'en' ? 'Official IKA representative in Spain' : 'Representante oficial IKA España'}</span></span>
