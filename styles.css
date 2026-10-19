@@ -576,10 +576,12 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .hero-social__link:hover svg { color: inherit; }
 .hero-social__link:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
 @media (max-width: 640px) {
-  .hero-ika { gap: 12px; padding-right: 12px; }
+  .hero-ika { width: 100%; gap: 12px; padding-right: 12px; }
   .hero-ika > span { min-width: 0; }
   .hero-ika > span > span { font-size: 13px; }
-  .hero-ika__arrow { margin-left: 0; }
+  .hero-ika__arrow { margin-left: auto; }
+  .hero-social { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 8px; }
+  .hero-social__link { min-width: 0; flex-direction: column; gap: 6px; padding: 10px 4px; font-size: 12px; }
 }
 .hero-proof {
   position: absolute;
