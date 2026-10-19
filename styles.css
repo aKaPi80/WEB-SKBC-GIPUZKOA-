@@ -3986,3 +3986,15 @@ textarea { resize: vertical; }
   .merch-drawer__backdrop { transition: none; }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: url("assets/cursor-fist.svg") 16 8, auto; }
+  body :is(a[href], button, summary, select, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"]) {
+    cursor: url("assets/cursor-fist.svg") 16 8, pointer;
+  }
+  body :is(input:not([type]), input[type="text"], input[type="email"], input[type="tel"], input[type="search"], input[type="url"], input[type="password"], input[type="number"], textarea, [contenteditable="true"], [contenteditable=""]) {
+    cursor: text;
+  }
+  body :is(button, input, select, textarea):disabled,
+  body [aria-disabled="true"] { cursor: not-allowed; }
+}
+
