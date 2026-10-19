@@ -214,6 +214,23 @@ function optimizedImage(path) {
   return aliases[pathname] ? aliases[pathname] + value.slice(pathname.length) : value;
 }
 
+function socialShortcuts(settings) {
+  const icons = {
+    instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>',
+    facebook: '<path d="M14 21v-8h3l.5-4H14V7c0-1 .3-2 2-2h2V1.5A25 25 0 0 0 15 1c-3 0-5 2-5 5v3H7v4h3v8"/>',
+    youtube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3Z" fill="currentColor" stroke="none"/>'
+  };
+  const links = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube']].flatMap(([key, label]) => {
+    let url;
+    try { url = new URL(settings[key]); } catch { return []; }
+    if (url.protocol !== 'https:') return [];
+    return [`<a class="hero-social__link hero-social__link--${key}" href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false">${icons[key]}</svg><span>${label}</span></a>`];
+  });
+  if (!links.length) return '';
+  const label = { es: 'Redes sociales del club', eu: 'Klubaren sare sozialak', en: 'Club social media' }[state.lang] || 'Redes sociales del club';
+  return `<nav class="hero-social" aria-label="${label}">${links.join('')}</nav>`;
+}
+
 function systemLogo(key, fallback) {
   return optimizedImage(systemSettings()[key] || fallback);
 }
@@ -1925,6 +1942,7 @@ function render() {
           <span><strong>SKBC GIPUZKOA</strong><span>${state.lang === 'eu' ? 'IKAren ordezkari ofiziala Espainian' : state.lang === 'en' ? 'Official IKA representative in Spain' : 'Representante oficial IKA España'}</span></span>
           <span class="hero-ika__arrow" aria-hidden="true">↗</span>
         </a>
+        ${socialShortcuts(settings)}
       </div>
       <div class="hero-proof">
         ${copy.hero.cards.map((card) => `<article><strong>${card[0]}</strong><span>${card[1]}</span></article>`).join("")}
