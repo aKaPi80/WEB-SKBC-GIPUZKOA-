@@ -3,6 +3,7 @@
   const groups = [
     { id: 'home', label: 'Inicio', icon: '⌂', panels: [['dashboard', 'Inicio']] },
     { id: 'website', label: 'Editar web', icon: '✎', panels: [['es', 'Textos'], ['people', 'Equipo y personas'], ['settings', 'Fotos, horarios y contacto'], ['eu', 'Euskera'], ['en', 'Inglés'], ['custom', 'Otras secciones']] },
+    { id: 'visual', label: 'Estilo visual', icon: '◐', panels: [['visual', 'Estilo visual']] },
     { id: 'updates', label: 'Calendario y noticias', icon: '▦', panels: [['events', 'Calendario'], ['news', 'Noticias']] },
     { id: 'shop', label: 'Tienda y pedidos', icon: '▤', panels: [['orders', 'Pedidos'], ['merch', 'Productos']] },
     { id: 'requests', label: 'Solicitudes', icon: '☰', panels: [['leads', 'Contactos'], ['kenshi', 'Accesos Kenshi'], ['testimonials', 'Testimonios']] },

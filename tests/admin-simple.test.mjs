@@ -36,11 +36,12 @@ test('an edit made during a publication remains pending and is not included in t
   assert.equal(element.disabled, false);
 });
 
-test('every existing panel remains reachable through five main groups and configuration', async () => {
+test('every existing panel and the visual-style shortcut remain reachable', async () => {
   const context = { window: {} };
   vm.runInNewContext(await readFile(new URL('../admin-simple.js', import.meta.url), 'utf8'), context);
   const { groups, groupFor } = context.window.SKBC_ADMIN_SIMPLE;
-  assert.equal(groups.filter(group => !group.secondary).length, 5);
+  assert.equal(groups.filter(group => !group.secondary).length, 6);
+  assert.equal(groupFor('visual')?.label, 'Estilo visual');
   for (const panel of ['dashboard', 'settings', 'system', 'es', 'eu', 'en', 'people', 'events', 'news', 'leads', 'testimonials', 'merch', 'orders', 'kenshi', 'custom', 'advanced']) {
     assert.ok(groupFor(panel), `${panel} is reachable`);
   }

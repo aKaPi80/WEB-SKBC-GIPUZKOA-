@@ -60,6 +60,8 @@ panelTitles.kenshi = "Area Kenshi";
 labels.kenshi = "Kenshi";
 Object.assign(panelTitles, { dashboard: "Inicio", es: "Textos de la web", eu: "Textos en euskera", en: "Textos en inglés", settings: "Fotos, horarios y contacto", orders: "Pedidos", leads: "Contactos", merch: "Productos de la tienda" });
 Object.assign(labels, { dashboard: "Inicio", es: "Español", eu: "Euskera", en: "Inglés", settings: "Editar web" });
+panelTitles.visual = "Estilo visual";
+labels.visual = "Apariencia de la web";
 
 const settingsGroups = [
   {
@@ -139,6 +141,7 @@ const settingsGroups = [
     ]
   },
   {
+    id: "visual-style",
     title: "Estilo visual",
     help: "Elige los efectos de temporada y combina el lazo negro, el lazo rosa de solidaridad con las personas afectadas por el cáncer de mama y los colores del Día de la Mujer. Los lazos permanecen adheridos al logo.",
     fields: [
@@ -559,6 +562,7 @@ function render() {
   else if (currentPanel === "custom") renderCustom();
   else if (currentPanel === "dashboard") renderDashboard();
   else if (currentPanel === "system") renderSystem();
+  else if (currentPanel === "visual") renderGroups(settingsGroups.filter(group => group.id === "visual-style"));
   else if (currentPanel === "people") renderPeople();
   else if (currentPanel === "events") renderEvents();
   else if (currentPanel === "news") renderNews();
@@ -608,7 +612,7 @@ function enhanceMobileCollapsers() {
     const header = group.querySelector(":scope > header");
     if (!header) return;
     group.dataset.mobileAccordionReady = "true";
-    group.dataset.mobileCollapsed = group.dataset.mobileKeepOpen === "true" || ["orders", "leads", "testimonials", "kenshi", "events", "news"].includes(currentPanel) || (index === 0 && currentPanel === "dashboard") ? "false" : "true";
+    group.dataset.mobileCollapsed = group.dataset.mobileKeepOpen === "true" || ["visual", "orders", "leads", "testimonials", "kenshi", "events", "news"].includes(currentPanel) || (index === 0 && currentPanel === "dashboard") ? "false" : "true";
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "mobile-collapse-toggle";
