@@ -150,5 +150,5 @@
       }
     }
   }
-  window.SKBC_ADMIN_NEWS={createStore,configure,render,hasDraft:()=>Boolean(store?.hasDraft()),hasUnsaved:()=>Boolean(store?.hasUnsaved()),isBusy:()=>busy,cancel:()=>store?.cancel()};
+  window.SKBC_ADMIN_NEWS={createStore,configure,render,open:index=>{store.start(index);render();},hasDraft:()=>Boolean(store?.hasDraft()),hasUnsaved:()=>Boolean(store?.hasUnsaved()),isBusy:()=>busy,cancel:()=>store?.cancel()};
 })();

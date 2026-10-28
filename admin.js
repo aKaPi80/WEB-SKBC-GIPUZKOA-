@@ -549,6 +549,7 @@ function setStatus(text, mode = "neutral") {
 function markDirty() {
   dirty = true;
   setStatus("Cambios sin publicar", "warning");
+  window.SKBC_EDITOR_WORKSPACE?.refresh();
 }
 
 function render() {
@@ -576,6 +577,7 @@ function render() {
 
   enhanceMobileCollapsers();
   window.SKBC_ADMIN_SIMPLE.enhance(currentPanel);
+  window.SKBC_EDITOR_WORKSPACE?.refresh();
 }
 
 function renderIntro(extra = "") {
@@ -1247,7 +1249,7 @@ async function translatePersonRow(row, button, syncPeople) {
 function groupTemplate(group) {
   const translate = currentPanel === "es" ? `<button class="translate-section" type="button" data-translate-section="${encodeURIComponent(JSON.stringify(group.fields))}">Traducir esta sección a EU/EN</button>` : "";
   return `
-    <article class="editor-group">
+    <article class="editor-group"${group.id === "visual-style" ? ' data-visual-settings="true"' : ""}>
       <header>
         <div>
           <h3>${group.title}</h3>
@@ -4476,7 +4478,10 @@ document.querySelector("#publish").addEventListener("click", async () => {
     return;
   }
 
-  if (!confirm("¿Publicar estos cambios en la web?")) return;
+  const approved = window.SKBC_EDITOR_WORKSPACE
+    ? await window.SKBC_EDITOR_WORKSPACE.confirmPublish()
+    : confirm("¿Publicar estos cambios en la web?");
+  if (!approved) return;
 
   const submittedContent = structuredClone(data);
   try {
@@ -4510,6 +4515,7 @@ document.querySelector("#publish").addEventListener("click", async () => {
     document.querySelector("#publish").disabled = false;
     document.querySelector("#editor").inert = false;
     document.querySelector("#admin-shell aside").inert = false;
+    window.SKBC_EDITOR_WORKSPACE?.refresh();
   }
 });
 
@@ -4698,6 +4704,51 @@ window.addEventListener("beforeunload", (event) => {
   event.returnValue = "";
 });
 
+
+function editorWorkspaceFields() {
+  const fields=[];
+  function add(groups,panel,suffix="") {for(const group of groups)for(const [label,path,type] of group.fields)fields.push({label:label+suffix,path,type,panel:group.id==="visual-style"?"visual":panel});}
+  add(settingsGroups,"settings");add(systemGroups,"system");
+  for(const [lang,label] of [["es","Español"],["eu","Euskera"],["en","Inglés"]])add(languageGroups(lang),lang," · "+label);
+  for(const [index,item] of (data.settings.news || []).entries()) {
+    for(const lang of ["es","eu","en"])for(const key of ["title","text"])fields.push({label:"Noticia: "+(item.languages?.es?.title || index+1),path:["settings","news",index,"languages",lang,key],type:key==="text"?"textarea":"input",panel:"news",index});
+    fields.push({label:"Imagen de noticia",path:["settings","news",index,"image"],type:"input",panel:"news",index});
+  }
+  for(const [index,item] of (data.settings.events || []).entries())for(const lang of ["es","eu","en"])for(const key of ["title","description"])fields.push({label:"Evento: "+(item.languages?.es?.title || index+1),path:["settings","events",index,"languages",lang,key],type:key==="description"?"textarea":"input",panel:"events",index});
+  return fields;
+}
+
+function focusWorkspaceField(field) {
+  if(field.panel==="events")currentEventIndex=field.index;
+  const same=currentPanel===field.panel;
+  openPanel(field.panel);
+  if(currentPanel!==field.panel)return;
+  if(field.panel==="news") {
+    window.SKBC_ADMIN_NEWS.open(field.index);
+    const name=field.path.slice(3).join(".");
+    const input=[...document.querySelectorAll('#simple-news-form [name]')].find(input=>input.name===name);
+    if(input){input.closest('details')?.setAttribute('open','');input.scrollIntoView({block:'center'});input.focus();}
+    return;
+  }
+  if(same)render();
+  const key=JSON.stringify(field.path);
+  const control=[...document.querySelectorAll('#editor [data-path]')].find(input=>input.dataset.path===encodeURIComponent(key));
+  if(!control){setStatus("La sección está abierta. Busca el campo "+field.label+".","neutral");return;}
+  const group=control.closest('.editor-group');
+  if(group){group.dataset.mobileCollapsed="false";const toggle=group.querySelector('.mobile-collapse-toggle');if(toggle){toggle.textContent="Cerrar";toggle.setAttribute('aria-expanded','true');}}
+  for(let details=control.closest('details');details;details=details.parentElement?.closest('details'))details.open=true;
+  const target=control.closest('.field') || control;
+  target.classList.add('editor-focused-field');target.scrollIntoView({block:'center'});
+  (control.hidden?target.querySelector('button,input:not([type="hidden"])'):control)?.focus();
+  setTimeout(()=>target.classList.remove('editor-focused-field'),3500);
+}
+
+function focusVisualSchedule(index) {
+  focusWorkspaceField({panel:"visual",path:["settings","specialVisual","schedule"],label:"Programador de efectos"});
+  const row=document.querySelectorAll('#editor .special-schedule-row')[index];
+  if(row){row.classList.add('editor-focused-field');row.scrollIntoView({block:'center'});row.querySelector('select')?.focus();setTimeout(()=>row.classList.remove('editor-focused-field'),3500);}
+}
+
 window.SKBC_ADMIN_NEWS.configure({
   getItems: () => (data.settings.news ||= []),
   onChange: markDirty,
@@ -4707,6 +4758,7 @@ window.SKBC_ADMIN_NEWS.configure({
   afterRender: enhanceMobileCollapsers
 });
 window.SKBC_ADMIN_SIMPLE.install({ openPanel });
+window.SKBC_EDITOR_WORKSPACE.install({getContent:()=>data,getBaseline:()=>publishedContentSnapshot,getFields:editorWorkspaceFields,hasDraft:()=>window.SKBC_ADMIN_NEWS.hasDraft(),notice:setStatus,editField:focusWorkspaceField,focusSchedule:focusVisualSchedule});
 render();
 setStatus("Sin cambios pendientes", "neutral");
 

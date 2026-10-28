@@ -5,13 +5,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 test('publication updates the editor and content without replacing public application files', async () => {
-  const { writeEditorPublication, parseContent, verifyBaseline } = await import('../scripts/admin-publication.mjs');
+  const { writeEditorPublication, parseContent, verifyBaseline, editorFiles } = await import('../scripts/admin-publication.mjs');
   const root = await mkdtemp(join(tmpdir(), 'skbc-admin-'));
   const local = join(root, 'local');
   const target = join(root, 'target');
   try {
     await mkdir(local); await mkdir(target);
-    for (const name of ['admin.html', 'admin.js', 'admin.css', 'admin-simple.js', 'admin-simple.css', 'admin-catalog.js', 'admin-news.js']) await writeFile(join(local, name), name);
+    for (const name of editorFiles) await writeFile(join(local, name), name);
     await writeFile(join(local, 'app.js'), 'OLD APP');
     await writeFile(join(target, 'app.js'), 'CURRENT APP');
     await mkdir(join(target, 'assets'), { recursive: true });

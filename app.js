@@ -1,13 +1,13 @@
 const STORAGE_KEY = "skbc_content_v2";
 const state = {
   content: loadContent(),
-  lang: ["es", "eu", "en"].includes(new URLSearchParams(location.search).get("lang")) ? new URLSearchParams(location.search).get("lang") : "es",
+  lang: window.SKBC_ADMIN_PREVIEW === true ? (window.SKBC_PREVIEW_LANGUAGE || "es") : (["es", "eu", "en"].includes(new URLSearchParams(location.search).get("lang")) ? new URLSearchParams(location.search).get("lang") : "es"),
   merchCart: [],
   merchCatalog: { status: "idle", catalogSource: "remote", products: [], variants: [], error: "" },
   merchOrder: { idempotencyKey: crypto.randomUUID(), failedFingerprint: "", status: "idle", message: "" }
 };
 
-const merchOrderHelpersPromise = import("./merch-orders.js");
+const merchOrderHelpersPromise = window.SKBC_ADMIN_PREVIEW === true ? Promise.resolve({}) : import("./merch-orders.js");
 
 const formStartedAt = Date.now();
 
@@ -1615,6 +1615,7 @@ function analyticsId() {
 }
 
 function setupAnalytics() {
+  if (window.SKBC_ADMIN_PREVIEW === true) return;
   const id = analyticsId();
   if (!id || document.querySelector("script[data-google-analytics]")) return;
   window.dataLayer = window.dataLayer || [];

@@ -1,0 +1,29 @@
+#pending-changes { display: block; margin-top: 6px; font-size: 12px; color: #e6c36e; }
+.editor-dialog { width: min(720px,94vw); max-height: 94vh; padding: 0; border: 1px solid #d9ddd7; border-radius: 12px; color: #15171a; background: #fff; box-shadow: 0 18px 70px #0005; }
+.editor-dialog::backdrop { background: #111b; }
+.editor-dialog > header { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 18px 24px; border-bottom: 1px solid #ddd; }
+.editor-dialog h2 { margin: 0; font-size: 21px; }
+.editor-dialog-body { padding: 22px; }
+.editor-dialog button { color: #25282c; background: #f4f3ef; border: 1px solid #d3d5d2; }
+.editor-dialog button.primary { background: #c52727; border-color: #c52727; color: #fff; }
+.editor-dialog-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.editor-change-list { max-height: 48vh; overflow-y: auto; padding-left: 25px; }
+.editor-change-list li { padding: 8px; line-height: 1.5; }
+.editor-preview-dialog { width: 96vw; max-width: 1500px; }
+.editor-preview-dialog .editor-dialog-body { padding: 14px; }
+.editor-preview-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.editor-preview-toolbar label { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.editor-preview-toolbar select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font: inherit; }
+.editor-preview-toolbar button[aria-pressed="true"] { color: #a52121; background: #fae8e6; border-color: #ba7777; }
+#preview-status { color: #62686b; font-size: 13px; line-height: 1.5; }
+.editor-preview-stage { width: 100%; overflow: auto; background: #dadbd7; padding: 12px; border-radius: 8px; }
+.editor-preview-stage iframe { display: block; border: 0; margin: auto; height: 67vh; min-height: 460px; background: white; }
+.editor-effect-status { padding: 20px 0; border-bottom: 1px solid #e5e4df; margin-bottom: 20px; }
+.editor-effect-status h3 { margin: 0 0 8px; font-size: 18px; }
+.editor-effect-status > p { color: #62686b; font-size: 13px; }
+.editor-effect-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 10px 0; border-top: 1px solid #eee; font-size: 13px; }
+.editor-effect-row > strong { min-width: 140px; }
+.editor-effect-row > span { flex: 1; min-width: 160px; line-height: 1.5; }
+.editor-effect-row button { font-size: 12px; }
+.editor-focused-field { outline: 3px solid #cf9d27; outline-offset: 5px; border-radius: 7px; }
+@media(max-width:600px) { .editor-dialog > header { padding: 12px; }.editor-dialog h2 { font-size: 18px; }.editor-dialog-body { padding: 15px; }.editor-preview-toolbar { gap: 7px; }.editor-preview-toolbar button { font-size: 12px; padding: 9px; } }

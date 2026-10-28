@@ -1,7 +1,7 @@
 import { cp, mkdir, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-export const editorFiles = ['admin.html', 'admin.js', 'admin.css', 'admin-simple.js', 'admin-simple.css', 'admin-catalog.js', 'admin-news.js'];
+export const editorFiles = ['admin.html', 'admin.js', 'admin.css', 'admin-simple.js', 'admin-simple.css', 'admin-catalog.js', 'admin-news.js', 'admin-editor-tools.js', 'admin-workspace.js', 'admin-workspace.css', 'admin-preview-bridge.js'];
 export const publicationPaths = ['content.js', ...editorFiles, 'assets/uploads'];
 
 export function parseContent(source) {
