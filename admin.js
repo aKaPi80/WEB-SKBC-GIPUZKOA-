@@ -1266,7 +1266,7 @@ function fieldTemplate([label, path, type]) {
   const value = formatFieldValue(getByPath(data, path), type);
   const id = `field-${path.join("-")}`;
   const encodedPath = encodeURIComponent(JSON.stringify(path));
-  const imageField = isImageField(label, path);
+  const imageField = isImageField(label, path, type);
   const positionPath = imageField ? positionPathForImagePath(path) : null;
   const encodedPositionPath = positionPath ? encodeURIComponent(JSON.stringify(positionPath)) : "";
   const upload = imageField ? `<button class="upload-image" data-upload-path="${encodedPath}" type="button">Subir imagen</button>` : "";
@@ -1278,7 +1278,8 @@ function fieldTemplate([label, path, type]) {
   return `<label class="field${wideClass}" for="${id}"><span>${label}</span>${control}</label>`;
 }
 
-function isImageField(label, path) {
+function isImageField(label, path, type) {
+  if (type !== "input") return false;
   const text = `${label} ${path.join(" ")}`.toLowerCase();
   return text.includes("foto") || text.includes("imagen") || text.includes("image") || text.includes("logo");
 }
