@@ -92,7 +92,8 @@ window.SKBC_CONTENT = {
           "end": "2026-11-15",
           "message": "Otoño en el dojo"
         }
-      ]
+      ],
+      "mourning": true
     },
     "socialFeeds": {
       "instagramUrls": "https://www.instagram.com/p/DYxwkFHDNer/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\nhttps://www.instagram.com/reel/DZTJzzoPn76/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==\n",
