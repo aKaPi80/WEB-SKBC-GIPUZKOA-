@@ -1503,6 +1503,30 @@ function renderCustom() {
 }
 
 function renderEvents() {
+  if (!window.SKBC_ADMIN_CALENDAR) return renderEventsLegacy();
+  window.SKBC_ADMIN_CALENDAR.render(document.querySelector("#editor"), {
+    events: data.settings.events || [], selected: currentEventIndex,
+    consumeSelection: () => { currentEventIndex = null; },
+    save: (index, event) => {
+      data.settings.events ||= [];
+      if (index === null) data.settings.events.push(event);
+      else data.settings.events[index] = event;
+      markDirty();
+    },
+    remove: index => { data.settings.events.splice(index, 1); markDirty(); renderEvents(); },
+    refresh: renderEvents,
+    advanced: () => {
+      renderEventsLegacy();
+      const back = document.createElement("button"); back.type = "button";
+      back.textContent = "← Volver al calendario grande";
+      back.addEventListener("click", () => { currentEventIndex = null; renderEvents(); });
+      document.querySelector("#editor").prepend(back);
+      window.SKBC_ADMIN_SIMPLE.enhance("events");
+    }
+  });
+}
+
+function renderEventsLegacy() {
   const editor = document.querySelector("#editor");
   const events = data.settings.events || [];
   const importedEvents = events.filter((event) => event.source === "management").length;
@@ -1723,6 +1747,7 @@ function galleryImageItemTemplate(image, index, position = "center center") {
 }
 
 function generatedEventDates(event) {
+  if (window.SKBC_ADMIN_CALENDAR) return window.SKBC_ADMIN_CALENDAR.dates(event);
   const dates = new Set(Array.isArray(event.dates) ? event.dates.filter(Boolean) : []);
   if (event.start) dates.add(event.start);
   generatedRepeatDates(event).forEach((date) => dates.add(date));
@@ -4699,7 +4724,7 @@ document.querySelector("#reset").addEventListener("click", () => {
 });
 
 window.addEventListener("beforeunload", (event) => {
-  if (!dirty && !window.SKBC_ADMIN_NEWS.hasUnsaved() && !window.SKBC_ADMIN_NEWS.isBusy()) return;
+  if (!dirty && !window.SKBC_ADMIN_CALENDAR?.hasUnsaved() && !window.SKBC_ADMIN_NEWS.hasUnsaved() && !window.SKBC_ADMIN_NEWS.isBusy()) return;
   event.preventDefault();
   event.returnValue = "";
 });
@@ -4731,6 +4756,11 @@ function focusWorkspaceField(field) {
     return;
   }
   if(same)render();
+  if(field.panel==="events") {
+    const lang=field.path[4], name=field.path[5]+(lang==="es"?"":"_"+lang);
+    const control=document.querySelector('.cal-dialog [name="'+name+'"]');
+    if(control){control.closest('details')?.setAttribute('open','');control.focus();return;}
+  }
   const key=JSON.stringify(field.path);
   const control=[...document.querySelectorAll('#editor [data-path]')].find(input=>input.dataset.path===encodeURIComponent(key));
   if(!control){setStatus("La sección está abierta. Busca el campo "+field.label+".","neutral");return;}
