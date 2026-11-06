@@ -1506,6 +1506,13 @@ function renderEvents() {
   if (!window.SKBC_ADMIN_CALENDAR) return renderEventsLegacy();
   window.SKBC_ADMIN_CALENDAR.render(document.querySelector("#editor"), {
     events: data.settings.events || [], selected: currentEventIndex,
+    settings: data.settings,
+    publication: (year, status) => {
+      data.settings.calendarPublication ||= { years: {} };
+      data.settings.calendarPublication.years ||= {};
+      data.settings.calendarPublication.years[year] = status === "official" ? "official" : "provisional";
+      markDirty();
+    },
     consumeSelection: () => { currentEventIndex = null; },
     save: (index, event) => {
       data.settings.events ||= [];
@@ -4740,6 +4747,7 @@ function editorWorkspaceFields() {
     fields.push({label:"Imagen de noticia",path:["settings","news",index,"image"],type:"input",panel:"news",index});
   }
   for(const [index,item] of (data.settings.events || []).entries())for(const lang of ["es","eu","en"])for(const key of ["title","description"])fields.push({label:"Evento: "+(item.languages?.es?.title || index+1),path:["settings","events",index,"languages",lang,key],type:key==="description"?"textarea":"input",panel:"events",index});
+  for(const year of Object.keys(data.settings.calendarPublication?.years || {}))fields.push({label:"Estado público del calendario "+year,path:["settings","calendarPublication","years",year],type:"calendar-publication",panel:"events"});
   return fields;
 }
 

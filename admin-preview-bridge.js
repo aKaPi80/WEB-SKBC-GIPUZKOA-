@@ -81,7 +81,7 @@
     started=true;fields=Array.isArray(event.data.fields)?event.data.fields:[];editing=event.data.editing!==false;
     window.SKBC_CONTENT=event.data.content;window.SKBC_PREVIEW_LANGUAGE=['es','eu','en'].includes(event.data.language)?event.data.language:'es';
     try {
-      await loadScript(params.get('app'));await loadScript(params.get('seasonal'));
+      await loadScript(new URL('calendar-public.js?v=20261106',params.get('app')).href);await loadScript(params.get('app'));await loadScript(params.get('seasonal'));
       if(!document.querySelector('#app .hero'))throw new Error('No se pudo renderizar la página');
       const style=document.createElement('style');style.textContent='.preview-editing [data-preview-field]{cursor:pointer!important}.preview-editing [data-preview-field]:hover,.preview-editing [data-preview-field]:focus-visible{outline:3px solid #ffcf5a!important;outline-offset:4px}.preview-has-photo{position:relative}.preview-photo-edit{display:none;position:absolute;right:18px;top:130px;z-index:10;background:#fff;color:#951f25;padding:10px 15px;border:2px solid #951f25;border-radius:7px;font:600 14px Arial}.preview-editing .preview-photo-edit{display:block}';document.head.append(style);
       document.documentElement.classList.toggle('preview-editing',editing);annotate();

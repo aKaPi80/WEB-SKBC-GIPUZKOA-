@@ -394,11 +394,6 @@ function nextThreeMonths() {
     .filter((month) => month.getFullYear() === year);
 }
 
-function fullYearMonths() {
-  const year = new Date().getFullYear();
-  return Array.from({ length: 12 }, (_, index) => new Date(year, index, 1));
-}
-
 function upcomingEvents(events) {
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
@@ -427,112 +422,10 @@ function publicCalendarEvents(events) {
   return events.filter((event) => eventTouchesYear(event, year));
 }
 
-function printEventNumber(event, eventNumbers) {
-  if (!eventNumbers.has(event)) eventNumbers.set(event, eventNumbers.size + 1);
-  return eventNumbers.get(event);
-}
-
-function printableMonthGrid(monthDate, events, copy, eventNumbers) {
-  const year = monthDate.getFullYear();
-  const month = monthDate.getMonth();
-  const first = new Date(year, month, 1);
-  const offset = (first.getDay() + 6) % 7;
-  const days = new Date(year, month + 1, 0).getDate();
-  const cells = [];
-  for (let i = 0; i < offset; i += 1) cells.push(`<span class="calendar-day is-empty"></span>`);
-  for (let day = 1; day <= days; day += 1) {
-    const current = new Date(year, month, day);
-    const dayEvents = events.filter((event) => eventTouchesDate(event, current));
-    cells.push(`<span class="calendar-day ${dayEvents.length ? "has-event" : ""}">
-      <strong>${day}</strong>
-      <span class="print-markers">
-        ${dayEvents.slice(0, 4).map((event) => `<i style="--event-color:${event.color || "#1f6fa9"}">${printEventNumber(event, eventNumbers)}</i>`).join("")}
-      </span>
-    </span>`);
-  }
-  return `<article class="calendar-month">
-    <h3>${monthName(monthDate)}</h3>
-    <div class="calendar-weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-    <div class="calendar-days">${cells.join("")}</div>
-  </article>`;
-}
-
-function printableCalendarHtml(events, copy) {
-  const eventNumbers = new Map();
-  const months = fullYearMonths().map((month) => printableMonthGrid(month, events, copy.calendar, eventNumbers)).join("");
-  const eventList = Array.from(eventNumbers.entries())
-    .sort((a, b) => a[1] - b[1])
-    .map(([event, number]) => {
-      const text = eventCopy(event);
-      return `<li style="--event-color:${event.color || "#1f6fa9"}"><b>${number}</b><span><strong>${text.title || copy.calendar.empty}</strong><em>${eventDateLabel(event)}${event.location ? ` · ${event.location}` : ""}${text.description ? ` · ${text.description}` : ""}</em></span></li>`;
-    })
-    .join("");
-  return `<!doctype html>
-    <html lang="${state.lang}">
-      <head>
-        <meta charset="utf-8" />
-        <title>${copy.calendar.title} \u00b7 SKBC GIPUZKOA</title>
-        <style>
-          @page { size: A4 landscape; margin: 8mm; }
-          * { box-sizing: border-box; }
-          * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          body { margin: 0; color: #101113; font-family: Arial, sans-serif; }
-          .print-header { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 7px; border-bottom: 2px solid #101113; padding-bottom: 5px; }
-          .print-header p { margin: 0; color: #c52727; font-size: 9px; font-weight: 900; text-transform: uppercase; }
-          .print-header h1 { margin: 1px 0 0; font-size: 18px; line-height: 1; }
-          .print-header strong { font-size: 10px; }
-          .calendar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-          .calendar-month { break-inside: avoid; border: 1px solid #d9dee7; border-radius: 4px; padding: 4px; }
-          .calendar-month h3 { margin: 0 0 3px; font-size: 9px; text-transform: capitalize; }
-          .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
-          .calendar-weekdays span { color: #59606c; font-size: 6px; font-weight: 900; text-align: center; }
-          .calendar-day { min-height: 19px; border: 1px solid #eef0f4; border-radius: 2px; padding: 2px; overflow: hidden; }
-          .calendar-day.is-empty { border-color: transparent; }
-          .calendar-day strong { display: block; font-size: 7px; line-height: 1; }
-          .print-markers { display: flex; flex-wrap: wrap; gap: 1px; margin-top: 1px; }
-          .print-markers i { display: inline-grid; place-items: center; min-width: 10px; height: 10px; border: 1px solid var(--event-color); border-radius: 999px; color: #fff; background: var(--event-color); font-size: 5px; font-style: normal; font-weight: 900; line-height: 1; }
-          .print-legend-title { margin: 5px 0 3px; color: #101113; font-size: 8px; font-weight: 900; text-transform: uppercase; }
-          .print-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px 8px; margin: 0; padding: 0; list-style: none; }
-          .print-legend li { display: grid; grid-template-columns: 15px 1fr; gap: 4px; align-items: start; break-inside: avoid; font-size: 6.5px; line-height: 1.15; }
-          .print-legend b { display: grid; place-items: center; width: 13px; height: 13px; border-radius: 999px; color: #fff; background: var(--event-color); font-size: 7px; }
-          .print-legend strong { display: block; font-size: 7px; }
-          .print-legend em { display: block; color: #59606c; font-style: normal; }
-          .print-footer { margin-top: 4px; color: #59606c; font-size: 6px; }
-          @media print { .no-print { display: none; } }
-        </style>
-      </head>
-      <body>
-        <div class="print-header">
-          <div><p>SKBC GIPUZKOA</p><h1>${copy.calendar.title}</h1></div>
-          <strong>${new Date().getFullYear()}</strong>
-        </div>
-        <div class="calendar-grid calendar-grid--year">${months}</div>
-        <h2 class="print-legend-title">Eventos programados</h2>
-        <ul class="print-legend">${eventList}</ul>
-        <div class="print-footer">${copy.calendar.printHint || ""}</div>
-      </body>
-    </html>`;
-}
-
-function openPrintableCalendar() {
-  const copy = t();
-  const events = (state.content.settings.events || []).filter((event) => event.enabled !== false);
-  document.querySelector("#calendarPrintFrame")?.remove();
-  const frame = document.createElement("iframe");
-  frame.id = "calendarPrintFrame";
-  frame.className = "print-frame";
-  frame.onload = () => {
-    setTimeout(() => {
-      frame.contentWindow?.focus();
-      frame.contentWindow?.print();
-    }, 250);
-  };
-  frame.srcdoc = printableCalendarHtml(events, copy);
-  document.body.appendChild(frame);
-}
-
 function calendarSection(settings, copy) {
-  const events = publicCalendarEvents((settings.events || []).filter((event) => event.enabled !== false));
+  const publicCalendar = window.SKBC_PUBLIC_CALENDAR;
+  const year = new Date().getFullYear();
+  const events = publicCalendar.eventsForYear(settings.events || [], year);
   const upcoming = upcomingEvents(events);
   return `<section class="section calendar-section" id="calendario">
     <div class="section-heading">
@@ -541,7 +434,8 @@ function calendarSection(settings, copy) {
       <p>${copy.calendar.text}</p>
     </div>
     <div class="calendar-home-actions">
-      <button class="button" type="button" data-open-calendar>${copy.calendar.openFull || "Ver calendario completo"}</button>
+      <a class="button" href="${publicCalendar.link(year,state.lang)}" target="_blank" rel="noopener noreferrer">${publicCalendar.buttonLabel(settings,year,state.lang)}</a>
+      <a class="button secondary" href="${publicCalendar.link(year+1,state.lang)}" target="_blank" rel="noopener noreferrer">${publicCalendar.buttonLabel(settings,year+1,state.lang)}</a>
     </div>
     <div class="calendar-grid calendar-grid--quarter calendar-preview">
       ${nextThreeMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
@@ -551,40 +445,10 @@ function calendarSection(settings, copy) {
         const text = eventCopy(event);
         return `<article style="--event-color:${event.color || "#1f6fa9"}">
           <span>${eventDateLabel(event)}</span>
-          <h3>${text.title || ""}</h3>
-          <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
+          <h3>${escapeHtml(text.title || "")}</h3>
+          <p>${escapeHtml(event.location || "")}${event.location && publicCalendar.description(text.description) ? " · " : ""}${escapeHtml(publicCalendar.description(text.description))}</p>
         </article>`;
       }).join("") : `<p>${copy.calendar.empty}</p>`}
-    </div>
-    <div class="calendar-modal" id="calendarModal" aria-hidden="true">
-      <div class="calendar-modal__panel" role="dialog" aria-modal="true" aria-label="${copy.calendar.title}">
-        <div class="calendar-modal__header">
-          <div>
-            <p class="eyebrow">${copy.calendar.eyebrow}</p>
-            <h2>${copy.calendar.title}</h2>
-          </div>
-          <div class="calendar-modal__actions">
-            <button type="button" data-print-calendar>${copy.calendar.savePrint || copy.calendar.print || "Guardar / imprimir"}</button>
-            <button type="button" data-close-calendar>${copy.calendar.back || "Volver"}</button>
-          </div>
-        </div>
-        <p class="calendar-print-hint">${copy.calendar.printHint || ""}</p>
-        <div class="print-area">
-          <div class="calendar-grid calendar-grid--year calendar-print-grid">
-            ${fullYearMonths().map((month) => monthGrid(month, events, copy.calendar)).join("")}
-          </div>
-          <div class="calendar-list calendar-print-list">
-            ${events.length ? events.map((event) => {
-              const text = eventCopy(event);
-              return `<article style="--event-color:${event.color || "#1f6fa9"}">
-                <span>${eventDateLabel(event)}</span>
-                <h3>${text.title || ""}</h3>
-                <p>${event.location || ""}${event.location && text.description ? " · " : ""}${text.description || ""}</p>
-              </article>`;
-            }).join("") : `<p>${copy.calendar.empty}</p>`}
-          </div>
-        </div>
-      </div>
     </div>
   </section>`;
 }
@@ -2340,7 +2204,7 @@ function bindKenshiPortal(copy) {
 
 function kenshiUpcomingEvents(copy) {
   const settings = state.content.settings || {};
-  const events = publicCalendarEvents((settings.events || []).filter((event) => event.enabled !== false));
+  const events = window.SKBC_PUBLIC_CALENDAR.eventsForYear(settings.events || [], new Date().getFullYear());
   return upcomingEvents(events).slice(0, 3).map((event) => {
     const text = event.languages?.[state.lang] || event.languages?.es || {};
     return {
@@ -2635,30 +2499,7 @@ function bindTestimonialCards(copy) {
   });
 }
 
-function bindCalendar() {
-  document.querySelector("[data-open-calendar]")?.addEventListener("click", () => {
-    document.querySelector("#calendarModal")?.classList.add("is-open");
-    document.querySelector("#calendarModal")?.setAttribute("aria-hidden", "false");
-  });
-  document.querySelector("[data-close-calendar]")?.addEventListener("click", closeCalendarModal);
-  document.querySelector("[data-print-calendar]")?.addEventListener("click", openPrintableCalendar);
-  document.querySelector("#calendarModal")?.addEventListener("click", (event) => {
-    if (event.target.id === "calendarModal") closeCalendarModal();
-  });
-  document.querySelectorAll("[data-calendar-step]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const direction = Number(button.dataset.calendarStep);
-      if (calendarState.view === "year") {
-        calendarState.date = new Date(calendarState.date.getFullYear() + direction, calendarState.date.getMonth(), 1);
-      } else if (calendarState.view === "quarter") {
-        calendarState.date = new Date(calendarState.date.getFullYear(), calendarState.date.getMonth() + direction * 3, 1);
-      } else {
-        calendarState.date = new Date(calendarState.date.getFullYear(), calendarState.date.getMonth() + direction, 1);
-      }
-      render();
-    });
-  });
-}
+function bindCalendar() {}
 
 function closeCalendarModal() {
   document.querySelector("#calendarModal")?.classList.remove("is-open");

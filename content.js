@@ -336,7 +336,7 @@ window.SKBC_CONTENT = {
           },
           "en": {
             "title": "SHAKUJO AND OUTSIDE TRAININGS",
-            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS.... "
+            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS...."
           }
         }
       },
@@ -411,15 +411,15 @@ window.SKBC_CONTENT = {
         "languages": {
           "es": {
             "title": "PUENTE DICIEMBRE",
-            "description": "Descripción del evento."
+            "description": ""
           },
           "eu": {
             "title": "ABENDUKO ZUBIA",
-            "description": "Ekitaldiaren deskribapena."
+            "description": ""
           },
           "en": {
             "title": "HOLYDAY",
-            "description": "Event description."
+            "description": ""
           }
         }
       },
@@ -598,7 +598,7 @@ window.SKBC_CONTENT = {
           },
           "en": {
             "title": "SHAKUJO AND OUTSIDE TRAININGS",
-            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS.... "
+            "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS...."
           }
         },
         "dates": [],
@@ -677,15 +677,15 @@ window.SKBC_CONTENT = {
         "languages": {
           "es": {
             "title": "PUENTE DICIEMBRE",
-            "description": "Descripción del evento."
+            "description": ""
           },
           "eu": {
             "title": "ABENDUKO ZUBIA",
-            "description": "Ekitaldiaren deskribapena."
+            "description": ""
           },
           "en": {
             "title": "HOLYDAY",
-            "description": "Event description."
+            "description": ""
           }
         },
         "excludedDates": []
@@ -1367,6 +1367,12 @@ window.SKBC_CONTENT = {
       "includeClosures": true,
       "includePublicEvents": true,
       "lastSync": "2026-11-06 · importado del calendario de gestión"
+    },
+    "calendarPublication": {
+      "years": {
+        "2026": "official",
+        "2027": "provisional"
+      }
     }
   },
   "languages": {
@@ -1680,7 +1686,7 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Calendario",
         "title": "Calendario anual de eventos",
-        "text": "Consulta cursos, seminarios, viajes, entrenamientos especiales y actividades del club. Puedes ver todo el a?o, tres meses o mes a mes.",
+        "text": "Consulta las fechas de cursos, entrenamientos, festivos y actividades del club.",
         "year": "A?o",
         "quarter": "3 meses",
         "month": "Mes",
@@ -2293,7 +2299,7 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Egutegia",
         "title": "Urteko ekitaldien egutegia",
-        "text": "Ikastaroak, mintegiak, bidaiak, entrenamendu bereziak eta klubeko jarduerak kontsulta ditzakezu. Urte osoa, hiru hilabete edo hilabetez hilabete ikus dezakezu.",
+        "text": "Kontsultatu ikastaroen, entrenamenduen, jaiegunen eta klubeko jardueren datak.",
         "year": "Urtea",
         "quarter": "3 hilabete",
         "month": "Hilabetea",
@@ -2906,7 +2912,7 @@ window.SKBC_CONTENT = {
       "calendar": {
         "eyebrow": "Calendar",
         "title": "Annual event calendar",
-        "text": "Check courses, seminars, trips, special training sessions and club activities. You can view the full year, three months or one month at a time.",
+        "text": "Check dates for courses, training, holidays and club activities.",
         "year": "Year",
         "quarter": "3 months",
         "month": "Month",
