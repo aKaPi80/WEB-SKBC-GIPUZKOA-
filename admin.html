@@ -13,8 +13,9 @@
     <link rel="stylesheet" href="admin-workspace.css?v=20261028" />
     <script src="admin-editor-tools.js?v=20261028"></script>
     <script src="admin-workspace.js?v=20261028"></script>
-    <link rel="stylesheet" href="admin-calendar.css?v=20261106" />
-    <script src="admin-calendar.js?v=20261106"></script>
+    <link rel="stylesheet" href="admin-calendar.css?v=20261106-drag" />
+    <script src="admin-calendar.js?v=20261106-drag"></script>
+    <script src="admin-calendar-import.js?v=20261106-drag"></script>
     <style>
       .admin-login {
         display: grid;
@@ -141,7 +142,7 @@
         document.body.classList.remove("admin-locked");
         if (!document.querySelector("script[data-admin-app]")) {
           const script = document.createElement("script");
-          script.src = "admin.js?v=20261106-calendar";
+          script.src = "admin.js?v=20261106-drag";
           script.dataset.adminApp = "true";
           document.body.appendChild(script);
         }

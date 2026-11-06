@@ -12,3 +12,4 @@
 #editor .cal-compact .cal-event{font-size:10px;padding:3px;border-left-width:2px}
 #editor .cal-compact .cal-day{font-size:12px;padding:2px;min-height:25px}
 @media(max-width:650px){#editor .cal-workspace .cal-event{font-size:10px;padding:3px}}
+.cal-move-help{color:#586570;font-size:14px;line-height:1.5}.cal-move-status{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin:12px 0;font-size:14px;color:#195d43}.cal-move-status:empty{display:none}.cal-dragging{opacity:.4}#editor .cal-workspace .cal-cell.cal-drop-target{outline:3px solid #2476ad;outline-offset:-3px;background:#e6f3fc}#editor .cal-workspace .cal-event[draggable=true]{cursor:grab}#editor .cal-workspace .cal-event[draggable=true]:active{cursor:grabbing}.cal-move-form{padding:16px;border:1px solid #cddce6;border-radius:8px;background:#f4f8fb;display:grid;gap:12px}.cal-move-form p{margin:0;font-size:13px;color:#586570}

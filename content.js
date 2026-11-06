@@ -805,6 +805,343 @@ window.SKBC_CONTENT = {
           }
         },
         "excludedDates": []
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2026-03-30",
+        "end": "2026-04-12",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-03-30",
+          "until": "2026-04-12",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:semana santa 2026|2026-03-30|2026-04-12|all",
+        "sourceAliases": [
+          "closure-calendar:semana santa 2026|2026-03-30|2026-04-12|all"
+        ],
+        "managementOriginal": {
+          "start": "2026-03-30",
+          "end": "2026-04-12"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2026-07-01",
+        "end": "2026-08-31",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-07-01",
+          "until": "2026-08-31",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Verano 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Verano 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Verano 2026",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:verano 2026|2026-07-01|2026-08-31|all",
+        "sourceAliases": [
+          "closure-calendar:verano 2026|2026-07-01|2026-08-31|all"
+        ],
+        "managementOriginal": {
+          "start": "2026-07-01",
+          "end": "2026-08-31"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2026-12-24",
+        "end": "2027-01-06",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-12-24",
+          "until": "2027-01-06",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Navidad 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Navidad 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Navidad 2026",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:navidad 2026|2026-12-24|2027-01-06|all",
+        "sourceAliases": [
+          "closure-calendar:navidad 2026|2026-12-24|2027-01-06|all"
+        ],
+        "managementOriginal": {
+          "start": "2026-12-24",
+          "end": "2027-01-06"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "closure",
+        "kind": "holiday",
+        "visibility": "public",
+        "start": "2027-02-04",
+        "end": "2027-02-09",
+        "color": "#b83232",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-02-04",
+          "until": "2027-02-09",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          },
+          "eu": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          },
+          "en": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:carnavales tolosa|2027-02-04|2027-02-09|all",
+        "sourceAliases": [
+          "closure-calendar:carnavales tolosa|2027-02-04|2027-02-09|all"
+        ],
+        "managementOriginal": {
+          "start": "2027-02-04",
+          "end": "2027-02-09"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2027-03-24",
+        "end": "2027-04-04",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-03-24",
+          "until": "2027-04-04",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:semana santa 2027|2027-03-24|2027-04-04|all",
+        "sourceAliases": [
+          "closure-calendar:semana santa 2027|2027-03-24|2027-04-04|all"
+        ],
+        "managementOriginal": {
+          "start": "2027-03-24",
+          "end": "2027-04-04"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2027-07-01",
+        "end": "2027-08-31",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-07-01",
+          "until": "2027-08-31",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Verano 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Verano 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Verano 2027",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:verano 2027|2027-07-01|2027-08-31|all",
+        "sourceAliases": [
+          "closure-calendar:verano 2027|2027-07-01|2027-08-31|all"
+        ],
+        "managementOriginal": {
+          "start": "2027-07-01",
+          "end": "2027-08-31"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "closure",
+        "kind": "holiday",
+        "visibility": "public",
+        "start": "2027-10-06",
+        "end": "2027-10-13",
+        "color": "#b83232",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-10-06",
+          "until": "2027-10-13",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          },
+          "eu": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          },
+          "en": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:puente de octubre|2027-10-06|2027-10-13|all",
+        "sourceAliases": [
+          "closure-calendar:puente de octubre|2027-10-06|2027-10-13|all"
+        ],
+        "managementOriginal": {
+          "start": "2027-10-06",
+          "end": "2027-10-13"
+        }
+      },
+      {
+        "enabled": true,
+        "source": "management",
+        "sourceTable": "skbc_calendar_closures",
+        "type": "vacation",
+        "kind": "vacation",
+        "visibility": "public",
+        "start": "2027-12-23",
+        "end": "2028-01-06",
+        "color": "#996019",
+        "location": "SKBC GIPUZKOA",
+        "appliesTo": "all",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-12-23",
+          "until": "2028-01-06",
+          "everyDays": 15
+        },
+        "languages": {
+          "es": {
+            "title": "Navidad 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Navidad 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Navidad 2027",
+            "description": ""
+          }
+        },
+        "sourceKey": "closure-calendar:navidad 2027|2027-12-23|2028-01-06|all",
+        "sourceAliases": [
+          "closure-calendar:navidad 2027|2027-12-24|2028-01-06|all",
+          "closure-calendar:navidad 2027|2027-12-23|2028-01-06|all"
+        ],
+        "managementOriginal": {
+          "start": "2027-12-23",
+          "end": "2028-01-06"
+        }
       }
     ],
     "galleryLinks": [
@@ -1029,7 +1366,7 @@ window.SKBC_CONTENT = {
       "publicEventsTable": "skbc_public_calendar_events",
       "includeClosures": true,
       "includePublicEvents": true,
-      "lastSync": ""
+      "lastSync": "2026-11-06 · importado del calendario de gestión"
     }
   },
   "languages": {

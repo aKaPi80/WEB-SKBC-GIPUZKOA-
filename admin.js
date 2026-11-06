@@ -2283,18 +2283,15 @@ async function importManagementCalendar() {
   try {
     setStatus("Importando calendario desde el sistema de gestión...", "warning");
     const [closures, publicEvents] = await Promise.all([
-      config.includeClosures ? fetchManagementRows(config, config.closuresTable, "select=id,starts_on,ends_on,title,applies_to,notes,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : [],
-      config.includePublicEvents ? fetchManagementRows(config, config.publicEventsTable, "select=id,starts_on,ends_on,title,description,location,color,kind,visibility,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : []
+      config.includeClosures ? fetchManagementRows(config, config.closuresTable, "select=id,starts_on,ends_on,title,applies_to,active,updated_at&active=eq.true&order=starts_on.asc&limit=1000") : [],
+      config.includePublicEvents ? fetchManagementRows(config, config.publicEventsTable, "select=id,starts_on,ends_on,title,description,location,color,kind,visibility,active,updated_at&active=eq.true&visibility=eq.public&order=starts_on.asc&limit=1000", true) : []
     ]);
     const imported = [
-      ...closures.map(managementClosureToEvent),
-      ...publicEvents.map(managementPublicEventToEvent)
+      ...window.SKBC_CALENDAR_IMPORT.closures(closures),
+      ...window.SKBC_CALENDAR_IMPORT.publicEvents(publicEvents || [])
     ].filter(Boolean);
-    const previousImported = new Map((data.settings.events || [])
-      .filter((event) => event.source === "management" && event.sourceKey)
-      .map((event) => [event.sourceKey, event]));
-    const mergedImported = imported.map((event) => mergeImportedEvent(previousImported.get(event.sourceKey), event));
-    const manualEvents = (data.settings.events || []).filter((event) => event.source !== "management");
+    const authoritativeTables = [config.includeClosures ? config.closuresTable : null, config.includePublicEvents && publicEvents !== null ? config.publicEventsTable : null].filter(Boolean);
+    const merged = window.SKBC_CALENDAR_IMPORT.merge(data.settings.events || [], imported, { authoritativeTables });
     if (!data.settings.managementCalendar) data.settings.managementCalendar = {};
     data.settings.managementCalendar.enabled = true;
     data.settings.managementCalendar.supabaseUrl = config.supabaseUrl;
@@ -2304,23 +2301,26 @@ async function importManagementCalendar() {
     data.settings.managementCalendar.includeClosures = config.includeClosures;
     data.settings.managementCalendar.includePublicEvents = config.includePublicEvents;
     data.settings.managementCalendar.lastSync = new Date().toISOString().slice(0, 19).replace("T", " ");
-    data.settings.events = [...manualEvents, ...mergedImported].sort(compareEventsForAdmin);
+    data.settings.events = merged.sort(compareEventsForAdmin);
     currentEventIndex = null;
     markDirty();
-    setStatus(`Calendario importado: ${mergedImported.length} evento(s) desde gestión. Pulsa Publicar en GitHub para actualizar la web.`, "ok");
+    setStatus(`Calendario importado: ${imported.length} evento(s) desde gestión. Los cambios de fechas hechos en la web se han conservado. Pulsa Publicar cambios para actualizar la web.`, "ok");
     renderEvents();
   } catch (error) {
     setStatus(`No se pudo importar el calendario de gestión: ${error.message}`, "danger");
   }
 }
 
-async function fetchManagementRows(config, table, query) {
+async function fetchManagementRows(config, table, query, optional = false) {
   const response = await fetch(`${config.supabaseUrl}/rest/v1/${table}?${query}`, {
     headers: supabaseHeaders(supabaseSession(), config)
   });
-  const rows = await response.json().catch(() => ([]));
+  const rows = await response.json().catch(() => { throw new Error("La respuesta del calendario no es válida. No se ha importado nada."); });
+  if (optional && response.status === 404 && ["PGRST205", "42P01"].includes(rows.code)) return null;
   if (!response.ok) throw new Error(friendlySupabaseError(rows, `No se pudo leer ${table}.`));
-  return Array.isArray(rows) ? rows : [];
+  if (Array.isArray(rows) && rows.length >= 1000) throw new Error("El calendario supera el límite de lectura. No se ha importado para evitar una copia incompleta.");
+  if (!Array.isArray(rows)) throw new Error("La respuesta del calendario está incompleta. No se ha importado nada.");
+  return rows;
 }
 
 function managementClosureToEvent(row) {
