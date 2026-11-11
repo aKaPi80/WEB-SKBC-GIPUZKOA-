@@ -19,7 +19,7 @@
   .pub-month { padding: 1.5mm; border-color: #c9bab1; border-radius: 1.5mm; }
   .pub-month h2 { font: bold 11pt Georgia,serif; color: #862424; margin: 0 0 1mm; }
   .pub-week { font-size: 7pt; margin-bottom: .6mm; }
-  .pub-days { grid-template-rows: repeat(6, 7mm); }
+  .pub-days { grid-template-rows: repeat(6, 8.5mm); }
   .pub-day { min-height: 0; padding: .3mm; line-height: 1; }
   .pub-day strong { font-size: 7.5pt; }
   .pub-empty { background: #f8f1eb; }
