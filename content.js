@@ -149,7 +149,7 @@ window.SKBC_CONTENT = {
         },
         "languages": {
           "es": {
-            "title": "BUSEN SKBC GIPUZKOA",
+            "title": "BUSEN SKBC",
             "description": ""
           },
           "eu": {
