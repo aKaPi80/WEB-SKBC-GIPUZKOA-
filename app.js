@@ -488,7 +488,7 @@ function podcastNews(settings) {
       <a class="button" href="${url}" target="_blank" rel="noopener noreferrer">${listen}</a>
     </div>
     <iframe src="https://open.spotify.com/embed/show/${show[1]}" title="Más allá del Dojo · Spotify"
-      width="100%" height="352" loading="lazy" allow="encrypted-media; fullscreen; picture-in-picture"></iframe>
+      width="100%" height="152" loading="lazy" allow="encrypted-media; fullscreen; picture-in-picture"></iframe>
   </article>`;
 }
 
@@ -515,10 +515,10 @@ function upcomingNewsSection(settings, copy) {
       <h2>${copy.news.title}</h2>
       <p>${copy.news.text}</p>
     </div>
-    ${podcastNews(settings)}
     <div class="news-carousel ${animateNews ? "is-animated" : ""}">
       ${cards.length ? `<div class="news-track">${carouselCards.join("")}</div>` : `<p>${copy.news.empty}</p>`}
     </div>
+    ${podcastNews(settings)}
   </section>`;
 }
 
