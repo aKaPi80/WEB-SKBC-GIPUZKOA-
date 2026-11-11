@@ -616,7 +616,12 @@ window.SKBC_CONTENT = {
         "color": "#996019",
         "location": "SKBC GIPUZKOA",
         "appliesTo": "all",
-        "dates": [],
+        "dates": [
+          "2027-01-07",
+          "2027-01-08",
+          "2027-01-09",
+          "2027-01-10"
+        ],
         "repeat": {
           "enabled": false,
           "start": "2026-12-24",
@@ -644,7 +649,9 @@ window.SKBC_CONTENT = {
         "managementOriginal": {
           "start": "2026-12-24",
           "end": "2027-01-06"
-        }
+        },
+        "excludedDates": [],
+        "managementDateOverride": true
       },
       {
         "enabled": true,
