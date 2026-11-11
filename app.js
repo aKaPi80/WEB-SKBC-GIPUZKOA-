@@ -223,9 +223,10 @@ function socialShortcuts(settings) {
   const icons = {
     instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>',
     facebook: '<path d="M14 21v-8h3l.5-4H14V7c0-1 .3-2 2-2h2V1.5A25 25 0 0 0 15 1c-3 0-5 2-5 5v3H7v4h3v8"/>',
-    youtube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3Z" fill="currentColor" stroke="none"/>'
+    youtube: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3Z" fill="currentColor" stroke="none"/>',
+    spotify: '<circle cx="12" cy="12" r="9.5"/><path stroke-linecap="round" d="M6.6 9.2c4.3-1.3 8.2-.6 11.1 1.1M7.5 12.5c3.4-1 6.6-.5 9 1M8.4 15.5c2.7-.7 5.1-.3 7 .8"/>'
   };
-  const links = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube']].flatMap(([key, label]) => {
+  const links = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube'], ['spotify', 'Spotify']].flatMap(([key, label]) => {
     let url;
     try { url = new URL(settings[key]); } catch { return []; }
     if (url.protocol !== 'https:') return [];

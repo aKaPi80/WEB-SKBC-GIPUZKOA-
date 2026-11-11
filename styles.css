@@ -590,6 +590,7 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
 .hero-social__link--instagram svg { color: #ffa5d0; }
 .hero-social__link--facebook svg { color: #9cc6ff; }
 .hero-social__link--youtube svg { color: #ff9b9b; }
+.hero-social__link--spotify svg { color: #65df96; }
 .hero-social__link:hover { background: #fff; color: var(--ink); }
 .hero-social__link:hover svg { color: inherit; }
 .hero-social__link:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
@@ -599,6 +600,7 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   .hero-ika > span > span { font-size: 13px; }
   .hero-ika__arrow { margin-left: auto; }
   .hero-social { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 8px; }
+  .hero-social:has(.hero-social__link--spotify) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-social__link { min-width: 0; flex-direction: column; gap: 6px; padding: 10px 4px; font-size: 12px; }
 }
 .hero-proof {
