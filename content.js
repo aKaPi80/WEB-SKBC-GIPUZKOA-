@@ -169,16 +169,16 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2026-12-08",
+        "start": "2026-12-04",
         "end": "2026-12-08",
         "color": "#a81f76",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-06-04",
-          "until": "2026-06-04",
-          "everyDays": ""
+          "start": "2026-12-04",
+          "until": "2026-12-08",
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -193,7 +193,10 @@ window.SKBC_CONTENT = {
             "title": "HOLYDAY",
             "description": ""
           }
-        }
+        },
+        "kind": "event",
+        "featuredNews": false,
+        "excludedDates": []
       },
       {
         "enabled": true,
@@ -225,20 +228,20 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2026-12-10",
-        "end": "2026-12-10",
+        "start": "2026-12-17",
+        "end": "2026-12-17",
         "color": "#c3f2c0",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-06-04",
-          "until": "2026-06-04",
-          "everyDays": "15"
+          "start": "2026-12-17",
+          "until": "2026-12-17",
+          "everyDays": 15
         },
         "languages": {
           "es": {
-            "title": "EXAMENES",
+            "title": "EXAMENES ADULTOS",
             "description": "2 CONVOCATORIA EXAMENES DEL AÑO"
           },
           "eu": {
@@ -249,20 +252,23 @@ window.SKBC_CONTENT = {
             "title": "TESTS",
             "description": "2 EXAMS OF THE YEAR"
           }
-        }
+        },
+        "kind": "event",
+        "featuredNews": true,
+        "excludedDates": []
       },
       {
         "enabled": true,
-        "start": "2026-10-15",
-        "end": "2026-10-15",
+        "start": "2026-11-26",
+        "end": "2026-11-26",
         "color": "#515176",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-06-04",
-          "until": "2026-06-04",
-          "everyDays": "15"
+          "start": "2026-11-26",
+          "until": "2026-11-26",
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -277,20 +283,23 @@ window.SKBC_CONTENT = {
             "title": "SKBC GIPUZKOA CONFERENCE",
             "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
           }
-        }
+        },
+        "kind": "event",
+        "featuredNews": true,
+        "excludedDates": []
       },
       {
         "enabled": true,
-        "start": "2026-12-12",
-        "end": "2026-12-12",
+        "start": "2026-12-19",
+        "end": "2026-12-19",
         "color": "#a8961f",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-12-12",
-          "until": "2026-12-12",
-          "everyDays": "15"
+          "start": "2026-12-19",
+          "until": "2026-12-19",
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -305,7 +314,10 @@ window.SKBC_CONTENT = {
             "title": "SKBC YEAR-END MEETING & DINNER",
             "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
           }
-        }
+        },
+        "kind": "event",
+        "featuredNews": true,
+        "excludedDates": []
       },
       {
         "enabled": true,
