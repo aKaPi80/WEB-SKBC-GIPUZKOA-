@@ -328,7 +328,15 @@ window.SKBC_CONTENT = {
           }
         },
         "dates": [],
-        "excludedDates": []
+        "excludedDates": [],
+        "kind": "event",
+        "featuredNews": true,
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-26",
+          "until": "2027-06-27",
+          "everyDays": 15
+        }
       },
       {
         "enabled": true,
@@ -378,16 +386,16 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2027-12-14",
-        "end": "2027-12-14",
+        "start": "2027-12-04",
+        "end": "2027-12-08",
         "color": "#a81f76",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2027-06-03",
-          "until": "2027-06-03",
-          "everyDays": ""
+          "start": "2027-12-04",
+          "until": "2027-12-08",
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -403,7 +411,9 @@ window.SKBC_CONTENT = {
             "description": ""
           }
         },
-        "excludedDates": []
+        "excludedDates": [],
+        "kind": "event",
+        "featuredNews": false
       },
       {
         "enabled": true,
@@ -462,7 +472,8 @@ window.SKBC_CONTENT = {
           }
         },
         "excludedDates": [],
-        "kind": "event"
+        "kind": "event",
+        "featuredNews": true
       },
       {
         "enabled": true,
@@ -473,9 +484,9 @@ window.SKBC_CONTENT = {
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2027-06-17",
-          "until": "2027-06-17",
-          "everyDays": "15"
+          "start": "2027-09-23",
+          "until": "2027-09-23",
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -491,7 +502,9 @@ window.SKBC_CONTENT = {
             "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
           }
         },
-        "excludedDates": []
+        "excludedDates": [],
+        "kind": "event",
+        "featuredNews": true
       },
       {
         "enabled": true,
@@ -504,7 +517,7 @@ window.SKBC_CONTENT = {
           "enabled": false,
           "start": "2027-12-18",
           "until": "2027-12-18",
-          "everyDays": "15"
+          "everyDays": 15
         },
         "languages": {
           "es": {
@@ -520,7 +533,9 @@ window.SKBC_CONTENT = {
             "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
           }
         },
-        "excludedDates": []
+        "excludedDates": [],
+        "kind": "event",
+        "featuredNews": true
       },
       {
         "enabled": true,
@@ -894,7 +909,8 @@ window.SKBC_CONTENT = {
           "everyDays": 15
         },
         "dates": [],
-        "excludedDates": []
+        "excludedDates": [],
+        "featuredNews": true
       },
       {
         "start": "2027-06-27",
@@ -924,7 +940,8 @@ window.SKBC_CONTENT = {
           "everyDays": 15
         },
         "dates": [],
-        "excludedDates": []
+        "excludedDates": [],
+        "featuredNews": true
       },
       {
         "start": "2027-06-15",
@@ -954,7 +971,8 @@ window.SKBC_CONTENT = {
           "everyDays": 15
         },
         "dates": [],
-        "excludedDates": []
+        "excludedDates": [],
+        "featuredNews": true
       },
       {
         "start": "2027-01-16",
