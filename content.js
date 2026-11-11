@@ -376,40 +376,6 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2027-09-04",
-        "end": "2027-12-30",
-        "color": "#43ad8d",
-        "location": "Tolosa",
-        "dates": [
-          "2027-12-18"
-        ],
-        "repeat": {
-          "enabled": true,
-          "start": "2027-09-04",
-          "until": "2027-12-30",
-          "everyDays": "14"
-        },
-        "languages": {
-          "es": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "eu": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "en": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          }
-        },
-        "excludedDates": [
-          "2027-12-11",
-          "2027-12-25"
-        ]
-      },
-      {
-        "enabled": true,
         "start": "2027-12-14",
         "end": "2027-12-14",
         "color": "#a81f76",

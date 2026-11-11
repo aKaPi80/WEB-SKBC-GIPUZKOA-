@@ -13,7 +13,8 @@ const MEDIA_REPLACEMENTS = {
 let data = load();
 let publishedContentSnapshot = cloneDefault();
 let publishedContentSignature = contentSignature(publishedContentSnapshot);
-let currentPanel = "dashboard";
+const requestedPanel = new URLSearchParams(location.search).get("panel");
+let currentPanel = ["news", "events"].includes(requestedPanel) ? requestedPanel : "dashboard";
 let currentEventIndex = null;
 let currentEventYear = new Date().getFullYear();
 
