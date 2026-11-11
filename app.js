@@ -492,14 +492,44 @@ function podcastNews(settings) {
   </article>`;
 }
 
+function calendarNewsItems(settings, now = new Date()) {
+  const calendar = window.SKBC_PUBLIC_CALENDAR;
+  if (!calendar) return [];
+  const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Madrid" }).format(now);
+  const limit = new Date(today + "T00:00:00Z");
+  limit.setUTCDate(limit.getUTCDate() + 14);
+  const through = limit.toISOString().slice(0, 10);
+  const year = Number(today.slice(0, 4));
+  const years = year === limit.getUTCFullYear() ? [year] : [year, limit.getUTCFullYear()];
+  return (settings.events || []).flatMap(event => {
+    if (event.featuredNews !== true || event.enabled === false || event.enabled === "false" ||
+        (event.visibility && event.visibility !== "public")) return [];
+    const date = years.flatMap(value => calendar.dates(event, value)).find(day => day >= today && day <= through);
+    if (!date) return [];
+    const inRange = !event.repeat?.enabled && date >= event.start && date <= (event.end || event.start);
+    const start = inRange ? event.start : date;
+    const end = inRange ? event.end || start : start;
+    return [{
+      date: start,
+      dateLabel: end === start ? start : start + " – " + end,
+      color: /^#[0-9a-f]{6}$/i.test(event.color || "") ? event.color : "#1f6fa9",
+      url: calendar.link(Number(date.slice(0, 4)), state.lang),
+      languages: Object.fromEntries(Object.entries(event.languages || {}).map(([lang, entry]) => [
+        lang, { title: escapeHtml(entry.title || ""), text: [calendar.description(entry.description), event.location].filter(Boolean).map(escapeHtml).join(" · ") }
+      ]))
+    }];
+  });
+}
+
 function upcomingNewsSection(settings, copy) {
-  const news = visibleNewsItems(settings);
+  const news = [...visibleNewsItems(settings), ...calendarNewsItems(settings)]
+    .sort((a, b) => String(a.date || "9999-12-31").localeCompare(String(b.date || "9999-12-31")));
   const cards = news.map((item) => {
     const text = item.languages?.[state.lang] || item.languages?.es || {};
     const image = item.image ? `<img src="${item.image}" alt="${text.title || ""}" />` : "";
     const inner = `
       ${image}
-      <span style="--news-color:${item.color || "#1f6fa9"}">${item.date || ""}</span>
+      <span style="--news-color:${item.color || "#1f6fa9"}">${item.dateLabel || item.date || ""}</span>
       <h3>${text.title || ""}</h3>
       <p>${text.text || ""}</p>
     `;
