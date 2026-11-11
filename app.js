@@ -472,6 +472,26 @@ function visibleNewsItems(settings) {
     .sort((a, b) => String(a.date || "9999-12-31").localeCompare(String(b.date || "9999-12-31")));
 }
 
+function podcastNews(settings) {
+  const show = /^https:\/\/open\.spotify\.com\/show\/([a-zA-Z0-9]+)\/?(?:[?#].*)?$/.exec(settings.spotify || "");
+  if (!show) return "";
+  const url = `https://open.spotify.com/show/${show[1]}`;
+  const labels = {
+    es: ["Nuevos episodios los viernes a las 17:00 (hora peninsular)", "Escuchar en Spotify"],
+    eu: ["Atal berriak ostiraletan 17:00etan (penintsulako ordua)", "Spotifyn entzun"],
+    en: ["New episodes Fridays at 17:00 (mainland Spain time)", "Listen on Spotify"]
+  };
+  const [schedule, listen] = labels[state.lang] || labels.es;
+  return `<article class="podcast-news">
+    <div class="podcast-news__heading">
+      <div><h3>Más allá del Dojo</h3><p>${schedule}</p></div>
+      <a class="button" href="${url}" target="_blank" rel="noopener noreferrer">${listen}</a>
+    </div>
+    <iframe src="https://open.spotify.com/embed/show/${show[1]}" title="Más allá del Dojo · Spotify"
+      width="100%" height="352" loading="lazy" allow="encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </article>`;
+}
+
 function upcomingNewsSection(settings, copy) {
   const news = visibleNewsItems(settings);
   const cards = news.map((item) => {
@@ -495,6 +515,7 @@ function upcomingNewsSection(settings, copy) {
       <h2>${copy.news.title}</h2>
       <p>${copy.news.text}</p>
     </div>
+    ${podcastNews(settings)}
     <div class="news-carousel ${animateNews ? "is-animated" : ""}">
       ${cards.length ? `<div class="news-track">${carouselCards.join("")}</div>` : `<p>${copy.news.empty}</p>`}
     </div>

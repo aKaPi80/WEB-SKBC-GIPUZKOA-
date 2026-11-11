@@ -4020,3 +4020,22 @@ textarea { resize: vertical; }
   body [aria-disabled="true"] { cursor: not-allowed; }
 }
 
+
+
+.podcast-news {
+  margin-bottom: 24px;
+  padding: clamp(16px, 3vw, 24px);
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  background: #fff;
+}
+.podcast-news__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+.podcast-news__heading h3, .podcast-news__heading p { margin: 0; }
+.podcast-news iframe { display: block; border: 0; border-radius: 12px; }
