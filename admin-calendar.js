@@ -25,6 +25,17 @@
     if(delta&&event.source==='management')event.managementDateOverride=true;
     return event;
   }
+  function moveOccurrence(original,from,to){
+    if(!parse(to))throw Error('La fecha de destino no es válida.');
+    const occurrences=dates(original);
+    if(!occurrences.includes(from))throw Error('El evento no está programado para ese día.');
+    if(from===to)return clone(original);
+    if(occurrences.includes(to))throw Error('El evento ya está programado para ese día.');
+    const event=clone(original);
+    event.dates=[...new Set([...(event.dates||[]).filter(day=>day!==from),to])].sort();
+    event.excludedDates=[...new Set([...(event.excludedDates||[]).filter(day=>day!==to),from])].sort();
+    return markDateOverride(original,event);
+  }
   function markDateOverride(original,event){
     if(original?.source==='management'&&['start','end','repeat','dates','excludedDates'].some(name=>JSON.stringify(original[name])!==JSON.stringify(event[name])))event.managementDateOverride=true;
     return event;
@@ -86,10 +97,10 @@
     function moveEvent(index,from,to){
       if(from===to)return;
       const original=events[index];if(!original)return;
-      if((original.repeat?.enabled||(original.dates||[]).length)&&!confirm('Se moverá el evento completo, incluidas sus repeticiones y días adicionales. ¿Continuar?'))return;
+      const singleOccurrence=Boolean(original.repeat?.enabled);
       try{
-        const after=move(original,from,to);lastMove={index,before:clone(original),after:clone(after)};
-        api.save(index,after);moveMessage=(original.languages?.es?.title||'Evento')+' movido '+(after.start||to)+' / '+(after.end||after.start||to)+'. Pendiente de publicar.';
+        const after=singleOccurrence?moveOccurrence(original,from,to):move(original,from,to);lastMove={index,before:clone(original),after:clone(after)};
+        api.save(index,after);moveMessage=(original.languages?.es?.title||'Evento')+(singleOccurrence?' · fecha movida de '+from+' a '+to:' movido '+(after.start||to)+' / '+(after.end||after.start||to))+'. Pendiente de publicar.';
         const destination=parse(to);month=new Date(destination.getFullYear(),destination.getMonth(),1);
         api.refresh();
         root.querySelector('[data-cal-event="'+index+'"][data-cal-from="'+to+'"]')?.focus();
@@ -190,10 +201,11 @@
         if(changed){dialog.querySelector('.cal-error').textContent='Guarda o cancela los cambios antes de mover el evento.';return;}
         dialog.querySelector('[data-cal-move]').remove();
         const controls=document.createElement('section');controls.className='cal-move-form';
-        controls.innerHTML='<label>Nueva fecha de inicio<input type="date" data-cal-destination value="'+esc(event.start||date||'')+'"></label><button type="button" class="primary" data-cal-confirm-move>Mover a esta fecha</button><p>Se conserva la duración. Las series se desplazan completas.</p>';
+        const from=event.repeat?.enabled?(date||dates(event)[0]):(event.start||dates(event)[0]);
+        controls.innerHTML='<label>Nueva fecha de inicio<input type="date" data-cal-destination value="'+esc(from||'')+'"></label><button type="button" class="primary" data-cal-confirm-move>Mover a esta fecha</button><p>'+(event.repeat?.enabled?'Se moverá solo la fecha seleccionada.':'Se conserva la duración.')+'</p>';
         form.querySelector('footer').before(controls);
         controls.querySelector('input').focus();
-        controls.querySelector('button').onclick=()=>{if(changed){dialog.querySelector('.cal-error').textContent='Guarda o cancela los cambios antes de mover el evento.';return;}const destination=controls.querySelector('input').value;if(!parse(destination)){dialog.querySelector('.cal-error').textContent='Indica una fecha válida.';return;}closeDialog();moveEvent(index,event.start||dates(event)[0],destination);};
+        controls.querySelector('button').onclick=()=>{if(changed){dialog.querySelector('.cal-error').textContent='Guarda o cancela los cambios antes de mover el evento.';return;}const destination=controls.querySelector('input').value;if(!parse(destination)){dialog.querySelector('.cal-error').textContent='Indica una fecha válida.';return;}closeDialog();moveEvent(index,from,destination);};
       });
       form.onsubmit=e=>{e.preventDefault();try{
         const values=Object.fromEntries(new FormData(form));values.enabled=values.enabled==='true';
@@ -209,5 +221,5 @@
       form.elements.title.focus();
     }
   }
-  window.SKBC_ADMIN_CALENDAR={dates,move,prepare,render,hasUnsaved:()=>unsaved};
+  window.SKBC_ADMIN_CALENDAR={dates,move,moveOccurrence,prepare,render,hasUnsaved:()=>unsaved};
 })();

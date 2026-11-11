@@ -953,6 +953,36 @@ window.SKBC_CONTENT = {
         },
         "dates": [],
         "excludedDates": []
+      },
+      {
+        "start": "2027-01-16",
+        "end": "2027-01-16",
+        "enabled": true,
+        "color": "#6951a5",
+        "kind": "event",
+        "languages": {
+          "es": {
+            "title": "BUSEN SKBC",
+            "description": ""
+          },
+          "eu": {
+            "title": "BUSEN SKBC",
+            "description": ""
+          },
+          "en": {
+            "title": "BUSEN SKBC",
+            "description": ""
+          }
+        },
+        "location": "",
+        "repeat": {
+          "enabled": true,
+          "start": "2027-01-16",
+          "until": "2027-12-31",
+          "everyDays": 15
+        },
+        "dates": [],
+        "excludedDates": []
       }
     ],
     "defaultLanguage": "es",
