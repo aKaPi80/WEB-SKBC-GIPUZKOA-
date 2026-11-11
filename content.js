@@ -330,8 +330,8 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2027-07-07",
-        "end": "2027-08-05",
+        "start": "2027-07-01",
+        "end": "2027-07-30",
         "color": "#1fa853",
         "location": "Tolosa",
         "languages": {
@@ -353,8 +353,8 @@ window.SKBC_CONTENT = {
       },
       {
         "enabled": true,
-        "start": "2027-08-07",
-        "end": "2027-09-06",
+        "start": "2027-08-01",
+        "end": "2027-08-31",
         "color": "#a81f76",
         "location": "Tolosa",
         "languages": {
