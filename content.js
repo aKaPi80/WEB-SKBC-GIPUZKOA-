@@ -48,7 +48,11 @@ window.SKBC_CONTENT = {
     ],
     "events": [
       {
+        "enabled": true,
+        "start": "2026-06-27",
+        "end": "2026-06-28",
         "color": "#1f6fa9",
+        "location": "Irlanda",
         "languages": {
           "es": {
             "title": "Curso internacional IKA en Irlanda",
@@ -62,13 +66,14 @@ window.SKBC_CONTENT = {
             "title": "IKA International course in Ireland",
             "description": "Training and exchange with other practitioners."
           }
-        },
-        "enabled": true,
-        "start": "2026-06-27",
-        "end": "2026-06-28",
-        "location": "Irlanda"
+        }
       },
       {
+        "enabled": true,
+        "start": "2026-06-06",
+        "end": "2026-06-07",
+        "color": "#c52727",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "Curso SKBC en Tolosa",
@@ -82,14 +87,14 @@ window.SKBC_CONTENT = {
             "title": "SKBC Course in Tolosa",
             "description": "Seminar for club students and guests."
           }
-        },
-        "enabled": true,
-        "start": "2026-06-06",
-        "end": "2026-06-07",
-        "color": "#c52727",
-        "location": "Tolosa"
+        }
       },
       {
+        "enabled": true,
+        "start": "2026-07-01",
+        "end": "2026-07-30",
+        "color": "#1fa853",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "SHAKUJO Y ENTRENAMIENTO AIRE LIBRE",
@@ -103,14 +108,14 @@ window.SKBC_CONTENT = {
             "title": "SHAKUJO AND OUTSIDE TRAININGS",
             "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS...."
           }
-        },
-        "enabled": true,
-        "start": "2026-07-01",
-        "end": "2026-07-30",
-        "color": "#1fa853",
-        "location": "Tolosa"
+        }
       },
       {
+        "enabled": true,
+        "start": "2026-08-01",
+        "end": "2026-08-31",
+        "color": "#a81f76",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "VACACIONES",
@@ -124,28 +129,9 @@ window.SKBC_CONTENT = {
             "title": "HOLYDAYS",
             "description": "HOLYDAYS"
           }
-        },
-        "enabled": true,
-        "start": "2026-08-01",
-        "end": "2026-08-31",
-        "color": "#a81f76",
-        "location": "Tolosa"
+        }
       },
       {
-        "languages": {
-          "es": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "eu": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "en": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          }
-        },
         "enabled": true,
         "start": "2026-09-05",
         "end": "2026-12-31",
@@ -160,12 +146,38 @@ window.SKBC_CONTENT = {
           "until": "2026-12-31",
           "everyDays": "14"
         },
+        "languages": {
+          "es": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "eu": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "en": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          }
+        },
         "excludedDates": [
           "2026-12-12",
           "2026-12-26"
         ]
       },
       {
+        "enabled": true,
+        "start": "2026-12-08",
+        "end": "2026-12-08",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2026-06-04",
+          "until": "2026-06-04",
+          "everyDays": ""
+        },
         "languages": {
           "es": {
             "title": "PUENTE DICIEMBRE",
@@ -179,10 +191,12 @@ window.SKBC_CONTENT = {
             "title": "HOLYDAY",
             "description": ""
           }
-        },
+        }
+      },
+      {
         "enabled": true,
-        "start": "2026-12-08",
-        "end": "2026-12-08",
+        "start": "2026-12-24",
+        "end": "2026-12-31",
         "color": "#a81f76",
         "location": "Tolosa",
         "dates": [],
@@ -190,10 +204,8 @@ window.SKBC_CONTENT = {
           "enabled": false,
           "start": "2026-06-04",
           "until": "2026-06-04",
-          "everyDays": ""
-        }
-      },
-      {
+          "everyDays": "15"
+        },
         "languages": {
           "es": {
             "title": "VACACIONES DE NAVIDAD",
@@ -207,11 +219,13 @@ window.SKBC_CONTENT = {
             "title": "WINTER HOLIDAYS",
             "description": ""
           }
-        },
+        }
+      },
+      {
         "enabled": true,
-        "start": "2026-12-24",
-        "end": "2026-12-31",
-        "color": "#a81f76",
+        "start": "2026-12-10",
+        "end": "2026-12-10",
+        "color": "#c3f2c0",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
@@ -219,9 +233,7 @@ window.SKBC_CONTENT = {
           "start": "2026-06-04",
           "until": "2026-06-04",
           "everyDays": "15"
-        }
-      },
-      {
+        },
         "languages": {
           "es": {
             "title": "EXAMENES",
@@ -235,11 +247,13 @@ window.SKBC_CONTENT = {
             "title": "TESTS",
             "description": "2 EXAMS OF THE YEAR"
           }
-        },
+        }
+      },
+      {
         "enabled": true,
-        "start": "2026-12-10",
-        "end": "2026-12-10",
-        "color": "#c3f2c0",
+        "start": "2026-10-15",
+        "end": "2026-10-15",
+        "color": "#515176",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
@@ -247,9 +261,7 @@ window.SKBC_CONTENT = {
           "start": "2026-06-04",
           "until": "2026-06-04",
           "everyDays": "15"
-        }
-      },
-      {
+        },
         "languages": {
           "es": {
             "title": "CONFERENCIA DE SKBC GIPUZKOA",
@@ -263,21 +275,21 @@ window.SKBC_CONTENT = {
             "title": "SKBC GIPUZKOA CONFERENCE",
             "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
           }
-        },
+        }
+      },
+      {
         "enabled": true,
-        "start": "2026-10-15",
-        "end": "2026-10-15",
-        "color": "#515176",
+        "start": "2026-12-12",
+        "end": "2026-12-12",
+        "color": "#a8961f",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2026-06-04",
-          "until": "2026-06-04",
+          "start": "2026-12-12",
+          "until": "2026-12-12",
           "everyDays": "15"
-        }
-      },
-      {
+        },
         "languages": {
           "es": {
             "title": "SKBC REUNION Y CENA DE FIN DE AÑO",
@@ -291,44 +303,14 @@ window.SKBC_CONTENT = {
             "title": "SKBC YEAR-END MEETING & DINNER",
             "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
           }
-        },
-        "enabled": true,
-        "start": "2026-12-12",
-        "end": "2026-12-12",
-        "color": "#a8961f",
-        "location": "Tolosa",
-        "dates": [],
-        "repeat": {
-          "enabled": false,
-          "start": "2026-12-12",
-          "until": "2026-12-12",
-          "everyDays": "15"
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Curso internacional IKA en Irlanda",
-            "description": "Entrenamiento y convivencia con otros practicantes."
-          },
-          "eu": {
-            "title": "IKA Nazioarteko ikastaroa Irlandan",
-            "description": "Beste praktikatzaileekin entrenamendua eta bizikidetza."
-          },
-          "en": {
-            "title": "IKA International course in Ireland",
-            "description": "Training and exchange with other practitioners."
-          }
-        },
         "enabled": true,
         "start": "2027-06-26",
         "end": "2027-06-27",
-        "color": "#1f6fa9",
-        "location": "Irlanda",
-        "dates": [],
-        "excludedDates": []
-      },
-      {
+        "color": "#c52727",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "Curso SKBC en Tolosa",
@@ -343,15 +325,15 @@ window.SKBC_CONTENT = {
             "description": "Seminar for club students and guests."
           }
         },
-        "enabled": true,
-        "start": "2027-06-05",
-        "end": "2027-06-06",
-        "color": "#c52727",
-        "location": "Tolosa",
         "dates": [],
         "excludedDates": []
       },
       {
+        "enabled": true,
+        "start": "2027-07-07",
+        "end": "2027-08-05",
+        "color": "#1fa853",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "SHAKUJO Y ENTRENAMIENTO AIRE LIBRE",
@@ -366,15 +348,15 @@ window.SKBC_CONTENT = {
             "description": "OUTSIDE TRAINING, SHAKUJO, MOUNTAINS...."
           }
         },
-        "enabled": true,
-        "start": "2027-07-07",
-        "end": "2027-08-05",
-        "color": "#1fa853",
-        "location": "Tolosa",
         "dates": [],
         "excludedDates": []
       },
       {
+        "enabled": true,
+        "start": "2027-08-07",
+        "end": "2027-09-06",
+        "color": "#a81f76",
+        "location": "Tolosa",
         "languages": {
           "es": {
             "title": "VACACIONES",
@@ -389,29 +371,10 @@ window.SKBC_CONTENT = {
             "description": "HOLYDAYS"
           }
         },
-        "enabled": true,
-        "start": "2027-08-07",
-        "end": "2027-09-06",
-        "color": "#a81f76",
-        "location": "Tolosa",
         "dates": [],
         "excludedDates": []
       },
       {
-        "languages": {
-          "es": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "eu": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          },
-          "en": {
-            "title": "BUSEN SKBC GIPUZKOA",
-            "description": ""
-          }
-        },
         "enabled": true,
         "start": "2027-09-04",
         "end": "2027-12-30",
@@ -426,12 +389,38 @@ window.SKBC_CONTENT = {
           "until": "2027-12-30",
           "everyDays": "14"
         },
+        "languages": {
+          "es": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "eu": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          },
+          "en": {
+            "title": "BUSEN SKBC GIPUZKOA",
+            "description": ""
+          }
+        },
         "excludedDates": [
           "2027-12-11",
           "2027-12-25"
         ]
       },
       {
+        "enabled": true,
+        "start": "2027-12-14",
+        "end": "2027-12-14",
+        "color": "#a81f76",
+        "location": "Tolosa",
+        "dates": [],
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-03",
+          "until": "2027-06-03",
+          "everyDays": ""
+        },
         "languages": {
           "es": {
             "title": "PUENTE DICIEMBRE",
@@ -446,9 +435,12 @@ window.SKBC_CONTENT = {
             "description": ""
           }
         },
+        "excludedDates": []
+      },
+      {
         "enabled": true,
-        "start": "2027-12-14",
-        "end": "2027-12-14",
+        "start": "2027-12-23",
+        "end": "2027-12-30",
         "color": "#a81f76",
         "location": "Tolosa",
         "dates": [],
@@ -456,11 +448,8 @@ window.SKBC_CONTENT = {
           "enabled": false,
           "start": "2027-06-03",
           "until": "2027-06-03",
-          "everyDays": ""
+          "everyDays": "15"
         },
-        "excludedDates": []
-      },
-      {
         "languages": {
           "es": {
             "title": "VACACIONES DE NAVIDAD",
@@ -475,24 +464,24 @@ window.SKBC_CONTENT = {
             "description": ""
           }
         },
+        "excludedDates": []
+      },
+      {
         "enabled": true,
-        "start": "2027-12-23",
-        "end": "2027-12-30",
-        "color": "#a81f76",
+        "start": "2027-12-16",
+        "end": "2027-12-16",
+        "color": "#c3f2c0",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2027-06-03",
-          "until": "2027-06-03",
-          "everyDays": "15"
+          "start": "2027-12-16",
+          "until": "2027-12-16",
+          "everyDays": 15
         },
-        "excludedDates": []
-      },
-      {
         "languages": {
           "es": {
-            "title": "EXAMENES",
+            "title": "EXAMENES ADULTOS",
             "description": "2 CONVOCATORIA EXAMENES DEL AÑO"
           },
           "eu": {
@@ -504,21 +493,22 @@ window.SKBC_CONTENT = {
             "description": "2 EXAMS OF THE YEAR"
           }
         },
+        "excludedDates": [],
+        "kind": "event"
+      },
+      {
         "enabled": true,
-        "start": "2027-12-09",
-        "end": "2027-12-09",
-        "color": "#c3f2c0",
+        "start": "2027-09-23",
+        "end": "2027-09-23",
+        "color": "#515176",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2027-06-03",
-          "until": "2027-06-03",
+          "start": "2027-06-17",
+          "until": "2027-06-17",
           "everyDays": "15"
         },
-        "excludedDates": []
-      },
-      {
         "languages": {
           "es": {
             "title": "CONFERENCIA DE SKBC GIPUZKOA",
@@ -533,21 +523,21 @@ window.SKBC_CONTENT = {
             "description": "TALK ABOUT SHORINJI KEMPO OPEN TO EVERYONE, PARENTS OF CLUB MEMBERS, CLUB MEMBERS AND PEOPLE INTERESTED IN KNOWING WHAT SHORINJI KEMPO IS."
           }
         },
+        "excludedDates": []
+      },
+      {
         "enabled": true,
-        "start": "2027-09-09",
-        "end": "2027-09-09",
-        "color": "#515176",
+        "start": "2027-12-18",
+        "end": "2027-12-18",
+        "color": "#a8961f",
         "location": "Tolosa",
         "dates": [],
         "repeat": {
           "enabled": false,
-          "start": "2027-06-03",
-          "until": "2027-06-03",
+          "start": "2027-12-18",
+          "until": "2027-12-18",
           "everyDays": "15"
         },
-        "excludedDates": []
-      },
-      {
         "languages": {
           "es": {
             "title": "SKBC REUNION Y CENA DE FIN DE AÑO",
@@ -562,35 +552,9 @@ window.SKBC_CONTENT = {
             "description": "BOARD MEETING SKBC GIPUZKOA FY YEAR-ROUND FAREWELL DINNER WITH THE WHOLE CLUB"
           }
         },
-        "enabled": true,
-        "start": "2027-12-11",
-        "end": "2027-12-11",
-        "color": "#a8961f",
-        "location": "Tolosa",
-        "dates": [],
-        "repeat": {
-          "enabled": false,
-          "start": "2027-12-11",
-          "until": "2027-12-11",
-          "everyDays": "15"
-        },
         "excludedDates": []
       },
       {
-        "languages": {
-          "es": {
-            "title": "Semana Santa 2026",
-            "description": ""
-          },
-          "eu": {
-            "title": "Semana Santa 2026",
-            "description": ""
-          },
-          "en": {
-            "title": "Semana Santa 2026",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -609,6 +573,20 @@ window.SKBC_CONTENT = {
           "until": "2026-04-12",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Semana Santa 2026",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:semana santa 2026|2026-03-30|2026-04-12|all",
         "sourceAliases": [
           "closure-calendar:semana santa 2026|2026-03-30|2026-04-12|all"
@@ -619,20 +597,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Verano 2026",
-            "description": ""
-          },
-          "eu": {
-            "title": "Verano 2026",
-            "description": ""
-          },
-          "en": {
-            "title": "Verano 2026",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -651,6 +615,20 @@ window.SKBC_CONTENT = {
           "until": "2026-08-31",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Verano 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Verano 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Verano 2026",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:verano 2026|2026-07-01|2026-08-31|all",
         "sourceAliases": [
           "closure-calendar:verano 2026|2026-07-01|2026-08-31|all"
@@ -661,20 +639,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Navidad 2026",
-            "description": ""
-          },
-          "eu": {
-            "title": "Navidad 2026",
-            "description": ""
-          },
-          "en": {
-            "title": "Navidad 2026",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -693,6 +657,20 @@ window.SKBC_CONTENT = {
           "until": "2027-01-06",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Navidad 2026",
+            "description": ""
+          },
+          "eu": {
+            "title": "Navidad 2026",
+            "description": ""
+          },
+          "en": {
+            "title": "Navidad 2026",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:navidad 2026|2026-12-24|2027-01-06|all",
         "sourceAliases": [
           "closure-calendar:navidad 2026|2026-12-24|2027-01-06|all"
@@ -703,20 +681,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "CARNAVALES TOLOSA",
-            "description": ""
-          },
-          "eu": {
-            "title": "CARNAVALES TOLOSA",
-            "description": ""
-          },
-          "en": {
-            "title": "CARNAVALES TOLOSA",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -735,6 +699,20 @@ window.SKBC_CONTENT = {
           "until": "2027-02-09",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          },
+          "eu": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          },
+          "en": {
+            "title": "CARNAVALES TOLOSA",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:carnavales tolosa|2027-02-04|2027-02-09|all",
         "sourceAliases": [
           "closure-calendar:carnavales tolosa|2027-02-04|2027-02-09|all"
@@ -745,20 +723,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Semana Santa 2027",
-            "description": ""
-          },
-          "eu": {
-            "title": "Semana Santa 2027",
-            "description": ""
-          },
-          "en": {
-            "title": "Semana Santa 2027",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -777,6 +741,20 @@ window.SKBC_CONTENT = {
           "until": "2027-04-04",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Semana Santa 2027",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:semana santa 2027|2027-03-24|2027-04-04|all",
         "sourceAliases": [
           "closure-calendar:semana santa 2027|2027-03-24|2027-04-04|all"
@@ -787,20 +765,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Verano 2027",
-            "description": ""
-          },
-          "eu": {
-            "title": "Verano 2027",
-            "description": ""
-          },
-          "en": {
-            "title": "Verano 2027",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -819,6 +783,20 @@ window.SKBC_CONTENT = {
           "until": "2027-08-31",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Verano 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Verano 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Verano 2027",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:verano 2027|2027-07-01|2027-08-31|all",
         "sourceAliases": [
           "closure-calendar:verano 2027|2027-07-01|2027-08-31|all"
@@ -829,20 +807,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "PUENTE DE OCTUBRE",
-            "description": ""
-          },
-          "eu": {
-            "title": "PUENTE DE OCTUBRE",
-            "description": ""
-          },
-          "en": {
-            "title": "PUENTE DE OCTUBRE",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -861,6 +825,20 @@ window.SKBC_CONTENT = {
           "until": "2027-10-13",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          },
+          "eu": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          },
+          "en": {
+            "title": "PUENTE DE OCTUBRE",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:puente de octubre|2027-10-06|2027-10-13|all",
         "sourceAliases": [
           "closure-calendar:puente de octubre|2027-10-06|2027-10-13|all"
@@ -871,20 +849,6 @@ window.SKBC_CONTENT = {
         }
       },
       {
-        "languages": {
-          "es": {
-            "title": "Navidad 2027",
-            "description": ""
-          },
-          "eu": {
-            "title": "Navidad 2027",
-            "description": ""
-          },
-          "en": {
-            "title": "Navidad 2027",
-            "description": ""
-          }
-        },
         "enabled": true,
         "source": "management",
         "sourceTable": "skbc_calendar_closures",
@@ -903,6 +867,20 @@ window.SKBC_CONTENT = {
           "until": "2028-01-06",
           "everyDays": 15
         },
+        "languages": {
+          "es": {
+            "title": "Navidad 2027",
+            "description": ""
+          },
+          "eu": {
+            "title": "Navidad 2027",
+            "description": ""
+          },
+          "en": {
+            "title": "Navidad 2027",
+            "description": ""
+          }
+        },
         "sourceKey": "closure-calendar:navidad 2027|2027-12-23|2028-01-06|all",
         "sourceAliases": [
           "closure-calendar:navidad 2027|2027-12-24|2028-01-06|all",
@@ -912,6 +890,96 @@ window.SKBC_CONTENT = {
           "start": "2027-12-23",
           "end": "2028-01-06"
         }
+      },
+      {
+        "start": "2027-06-17",
+        "end": "2027-06-17",
+        "enabled": true,
+        "color": "#26d94a",
+        "kind": "event",
+        "languages": {
+          "es": {
+            "title": "FIESTA DESPEDIDA SKBC Y CAMPEONATO DE TORTILLA DE PATATA",
+            "description": ""
+          },
+          "eu": {
+            "title": "FIESTA DESPEDIDA SKBC Y CAMPEONATO DE TORTILLA DE PATATA",
+            "description": ""
+          },
+          "en": {
+            "title": "FIESTA DESPEDIDA SKBC Y CAMPEONATO DE TORTILLA DE PATATA",
+            "description": ""
+          }
+        },
+        "location": "TOLOSA",
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-17",
+          "until": "2027-06-17",
+          "everyDays": 15
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "start": "2027-06-27",
+        "end": "2027-06-27",
+        "enabled": true,
+        "color": "#9df0e0",
+        "kind": "event",
+        "languages": {
+          "es": {
+            "title": "EXAMENES ADULTOS",
+            "description": ""
+          },
+          "eu": {
+            "title": "EXAMENES ADULTOS",
+            "description": ""
+          },
+          "en": {
+            "title": "EXAMENES ADULTOS",
+            "description": ""
+          }
+        },
+        "location": "TOLOSA",
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-27",
+          "until": "2027-06-27",
+          "everyDays": 15
+        },
+        "dates": [],
+        "excludedDates": []
+      },
+      {
+        "start": "2027-06-15",
+        "end": "2027-06-15",
+        "enabled": true,
+        "color": "#78e8db",
+        "kind": "event",
+        "languages": {
+          "es": {
+            "title": "EXAMENES NIÑOS",
+            "description": ""
+          },
+          "eu": {
+            "title": "EXAMENES NIÑOS",
+            "description": ""
+          },
+          "en": {
+            "title": "EXAMENES NIÑOS",
+            "description": ""
+          }
+        },
+        "location": "",
+        "repeat": {
+          "enabled": false,
+          "start": "2027-06-15",
+          "until": "2027-06-15",
+          "everyDays": 15
+        },
+        "dates": [],
+        "excludedDates": []
       }
     ],
     "defaultLanguage": "es",
