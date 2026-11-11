@@ -6,6 +6,7 @@ window.SKBC_CONTENT = {
     "instagram": "https://www.instagram.com/skbc_gipuzkoa/",
     "facebook": "https://www.facebook.com/100094925771992",
     "youtube": "https://www.youtube.com/@SKBCGIPUZKOA",
+    "spotify": "https://open.spotify.com/show/6E90V4MllBhJxi7rvpLi0B",
     "maps": "https://www.google.com/maps?q=Garmendiola%20aldapa%202%20Tolosa",
     "system": {
       "siteName": "SKBC GIPUZKOA",
@@ -1712,7 +1713,7 @@ window.SKBC_CONTENT = {
         "text": "SI QUIERES ESTAR AL DIA DE TODAS LAS NOVEDADES Y NOTICIAS SIGUENOS EN NUESTRAS REDES SOCIALES!",
         "instagram": "Instagram · últimas publicaciones",
         "facebook": "Facebook · página oficial",
-        "youtube": "YouTube · vídeos"
+        "youtube": "YouTube · vídeos", "spotify": "Escucha Más allá del Dojo"
       },
       "merch": {
         "eyebrow": "Merchandising",
@@ -2325,7 +2326,7 @@ window.SKBC_CONTENT = {
         "text": "Azken berri eta eguneratze guztien berri izan nahi baduzu, jarraitu gaitzazu gure sare sozialetan!",
         "instagram": "Instagram · Azken argitalpenak",
         "facebook": "Facebook · Orrialde Ofiziala",
-        "youtube": "YouTubeko bideoak"
+        "youtube": "YouTubeko bideoak", "spotify": "Entzun Más allá del Dojo"
       },
       "merch": {
         "eyebrow": "Merchandising",
@@ -2938,7 +2939,7 @@ window.SKBC_CONTENT = {
         "text": "IF YOU WANT TO STAY UP TO DATE WITH ALL THE NEWS AND DEVELOPMENTS FOLLOW US ON OUR SOCIAL NETWORKS!",
         "instagram": "Instagram · latest posts",
         "facebook": "Facebook · official page",
-        "youtube": "YouTube · videos"
+        "youtube": "YouTube · videos", "spotify": "Listen to Más allá del Dojo"
       },
       "merch": {
         "eyebrow": "Merchandising",

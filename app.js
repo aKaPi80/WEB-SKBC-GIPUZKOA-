@@ -1951,10 +1951,11 @@ function render() {
           ${socialEmbeds.youtube}
         </div>
       ` : ""}
-      <div class="grid-3">
+      <div class="${settings.spotify ? "grid-4" : "grid-3"}">
         <a class="card" href="${settings.instagram}" target="_blank" rel="noreferrer"><span>Instagram</span><h3>${copy.social.instagram}</h3></a>
         <a class="card" href="${settings.facebook}" target="_blank" rel="noreferrer"><span>Facebook</span><h3>${copy.social.facebook}</h3></a>
         <a class="card" href="${settings.youtube}" target="_blank" rel="noreferrer"><span>YouTube</span><h3>${copy.social.youtube}</h3></a>
+        ${settings.spotify ? `<a class="card" href="${settings.spotify}" target="_blank" rel="noreferrer"><span>Spotify</span><h3>${copy.social.spotify}</h3></a>` : ""}
       </div>
     </section>
 
