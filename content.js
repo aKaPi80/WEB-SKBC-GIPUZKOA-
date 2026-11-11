@@ -2,6 +2,7 @@ window.SKBC_CONTENT = {
   "settings": {
     "news": [
       {
+        "color": "#1f6fa9",
         "languages": {
           "es": {
             "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
@@ -16,11 +17,10 @@ window.SKBC_CONTENT = {
             "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
           }
         },
-        "color": "#1f6fa9",
         "enabled": true,
         "date": "2026-06-25",
         "expiresAt": "2026-06-26T00:00",
-        "image": "assets/uploads/1780947943321-kurtso-bukaerako-festa-eta-tortilla-patata.png",
+        "image": "assets/uploads/a671abf7-956a-4f13-9c39-dbe7ddc715fa.png",
         "url": "https://forms.gle/Wy8UNTeLVoh7rC3u9"
       },
       {
@@ -48,7 +48,6 @@ window.SKBC_CONTENT = {
     ],
     "events": [
       {
-        "color": "#1f6fa9",
         "languages": {
           "es": {
             "title": "Curso internacional IKA en Irlanda",
@@ -63,6 +62,7 @@ window.SKBC_CONTENT = {
             "description": "Training and exchange with other practitioners."
           }
         },
+        "color": "#1f6fa9",
         "enabled": true,
         "start": "2026-06-27",
         "end": "2026-06-28",
