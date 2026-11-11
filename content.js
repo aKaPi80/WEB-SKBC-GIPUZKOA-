@@ -2,6 +2,7 @@ window.SKBC_CONTENT = {
   "settings": {
     "news": [
       {
+        "color": "#1f6fa9",
         "languages": {
           "es": {
             "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
@@ -16,7 +17,6 @@ window.SKBC_CONTENT = {
             "text": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
           }
         },
-        "color": "#1f6fa9",
         "enabled": true,
         "date": "2026-06-25",
         "expiresAt": "2026-06-26T00:00",
@@ -48,25 +48,25 @@ window.SKBC_CONTENT = {
     ],
     "events": [
       {
-        "color": "#1f6fa9",
         "languages": {
           "es": {
-            "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
-            "description": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO"
+            "title": "Curso internacional IKA en Irlanda",
+            "description": "Entrenamiento y convivencia con otros practicantes."
           },
           "eu": {
-            "title": "PATATA TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA.",
-            "description": "PATATA-TORTILLA LEHIAKETA ETA URTE AMAIERAKO FESTA"
+            "title": "IKA Nazioarteko ikastaroa Irlandan",
+            "description": "Beste praktikatzaileekin entrenamendua eta bizikidetza."
           },
           "en": {
-            "title": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY.",
-            "description": "CONTEST POTATO TORTILLA AND END OF YEAR PARTY"
+            "title": "IKA International course in Ireland",
+            "description": "Training and exchange with other practitioners."
           }
         },
         "enabled": true,
-        "start": "2026-06-25",
-        "end": "2026-06-25",
-        "location": "https://forms.gle/Wy8UNTeLVoh7rC3u9"
+        "start": "2026-06-27",
+        "end": "2026-06-28",
+        "color": "#1f6fa9",
+        "location": "Irlanda"
       },
       {
         "languages": {
