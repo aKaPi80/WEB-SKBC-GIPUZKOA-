@@ -190,9 +190,9 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", kenshi: "\u00c1rea Kenshi", contact: "Contacto", more: "M\u00e1s" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", kenshi: "Kenshi Gunea", contact: "Kontaktua", more: "Gehiago" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", kenshi: "Kenshi Area", contact: "Contact", more: "More" }
+  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", kenshi: "\u00c1rea Kenshi", contact: "Contacto", menu: "Men\u00fa", navigation: "Men\u00fa principal" },
+  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", kenshi: "Kenshi Gunea", contact: "Kontaktua", menu: "Menua", navigation: "Menu nagusia" },
+  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", kenshi: "Kenshi Area", contact: "Contact", menu: "Menu", navigation: "Main navigation" }
 };
 
 const NAV_KEYS = ["kids", "adults", "club", "team", "learn", "schedule", "calendar", "gallery", "testimonials", "faq", "news", "social", "merch", "kenshi", "contact"];
@@ -1635,13 +1635,9 @@ function renderNav(copy) {
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
-  const primaryHrefs = new Set(["#ninos", "#adultos", "#club", "#equipo", "#aprendizaje", "#horarios", "#calendario", "#testimonios", "#merchandising", "#contacto"]);
-  const primaryNav = baseNav.filter((item) => primaryHrefs.has(item.href));
-  const secondaryNav = baseNav.filter((item) => !primaryHrefs.has(item.href));
-  document.querySelector(".main-nav").innerHTML = [
-    ...primaryNav.map((item) => `<a href="${item.href}">${item.label}</a>`),
-    secondaryNav.length ? `<details class="nav-more"><summary>${labels.more || "Más"}</summary><div>${secondaryNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("")}</div></details>` : ""
-  ].join("");
+  mainNav.innerHTML = baseNav.map((item) => `<a href="${item.href}">${item.label}</a>`).join("");
+  mainNav.setAttribute("aria-label", labels.navigation);
+  menuButton.querySelector(".menu-label").textContent = labels.menu;
   document.querySelector(".nav-cta").textContent = copy.ctaShort;
   document.querySelector(".nav-cta").href = whatsappLink(copy.contact.title);
   const kenshiAccess = document.querySelector(".kenshi-access");
@@ -2864,11 +2860,22 @@ document.querySelectorAll("[data-lang]").forEach((button) => {
   });
 });
 
-document.querySelector(".menu-button").addEventListener("click", () => {
-  const nav = document.querySelector(".main-nav");
-  const isOpen = nav.classList.toggle("is-open");
-  document.querySelector(".menu-button").setAttribute("aria-expanded", String(isOpen));
+const menuButton = document.querySelector(".menu-button");
+const mainNav = document.querySelector(".main-nav");
+
+function setMenuOpen(isOpen) {
+  mainNav.hidden = !isOpen;
+  menuButton.setAttribute("aria-expanded", String(isOpen));
+}
+
+menuButton.addEventListener("click", () => setMenuOpen(mainNav.hidden));
+
+document.addEventListener("click", (event) => {
+  if (mainNav.hidden || menuButton.contains(event.target)) return;
+  if (!mainNav.contains(event.target) || event.target.closest("a[href]")) setMenuOpen(false);
 });
+
+window.addEventListener("hashchange", () => setMenuOpen(false));
 
 document.querySelector(".profile-modal__close").addEventListener("click", closeProfile);
 document.querySelector("#profileModal").addEventListener("click", (event) => {
@@ -2884,6 +2891,10 @@ document.querySelector("#galleryModal").addEventListener("click", (event) => {
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    if (!mainNav.hidden) {
+      setMenuOpen(false);
+      menuButton.focus();
+    }
     closeProfile();
     closeGalleryImage();
     closeTestimonial();
