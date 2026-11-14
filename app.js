@@ -21,7 +21,7 @@ function deepMerge(base, override) {
   return Object.keys({ ...base, ...override }).reduce((merged, key) => {
     merged[key] = deepMerge(base[key], override[key]);
     return merged;
-  }, {});
+  }, { ...fallback });
 }
 
 function t() {
