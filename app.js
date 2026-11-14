@@ -21,7 +21,7 @@ function deepMerge(base, override) {
   return Object.keys({ ...base, ...override }).reduce((merged, key) => {
     merged[key] = deepMerge(base[key], override[key]);
     return merged;
-  }, { ...fallback });
+  }, {});
 }
 
 function t() {
@@ -269,7 +269,7 @@ function navLabels() {
   return NAV_KEYS.reduce((labels, key, index) => {
     labels[key] = parts[index] || fallback[key];
     return labels;
-  }, {});
+  }, { ...fallback });
 }
 
 function uniqueNavItems(items) {
