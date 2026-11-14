@@ -190,9 +190,9 @@ function customNavItems(settings) {
 }
 
 const NAV_TEXT = {
-  es: { kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", kenshi: "\u00c1rea Kenshi", contact: "Contacto", menu: "Men\u00fa", navigation: "Men\u00fa principal" },
-  eu: { kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", kenshi: "Kenshi Gunea", contact: "Kontaktua", menu: "Menua", navigation: "Menu nagusia" },
-  en: { kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", kenshi: "Kenshi Area", contact: "Contact", menu: "Menu", navigation: "Main navigation" }
+  es: { home: "Inicio", kids: "Ni\u00f1os", adults: "Adultos", club: "Club", team: "Equipo", learn: "Aprendizaje", schedule: "Horarios", calendar: "Calendario", gallery: "Galer\u00eda", testimonials: "Testimonios", faq: "FAQ", news: "Noticias", social: "Redes", merch: "Tienda", kenshi: "\u00c1rea Kenshi", contact: "Contacto", menu: "Men\u00fa", navigation: "Men\u00fa principal" },
+  eu: { home: "Hasiera", kids: "Haurrak", adults: "Helduak", club: "Kluba", team: "Taldea", learn: "Ikaskuntza", schedule: "Ordutegiak", calendar: "Egutegia", gallery: "Galeria", testimonials: "Testigantzak", faq: "FAQ", news: "Albisteak", social: "Sareak", merch: "Denda", kenshi: "Kenshi Gunea", contact: "Kontaktua", menu: "Menua", navigation: "Menu nagusia" },
+  en: { home: "Home", kids: "Kids", adults: "Adults", club: "Club", team: "Team", learn: "Learning", schedule: "Schedule", calendar: "Calendar", gallery: "Gallery", testimonials: "Testimonials", faq: "FAQ", news: "News", social: "Social", merch: "Shop", kenshi: "Kenshi Area", contact: "Contact", menu: "Menu", navigation: "Main navigation" }
 };
 
 const NAV_KEYS = ["kids", "adults", "club", "team", "learn", "schedule", "calendar", "gallery", "testimonials", "faq", "news", "social", "merch", "kenshi", "contact"];
@@ -1619,6 +1619,7 @@ function renderNav(copy) {
   const brandSubtitle = document.querySelector(".brand small");
   if (brandSubtitle) brandSubtitle.textContent = system.brandSubtitle || "Shorinji Kempo · Tolosa";
   const baseNav = uniqueNavItems([
+    { label: labels.home, href: "#inicio" },
     { label: labels.kids, href: "#ninos" },
     { label: labels.adults, href: "#adultos" },
     { label: labels.club, href: "#club" },
