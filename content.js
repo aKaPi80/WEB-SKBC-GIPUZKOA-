@@ -1539,7 +1539,7 @@ window.SKBC_CONTENT = {
         "title": "Shorinji Kempo para niños, jóvenes y adultos en Tolosa",
         "text": "Aprende defensa personal, mejora tu confianza y entrena en un club familiar, cercano y sin presión competitiva.",
         "primary": "Primer mes gratis",
-        "secondary": "Ver horarios",
+        "secondary": "Ver dojos y horarios",
         "cards": [
           [
             "5-13 años",
@@ -1820,12 +1820,21 @@ window.SKBC_CONTENT = {
       },
       "schedule": {
         "eyebrow": "Horarios y ubicación",
-        "title": "Ven a probar en Tolosa",
-        "text": "Escríbenos antes de venir y te indicaremos cuál es el mejor día para probar, qué traer y cómo funciona el primer mes gratuito.",
+        "title": "Dos dojos, un club en Tolosa",
+        "text": "SKBC Gipuzkoa cuenta con Gainberri y Seishin Dojo. Escríbenos antes de venir para organizar tu primer mes gratis.",
         "kids": "Niños · 5-13 años · Martes y jueves · 17:30-18:30",
         "adults": "Jóvenes y adultos · 13+ años · Martes y jueves · 18:30-20:00",
-        "place": "GAINBERRI      Garmendiola aldapa 2, Tolosa",
-        "maps": "Abrir en Google Maps"
+        "place": "Garmendiola aldapa 2, Tolosa",
+        "maps": "Abrir en Google Maps",
+        "summary": "Gainberri y Seishin · Dos dojos, un club",
+        "seishin": {
+          "audience": "Adultos · Clases por la mañana",
+          "schedule": "Lunes y miércoles · 11:00–12:30",
+          "teacher": "Clases con Bharat Sensei",
+          "opening": "Apertura el 30 de noviembre de 2026",
+          "offer": "Primer mes gratis",
+          "cta": "Probar en Seishin Dojo"
+        }
       },
       "calendar": {
         "eyebrow": "Calendario",
@@ -2093,7 +2102,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "¿Dónde entrenamos?",
-            "Entrenamos en Gainberri, Tolosa, Gipuzkoa. En la sección de horarios tienes la ubicación y el enlace a Google Maps."
+            "Entrenamos en dos dojos de SKBC Gipuzkoa en Tolosa: Gainberri, en Garmendiola aldapa 2, y Seishin Dojo, en Plaza Lizardi, 2. Seishin abre el 30 de noviembre de 2026 con clases para adultos los lunes y miércoles de 11:00 a 12:30, con Bharat Sensei y el primer mes gratis. En la sección de dojos y horarios tienes las dos ubicaciones y sus enlaces a Google Maps."
           ],
           [
             "¿Pueden probar niños y adultos?",
@@ -2153,7 +2162,7 @@ window.SKBC_CONTENT = {
         "title": "Shorinji Kempo haurrentzat, gazteentzat eta helduentzat Tolosan",
         "text": "Ikasi defentsa pertsonala, indartu konfiantza eta entrenatu giro familiar, hurbil eta lehiarik gabeko batean.",
         "primary": "Lehen hilabetea doan",
-        "secondary": "Ordutegiak ikusi",
+        "secondary": "Ikusi dojoak eta ordutegiak",
         "cards": [
           [
             "5-13 urte",
@@ -2434,12 +2443,21 @@ window.SKBC_CONTENT = {
       },
       "schedule": {
         "eyebrow": "Ordutegiak eta kokapena",
-        "title": "Zatoz eta probatu Tolosara",
-        "text": "Idatzi iezaguzu etorri aurretik eta esango dizugu zein den probatzeko egunik onena, zer ekarri behar duzun eta nola funtzionatzen duen lehen doako hilabeteak.",
+        "title": "Bi dojo, klub bat Tolosan",
+        "text": "SKBC Gipuzkoak bi dojo ditu: Gainberri eta Seishin. Idatzi iezaguzu etorri aurretik zure lehen doako hilabetea antolatzeko.",
         "kids": "Haurrak · 5-13 urte · Astearte eta ostegunetan · 17:30-18:30",
         "adults": "Gazteak eta helduak · 13+ urte · Astearte eta ostegunetan · 18:30-20:00",
-        "place": "GAINBERRI Garmendiola aldapa 2, Tolosa",
-        "maps": "Google Mapsen ireki"
+        "place": "Garmendiola aldapa 2, Tolosa",
+        "maps": "Google Mapsen ireki",
+        "summary": "Gainberri eta Seishin · Bi dojo, klub bat",
+        "seishin": {
+          "audience": "Helduak · Goizeko eskolak",
+          "schedule": "Astelehen eta asteazkenetan · 11:00–12:30",
+          "teacher": "Eskolak Bharat Senseirekin",
+          "opening": "Irekiera 2026ko azaroaren 30ean",
+          "offer": "Lehen hilabetea doan",
+          "cta": "Probatu Seishin Dojoan"
+        }
       },
       "calendar": {
         "eyebrow": "Egutegia",
@@ -2707,7 +2725,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "Non entrenatzen gara?",
-            "Gainberrin entrenatzen dugu, Tolosa, GIpuzkoan. Kokapena eta Google Maps-erako esteka ordutegien atalean daude."
+            "SKBC Gipuzkoako bi dojotan entrenatzen dugu Tolosan: Gainberrin, Garmendiola aldapa 2an, eta Seishin Dojoan, Lizardi plaza 2an. Seishin 2026ko azaroaren 30ean irekiko da, helduentzako eskolekin astelehen eta asteazkenetan 11:00etatik 12:30era, Bharat Senseirekin eta lehen hilabetea doan. Dojoen eta ordutegien atalean bi kokapenak eta Google Maps-erako estekak dituzu."
           ],
           [
             "Haurrek eta helduek probatu al dezakete?",
@@ -2767,7 +2785,7 @@ window.SKBC_CONTENT = {
         "title": "Shorinji Kempo for children, teens and adults in Tolosa",
         "text": "Learn self-defence, build confidence and train in a friendly family club with no competitive pressure.",
         "primary": "First month free",
-        "secondary": "See schedule",
+        "secondary": "View dojos and schedules",
         "cards": [
           [
             "Ages 5-13",
@@ -3048,12 +3066,21 @@ window.SKBC_CONTENT = {
       },
       "schedule": {
         "eyebrow": "Schedule and location",
-        "title": "Come and try in Toulouse",
-        "text": "Write us before you come and we'll let you know the best day to try, what to bring, and how the first free month works.",
+        "title": "Two dojos, one club in Tolosa",
+        "text": "SKBC Gipuzkoa has two dojos: Gainberri and Seishin. Contact us before visiting to arrange your first month free.",
         "kids": "Children · 5-13 years · Tuesday and Thursday · 17:30-18:30",
         "adults": "Youth and adults · 13+ years · Tuesday and Thursday · 18:30-20:00",
-        "place": "GAINBERRI      Garmendiola aldapa 2, Toulouse",
-        "maps": "Open in Google Maps"
+        "place": "Garmendiola aldapa 2, Tolosa",
+        "maps": "Open in Google Maps",
+        "summary": "Gainberri and Seishin · Two dojos, one club",
+        "seishin": {
+          "audience": "Adults · Morning classes",
+          "schedule": "Mondays and Wednesdays · 11:00–12:30",
+          "teacher": "Classes with Bharat Sensei",
+          "opening": "Opening on 30 November 2026",
+          "offer": "First month free",
+          "cta": "Try Seishin Dojo"
+        }
       },
       "calendar": {
         "eyebrow": "Calendar",
@@ -3321,7 +3348,7 @@ window.SKBC_CONTENT = {
           ],
           [
             "Where do we train?",
-            "We trained in Gainberri, Toulouse, Gipuzkoa. In the hours section you have the location and the link to Google Maps."
+            "We train at two SKBC Gipuzkoa dojos in Tolosa: Gainberri at Garmendiola aldapa 2, and Seishin Dojo at Plaza Lizardi, 2. Seishin opens on 30 November 2026 with adult classes on Mondays and Wednesdays from 11:00 to 12:30, taught by Bharat Sensei, and the first month free. Find both locations and Google Maps links in the dojos and schedules section."
           ],
           [
             "Can you try children and adults?",

@@ -4034,3 +4034,19 @@ textarea { resize: vertical; }
 }
 .podcast-news__heading h3, .podcast-news__heading p { margin: 0; }
 .podcast-news iframe { display: block; border: 0; border-radius: 12px; }
+
+.dojo-summary {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--gold);
+  color: #fff;
+  font-weight: 850;
+}
+.dojo-location h3 { margin-top: 0; }
+.dojo-location ul { padding-left: 20px; line-height: 1.7; }
+.dojo-location li + li { margin-top: 10px; }
+.dojo-location > a:not(.button) { text-decoration: underline; text-underline-offset: 4px; }
+.dojo-location--seishin { border-color: var(--gold); }
+.dark .dojo-opening, .dark .dojo-offer { color: var(--gold); font-weight: 850; }
+.dojo-location .button { display: flex; margin-top: 20px; }

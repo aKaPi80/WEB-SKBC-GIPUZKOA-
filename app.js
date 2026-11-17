@@ -1852,6 +1852,7 @@ function render() {
         <p class="eyebrow">${copy.hero.eyebrow}</p>
         <h1>${copy.hero.title}</h1>
         <p>${copy.hero.text}</p>
+        ${copy.schedule.summary ? `<a class="dojo-summary" href="#horarios">${escapeHtml(copy.schedule.summary)}</a>` : ""}
         <div class="hero-actions">
           <a class="button" href="${whatsappLink(copy.hero.primary)}" target="_blank" rel="noreferrer">${copy.hero.primary}</a>
           <a class="button secondary" href="#horarios">${copy.hero.secondary}</a>
@@ -1976,10 +1977,30 @@ function render() {
 
     <section class="section dark" id="horarios">
       <div class="section-heading"><p class="eyebrow">${copy.schedule.eyebrow}</p><h2>${copy.schedule.title}</h2><p>${copy.schedule.text}</p></div>
-      <div class="grid-3">
-        <article class="card"><span>01</span><h3>${copy.schedule.kids}</h3></article>
-        <article class="card"><span>02</span><h3>${copy.schedule.adults}</h3></article>
-        <article class="card"><span>03</span><h3>${copy.schedule.place}</h3><p><a href="${settings.maps}" target="_blank" rel="noreferrer">${copy.schedule.maps}</a></p></article>
+      <div class="grid-2 dojo-locations">
+        <article class="card dojo-location">
+          <h3>Gainberri Dojo</h3>
+          <p>${escapeHtml(copy.schedule.place)}</p>
+          <ul>
+            <li>${escapeHtml(copy.schedule.kids)}</li>
+            <li>${escapeHtml(copy.schedule.adults)}</li>
+          </ul>
+          <a href="${escapeHtml(settings.maps)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.schedule.maps)}</a>
+        </article>
+        ${copy.schedule.seishin ? `
+        <article class="card dojo-location dojo-location--seishin">
+          <h3>Seishin Dojo</h3>
+          <p>Plaza Lizardi, 2 · Tolosa</p>
+          <p class="dojo-opening"><time datetime="2026-11-30">${escapeHtml(copy.schedule.seishin.opening)}</time></p>
+          <ul>
+            <li>${escapeHtml(copy.schedule.seishin.audience)}</li>
+            <li>${escapeHtml(copy.schedule.seishin.schedule)}</li>
+            <li>${escapeHtml(copy.schedule.seishin.teacher)}</li>
+          </ul>
+          <p class="dojo-offer">${escapeHtml(copy.schedule.seishin.offer)}</p>
+          <a href="https://www.google.com/maps?q=Plaza%20Lizardi%202%20Tolosa" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.schedule.maps)}</a>
+          <a class="button" href="${whatsappLink(copy.schedule.seishin.cta)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.schedule.seishin.cta)}</a>
+        </article>` : ""}
       </div>
     </section>
 
