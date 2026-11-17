@@ -4050,3 +4050,6 @@ textarea { resize: vertical; }
 .dojo-location--seishin { border-color: var(--gold); }
 .dark .dojo-opening, .dark .dojo-offer { color: var(--gold); font-weight: 850; }
 .dojo-location .button { display: flex; margin-top: 20px; }
+
+.dark .dojo-opening.dojo-status--active { color: #86efac; }
+.dark .dojo-opening.dojo-status--upcoming { color: #fdba74; }

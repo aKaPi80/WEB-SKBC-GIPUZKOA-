@@ -1823,6 +1823,8 @@ function updateDojoStatuses(now = new Date()) {
   const schedule = t().schedule;
   // Midnight in Madrid on the opening date (CET, UTC+1).
   const isActive = now >= new Date("2026-11-30T00:00:00+01:00");
+  status.classList.toggle("dojo-status--active", isActive);
+  status.classList.toggle("dojo-status--upcoming", !isActive);
   status.innerHTML = isActive
     ? escapeHtml(schedule.active)
     : `<time datetime="2026-11-30">${escapeHtml(schedule.seishin.opening)}</time>`;
@@ -1992,7 +1994,7 @@ function render() {
         <article class="card dojo-location">
           <h3>Gainberri Dojo</h3>
           <p>${escapeHtml(copy.schedule.place)}</p>
-          <p class="dojo-opening">${escapeHtml(copy.schedule.active)}</p>
+          <p class="dojo-opening dojo-status--active">${escapeHtml(copy.schedule.active)}</p>
           <ul>
             <li>${escapeHtml(copy.schedule.kids)}</li>
             <li>${escapeHtml(copy.schedule.adults)}</li>

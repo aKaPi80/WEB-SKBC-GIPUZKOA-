@@ -1840,7 +1840,7 @@ window.SKBC_CONTENT = {
           "offer": "Primer mes gratis",
           "cta": "Probar en Gainberri Dojo"
         },
-        "active": "Activo"
+        "active": "En funcionamiento"
       },
       "calendar": {
         "eyebrow": "Calendario",
@@ -2469,7 +2469,7 @@ window.SKBC_CONTENT = {
           "offer": "Lehen hilabetea doan",
           "cta": "Probatu Gainberri Dojoan"
         },
-        "active": "Aktibo"
+        "active": "Martxan"
       },
       "calendar": {
         "eyebrow": "Egutegia",
@@ -3098,7 +3098,7 @@ window.SKBC_CONTENT = {
           "offer": "First month free",
           "cta": "Try Gainberri Dojo"
         },
-        "active": "Active"
+        "active": "Operating"
       },
       "calendar": {
         "eyebrow": "Calendar",
