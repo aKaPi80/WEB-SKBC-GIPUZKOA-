@@ -1834,6 +1834,11 @@ window.SKBC_CONTENT = {
           "opening": "Apertura el 30 de noviembre de 2026",
           "offer": "Primer mes gratis",
           "cta": "Probar en Seishin Dojo"
+        },
+        "gainberri": {
+          "teacher": "Clases con Alvaro Sensei",
+          "offer": "Primer mes gratis",
+          "cta": "Probar en Gainberri Dojo"
         }
       },
       "calendar": {
@@ -2457,6 +2462,11 @@ window.SKBC_CONTENT = {
           "opening": "Irekiera 2026ko azaroaren 30ean",
           "offer": "Lehen hilabetea doan",
           "cta": "Probatu Seishin Dojoan"
+        },
+        "gainberri": {
+          "teacher": "Eskolak Alvaro Senseirekin",
+          "offer": "Lehen hilabetea doan",
+          "cta": "Probatu Gainberri Dojoan"
         }
       },
       "calendar": {
@@ -3080,6 +3090,11 @@ window.SKBC_CONTENT = {
           "opening": "Opening on 30 November 2026",
           "offer": "First month free",
           "cta": "Try Seishin Dojo"
+        },
+        "gainberri": {
+          "teacher": "Classes with Alvaro Sensei",
+          "offer": "First month free",
+          "cta": "Try Gainberri Dojo"
         }
       },
       "calendar": {

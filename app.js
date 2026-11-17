@@ -1694,7 +1694,7 @@ function specialVisualCopy(mode) {
   const labels = {
     es: {
       christmas: "Felices fiestas",
-      autumn: "OtoÃ±o en el dojo",
+      autumn: "Oto\u00f1o en el dojo",
       carnival: "Carnavales en Tolosa",
       womensDay: "8M · respeto, igualdad y confianza",
       mourning: "SKBC GIPUZKOA se suma al luto",
@@ -1984,8 +1984,11 @@ function render() {
           <ul>
             <li>${escapeHtml(copy.schedule.kids)}</li>
             <li>${escapeHtml(copy.schedule.adults)}</li>
+            ${copy.schedule.gainberri ? `<li>${escapeHtml(copy.schedule.gainberri.teacher)}</li>` : ""}
           </ul>
+          ${copy.schedule.gainberri ? `<p class="dojo-offer">${escapeHtml(copy.schedule.gainberri.offer)}</p>` : ""}
           <a href="${escapeHtml(settings.maps)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.schedule.maps)}</a>
+          ${copy.schedule.gainberri ? `<a class="button" href="${whatsappLink(copy.schedule.gainberri.cta)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.schedule.gainberri.cta)}</a>` : ""}
         </article>
         ${copy.schedule.seishin ? `
         <article class="card dojo-location dojo-location--seishin">
