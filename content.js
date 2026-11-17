@@ -1839,7 +1839,8 @@ window.SKBC_CONTENT = {
           "teacher": "Clases con Alvaro Sensei",
           "offer": "Primer mes gratis",
           "cta": "Probar en Gainberri Dojo"
-        }
+        },
+        "active": "Activo"
       },
       "calendar": {
         "eyebrow": "Calendario",
@@ -2467,7 +2468,8 @@ window.SKBC_CONTENT = {
           "teacher": "Eskolak Alvaro Senseirekin",
           "offer": "Lehen hilabetea doan",
           "cta": "Probatu Gainberri Dojoan"
-        }
+        },
+        "active": "Aktibo"
       },
       "calendar": {
         "eyebrow": "Egutegia",
@@ -3095,7 +3097,8 @@ window.SKBC_CONTENT = {
           "teacher": "Classes with Alvaro Sensei",
           "offer": "First month free",
           "cta": "Try Gainberri Dojo"
-        }
+        },
+        "active": "Active"
       },
       "calendar": {
         "eyebrow": "Calendar",

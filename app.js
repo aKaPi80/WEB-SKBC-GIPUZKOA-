@@ -1817,6 +1817,17 @@ function alertBannerLayer(settings) {
   `;
 }
 
+function updateDojoStatuses(now = new Date()) {
+  const status = document.querySelector("[data-seishin-status]");
+  if (!status) return;
+  const schedule = t().schedule;
+  // Midnight in Madrid on the opening date (CET, UTC+1).
+  const isActive = now >= new Date("2026-11-30T00:00:00+01:00");
+  status.innerHTML = isActive
+    ? escapeHtml(schedule.active)
+    : `<time datetime="2026-11-30">${escapeHtml(schedule.seishin.opening)}</time>`;
+}
+
 function render() {
   const copy = t();
   const { settings } = state.content;
@@ -1981,6 +1992,7 @@ function render() {
         <article class="card dojo-location">
           <h3>Gainberri Dojo</h3>
           <p>${escapeHtml(copy.schedule.place)}</p>
+          <p class="dojo-opening">${escapeHtml(copy.schedule.active)}</p>
           <ul>
             <li>${escapeHtml(copy.schedule.kids)}</li>
             <li>${escapeHtml(copy.schedule.adults)}</li>
@@ -1994,7 +2006,7 @@ function render() {
         <article class="card dojo-location dojo-location--seishin">
           <h3>Seishin Dojo</h3>
           <p>Plaza Lizardi, 2 · Tolosa</p>
-          <p class="dojo-opening"><time datetime="2026-11-30">${escapeHtml(copy.schedule.seishin.opening)}</time></p>
+          <p class="dojo-opening" data-seishin-status></p>
           <ul>
             <li>${escapeHtml(copy.schedule.seishin.audience)}</li>
             <li>${escapeHtml(copy.schedule.seishin.schedule)}</li>
@@ -2062,6 +2074,8 @@ function render() {
     ${alertBannerLayer(settings)}
     ${specialVisualLayer(settings)}
   `;
+
+  updateDojoStatuses();
 
   document.querySelector(".contact-form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -2931,3 +2945,7 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 render();
+setInterval(updateDojoStatuses, 60000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) updateDojoStatuses();
+});
