@@ -4,6 +4,28 @@ window.SKBC_CONTENT = {
       {
         "languages": {
           "es": {
+            "title": "SKBC Gipuzkoa crece: abrimos Seishin Dojo",
+            "text": "Dos dojos, un club: Gainberri y Seishin. El 30 de noviembre de 2026 abrimos Seishin Dojo en Plaza Lizardi, 2, Tolosa. Clases para adultos con Bharat Sensei, los lunes y miércoles de 11:00 a 12:30. ¡Primer mes gratis! Consulta las ubicaciones y horarios de los dos dojos."
+          },
+          "eu": {
+            "title": "SKBC Gipuzkoa hazten ari da: Seishin Dojo irekiko dugu",
+            "text": "Bi dojo, klub bat: Gainberri eta Seishin. 2026ko azaroaren 30ean Seishin Dojo irekiko dugu Tolosan, Lizardi plaza 2an. Helduentzako eskolak Bharat Senseirekin, astelehen eta asteazkenetan 11:00etatik 12:30era. Lehen hilabetea doan! Kontsultatu bi dojoen kokapenak eta ordutegiak."
+          },
+          "en": {
+            "title": "SKBC Gipuzkoa is growing: Seishin Dojo opens",
+            "text": "Two dojos, one club: Gainberri and Seishin. Seishin Dojo opens on 30 November 2026 at Plaza Lizardi, 2, Tolosa. Adult classes with Bharat Sensei on Mondays and Wednesdays from 11:00 to 12:30. First month free! View both dojos and their schedules."
+          }
+        },
+        "enabled": true,
+        "date": "2026-11-30",
+        "expiresAt": "2026-11-30T00:00:00+01:00",
+        "color": "#c52727",
+        "image": "",
+        "url": "https://www.skbcgipuzkoa.com/#horarios"
+      },
+      {
+        "languages": {
+          "es": {
             "title": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO.",
             "text": "CONCURSO TORTILLA DE PATATA Y FIESTA DE FIN DE CURSO"
           },
