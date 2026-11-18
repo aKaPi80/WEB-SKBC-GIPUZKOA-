@@ -1564,16 +1564,16 @@ window.SKBC_CONTENT = {
         "secondary": "Ver dojos y horarios",
         "cards": [
           [
-            "5-13 años",
+            "5-13 años · Gainberri",
             "Martes y jueves · 17:30-18:30"
           ],
           [
-            "13+ y adultos",
+            "13+ y adultos · Gainberri",
             "Martes y jueves · 18:30-20:00"
           ],
           [
-            "Sin compromiso",
-            "Ven, prueba y decide después"
+            "Adultos · Seishin",
+            "Lunes y miércoles · 11:00-12:30 · Desde el 30 de noviembre de 2026"
           ]
         ]
       },
@@ -2197,16 +2197,16 @@ window.SKBC_CONTENT = {
         "secondary": "Ikusi dojoak eta ordutegiak",
         "cards": [
           [
-            "5-13 urte",
+            "5-13 urte · Gainberri",
             "Astearte eta ostegunetan · 17:30-18:30"
           ],
           [
-            "13+ eta helduak",
+            "13+ eta helduak · Gainberri",
             "Astearte eta ostegunetan · 18:30-20:00"
           ],
           [
-            "Konpromisorik gabe",
-            "Etorri, probatu eta gero erabaki"
+            "Helduak · Seishin",
+            "Astelehen eta asteazkenetan · 11:00-12:30 · 2026ko azaroaren 30etik"
           ]
         ]
       },
@@ -2830,16 +2830,16 @@ window.SKBC_CONTENT = {
         "secondary": "View dojos and schedules",
         "cards": [
           [
-            "Ages 5-13",
-            "Tuesday and Thursday · 17:30-18:30"
+            "Ages 5-13 · Gainberri",
+            "Tuesdays and Thursdays · 17:30-18:30"
           ],
           [
-            "13+ and adults",
-            "Tuesday and Thursday · 18:30-20:00"
+            "Ages 13+ and adults · Gainberri",
+            "Tuesdays and Thursdays · 18:30-20:00"
           ],
           [
-            "No commitment",
-            "Come, try it and decide later"
+            "Adults · Seishin",
+            "Mondays and Wednesdays · 11:00-12:30 · From 30 November 2026"
           ]
         ]
       },
