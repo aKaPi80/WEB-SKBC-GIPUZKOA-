@@ -280,7 +280,7 @@ window.SKBC_CONTENT = {
         "excludedDates": []
       },
       {
-        "enabled": true,
+        "enabled": false,
         "start": "2026-11-26",
         "end": "2026-11-26",
         "color": "#515176",
