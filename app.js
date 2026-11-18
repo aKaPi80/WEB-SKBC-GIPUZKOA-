@@ -57,7 +57,6 @@ function ratingStars(value) {
 function cardGrid(items, columns = 4) {
   return `<div class="grid-${columns}">${items.map((item) => `
     <article class="card">
-      <span>${item[0]}</span>
       <h3>${item[0]}</h3>
       <p>${item[1] || ""}</p>
     </article>`).join("")}</div>`;
@@ -1914,7 +1913,7 @@ function render() {
           <p class="eyebrow">${copy.adults.eyebrow}</p>
           <h2>${copy.adults.title}</h2>
           <p>${copy.adults.text}</p>
-          <div class="grid-3">${copy.adults.items.map((item) => `<article class="card"><span>${item[0]}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
+          ${cardGrid(copy.adults.items, 3)}
         </div>
         <div class="split-media" style="${backgroundImageStyle(settings.images.adults, "adults")}"></div>
       </div>
