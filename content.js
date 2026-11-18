@@ -2133,6 +2133,10 @@ window.SKBC_CONTENT = {
             "Entrenamos en dos dojos de SKBC Gipuzkoa en Tolosa: Gainberri, en Garmendiola aldapa 2, y Seishin Dojo, en Plaza Lizardi, 2. Seishin abre el 30 de noviembre de 2026 con clases para adultos los lunes y miércoles de 11:00 a 12:30, con Bharat Sensei y el primer mes gratis. En la sección de dojos y horarios tienes las dos ubicaciones y sus enlaces a Google Maps."
           ],
           [
+            "¿Puedo entrenar en Gainberri y en Seishin?",
+            "Sí. Gainberri y Seishin forman parte del mismo club, SKBC Gipuzkoa. Puedes alternar los entrenamientos de los dos dojos según te convenga o asistir a todas las sesiones de ambos. Gainberri ofrece clases por la tarde y Seishin, para adultos, por la mañana. Los entrenamientos en Seishin comienzan el 30 de noviembre de 2026. Consulta los horarios para organizar tu semana."
+          ],
+          [
             "¿Pueden probar niños y adultos?",
             "Sí. Tenemos clases infantiles y clases para adultos, con objetivos y ritmo adecuados a cada grupo."
           ],
@@ -2762,6 +2766,10 @@ window.SKBC_CONTENT = {
             "SKBC Gipuzkoako bi dojotan entrenatzen dugu Tolosan: Gainberrin, Garmendiola aldapa 2an, eta Seishin Dojoan, Lizardi plaza 2an. Seishin 2026ko azaroaren 30ean irekiko da, helduentzako eskolekin astelehen eta asteazkenetan 11:00etatik 12:30era, Bharat Senseirekin eta lehen hilabetea doan. Dojoen eta ordutegien atalean bi kokapenak eta Google Maps-erako estekak dituzu."
           ],
           [
+            "Gainberrin eta Seishinen entrenatu dezaket?",
+            "Bai. Gainberri eta Seishin klub berekoak dira: SKBC Gipuzkoa. Bi dojoetako entrenamenduak txandakatu ditzakezu zure beharretara egokitzeko, edo bietako saio guztietara joan. Gainberrin arratsaldeko eskolak daude, eta Seishinen helduentzako goizeko eskolak. Seishineko entrenamenduak 2026ko azaroaren 30ean hasiko dira. Kontsultatu ordutegiak zure astea antolatzeko."
+          ],
+          [
             "Haurrek eta helduek probatu al dezakete?",
             "Bai. Haurren eta helduen klaseak ditugu, talde bakoitzerako egokiak diren helburu eta erritmoekin."
           ],
@@ -3389,6 +3397,10 @@ window.SKBC_CONTENT = {
           [
             "Where do we train?",
             "We train at two SKBC Gipuzkoa dojos in Tolosa: Gainberri at Garmendiola aldapa 2, and Seishin Dojo at Plaza Lizardi, 2. Seishin opens on 30 November 2026 with adult classes on Mondays and Wednesdays from 11:00 to 12:30, taught by Bharat Sensei, and the first month free. Find both locations and Google Maps links in the dojos and schedules section."
+          ],
+          [
+            "Can I train at both Gainberri and Seishin?",
+            "Yes. Gainberri and Seishin are part of the same club, SKBC Gipuzkoa. You can alternate between the two dojos to suit your schedule or attend all sessions at both. Gainberri offers afternoon classes, while Seishin offers morning classes for adults. Training at Seishin starts on 30 November 2026. Check the schedules to plan your week."
           ],
           [
             "Can you try children and adults?",
