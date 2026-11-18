@@ -746,6 +746,7 @@ h3 { margin-bottom: 10px; font-size: 22px; line-height: 1.18; }
   background: rgba(255,255,255,.08);
 }
 .card span { color: var(--red); font-size: 13px; font-weight: 950; text-transform: uppercase; }
+.card .card-title { margin-top: 0; color: var(--red); font-size: 13px; font-weight: 950; text-transform: uppercase; }
 .dark .card span, .media-bg .card span { color: var(--gold); }
 .card p { color: var(--muted); }
 .dark .card p, .media-bg .card p { color: rgba(255,255,255,.76); }

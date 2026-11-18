@@ -57,7 +57,7 @@ function ratingStars(value) {
 function cardGrid(items, columns = 4) {
   return `<div class="grid-${columns}">${items.map((item) => `
     <article class="card">
-      <h3>${item[0]}</h3>
+      <h3 class="card-title">${item[0]}</h3>
       <p>${item[1] || ""}</p>
     </article>`).join("")}</div>`;
 }
