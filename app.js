@@ -1945,7 +1945,6 @@ function render() {
         <div class="ika-badge">
           <img src="${optimizedImage('assets/ika-logo-white.png?v=2')}" alt="Logo International Kempo Association" />
           <strong>${copy.ika.badge || copy.ika.title}</strong>
-          <span>International Kempo Association</span>
         </div>
       </div>
     </section>
