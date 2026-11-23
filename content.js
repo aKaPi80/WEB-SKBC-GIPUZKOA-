@@ -1077,6 +1077,37 @@ window.SKBC_CONTENT = {
           "2027-12-12",
           "2027-12-27"
         ]
+      },
+      {
+        "start": "2026-12-22",
+        "end": "2026-12-22",
+        "enabled": true,
+        "color": "#88d3c0",
+        "kind": "event",
+        "languages": {
+          "es": {
+            "title": "ENTRENAMIENTO DE NIÑOS JUNTO A PADRES/MADRES",
+            "description": ""
+          },
+          "eu": {
+            "title": "ENTRENAMIENTO DE NIÑOS JUNTO A PADRES/MADRES",
+            "description": ""
+          },
+          "en": {
+            "title": "ENTRENAMIENTO DE NIÑOS JUNTO A PADRES/MADRES",
+            "description": ""
+          }
+        },
+        "location": "GAINBERRI",
+        "featuredNews": true,
+        "repeat": {
+          "enabled": false,
+          "start": "2026-12-22",
+          "until": "2026-12-22",
+          "everyDays": 15
+        },
+        "dates": [],
+        "excludedDates": []
       }
     ],
     "defaultLanguage": "es",
