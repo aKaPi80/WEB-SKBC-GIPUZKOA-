@@ -1887,9 +1887,9 @@ function render() {
   renderNav(copy);
 
   document.querySelector("#app").innerHTML = `
-    ${solidarityTribute(settings)}
     <section class="hero" id="inicio">
       <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
+      ${solidarityTribute(settings)}
       <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}${pinkRibbon(settings, "hero")}${dojoSeal('desktop')}</div>
       <div class="hero-content">
         <p class="eyebrow">${copy.hero.eyebrow}</p>

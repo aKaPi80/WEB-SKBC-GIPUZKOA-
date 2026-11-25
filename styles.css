@@ -4055,15 +4055,19 @@ textarea { resize: vertical; }
 .dark .dojo-opening.dojo-status--upcoming { color: #fdba74; }
 
 .solidarity-tribute {
+  position: relative;
+  z-index: 4;
+  align-self: start;
+  margin: 0 calc(-1 * clamp(18px, 5vw, 70px)) 1.25rem;
   background: linear-gradient(115deg, #2c123f, #4d2366);
   color: #fff;
-  padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem);
+  padding: clamp(.75rem, 1.4vw, 1.25rem) clamp(1rem, 4vw, 2.5rem);
   border-bottom: 4px solid #b98bdf;
 }
 
 .solidarity-tribute__inner {
   display: grid;
-  grid-template-columns: clamp(5rem, 17vw, 10rem) minmax(0, 1fr);
+  grid-template-columns: clamp(4rem, 9vw, 7.5rem) minmax(0, 1fr);
   align-items: center;
   gap: clamp(1rem, 4vw, 2.75rem);
   max-width: 65rem;
@@ -4079,7 +4083,7 @@ textarea { resize: vertical; }
 
 .solidarity-tribute h2 {
   color: inherit;
-  font-size: clamp(1.4rem, 4.4vw, 3.4rem);
+  font-size: clamp(1.2rem, 3.1vw, 2.6rem);
   line-height: 1.05;
   margin: 0 0 .45rem;
   text-wrap: balance;
@@ -4090,4 +4094,9 @@ textarea { resize: vertical; }
   font-size: clamp(.9rem, 1.7vw, 1.2rem);
   line-height: 1.4;
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .hero:has(> .solidarity-tribute) { padding-top: 144px; }
+  .hero > .solidarity-tribute { margin-inline: -18px; }
 }
