@@ -154,6 +154,8 @@ const settingsGroups = [
       ["Día de la Mujer (colores y mensaje combinables)", ["settings", "specialVisual", "womensDay"], "specialVisualToggle"],
       ["Intensidad del efecto", ["settings", "specialVisual", "intensity"], "specialVisualIntensity"],
       ["Mensaje especial opcional", ["settings", "specialVisual", "message"], "input"],
+      ["Contra la violencia machista · día de la conmemoración anual", ["settings", "specialVisual", "solidarityTribute", "day"], "solidarityDay"],
+      ["Contra la violencia machista · mes de la conmemoración anual", ["settings", "specialVisual", "solidarityTribute", "month"], "solidarityMonth"],
       ["Programador de efectos", ["settings", "specialVisual", "schedule"], "specialVisualSchedule"]
     ]
   },
@@ -1347,6 +1349,17 @@ function controlTemplate(id, encodedPath, value, type) {
     const rows = type === "matrix" ? 6 : 4;
     const hint = type === "matrix" || type === "linkList" || type === "colorList" ? `<small>Una línea por elemento. Usa | para separar datos.</small>` : "";
     return `${hint}<textarea id="${id}" data-type="${type}" data-path="${encodedPath}" rows="${rows}">${escapeHtml(value)}</textarea>`;
+  }
+  if (type === "solidarityDay" || type === "solidarityMonth") {
+    const isMonth = type === "solidarityMonth";
+    const selected = Number(value || (isMonth ? 11 : 25));
+    const monthNames = new Intl.DateTimeFormat("es-ES", { month: "long", timeZone: "UTC" });
+    const options = Array.from({ length: isMonth ? 12 : 31 }, (_, index) => {
+      const number = index + 1;
+      const label = isMonth ? monthNames.format(new Date(Date.UTC(2026, index, 1))) : number;
+      return `<option value="${number}"${selected === number ? " selected" : ""}>${label}</option>`;
+    });
+    return `<select id="${id}" data-type="${type}" data-path="${encodedPath}">${options.join("")}</select>`;
   }
   if (type === "date") {
     return `<input id="${id}" type="date" data-type="${type}" data-path="${encodedPath}" value="${escapeHtml(value)}" />`;

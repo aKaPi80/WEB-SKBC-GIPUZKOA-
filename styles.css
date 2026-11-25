@@ -4053,3 +4053,20 @@ textarea { resize: vertical; }
 
 .dark .dojo-opening.dojo-status--active { color: #86efac; }
 .dark .dojo-opening.dojo-status--upcoming { color: #fdba74; }
+
+.solidarity-tribute {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f4ecfa;
+  color: #3d2158;
+}
+
+.solidarity-tribute img {
+  flex: 0 0 auto;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: .5rem;
+}

@@ -1767,6 +1767,26 @@ function logoRibbon(settings, variant, kind) {
       </svg></span>`;
 }
 
+const solidarityDateFormatter = new Intl.DateTimeFormat("en", {
+  timeZone: "Europe/Madrid", month: "numeric", day: "numeric"
+});
+
+function solidarityTribute(settings, now = new Date()) {
+  const { month = 11, day = 25 } = settings.specialVisual?.solidarityTribute || {};
+  const date = Object.fromEntries(solidarityDateFormatter.formatToParts(now).map(({ type, value }) => [type, value]));
+  if (Number(date.month) !== Number(month) || Number(date.day) !== Number(day)) return "";
+
+  const messages = {
+    es: "En solidaridad con las mujeres que sufren violencia machista",
+    eu: "Indarkeria matxista jasaten duten emakumeekin elkartasunez",
+    en: "In solidarity with women affected by gender-based violence"
+  };
+  return `<aside class="solidarity-tribute">
+    <img src="assets/25n-violencia-machista.jpg" width="596" height="596" alt="" />
+    <strong>${messages[state.lang] || messages.es}</strong>
+  </aside>`;
+}
+
 function specialVisualLayer(settings) {
   const visual = specialVisualSettings(settings);
   const particles = seasonalParticles(visual.mode);
@@ -1881,6 +1901,8 @@ function render() {
         ${copy.hero.cards.map((card) => `<article><strong>${card[0]}</strong><span>${card[1]}</span></article>`).join("")}
       </div>
     </section>
+
+    ${solidarityTribute(settings)}
 
     <section class="section">
       <div class="section-heading"><p class="eyebrow">${copy.benefits.eyebrow}</p><h2>${copy.benefits.title}</h2><p>${copy.benefits.text}</p></div>
