@@ -4124,4 +4124,4 @@ textarea { resize: vertical; }
 .merch-clothing-catalog:empty { display: none; }
 .merch-clothing-catalog:not(:empty) { margin-block-start: 0.75rem; }
 
-.merch-store-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.merch-store-entry > .button { justify-self: start; align-self: center; text-align: center; }

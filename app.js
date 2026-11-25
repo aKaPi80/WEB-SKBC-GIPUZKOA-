@@ -7,7 +7,7 @@ const state = {
   merchOrder: { idempotencyKey: crypto.randomUUID(), failedFingerprint: "", status: "idle", message: "" }
 };
 
-const merchOrderHelpersPromise = window.SKBC_ADMIN_PREVIEW === true ? Promise.resolve({}) : import("./merch-orders.js");
+const loadMerchOrderHelpers = () => import("./merch-orders.js");
 
 const formStartedAt = Date.now();
 
@@ -1419,15 +1419,18 @@ async function bindClothingCatalog() {
   }
 }
 
-function merchSection(settings, copy) {
+function merchSection(settings) {
   if (settings.merch?.enabled === false) return "";
-  return `<section class="section merch-section" id="merchandising">
-    <div class="merch-hero">
-      <div><p class="eyebrow">Material SKBC</p><h2>Equípate para entrenar</h2><p>Consulta el material disponible y prepara un pedido por cada persona y artículo. El club confirmará disponibilidad y pago.</p></div>
-      <div class="merch-store-actions"><a class="button" href="${clothingStoreUrl}">${{ es: "Entrar en la tienda del club", eu: "Sartu klubeko dendan", en: "Enter the club store" }[state.lang]}</a><button class="button secondary merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button></div>
+  const [title, description, action] = {
+    es: ["Tienda del club", "Consulta los dogis, obis, ropa y material del club.", "Entrar en la tienda del club"],
+    eu: ["Klubeko denda", "Ikusi klubeko dogiak, obiak, arropa eta materiala.", "Sartu klubeko dendan"],
+    en: ["Club store", "Browse the club’s dogis, belts, clothing and equipment.", "Enter the club store"]
+  }[state.lang];
+  return `<section class="section merch-section" id="merchandising" aria-labelledby="club-store-title">
+    <div class="merch-hero merch-store-entry">
+      <div><h2 id="club-store-title">${title}</h2><p>${description}</p></div>
+      <a class="button" href="${clothingStoreUrl}">${action}</a>
     </div>
-    <div class="merch-catalog">${merchCatalogHtml()}</div>
-    ${merchDrawer(copy, settings)}
   </section>`;
 }
 
@@ -2153,7 +2156,7 @@ function render() {
       </div>
     </section>
 
-    ${merchSection(settings, copy)}
+    ${merchSection(settings)}
 
     ${customSections(settings)}
 
@@ -2223,7 +2226,6 @@ function render() {
   bindGalleryPhotos();
   bindProfiles();
   bindCalendar();
-  bindMerch(copy);
   bindKenshiPortal(copy);
 }
 
@@ -2797,7 +2799,7 @@ function bindMerch(copy = t()) {
     shell?.querySelectorAll("[data-remove-merch]").forEach((button) => {
       button.addEventListener("click", async () => {
         if (state.merchOrder.status === "loading") return;
-        const { removeCartLine } = await merchOrderHelpersPromise;
+        const { removeCartLine } = await loadMerchOrderHelpers();
         state.merchCart = removeCartLine(state.merchCart, button.dataset.removeMerch);
         updateCart();
       });
@@ -2836,7 +2838,7 @@ function bindMerch(copy = t()) {
     const product = state.merchCatalog.products.find((item) => item.id === lineForm.elements.productId.value);
     const variant = state.merchCatalog.variants.find((item) => item.id === lineForm.elements.variantId.value);
     if (!product || !variant || variant.is_orderable === false) return;
-    const { addCartLine } = await merchOrderHelpersPromise;
+    const { addCartLine } = await loadMerchOrderHelpers();
     state.merchCart = addCartLine(state.merchCart, {
       variantId: variant.id,
       recipient: lineForm.elements.recipient.value.trim(),
@@ -2864,7 +2866,7 @@ function bindMerch(copy = t()) {
     const status = orderForm.querySelector(".merch-form-status");
     const submit = orderForm.querySelector('button[type="submit"]');
     const contact = readContact();
-    const { buildOrderPayload, orderPayloadFingerprint, removeSubmittedCartLines, resolveIdempotencyKey, validateCartRecipients, validateOrderContact } = await merchOrderHelpersPromise;
+    const { buildOrderPayload, orderPayloadFingerprint, removeSubmittedCartLines, resolveIdempotencyKey, validateCartRecipients, validateOrderContact } = await loadMerchOrderHelpers();
     const validation = validateOrderContact(contact);
     const recipientValidation = validateCartRecipients(state.merchCart);
     if (!validation.valid || !recipientValidation.valid || !orderForm.reportValidity()) {
