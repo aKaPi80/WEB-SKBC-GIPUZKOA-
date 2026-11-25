@@ -4124,4 +4124,25 @@ textarea { resize: vertical; }
 .merch-clothing-catalog:empty { display: none; }
 .merch-clothing-catalog:not(:empty) { margin-block-start: 0.75rem; }
 
-.merch-store-entry > .button { justify-self: start; align-self: center; text-align: center; }
+.merch-store-entry .merch-store-cta {
+  justify-self: start;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  max-width: 100%;
+  padding: 10px 13px 10px 22px;
+  border: 1px solid #8e1520;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #b81d2a, #911624);
+  box-shadow: 0 9px 22px #92162436;
+  color: #fff;
+  font-size: clamp(16px, 2.2vw, 19px);
+  font-weight: 800;
+  text-align: left;
+}
+.merch-store-entry .merch-store-cta:hover { background: #861320; box-shadow: 0 10px 24px #92162455; }
+.merch-store-entry .merch-store-cta:focus-visible { outline: 3px solid #174d77; outline-offset: 4px; }
+.merch-store-arrow { display: grid; place-items: center; flex: 0 0 37px; width: 37px; height: 37px; border-radius: 50%; background: #ffffff24; font-size: 24px; }

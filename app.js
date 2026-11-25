@@ -1429,7 +1429,7 @@ function merchSection(settings) {
   return `<section class="section merch-section" id="merchandising" aria-labelledby="club-store-title">
     <div class="merch-hero merch-store-entry">
       <div><h2 id="club-store-title">${title}</h2><p>${description}</p></div>
-      <a class="button" href="${clothingStoreUrl}">${action}</a>
+      <a class="button merch-store-cta" href="${clothingStoreUrl}"><span>${action}</span><span class="merch-store-arrow" aria-hidden="true">→</span></a>
     </div>
   </section>`;
 }
