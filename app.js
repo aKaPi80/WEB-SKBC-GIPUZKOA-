@@ -1777,13 +1777,13 @@ function solidarityTribute(settings, now = new Date()) {
   if (Number(date.month) !== Number(month) || Number(date.day) !== Number(day)) return "";
 
   const messages = {
-    es: "En solidaridad con las mujeres que sufren violencia machista",
-    eu: "Indarkeria matxista jasaten duten emakumeekin elkartasunez",
+    es: "En solidaridad con las mujeres que sufren violencia de género",
+    eu: "Genero-indarkeria jasaten duten emakumeekin elkartasunez",
     en: "In solidarity with women affected by gender-based violence"
   };
   const titles = {
-    es: "Contra la violencia machista",
-    eu: "Indarkeria matxistaren aurka",
+    es: "Contra la violencia de género",
+    eu: "Genero-indarkeriaren aurka",
     en: "Against gender-based violence"
   };
   return `<aside class="solidarity-tribute" aria-labelledby="solidarity-tribute-title">
