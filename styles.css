@@ -4100,3 +4100,30 @@ textarea { resize: vertical; }
   .hero:has(> .solidarity-tribute) { padding-top: 144px; }
   .hero > .solidarity-tribute { margin-inline: -18px; }
 }
+
+.merch-clothing-store {
+  margin-block-start: 2rem;
+  min-width: 0;
+}
+
+.merch-clothing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  margin-block-end: 0.75rem;
+}
+
+.merch-clothing-header h3 {
+  margin: 0;
+}
+
+.merch-clothing-store iframe {
+  display: block;
+  width: 100%;
+  height: clamp(32rem, 85vh, 54rem);
+  border: 1px solid #dce5ec;
+  border-radius: 1rem;
+  background: #fff;
+}

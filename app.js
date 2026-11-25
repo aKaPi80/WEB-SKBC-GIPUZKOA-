@@ -1343,12 +1343,25 @@ async function submitMerchOrderToSupabase(payload) {
 
 function merchSection(settings, copy) {
   if (settings.merch?.enabled === false) return "";
+  const [shopTitle, openShop] = {
+    es: ["Tienda de ropa SKBC", "Abrir tienda en una página completa"],
+    eu: ["SKBC arropa-denda", "Ireki denda orri osoan"],
+    en: ["SKBC clothing store", "Open the full store page"],
+  }[state.lang];
+  const shopUrl = "https://skbc.vercel.app/tienda";
   return `<section class="section merch-section" id="merchandising">
     <div class="merch-hero">
       <div><p class="eyebrow">Material SKBC</p><h2>Equípate para entrenar</h2><p>Consulta el material disponible y prepara un pedido por cada persona y artículo. El club confirmará disponibilidad y pago.</p></div>
       <button class="button merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button>
     </div>
     <div class="merch-catalog">${merchCatalogHtml()}</div>
+    <section class="merch-clothing-store" aria-labelledby="merch-clothing-title">
+      <div class="merch-clothing-header">
+        <h3 id="merch-clothing-title">${shopTitle}</h3>
+        <a class="button" href="${shopUrl}">${openShop}</a>
+      </div>
+      ${state.merchCatalog.status === "ready" ? `<iframe src="${shopUrl}" title="${shopTitle}" loading="lazy"></iframe>` : ""}
+    </section>
     ${merchDrawer(copy, settings)}
   </section>`;
 }
