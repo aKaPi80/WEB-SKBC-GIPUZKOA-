@@ -1777,9 +1777,9 @@ function solidarityTribute(settings, now = new Date()) {
   if (Number(date.month) !== Number(month) || Number(date.day) !== Number(day)) return "";
 
   const messages = {
-    es: "En solidaridad con las mujeres que sufren violencia de género",
-    eu: "Genero-indarkeria jasaten duten emakumeekin elkartasunez",
-    en: "In solidarity with women affected by gender-based violence"
+    es: "En solidaridad con las víctimas de la violencia de género",
+    eu: "Genero-indarkeriaren biktimekin elkartasunez",
+    en: "In solidarity with victims of gender-based violence"
   };
   const titles = {
     es: "25N · Día Internacional contra la Violencia de Género",
