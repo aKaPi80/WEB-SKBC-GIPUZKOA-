@@ -1181,24 +1181,24 @@ function merchProductCard(product) {
 }
 
 function merchCatalogHtml() {
+  let notice = "";
   if (state.merchCatalog.status === "loading" || state.merchCatalog.status === "idle") {
-    return `<div class="merch-status merch-status--loading" role="status"><span></span><strong>Cargando catálogo...</strong></div>`;
-  }
-  if (state.merchCatalog.status === "error") {
-    return `<div class="merch-status merch-status--error" role="alert"><strong>No se pudo cargar el catálogo.</strong><p>${escapeHtml(state.merchCatalog.error)}</p><button class="button secondary" type="button" data-retry-merch>Reintentar</button></div>`;
-  }
-  if (!state.merchCatalog.products.length) {
-    return `<div class="merch-status" role="status"><strong>Catálogo temporalmente vacío</strong><p>Vuelve a consultarlo más tarde.</p></div>`;
+    notice = `<div class="merch-status merch-status--loading" role="status"><span></span><strong>Cargando catálogo...</strong></div>`;
+  } else if (state.merchCatalog.status === "error") {
+    notice = `<div class="merch-status merch-status--error" role="alert"><strong>No se pudo cargar el catálogo.</strong><p>${escapeHtml(state.merchCatalog.error)}</p><button class="button secondary" type="button" data-retry-merch>Reintentar</button></div>`;
+  } else if (!state.merchCatalog.products.length) {
+    notice = `<div class="merch-status" role="status"><strong>Catálogo temporalmente vacío</strong><p>Vuelve a consultarlo más tarde.</p></div>`;
   }
   const fallbackNotice = state.merchCatalog.catalogSource === "fallback"
     ? `<div class="merch-status merch-status--error" role="status"><strong>Catálogo orientativo</strong><p>Disponibilidad y precios pendientes de confirmación. El pedido online está desactivado hasta recuperar la conexión.</p><button class="button secondary" type="button" data-retry-merch>Reintentar</button></div>`
     : "";
-  return fallbackNotice + MERCH_CATEGORIES.map(({ key, label }) => {
+  return notice + fallbackNotice + MERCH_CATEGORIES.map(({ key, label }) => {
     const products = state.merchCatalog.products.filter((product) => productCategory(product) === key);
     return `<details class="merch-category">
-      <summary class="merch-category__heading"><span class="merch-category__title"><strong>${label}</strong><small>${products.length}</small></span><span class="merch-category__toggle"><span>Ver artículos</span><i aria-hidden="true"></i></span></summary>
+      <summary class="merch-category__heading"><span class="merch-category__title"><strong>${label}</strong><small data-merch-count="${products.length}">${products.length}</small></span><span class="merch-category__toggle"><span>Ver artículos</span><i aria-hidden="true"></i></span></summary>
       <div class="merch-category__content">
-        ${products.length ? `<div class="merch-grid">${products.map(merchProductCard).join("")}</div>` : `<p class="merch-category__empty">Sin artículos disponibles ahora mismo.</p>`}
+        ${products.length ? `<div class="merch-grid">${products.map(merchProductCard).join("")}</div>` : `<p class="merch-category__empty" data-merch-empty>Sin artículos disponibles ahora mismo.</p>`}
+        <div class="merch-clothing-catalog" data-clothing-catalog="${key}"></div>
       </div>
     </details>`;
   }).join("");
@@ -1341,27 +1341,92 @@ async function submitMerchOrderToSupabase(payload) {
   return Array.isArray(result) ? result[0] : result;
 }
 
+const clothingStoreUrl = "https://skbc.vercel.app/tienda";
+const clothingStoreCopy = {
+  es: ["Ver tallas y pedir", "No se pudo cargar la ropa. Abrir la tienda"],
+  eu: ["Ikusi neurriak eta eskatu", "Ezin izan da arropa kargatu. Ireki denda"],
+  en: ["View sizes and order", "Clothing could not be loaded. Open the store"],
+};
+let clothingCatalogRequest;
+
+async function bindClothingCatalog() {
+  const catalogs = Array.from(document.querySelectorAll("[data-clothing-catalog]"));
+  if (!catalogs.length) return;
+  const [openShop, failed] = clothingStoreCopy[state.lang];
+  const money = new Intl.NumberFormat(state.lang, { style: "currency", currency: "EUR" });
+  clothingCatalogRequest ??= fetch(new URL("/api/shop/catalog", clothingStoreUrl), { cache: "no-store" })
+    .then(response => {
+      if (!response.ok) throw new Error("Catalog unavailable");
+      return response.json();
+    })
+    .catch(() => {
+      clothingCatalogRequest = undefined;
+      return null;
+    });
+  const result = await clothingCatalogRequest;
+  if (!catalogs[0].isConnected) return;
+  if (!result) {
+    const catalog = catalogs.find(element => element.dataset.clothingCatalog === "club");
+    const link = document.createElement("a");
+    link.href = clothingStoreUrl;
+    link.textContent = failed;
+    catalog.replaceChildren(link);
+    return;
+  }
+
+  for (const catalog of catalogs) {
+    catalog.replaceChildren();
+    const products = result.products.filter(product => product.section === catalog.dataset.clothingCatalog);
+    const category = catalog.closest(".merch-category");
+    const count = category.querySelector("[data-merch-count]");
+    count.textContent = Number(count.dataset.merchCount) + products.length;
+    const empty = category.querySelector("[data-merch-empty]");
+    if (empty) empty.hidden = products.length > 0;
+    if (products.length) category.open = true;
+
+    for (const product of products) {
+      const card = document.createElement("article");
+      card.className = "merch-clothing-card";
+      const title = document.createElement("h4");
+      title.textContent = product.name;
+      if (product.image) {
+        try {
+          const url = new URL(product.image, clothingStoreUrl);
+          if (url.protocol === "https:" && !["www.icloud.com", "icloud.com"].includes(url.hostname)) {
+            const image = document.createElement("img");
+            image.src = url.href;
+            image.alt = "";
+            image.loading = "lazy";
+            image.referrerPolicy = "no-referrer";
+            image.addEventListener("error", () => image.remove());
+            card.append(image);
+          }
+        } catch {
+          // An invalid image does not prevent the product from being displayed.
+        }
+      }
+      const price = document.createElement("strong");
+      price.textContent = [...product.prices].sort((a, b) => a - b).map(cents => money.format(cents / 100)).join(" – ");
+      const sizes = document.createElement("p");
+      sizes.textContent = product.sizes.join(" · ");
+      const link = document.createElement("a");
+      link.href = clothingStoreUrl;
+      link.textContent = openShop;
+      link.setAttribute("aria-label", `${openShop} · ${product.name}`);
+      card.append(title, price, sizes, link);
+      catalog.append(card);
+    }
+  }
+}
+
 function merchSection(settings, copy) {
   if (settings.merch?.enabled === false) return "";
-  const [shopTitle, openShop] = {
-    es: ["Tienda de ropa SKBC", "Abrir tienda en una página completa"],
-    eu: ["SKBC arropa-denda", "Ireki denda orri osoan"],
-    en: ["SKBC clothing store", "Open the full store page"],
-  }[state.lang];
-  const shopUrl = "https://skbc.vercel.app/tienda";
   return `<section class="section merch-section" id="merchandising">
     <div class="merch-hero">
       <div><p class="eyebrow">Material SKBC</p><h2>Equípate para entrenar</h2><p>Consulta el material disponible y prepara un pedido por cada persona y artículo. El club confirmará disponibilidad y pago.</p></div>
       <button class="button merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button>
     </div>
     <div class="merch-catalog">${merchCatalogHtml()}</div>
-    <section class="merch-clothing-store" aria-labelledby="merch-clothing-title">
-      <div class="merch-clothing-header">
-        <h3 id="merch-clothing-title">${shopTitle}</h3>
-        <a class="button" href="${shopUrl}">${openShop}</a>
-      </div>
-      ${state.merchCatalog.status === "ready" ? `<iframe src="${shopUrl}" title="${shopTitle}" loading="lazy"></iframe>` : ""}
-    </section>
     ${merchDrawer(copy, settings)}
   </section>`;
 }
@@ -2639,6 +2704,7 @@ function closeCalendarModal() {
 }
 
 function bindMerch(copy = t()) {
+  if (!window.SKBC_ADMIN_PREVIEW) void bindClothingCatalog();
   const shell = document.querySelector("[data-merch-drawer]");
   const drawer = shell?.querySelector(".merch-drawer");
   const sizeGuideModal = shell?.querySelector("[data-size-guide-modal]");
