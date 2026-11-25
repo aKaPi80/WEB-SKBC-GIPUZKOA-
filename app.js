@@ -1781,9 +1781,19 @@ function solidarityTribute(settings, now = new Date()) {
     eu: "Indarkeria matxista jasaten duten emakumeekin elkartasunez",
     en: "In solidarity with women affected by gender-based violence"
   };
-  return `<aside class="solidarity-tribute">
-    <img src="assets/25n-violencia-machista.jpg" width="596" height="596" alt="" />
-    <strong>${messages[state.lang] || messages.es}</strong>
+  const titles = {
+    es: "Contra la violencia machista",
+    eu: "Indarkeria matxistaren aurka",
+    en: "Against gender-based violence"
+  };
+  return `<aside class="solidarity-tribute" aria-labelledby="solidarity-tribute-title">
+    <div class="solidarity-tribute__inner">
+      <img src="assets/25n-violencia-machista.jpg" width="596" height="596" alt="" />
+      <div>
+        <h2 id="solidarity-tribute-title">${titles[state.lang] || titles.es}</h2>
+        <p>${messages[state.lang] || messages.es}</p>
+      </div>
+    </div>
   </aside>`;
 }
 
@@ -1877,6 +1887,7 @@ function render() {
   renderNav(copy);
 
   document.querySelector("#app").innerHTML = `
+    ${solidarityTribute(settings)}
     <section class="hero" id="inicio">
       <div class="hero-bg" style="${backgroundImageStyle(settings.images.hero, "hero")}"></div>
       <div class="hero-logo"><img src="${systemLogo("heroLogo", "assets/logo-skbc.png")}" alt="Logo ${system.siteName || "SKBC GIPUZKOA"}" />${mourningRibbon(settings, "hero")}${pinkRibbon(settings, "hero")}${dojoSeal('desktop')}</div>
@@ -1901,8 +1912,6 @@ function render() {
         ${copy.hero.cards.map((card) => `<article><strong>${card[0]}</strong><span>${card[1]}</span></article>`).join("")}
       </div>
     </section>
-
-    ${solidarityTribute(settings)}
 
     <section class="section">
       <div class="section-heading"><p class="eyebrow">${copy.benefits.eyebrow}</p><h2>${copy.benefits.title}</h2><p>${copy.benefits.text}</p></div>

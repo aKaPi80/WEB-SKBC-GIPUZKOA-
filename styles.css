@@ -4055,18 +4055,39 @@ textarea { resize: vertical; }
 .dark .dojo-opening.dojo-status--upcoming { color: #fdba74; }
 
 .solidarity-tribute {
-  display: flex;
+  background: linear-gradient(115deg, #2c123f, #4d2366);
+  color: #fff;
+  padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem);
+  border-bottom: 4px solid #b98bdf;
+}
+
+.solidarity-tribute__inner {
+  display: grid;
+  grid-template-columns: clamp(5rem, 17vw, 10rem) minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f4ecfa;
-  color: #3d2158;
+  gap: clamp(1rem, 4vw, 2.75rem);
+  max-width: 65rem;
+  margin-inline: auto;
 }
 
 .solidarity-tribute img {
-  flex: 0 0 auto;
-  width: 3.75rem;
-  height: 3.75rem;
-  border-radius: .5rem;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: .65rem;
+}
+
+.solidarity-tribute h2 {
+  color: inherit;
+  font-size: clamp(1.4rem, 4.4vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0 0 .45rem;
+  text-wrap: balance;
+}
+
+.solidarity-tribute p {
+  color: #f5eafb;
+  font-size: clamp(.9rem, 1.7vw, 1.2rem);
+  line-height: 1.4;
+  margin: 0;
 }
