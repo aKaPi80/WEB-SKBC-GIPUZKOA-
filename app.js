@@ -1782,9 +1782,9 @@ function solidarityTribute(settings, now = new Date()) {
     en: "In solidarity with women affected by gender-based violence"
   };
   const titles = {
-    es: "Contra la violencia de género",
-    eu: "Genero-indarkeriaren aurka",
-    en: "Against gender-based violence"
+    es: "25N · Día Internacional contra la Violencia de Género",
+    eu: "A25 · Genero Indarkeriaren Aurkako Nazioarteko Eguna",
+    en: "25 Nov · International Day Against Gender-Based Violence"
   };
   return `<aside class="solidarity-tribute" aria-labelledby="solidarity-tribute-title">
     <div class="solidarity-tribute__inner">
