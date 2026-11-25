@@ -1424,7 +1424,7 @@ function merchSection(settings, copy) {
   return `<section class="section merch-section" id="merchandising">
     <div class="merch-hero">
       <div><p class="eyebrow">Material SKBC</p><h2>Equípate para entrenar</h2><p>Consulta el material disponible y prepara un pedido por cada persona y artículo. El club confirmará disponibilidad y pago.</p></div>
-      <button class="button merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button>
+      <div class="merch-store-actions"><a class="button" href="${clothingStoreUrl}">${{ es: "Entrar en la tienda del club", eu: "Sartu klubeko dendan", en: "Enter the club store" }[state.lang]}</a><button class="button secondary merch-cart-button" type="button" data-open-merch>Ver pedido <span>${state.merchCart.length}</span></button></div>
     </div>
     <div class="merch-catalog">${merchCatalogHtml()}</div>
     ${merchDrawer(copy, settings)}
@@ -1709,7 +1709,7 @@ function renderNav(copy) {
     { label: labels.faq, href: "#faq" },
     { label: labels.news, href: "#noticias" },
     { label: labels.social, href: "#redes" },
-    { label: labels.merch, href: "#merchandising" },
+    { label: labels.merch, href: clothingStoreUrl },
     ...customNavItems(state.content.settings),
     { label: labels.contact, href: "#contacto" }
   ]);
